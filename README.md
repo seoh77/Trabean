@@ -240,3 +240,80 @@
 2. 사용 내역 분류 (3순위)
 
    - 사용 내역을 카테고리별로 분류하여 볼 수 있다. (교통비, 식비, 등등)
+
+# 3. ERD
+
+![alt text](readme/ERD.png)
+
+```SQL
+
+CREATE TABLE `users` (
+	`userId`	bigint	NOT NULL,
+	`userKey`	String	NOT NULL,
+	`email`	String	NOT NULL,
+	`password`	String	NOT NULL,
+	`name`	String	NOT NULL,
+	`paymentAcountId`	int	NULL,
+	`mainAccountId`	int	NULL
+);
+
+CREATE TABLE `accounts` (
+	`accountId`	bigint	NOT NULL,
+	`accountNo`	String	NOT NULL,
+	`password`	String	NOT NULL,
+	`userId`	bigint	NOT NULL
+);
+
+CREATE TABLE `userAccounts` (
+	`userAccountId`	bigint	NOT NULL,
+	`userId`	int	NOT NULL,
+	`accountId`	int	NOT NULL,
+	`role`	enum	NOT NULL
+);
+
+CREATE TABLE `travelAccounts` (
+	`accountId`	bigint	NOT NULL,
+	`accountName`	String	NOT NULL,
+	`exchangeCurrency`	String	NOT NULL,
+	`parentAccountId`	int	NOT NULL,
+	`targetAmount`	bigint	NOT NULL
+);
+
+CREATE TABLE `merchants` (
+	`merchantId`	bigint	NOT NULL,
+	`accountNo`	String	NOT NULL,
+	`name`	String	NOT NULL,
+	`category`	String	NOT NULL,
+	`exchangeCurrency`	String	NOT NULL
+);
+
+CREATE TABLE `pays` (
+	`payId`	bigint	NOT NULL,
+	`accountId`	int	NOT NULL,
+	`merchantId`	int	NOT NULL,
+	`paymentDate`	Timestamp	NOT NULL,
+	`krwAmount`	bigint	NOT NULL,
+	`foreignAmount`	double	NOT NULL
+);
+
+CREATE TABLE `invitations` (
+	`invitationId`	bigint	NOT NULL,
+	`email`	String	NOT NULL,
+	`isAccepted`	bool	NOT NULL	DEFAULT false,
+	`accountId`	int	NOT NULL,
+	`inviteDate`	Timestamp	NOT NULL
+);
+
+CREATE TABLE `notifications` (
+	`notificationId`	bigint	NOT NULL,
+	`senderId`	int	NOT NULL,
+	`receiverId`	int	NOT NULL,
+	`type`	enum	NOT NULL,
+	`createTime`	timestamp	NOT NULL,
+	`isRead`	bool	NOT NULL	DEFAULT false,
+	`amount`	bigint	NULL,
+	`accountId`	int	NOT NULL
+);
+
+
+```
