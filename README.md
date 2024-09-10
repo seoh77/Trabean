@@ -248,72 +248,90 @@
 ```SQL
 
 CREATE TABLE `users` (
-	`userId`	bigint	NOT NULL,
-	`userKey`	String	NOT NULL,
-	`email`	String	NOT NULL,
-	`password`	String	NOT NULL,
-	`name`	String	NOT NULL,
-	`paymentAcountId`	int	NULL,
-	`mainAccountId`	int	NULL
+    `userId` BIGINT NOT NULL,
+    `userKey` VARCHAR(255) NOT NULL,
+    `email` VARCHAR(255) NOT NULL,
+    `password` VARCHAR(255) NOT NULL,
+    `name` VARCHAR(255) NOT NULL,
+    `paymentAccountId` INT NULL,
+    `mainAccountId` INT NULL,
+    PRIMARY KEY (`userId`)
 );
 
 CREATE TABLE `accounts` (
-	`accountId`	bigint	NOT NULL,
-	`accountNo`	String	NOT NULL,
-	`password`	String	NOT NULL,
-	`userId`	bigint	NOT NULL
+    `accountId` BIGINT NOT NULL,
+    `accountNo` VARCHAR(255) NOT NULL,
+    `password` VARCHAR(255) NOT NULL,
+    `userId` BIGINT NOT NULL,
+    PRIMARY KEY (`accountId`),
+    FOREIGN KEY (`userId`) REFERENCES `users`(`userId`)
 );
 
 CREATE TABLE `userAccounts` (
-	`userAccountId`	bigint	NOT NULL,
-	`userId`	int	NOT NULL,
-	`accountId`	int	NOT NULL,
-	`role`	enum	NOT NULL
+    `userAccountId` BIGINT NOT NULL,
+    `userId` BIGINT NOT NULL,
+    `accountId` BIGINT NOT NULL,
+    `role` ENUM('admin', 'user') NOT NULL,
+    PRIMARY KEY (`userAccountId`),
+    FOREIGN KEY (`userId`) REFERENCES `users`(`userId`),
+    FOREIGN KEY (`accountId`) REFERENCES `accounts`(`accountId`)
 );
 
 CREATE TABLE `travelAccounts` (
-	`accountId`	bigint	NOT NULL,
-	`accountName`	String	NOT NULL,
-	`exchangeCurrency`	String	NOT NULL,
-	`parentAccountId`	int	NOT NULL,
-	`targetAmount`	bigint	NOT NULL
+    `accountId` BIGINT NOT NULL,
+    `accountName` VARCHAR(255) NOT NULL,
+    `exchangeCurrency` VARCHAR(10) NOT NULL,
+    `parentAccountId` BIGINT NOT NULL,
+    `targetAmount` BIGINT NOT NULL,
+    PRIMARY KEY (`accountId`)
 );
 
 CREATE TABLE `merchants` (
-	`merchantId`	bigint	NOT NULL,
-	`accountNo`	String	NOT NULL,
-	`name`	String	NOT NULL,
-	`category`	String	NOT NULL,
-	`exchangeCurrency`	String	NOT NULL
+    `merchantId` BIGINT NOT NULL,
+    `accountNo` VARCHAR(255) NOT NULL,
+    `name` VARCHAR(255) NOT NULL,
+    `category` VARCHAR(255) NOT NULL,
+    `exchangeCurrency` VARCHAR(10) NOT NULL,
+    PRIMARY KEY (`merchantId`)
 );
 
 CREATE TABLE `pays` (
-	`payId`	bigint	NOT NULL,
-	`accountId`	int	NOT NULL,
-	`merchantId`	int	NOT NULL,
-	`paymentDate`	Timestamp	NOT NULL,
-	`krwAmount`	bigint	NOT NULL,
-	`foreignAmount`	double	NOT NULL
+    `payId` BIGINT NOT NULL,
+    `accountId` BIGINT NOT NULL,
+    `merchantId` BIGINT NOT NULL,
+    `paymentDate` TIMESTAMP NOT NULL,
+    `krwAmount` BIGINT NOT NULL,
+    `foreignAmount` DOUBLE NOT NULL,
+    PRIMARY KEY (`payId`),
+    FOREIGN KEY (`accountId`) REFERENCES `accounts`(`accountId`),
+    FOREIGN KEY (`merchantId`) REFERENCES `merchants`(`merchantId`)
 );
 
 CREATE TABLE `invitations` (
-	`invitationId`	bigint	NOT NULL,
-	`email`	String	NOT NULL,
-	`isAccepted`	bool	NOT NULL	DEFAULT false,
-	`accountId`	int	NOT NULL,
-	`inviteDate`	Timestamp	NOT NULL
+    `invitationId` BIGINT NOT NULL,
+    `email` VARCHAR(255) NOT NULL,
+    `isAccepted` BOOL NOT NULL DEFAULT false,
+    `accountId` BIGINT NOT NULL,
+    `inviteDate` TIMESTAMP NOT NULL,
+    PRIMARY KEY (`invitationId`),
+    FOREIGN KEY (`accountId`) REFERENCES `accounts`(`accountId`)
 );
 
 CREATE TABLE `notifications` (
-	`notificationId`	bigint	NOT NULL,
-	`senderId`	int	NOT NULL,
-	`receiverId`	int	NOT NULL,
-	`type`	enum	NOT NULL,
-	`createTime`	timestamp	NOT NULL,
-	`isRead`	bool	NOT NULL	DEFAULT false,
-	`amount`	bigint	NULL,
-	`accountId`	int	NOT NULL
+    `notificationId` BIGINT NOT NULL,
+    `senderId` BIGINT NOT NULL,
+    `receiverId` BIGINT NOT NULL,
+    `type` ENUM('message', 'alert') NOT NULL,
+    `createTime` TIMESTAMP NOT NULL,
+    `isRead` BOOL NOT NULL DEFAULT false,
+    `amount` BIGINT NULL,
+    `accountId` BIGINT NOT NULL,
+    PRIMARY KEY (`notificationId`),
+    FOREIGN KEY (`senderId`) REFERENCES `users`(`userId`),
+    FOREIGN KEY (`receiverId`) REFERENCES `users`(`userId`),
+    FOREIGN KEY (`accountId`) REFERENCES `accounts`(`accountId`)
 );
+
 
 
 ```
