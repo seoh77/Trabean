@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import com.trabean.payment.dto.response.PaymentsAuthResponse;
 import com.trabean.payment.dto.response.UserRoleResponse;
 import com.trabean.payment.entity.Payments;
+import com.trabean.payment.enums.UserRole;
 import com.trabean.payment.exception.PaymentsException;
 import com.trabean.payment.repository.PaymentsRepository;
 import com.trabean.payment.service.PaymentsAuthService;
@@ -47,7 +48,7 @@ class PaymentsAuthServiceTest {
                 .status("200")
                 .message("Success")
                 .userId(1L)
-                .userRole("payer")
+                .userRole(UserRole.PAYER)
                 .build();
 
         Payments mockPayment = Payments.createInitialPayment(1L, 1L);
@@ -75,7 +76,7 @@ class PaymentsAuthServiceTest {
                 .status("200")
                 .message("Success")
                 .userId(1L)
-                .userRole("nonePayer")
+                .userRole(UserRole.NONE_PAYER)
                 .build();
 
         // when: RestTemplate 동작 모킹

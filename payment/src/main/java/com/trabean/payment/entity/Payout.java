@@ -1,5 +1,6 @@
 package com.trabean.payment.entity;
 
+import com.trabean.payment.enums.PayoutStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

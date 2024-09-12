@@ -1,5 +1,6 @@
 package com.trabean.payment.dto.response;
 
+import com.trabean.payment.enums.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,5 +14,5 @@ public class UserRoleResponse {
     private String status;
     private String message;
     private Long userId;
-    private String userRole;
+    private UserRole userRole;
 }

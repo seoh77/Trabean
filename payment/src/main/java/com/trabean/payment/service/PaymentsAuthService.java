@@ -3,6 +3,7 @@ package com.trabean.payment.service;
 import com.trabean.payment.dto.response.PaymentsAuthResponse;
 import com.trabean.payment.dto.response.UserRoleResponse;
 import com.trabean.payment.entity.Payments;
+import com.trabean.payment.enums.UserRole;
 import com.trabean.payment.exception.PaymentsException;
 import com.trabean.payment.repository.PaymentsRepository;
 import java.text.SimpleDateFormat;
@@ -40,7 +41,7 @@ public class PaymentsAuthService {
         if (userRoleResponse == null) {
             throw new PaymentsException("권한을 받아오지 못 했습니다.", HttpStatus.BAD_REQUEST);
         }
-        if ("nonePayer".equals(userRoleResponse.getUserRole())) {
+        if (userRoleResponse.getUserRole() == UserRole.NONE_PAYER) {
             throw new PaymentsException("권한이 없는 사용자입니다.", HttpStatus.FORBIDDEN);
         }
 
