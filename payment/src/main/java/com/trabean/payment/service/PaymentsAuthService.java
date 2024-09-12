@@ -8,6 +8,7 @@ import com.trabean.payment.exception.PaymentsException;
 import com.trabean.payment.repository.PaymentsRepository;
 import java.text.SimpleDateFormat;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -20,10 +21,12 @@ public class PaymentsAuthService {
 
     private final PaymentsRepository paymentsRepository;
     private final RestTemplate restTemplate;
+    
+    @Value("${external.api.userRoleUrl}")
+    private String userRoleUrl;
 
     public PaymentsAuthResponse processPayment(String userKey, Long accountId) {
         // 유저 권한 확인 API 호출
-        String userRoleUrl = "https://9a285f4d-80ae-4d98-9d2a-c2c378839442.mock.pstmn.io";
         String requestBody = String.format("{\"userKey\":\"%s\", \"accountId\":%d}", userKey, accountId);
         HttpEntity<String> entity = new HttpEntity<>(requestBody);
 
