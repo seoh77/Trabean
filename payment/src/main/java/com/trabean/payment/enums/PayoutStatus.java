@@ -8,7 +8,7 @@ public enum PayoutStatus {
 
     @JsonCreator
     public static PayoutStatus from(String value) {
-        return PayoutStatus.valueOf(value.toUpperCase());
+        return PayoutStatus.valueOf(value.trim().toUpperCase());
     }
 
     @JsonValue

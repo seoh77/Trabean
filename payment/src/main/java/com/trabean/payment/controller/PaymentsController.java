@@ -1,10 +1,13 @@
 package com.trabean.payment.controller;
 
+import com.trabean.payment.dto.request.UpdatePaymentInfoRequest;
 import com.trabean.payment.dto.response.PaymentsAuthResponse;
 import com.trabean.payment.exception.PaymentsException;
+import com.trabean.payment.service.PaymentUpdateDetailService;
 import com.trabean.payment.service.PaymentsAuthService;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,11 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class PaymentsController {
 
     private final PaymentsAuthService paymentsAuthService;
+    private final PaymentUpdateDetailService paymentUpdateDetailService;
 
     // 초기 결제 요청 처리
     @PostMapping("/{accountId}/auth")
     public ResponseEntity<PaymentsAuthResponse> initiatePayment(
-            @PathVariable Long accountId,  // accountId를 경로 변수로 받음
+            @PathVariable("accountId") Long accountId,  // accountId를 경로 변수로 받음
             @RequestBody Map<String, String> request) {
 
         String userKey = request.get("userKey");
@@ -40,5 +44,15 @@ public class PaymentsController {
             e.printStackTrace();  // 전체 스택 트레이스 출력
             return ResponseEntity.status(500).body(null);  // 500 Internal Server Error
         }
+    }
+
+    // QR인식 후 결제 정보 업데이트
+    @PostMapping("/info")
+    public ResponseEntity<String> updatePaymentInfo(@RequestBody UpdatePaymentInfoRequest request) {
+        // 서비스 호출
+        paymentUpdateDetailService.updatePayment(request);
+
+        // 성공적으로 처리된 경우
+        return new ResponseEntity<>("결제 정보가 성공적으로 업데이트되었습니다.", HttpStatus.OK);
     }
 }

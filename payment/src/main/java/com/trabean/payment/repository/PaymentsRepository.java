@@ -6,5 +6,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PaymentsRepository extends JpaRepository<Payments, Long> {
-    // 필요한 추가 메소드가 있다면 여기서 정의할 수 있습니다.
+
+    //    @Query("SELECT p FROM Payments p WHERE p.paymentStatus = :paymentStatus")
+//    List<Payments> findAllByPaymentStatus(@Param("paymentStatus") PaymentStatus paymentStatus);
+
 }

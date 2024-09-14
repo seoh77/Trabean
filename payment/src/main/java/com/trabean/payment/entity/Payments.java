@@ -71,13 +71,18 @@ public class Payments {
         return payment;
     }
 
-    // 추가 결제 정보 업데이트 메서드 (추가 결제 요청 시)
+    // 결제 상태 변경
+    public void updatePaymentStatus(PaymentStatus status) {
+        this.paymentStatus = status;
+    }
+
+    // QR 인식 후 결제 정보 업데이트
     public void updatePaymentDetails(Long krwAmount, Double foreignAmount, Merchants merchant) {
         // 성공 시
         this.krwAmount = krwAmount;
         this.foreignAmount = foreignAmount;
         this.merchant = merchant;
-        this.paymentStatus = PaymentStatus.SUCCESS;
+        this.paymentStatus = PaymentStatus.PENDING;
         this.paymentDate = new Timestamp(System.currentTimeMillis()); // 시간 업데이트
     }
 }

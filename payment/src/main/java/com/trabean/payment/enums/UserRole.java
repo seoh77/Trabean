@@ -8,7 +8,7 @@ public enum UserRole {
 
     @JsonCreator
     public static UserRole from(String value) {
-        return UserRole.valueOf(value.toUpperCase());
+        return UserRole.valueOf(value.trim().toUpperCase());
     }
 
     @JsonValue
