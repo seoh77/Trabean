@@ -1,0 +1,66 @@
+package com.trabean.travel.service;
+
+import com.trabean.travel.dto.response.TravelAccountResponseDto;
+import com.trabean.travel.dto.response.TravelListAccountResponseDto;
+import com.trabean.travel.entity.ForeignTravelAccount;
+import com.trabean.travel.entity.KrwTravelAccount;
+import com.trabean.travel.repository.ForeignTravelAccountRepository;
+import com.trabean.travel.repository.KrwTravelAccountRepository;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class TravelAccountService {
+
+    private final ForeignTravelAccountRepository foreignTravelAccountRepository;
+    private final KrwTravelAccountRepository krwTravelAccountRepository;
+
+    public TravelListAccountResponseDto findAllTravelAccount(Long parentId) {
+        KrwTravelAccount krwTravelAccount = krwTravelAccountRepository.findByAccountId(parentId);
+
+        if (krwTravelAccount == null) {
+            throw new RuntimeException("KRW 계좌를 찾을 수 없습니다.");
+        }
+
+        List<ForeignTravelAccount> foreignTravelAccounts = foreignTravelAccountRepository.findByParentAccountId(
+                parentId);
+
+        List<TravelAccountResponseDto> list = new ArrayList<>();
+
+        // krwTravelAccount 잔액조회
+        Double accountKRWBalance = 0.0;
+
+        list.add(new TravelAccountResponseDto(krwTravelAccount.getAccountId(), "한국", "KRW", accountKRWBalance));
+
+        for (ForeignTravelAccount foreignTravelAccount : foreignTravelAccounts) {
+            Long accountId = foreignTravelAccount.getAccountId();
+            String exchangeCurrency = foreignTravelAccount.getExchangeCurrency();
+            String country = "";
+
+            if (exchangeCurrency.equals("USD")) {
+                country = "미국";
+            } else if (exchangeCurrency.equals("EUR")) {
+                country = "유럽";
+            } else if (exchangeCurrency.equals("JPY")) {
+                country = "일본";
+            } else if (exchangeCurrency.equals("GBP")) {
+                country = "영국";
+            } else if (exchangeCurrency.equals("CHF")) {
+                country = "스위스";
+            } else if (exchangeCurrency.equals("CAD")) {
+                country = "캐나다";
+            }
+
+            // 외화통장 잔액조회
+            Double accountBalance = 0.0;
+
+            list.add(new TravelAccountResponseDto(accountId, country, exchangeCurrency, accountBalance));
+        }
+
+        return new TravelListAccountResponseDto(krwTravelAccount.getAccountName(), list);
+    }
+
+}
