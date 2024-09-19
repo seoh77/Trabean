@@ -1,17 +1,16 @@
 package com.trabean.notification.db.entity;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.sql.Timestamp;
 
 @Entity
+@Table(name = "notifications")
 @Data
 public class Notification {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,6 +19,7 @@ public class Notification {
     private Long senderId;
     private Long receiverId;
     private Long accountId;
+    @Enumerated(EnumType.STRING)
     private NotificationType type;
     private boolean isRead;
     private Long amount;
