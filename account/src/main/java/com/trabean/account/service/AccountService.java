@@ -22,11 +22,15 @@ public class AccountService {
 
     public String getAccountNoById(Long accountId) {
         Optional<Account> account = accountRepository.findById(accountId);
+
         return account.map(Account::getAccountNo).orElse(null);
     }
 
-    public Optional<UserAccountRelation.UserRole> getUserRole(Long userId, Long accountId) {
+    public String getUserRoleByUserIdAndAccountId(Long userId, Long accountId) {
         Optional<UserAccountRelation> userAccountRelation = userAccountRelationRepository.findByUserIdAndAccountId(userId, accountId);
-        return userAccountRelation.map(UserAccountRelation::getUserRole);
+
+        return userAccountRelation
+                .map(relation -> relation.getUserRole().name())
+                .orElse(null);
     }
 }
