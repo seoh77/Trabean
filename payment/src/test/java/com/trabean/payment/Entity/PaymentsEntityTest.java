@@ -1,7 +1,10 @@
 package com.trabean.payment.Entity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import com.trabean.payment.entity.Merchants;
 import com.trabean.payment.entity.Payments;
 import com.trabean.payment.enums.PaymentStatus;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,8 +17,16 @@ public class PaymentsEntityTest {
 
     @BeforeEach
     void setUp() {
-        // 결제 초기화
-        payment = Payments.createInitialPayment(1L, 100L);  // userId, accountId 설정
+        // 가맹점 객체 Mock 생성
+        Merchants merchant = mock(Merchants.class);
+        when(merchant.getMerchantId()).thenReturn(1L);
+        when(merchant.getName()).thenReturn("Test Merchant");
+
+        Long krwAmount = 10000L; // 결제 금액 설정
+        Double foreignAmount = 1000.0; // 외화 결제 금액 설정
+
+        // QR 인식 후 결제 생성 메서드 호출
+        payment = Payments.createInitialPayment(1L, 100L, merchant, krwAmount, foreignAmount);
     }
 
     @Test

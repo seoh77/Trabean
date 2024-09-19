@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdatePaymentInfoRequest {
-    private String userKey;
-    private Long accountId; // 돈 빠져나가는 계좌
+public class RequestPaymentRequest {
+    private String transactionId;
+    private Long payId;
     private Long merchantId;
     private Long krwAmount;
     private Double foreignAmount;

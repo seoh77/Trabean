@@ -60,14 +60,18 @@ public class Payments {
     private Integer passwordErrorCount = 0;
 
     @Builder
-    // 결제 초기 생성 메서드 (최초 저장 시)
-    public static Payments createInitialPayment(Long userId, Long accountId) {
+    // 결제 초기 생성 메서드 (QR 인식 후)
+    public static Payments createInitialPayment(Long userId, Long accountId, Merchants merchant, Long krwAmount,
+                                                Double foreignAmount) {
         Payments payment = new Payments();
         payment.userId = userId;
         payment.accountId = accountId;
         payment.transactionId = UUID.randomUUID().toString();  // 트랜잭션 ID 생성
         payment.paymentStatus = PaymentStatus.PENDING;
         payment.paymentDate = new Timestamp(System.currentTimeMillis());  // 현재 시간 저장
+        payment.krwAmount = krwAmount;
+        payment.foreignAmount = foreignAmount;
+        payment.merchant = merchant;
         return payment;
     }
 
@@ -77,12 +81,12 @@ public class Payments {
     }
 
     // QR 인식 후 결제 정보 업데이트
-    public void updatePaymentDetails(Long krwAmount, Double foreignAmount, Merchants merchant) {
-        // 성공 시
-        this.krwAmount = krwAmount;
-        this.foreignAmount = foreignAmount;
-        this.merchant = merchant;
-        this.paymentStatus = PaymentStatus.PENDING;
-        this.paymentDate = new Timestamp(System.currentTimeMillis()); // 시간 업데이트
-    }
+//    public void updatePaymentDetails(Long krwAmount, Double foreignAmount, Merchants merchant) {
+//        // 성공 시
+//        this.krwAmount = krwAmount;
+//        this.foreignAmount = foreignAmount;
+//        this.merchant = merchant;
+//        this.paymentStatus = PaymentStatus.PENDING;
+//        this.paymentDate = new Timestamp(System.currentTimeMillis()); // 시간 업데이트
+//    }
 }
