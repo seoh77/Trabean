@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,6 +18,13 @@ public class TravelAccountService {
 
     private final ForeignTravelAccountRepository foreignTravelAccountRepository;
     private final KrwTravelAccountRepository krwTravelAccountRepository;
+
+    @Transactional
+    public Long updateTravelAccountName(Long accountId, String accountName) {
+        KrwTravelAccount account = krwTravelAccountRepository.findByAccountId(accountId);
+        account.setAccountName(accountName);
+        return accountId;
+    }
 
     public TravelListAccountResponseDto findAllTravelAccount(Long parentId) {
         KrwTravelAccount krwTravelAccount = krwTravelAccountRepository.findByAccountId(parentId);

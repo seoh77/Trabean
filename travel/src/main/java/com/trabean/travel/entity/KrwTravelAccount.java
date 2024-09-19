@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -17,6 +18,7 @@ public class KrwTravelAccount {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long accountId;
 
+    @Setter
     @Column(nullable = false, length = 20)
     private String accountName;
 
