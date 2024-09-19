@@ -29,8 +29,8 @@ public class User implements UserDetails {
 	@Column(name = "user_id", updatable = false, nullable = false)
 	private Long user_id;
 
-	@Column(name = "name", nullable = false)
-	private String name; // 사용자 성명
+	@Column(name="user_key",nullable = false)
+	private String user_key;
 
 	@Column(name = "email", nullable = false, unique = true)
 	private String email; // 사용자 이메일
@@ -38,15 +38,21 @@ public class User implements UserDetails {
 	@Column(name = "password", nullable = false)
 	private String password; // 사용자 비밀번호
 
-	@Column(name="user_key",nullable = false)
-	private String user_key;
+	@Column(name = "name", nullable = false)
+	private String name; // 사용자 성명
+
+	@Column(name = "payment_account_id")
+	private String payment_account_id;//사용자 계좌
+
+	@Column(name = "main_account_id")
+	private String main_account_id;//주 사용계좌
 
 	@Builder
 	public User(String name, String email, String password, String user_key) {
 		this.name = name;
 		this.email = email;
 		this.password = password;
-		this.user_key = user_key;
+		 this.user_key = user_key;
 	}
 
 	@Override
