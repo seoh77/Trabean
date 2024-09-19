@@ -29,4 +29,10 @@ public class TravelAccountController {
         travelAccountService.updateTravelAccountName(accountId, accountName);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+    @PutMapping("{accountId}/targetAmount")
+    public ResponseEntity<Void> updateTargetAmount(@PathVariable Long accountId, @RequestBody Long targetAmount) {
+        travelAccountService.updateTargetAmount(accountId, targetAmount);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
 }

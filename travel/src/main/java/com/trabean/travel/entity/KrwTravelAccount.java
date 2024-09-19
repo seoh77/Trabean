@@ -22,6 +22,7 @@ public class KrwTravelAccount {
     @Column(nullable = false, length = 20)
     private String accountName;
 
+    @Setter
     @Column(nullable = false)
     private Long targetAmount;
 
