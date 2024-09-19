@@ -98,4 +98,3 @@ CREATE TABLE `payout` (
     PRIMARY KEY (`payout_id`),
     FOREIGN KEY (`merchant_id`) REFERENCES `merchants`(`merchant_id`) -- merchants와 연관된 외래 키
 );
-
