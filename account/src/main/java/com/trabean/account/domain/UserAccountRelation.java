@@ -26,12 +26,12 @@ public class UserAccountRelation {
     private Long accountId;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Role role;
+    @Column(name = "role", nullable = false)
+    private UserRole userRole;
 
-    public enum Role {
+    public enum UserRole {
         ADMIN,
         PAYER,
-        NONEPAYER
+        NONE_PAYER
     }
 }
