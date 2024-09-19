@@ -14,6 +14,13 @@ WORKDIR /app
 # 빌드된 JAR 파일을 /app 디렉토리에 복사합니다.
 COPY build/libs/notification-0.0.1-SNAPSHOT.jar app.jar
 
+# ARG 변수를 ENV로 설정하여 컨테이너 실행 시 사용할 수 있도록 합니다.
+ENV DB_HOST=${DB_HOST}
+ENV DB_PORT=${DB_PORT}
+ENV DB_USER=${DB_USER}
+ENV DB_PASSWORD=${DB_PASSWORD}
+ENV DB_NAME=${DB_NAME}
+
 # 컨테이너가 사용하는 포트 8083을 노출합니다.
 EXPOSE 8083
 
