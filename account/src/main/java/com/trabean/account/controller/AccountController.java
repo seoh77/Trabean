@@ -3,6 +3,7 @@ package com.trabean.account.controller;
 import com.trabean.account.domain.UserAccountRelation;
 import com.trabean.account.dto.request.AccountNoRequestDTO;
 import com.trabean.account.dto.request.UserRoleRequestDTO;
+import com.trabean.account.dto.response.AccountNoResponseDTO;
 import com.trabean.account.dto.response.UserRoleResponseDTO;
 import com.trabean.account.service.AccountService;
 import lombok.RequiredArgsConstructor;
@@ -23,15 +24,23 @@ public class AccountController {
     private final AccountService accountService;
 
     @PostMapping("/get-account-number")
-    public ResponseEntity<String> getAccountNo(@RequestBody AccountNoRequestDTO requestDTO){
+    public ResponseEntity<AccountNoResponseDTO> getAccountNo(@RequestBody AccountNoRequestDTO requestDTO){
         Long accountId = requestDTO.getAccountId();
+
         String accountNo = accountService.getAccountNoById(accountId);
 
         if(accountNo != null){
-            return ResponseEntity.ok(accountNo);
+            AccountNoResponseDTO responseDTO = AccountNoResponseDTO.builder()
+                    .accountNo(accountNo)
+                    .message("성공")
+                    .build();
+            return ResponseEntity.ok(responseDTO);
         }
         else{
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("존재하지 않는 계좌 입니다.");
+            AccountNoResponseDTO responseDTO = AccountNoResponseDTO.builder()
+                    .message("해당 계좌를 찾을 수 없습니다.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDTO);
         }
     }
 
