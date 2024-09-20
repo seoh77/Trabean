@@ -32,7 +32,7 @@ out/
 /nbbuild/
 /dist/
 /nbdist/
-/.nb-gradle/
+/.nb-gradle/log/
 
 ### VS Code ###
 .vscode/
