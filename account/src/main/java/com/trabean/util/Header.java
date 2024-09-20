@@ -3,40 +3,34 @@ package com.trabean.util;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 @Data
 @Builder
-
 public class Header {
     String apiName;
-
-    @Builder.Default
-    String transmissionDate = getCurrentDate();
-
-    @Builder.Default
-    String transmissionTime = getCurrentTime();
-
+    String transmissionDate;
+    String transmissionTime;
     final String institutionCode = "00100";
     final String fintechAppNo = "001";
-
-    @Builder.Default
     String apiServiceCode;
-
     String institutionTransactionUniqueNo;
-
-    @Builder.Default
     String apiKey;
-
     String userKey;
 
-    private static String getCurrentDate(){
-        return LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+    public static class HeaderBuilder {
+        public HeaderBuilder apiName(String apiName) {
+            CurrentTime currentTime = new CurrentTime();
+
+            this.apiName = apiName;
+            this.transmissionDate = currentTime.getYyyymmdd();
+            this.transmissionTime = currentTime.getHhmmss();
+            this.apiServiceCode = apiName;
+            this.institutionTransactionUniqueNo = createInstitutionTransactionUniqueNo(currentTime.getYyyymmddhhmmss());
+            this.apiKey = System.getenv("API_KEY");
+            return this;
+        }
     }
 
-    private static String getCurrentTime(){
-        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("HHmmss"));
+    private static String createInstitutionTransactionUniqueNo(String currentTime) {
+        return currentTime + RandomStringGenerator.generateRandomString();
     }
 }

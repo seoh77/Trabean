@@ -1,27 +1,22 @@
 package com.trabean.util;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @CrossOrigin
 @RestController
-@RequiredArgsConstructor
-@RequestMapping("/api/accounts/test")
+@RequestMapping("/api/accounts/test1")
 public class HeaderTestController {
 
-    @Value("${API_KEY}")
-    private String API_KEY;
-
-    @GetMapping()
-    public Header test() {
-        return Header.
-                builder()
-                .apiName("김치")
-                .apiKey(API_KEY)
-                .build();
+    @GetMapping
+    public Map<String, Header> test() {
+        return Map.of("Header", Header.builder()
+                .apiName("김치치즈")
+                .userKey("testUserKey1")
+                .build());
     }
 }
