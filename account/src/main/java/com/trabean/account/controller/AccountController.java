@@ -24,21 +24,9 @@ public class AccountController {
     public ResponseEntity<AccountNoResponseDTO> getAccountNo(@RequestBody AccountNoRequestDTO requestDTO){
         Long accountId = requestDTO.getAccountId();
 
-        String accountNo = accountService.getAccountNoById(accountId);
+        AccountNoResponseDTO responseDTO = accountService.getAccountNoById(accountId);
 
-        if(accountNo != null){
-            AccountNoResponseDTO responseDTO = AccountNoResponseDTO.builder()
-                    .accountNo(accountNo)
-                    .message("성공")
-                    .build();
-            return ResponseEntity.ok(responseDTO);
-        }
-        else{
-            AccountNoResponseDTO responseDTO = AccountNoResponseDTO.builder()
-                    .message("해당 계좌를 찾을 수 없습니다.")
-                    .build();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDTO);
-        }
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
     @PostMapping("/get-user-role")
@@ -46,20 +34,8 @@ public class AccountController {
         Long userId = requestDTO.getUserId();
         Long accountId = requestDTO.getAccountId();
 
-        String userRole = accountService.getUserRoleByUserIdAndAccountId(userId, accountId);
+        UserRoleResponseDTO responseDTO = accountService.getUserRoleByUserIdAndAccountId(userId, accountId);
 
-        if(userRole != null){
-            UserRoleResponseDTO responseDTO = UserRoleResponseDTO.builder()
-                    .userRole(userRole)
-                    .message("성공")
-                    .build();
-            return ResponseEntity.ok(responseDTO);
-        }
-        else{
-            UserRoleResponseDTO responseDTO = UserRoleResponseDTO.builder()
-                    .message("잘못된 요청입니다.")
-                    .build();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDTO);
-        }
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 }
