@@ -7,9 +7,9 @@ import java.time.format.DateTimeFormatter;
 
 @Getter
 public class CurrentTime {
-    private String yyyymmddhhmmss;
-    private String yyyymmdd;
-    private String hhmmss;
+    private String YYYYMMDDHHMMSS;
+    private String YYYYMMDD;
+    private String HHMMSS;
 
     public CurrentTime() {
         LocalDateTime now = LocalDateTime.now();
@@ -18,8 +18,8 @@ public class CurrentTime {
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HHmmss");
 
-        this.yyyymmddhhmmss = now.format(dateTimeFormatter);
-        this.yyyymmdd = now.format(dateFormatter);
-        this.hhmmss = now.format(timeFormatter);
+        this.YYYYMMDDHHMMSS = now.format(dateTimeFormatter);
+        this.YYYYMMDD = now.format(dateFormatter);
+        this.HHMMSS = now.format(timeFormatter);
     }
 }
