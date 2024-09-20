@@ -1,5 +1,6 @@
 package com.trabean.travel.service;
 
+import com.trabean.travel.dto.response.TravelAccountIdResponseDto;
 import com.trabean.travel.dto.response.TravelAccountResponseDto;
 import com.trabean.travel.dto.response.TravelListAccountResponseDto;
 import com.trabean.travel.entity.ForeignTravelAccount;
@@ -92,6 +93,25 @@ public class TravelAccountService {
         }
 
         return new TravelListAccountResponseDto(krwTravelAccount.getAccountName(), list);
+    }
+
+    public TravelAccountIdResponseDto findAccountIdByCurrency(Long parentId, String currency) {
+        if (currency.equals("KRW")) {
+            KrwTravelAccount krwTravelAccount = krwTravelAccountRepository.findByAccountId(parentId);
+            return new TravelAccountIdResponseDto(krwTravelAccount.getAccountId());
+        } else {
+            List<ForeignTravelAccount> foreignTravelAccounts = foreignTravelAccountRepository.findByParentAccountId(
+                    parentId);
+
+            for (ForeignTravelAccount foreignTravelAccount : foreignTravelAccounts) {
+                String accountCurreny = foreignTravelAccount.getExchangeCurrency();
+                if (currency.equals(accountCurreny)) {
+                    return new TravelAccountIdResponseDto(foreignTravelAccount.getAccountId());
+                }
+            }
+        }
+
+        return null;
     }
 
 }

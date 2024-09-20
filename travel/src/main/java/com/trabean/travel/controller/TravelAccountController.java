@@ -1,6 +1,7 @@
 package com.trabean.travel.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.trabean.travel.dto.response.TravelAccountIdResponseDto;
 import com.trabean.travel.dto.response.TravelListAccountResponseDto;
 import com.trabean.travel.service.TargetAmountService;
 import com.trabean.travel.service.TravelAccountService;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -38,5 +40,18 @@ public class TravelAccountController {
     public ResponseEntity<Void> updateTargetAmount(@PathVariable Long accountId, @RequestBody Long targetAmount) {
         targetAmountService.updateTargetAmount(accountId, targetAmount);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @GetMapping
+    public ResponseEntity<TravelAccountIdResponseDto> getTravelAccountIdByCurrency(@RequestParam Long accountId,
+                                                                                   @RequestParam String currency) {
+        TravelAccountIdResponseDto travelAccountIdResponseDto = travelAccountService.findAccountIdByCurrency(accountId,
+                currency);
+
+        if (travelAccountIdResponseDto != null) {
+            return ResponseEntity.ok(travelAccountIdResponseDto);
+        }
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
