@@ -7,10 +7,17 @@ import com.trabean.travel.entity.KrwTravelAccount;
 import com.trabean.travel.repository.ForeignTravelAccountRepository;
 import com.trabean.travel.repository.KrwTravelAccountRepository;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
@@ -35,8 +42,24 @@ public class TravelAccountService {
 
         List<ForeignTravelAccount> foreignTravelAccounts = foreignTravelAccountRepository.findByParentAccountId(
                 parentId);
-
         List<TravelAccountResponseDto> list = new ArrayList<>();
+
+        // 계좌번호 조회
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "http://j11a604.p.ssafy.io:8081/api/accounts/get-account-number";
+        Map<String, Long> requestBody = new HashMap<>();
+        requestBody.put("accountId", parentId);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/json");
+        HttpEntity<Map<String, Long>> requestEntity = new HttpEntity<>(requestBody, headers);
+
+        ResponseEntity<Map> responseEntity = restTemplate.exchange(url, HttpMethod.POST, requestEntity, Map.class);
+
+        Map<String, String> responseBody = responseEntity.getBody();
+        String accountKRWNo = responseBody.get("accountNo");
+
+        System.out.println("accountKRWNo = " + accountKRWNo);
 
         // krwTravelAccount 잔액조회
         Double accountKRWBalance = 0.0;
@@ -70,6 +93,7 @@ public class TravelAccountService {
 
         return new TravelListAccountResponseDto(krwTravelAccount.getAccountName(), list);
     }
+
 
     @Transactional
     public Long updateTargetAmount(Long accountId, Long targetAmount) {

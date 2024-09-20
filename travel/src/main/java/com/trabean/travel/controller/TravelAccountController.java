@@ -1,5 +1,6 @@
 package com.trabean.travel.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.trabean.travel.dto.response.TravelListAccountResponseDto;
 import com.trabean.travel.service.TravelAccountService;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,8 @@ public class TravelAccountController {
     private final TravelAccountService travelAccountService;
 
     @GetMapping("{parentAccountId}")
-    public ResponseEntity<TravelListAccountResponseDto> getTravelListAccount(@PathVariable Long parentAccountId) {
+    public ResponseEntity<TravelListAccountResponseDto> getTravelListAccount(@PathVariable Long parentAccountId)
+            throws JsonProcessingException {
         return ResponseEntity.ok(travelAccountService.findAllTravelAccount(parentAccountId));
     }
 
