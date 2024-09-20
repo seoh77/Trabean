@@ -29,16 +29,16 @@ public class PaymentsRequestService {
     private final MerchantsRepository merchantsRepository;
     private final RestTemplate restTemplate;
 
-    @Value("${external.api.paymentForeignAccountUrl}") // 결제 메인계좌 -> 그에 맞는 외화 계좌id
+    @Value("https://0bae4fd6-f141-476f-8cd5-835280aea133.mock.pstmn.io") // 결제 메인계좌 -> 그에 맞는 외화 계좌id
     private String paymentForeignAccountUrl;
 
-    @Value("${external.api.accountNumberUrl}") // 계좌 id -> 계좌번호
+    @Value("https://96589213-98b8-4de4-b669-051c560919ea.mock.pstmn.io") // 계좌 id -> 계좌번호
     private String accountNumberUrl;
 
-    @Value("${external.api.exchangeUrl}") // 환율조회 api
+    @Value("https://finopenapi.ssafy.io/ssafy/api/v1/edu/exchangeRate/search") // 환율조회 api
     private String exchangeUrl;
 
-    @Value("${external.key.ssafyApiKey}")
+    @Value("${API_KEY}")
     private String ssafyApiKey;
 
     public ExchangeRateResponse searchExchangeRate(String currency) {

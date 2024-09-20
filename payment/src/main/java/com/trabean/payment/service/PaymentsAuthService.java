@@ -17,7 +17,7 @@ public class PaymentsAuthService {
 
     private final RestTemplate restTemplate;
 
-    @Value("${external.api.userRoleUrl}")
+    @Value("https://9a285f4d-80ae-4d98-9d2a-c2c378839442.mock.pstmn.io")
     private String userRoleUrl;
 
     public Long checkAuthPayment(String userKey, Long accountId) {
