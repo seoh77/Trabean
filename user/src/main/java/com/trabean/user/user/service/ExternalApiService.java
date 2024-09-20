@@ -1,5 +1,6 @@
 package com.trabean.user.user.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -20,7 +21,8 @@ public class ExternalApiService {
 
     private static final Logger logger = LoggerFactory.getLogger(ExternalApiService.class);
     private final RestTemplate restTemplate;
-    private final String apiKey = "1b5cd29adccc46609ff1ce0a589584e0";
+    @Value("${API_KEY}")
+    private String apiKey;
 
     public ExternalApiService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;

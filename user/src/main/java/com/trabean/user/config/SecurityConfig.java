@@ -41,7 +41,7 @@ public class SecurityConfig {
 				.permitAll()
 				.anyRequest().authenticated())
 			.formLogin(formLogin -> formLogin
-				.loginPage("http://localhost:8080/login")
+				.loginPage("api/user/login")
 				.defaultSuccessUrl("http://localhost:8080"))
 			.logout(logout -> logout
 				.logoutSuccessUrl("http://localhost:8080/login")
