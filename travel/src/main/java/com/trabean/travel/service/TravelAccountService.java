@@ -94,12 +94,4 @@ public class TravelAccountService {
         return new TravelListAccountResponseDto(krwTravelAccount.getAccountName(), list);
     }
 
-
-    @Transactional
-    public Long updateTargetAmount(Long accountId, Long targetAmount) {
-        KrwTravelAccount account = krwTravelAccountRepository.findByAccountId(accountId);
-        account.setTargetAmount(targetAmount);
-        return accountId;
-    }
-
 }
