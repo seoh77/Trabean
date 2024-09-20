@@ -20,3 +20,6 @@ logging:
 
 # SSAFY 금융 API 관리자 KEY
 API_KEY: ${API_KEY}
+
+server:
+  port: 8081

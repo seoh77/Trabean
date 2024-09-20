@@ -9,6 +9,7 @@ import java.time.format.DateTimeFormatter;
 
 @Data
 @Builder
+
 public class Header {
     String apiName;
 
@@ -20,11 +21,15 @@ public class Header {
 
     final String institutionCode = "00100";
     final String fintechAppNo = "001";
-    
+
+    @Builder.Default
     String apiServiceCode;
 
     String institutionTransactionUniqueNo;
+
+    @Builder.Default
     String apiKey;
+
     String userKey;
 
     private static String getCurrentDate(){
