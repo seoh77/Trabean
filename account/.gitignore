@@ -35,7 +35,3 @@ out/
 
 ### VS Code ###
 .vscode/
-
-# Ignore all yml files in resources directory
-src/main/resources/*.yml
-src/test/resources/*.yml
