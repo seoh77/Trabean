@@ -25,3 +25,5 @@ spring:
     hibernate:
       ddl-auto: update  # 테이블 자동 업데이트 설정
     show-sql: true  # SQL 쿼리 로깅 활성화
+server:
+  port: 8084
