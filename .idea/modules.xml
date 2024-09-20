@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/S11P21A604.iml" filepath="$PROJECT_DIR$/.idea/S11P21A604.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.trabean.notification.main.iml" filepath="$PROJECT_DIR$/.idea/modules/com.trabean.notification.main.iml" />
     </modules>
   </component>
 </project>
