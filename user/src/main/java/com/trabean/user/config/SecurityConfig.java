@@ -1,5 +1,9 @@
 package com.trabean.user.config;
 
+import com.trabean.user.config.jwt.JwtAccessDeniedHandler;
+import com.trabean.user.config.jwt.JwtAuthenticationEntryPoint;
+import com.trabean.user.config.jwt.TokenProvider;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +24,11 @@ import lombok.RequiredArgsConstructor;
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
+@Slf4j
 public class SecurityConfig {
+	private final TokenProvider tokenProvider;
+	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+	private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 	private final UserDetailsService userService;
 
 	@Value("${app.api.url}")

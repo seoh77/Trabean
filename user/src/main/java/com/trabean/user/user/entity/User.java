@@ -3,20 +3,16 @@ package com.trabean.user.user.entity;
 import java.util.Collection;
 import java.util.List;
 
+import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -46,6 +42,9 @@ public class User implements UserDetails {
 
 	@Column(name = "main_account_id")
 	private String main_account_id;//주 사용계좌
+
+	@Enumerated(EnumType.STRING)
+	private Authority authority;
 
 	@Builder
 	public User(String name, String email, String password, String user_key) {

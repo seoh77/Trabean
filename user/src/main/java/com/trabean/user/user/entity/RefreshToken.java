@@ -5,31 +5,24 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-@NoArgsConstructor
-@Getter
+@Builder
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class RefreshToken {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", updatable = false)
-	private Long id;
+	@Column(name = "RT_KEY")
+	private String key; //member id 들어감
 
-	@Column(name = "user_id", nullable = false, unique = true)
-	private Long userId;
+	@Column(name = "RT_VALUE")
+	private String value;// token값 들어감
 
-	@Column(name = "refresh_token", nullable = false)
-	private String refreshToken;
-
-	public RefreshToken(Long userId, String refreshToken) {
-		this.userId = userId;
-		this.refreshToken = refreshToken;
-	}
-
-	public RefreshToken update(String refreshToken) {
-		this.refreshToken = refreshToken;
+	public RefreshToken updateValue(String token) {
+		this.value = token;
 		return this;
 	}
 }
