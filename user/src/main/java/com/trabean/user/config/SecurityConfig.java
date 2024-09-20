@@ -1,5 +1,6 @@
 package com.trabean.user.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,33 +23,38 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 	private final UserDetailsService userService;
 
+	@Value("${app.api.url}")
+	private String baseUrl;
+
+//	@Value("${app.api.production-url}")
+//	private String productionUrl;
 
 	//스프링 시큐리티 기능 비활성화 하기
 	@Bean
 	public WebSecurityCustomizer configure() {
 		return (web -> web.ignoring()
-			.requestMatchers(new AntPathRequestMatcher("/api/**", "POST")));
+				.requestMatchers(new AntPathRequestMatcher(baseUrl + "/api/**", "POST")));
 	}
 
 	//특정 HTTP 요청에 대한 웹 기반 보안 구성
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		return http
-			.authorizeHttpRequests(auth -> auth
-				.requestMatchers(new AntPathRequestMatcher("/api/user/**"),
-					new AntPathRequestMatcher("/user"),
-					new AntPathRequestMatcher("http://localhost:8080/**"))
-				.permitAll()
-				.anyRequest().authenticated())
-			.formLogin(formLogin -> formLogin
-				.loginPage("api/user/login")
-				.defaultSuccessUrl("http://localhost:8080"))
-			.logout(logout -> logout
-				.logoutSuccessUrl("http://localhost:8080/login")
-				.invalidateHttpSession(true)
-			)
-			.csrf(AbstractHttpConfigurer::disable) //csrf 비활성화
-			.build();
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers(new AntPathRequestMatcher(baseUrl + "/api/user/**"),
+								new AntPathRequestMatcher("/api/user"),
+								new AntPathRequestMatcher(baseUrl+ "/api/**"))
+						.permitAll()
+						.anyRequest().authenticated())
+				.formLogin(formLogin -> formLogin
+						.loginPage(baseUrl + "/api/user/login")
+						.defaultSuccessUrl(baseUrl+"/api/accounts"))
+				.logout(logout -> logout
+						.logoutSuccessUrl(baseUrl + "/api/user/login")
+						.invalidateHttpSession(true)
+				)
+				.csrf(AbstractHttpConfigurer::disable) //csrf 비활성화
+				.build();
 	}
 
 	//인증 관리자 관련 설정하기
