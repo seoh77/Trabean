@@ -22,7 +22,7 @@ public class Header {
     final String fintechAppNo = "001";
 
     @Builder.Default
-    String apiServiceCode = apiName;
+    String apiServiceCode;
 
     String institutionTransactionUniqueNo;
     String apiKey;
