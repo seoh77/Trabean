@@ -20,8 +20,7 @@ public class Header {
 
     final String institutionCode = "00100";
     final String fintechAppNo = "001";
-
-    @Builder.Default
+    
     String apiServiceCode;
 
     String institutionTransactionUniqueNo;
