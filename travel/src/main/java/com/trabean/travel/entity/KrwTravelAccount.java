@@ -30,4 +30,7 @@ public class KrwTravelAccount {
     @OneToMany(mappedBy = "parentAccount", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<ForeignTravelAccount> childAccounts;
 
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<Invitation> invitationList;
+
 }
