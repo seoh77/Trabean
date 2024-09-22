@@ -10,6 +10,6 @@ import java.util.Optional;
 @Repository
 public interface UserAccountRelationRepository extends JpaRepository<UserAccountRelation, Long> {
 
-    @Query("SELECT u FROM UserAccountRelation u WHERE u.userId = :userId AND u.accountId = :accountId")
+    @Query("SELECT u FROM UserAccountRelation u WHERE u.userId = :userId AND u.account.accountId = :accountId")
     Optional<UserAccountRelation> findByUserIdAndAccountId(Long userId, Long accountId);
 }
