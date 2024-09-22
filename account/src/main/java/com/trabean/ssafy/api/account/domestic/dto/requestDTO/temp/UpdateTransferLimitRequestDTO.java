@@ -1,4 +1,4 @@
-package com.trabean.ssafy.api.account.domestic.dto.requestDTO;
+package com.trabean.ssafy.api.account.domestic.dto.requestDTO.temp;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.trabean.util.RequestHeader;
@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class DeleteDemandDepositAccountRequestDTO {
+public class UpdateTransferLimitRequestDTO {
 
     @JsonProperty("Header")
     private RequestHeader header;
@@ -15,6 +15,9 @@ public class DeleteDemandDepositAccountRequestDTO {
     @JsonProperty("accountNo")
     private String accountNo;
 
-    @JsonProperty("refundAccountNo")
-    private String refundAccountNo;
+    @JsonProperty("oneTimeTransferLimit")
+    private Long oneTimeTransferLimit;
+
+    @JsonProperty("dailyTransferLimit")
+    private Long dailyTransferLimit;
 }

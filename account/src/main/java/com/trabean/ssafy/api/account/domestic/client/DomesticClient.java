@@ -1,7 +1,10 @@
 package com.trabean.ssafy.api.account.domestic.client;
 
 import com.trabean.ssafy.api.account.domestic.dto.requestDTO.*;
-import com.trabean.ssafy.api.account.domestic.dto.responseDTO.*;
+import com.trabean.ssafy.api.account.domestic.dto.requestDTO.temp.*;
+import com.trabean.ssafy.api.account.domestic.dto.responseDTO.CreateDemandDepositAccountResponseDTO;
+import com.trabean.ssafy.api.account.domestic.dto.responseDTO.InquireDemandDepositAccountListResponseDTO;
+import com.trabean.ssafy.api.account.domestic.dto.responseDTO.temp.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +19,8 @@ public interface DomesticClient {
     // SSAFY 금융 API p.38 - 계좌 목록 조회
     @PostMapping("/inquireDemandDepositAccountList")
     InquireDemandDepositAccountListResponseDTO inquireDemandDepositAccountList(@RequestBody InquireDemandDepositAccountListRequestDTO requestDTO);
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // SSAFY 금융 API p.42 - 계좌 조회 (단건)
     @PostMapping("/inquireDemandDepositAccount")

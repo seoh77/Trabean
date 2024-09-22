@@ -1,4 +1,4 @@
-package com.trabean.ssafy.api.account.domestic.dto.responseDTO;
+package com.trabean.ssafy.api.account.domestic.dto.responseDTO.temp;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.trabean.util.ResponseHeader;
@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class UpdateTranferLimitResponseDTO {
+public class InquireDemandDepositAccountResponseDTO {
 
     @JsonProperty("Header")
     private ResponseHeader header;

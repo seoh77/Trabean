@@ -1,4 +1,4 @@
-package com.trabean.ssafy.api.account.domestic.dto.requestDTO;
+package com.trabean.ssafy.api.account.domestic.dto.requestDTO.temp;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.trabean.util.RequestHeader;
@@ -7,14 +7,11 @@ import lombok.Data;
 
 @Data
 @Builder
-public class InquireTransactionHistoryRequestDTO {
+public class InquireDemandDepositAccountHolderNameRequestDTO {
 
     @JsonProperty("Header")
     private RequestHeader header;
 
     @JsonProperty("accountNo")
     private String accountNo;
-
-    @JsonProperty("transactionUniqueNo")
-    private Long transactionUniqueNo;
 }

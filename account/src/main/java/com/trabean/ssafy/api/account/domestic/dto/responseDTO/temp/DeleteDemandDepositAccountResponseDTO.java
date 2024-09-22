@@ -1,4 +1,4 @@
-package com.trabean.ssafy.api.account.domestic.dto.responseDTO;
+package com.trabean.ssafy.api.account.domestic.dto.responseDTO.temp;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.trabean.util.ResponseHeader;
@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class UpdateDemandDepositAccountWithdrawalResponseDTO {
+public class DeleteDemandDepositAccountResponseDTO {
 
     @JsonProperty("Header")
     private ResponseHeader header;
@@ -17,7 +17,9 @@ public class UpdateDemandDepositAccountWithdrawalResponseDTO {
 
     @Data
     public static class REC {
-        private Long transactionUniqueNo;
-        private String transactionDate;
+        private String status;
+        private String accountNo;
+        private String refundAccountNo;
+        private Long accountBalance;
     }
 }

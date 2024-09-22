@@ -3,10 +3,10 @@ package com.trabean.ssafy.api.account.domestic.dto.requestDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.trabean.util.RequestHeader;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
 @Builder
+@Getter
 public class CreateDemandDepositAccountRequestDTO {
 
     @JsonProperty("Header")

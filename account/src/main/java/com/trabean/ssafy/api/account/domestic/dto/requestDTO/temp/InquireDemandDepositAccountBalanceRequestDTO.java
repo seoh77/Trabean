@@ -1,4 +1,4 @@
-package com.trabean.ssafy.api.account.domestic.dto.requestDTO;
+package com.trabean.ssafy.api.account.domestic.dto.requestDTO.temp;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.trabean.util.RequestHeader;
@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class InquireDemandDepositAccountHolderNameRequestDTO {
+public class InquireDemandDepositAccountBalanceRequestDTO {
 
     @JsonProperty("Header")
     private RequestHeader header;

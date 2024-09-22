@@ -2,13 +2,17 @@ package com.trabean.ssafy.api.account.domestic.dto.responseDTO;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.trabean.util.ResponseHeader;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Data
 @Builder
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class InquireDemandDepositAccountListResponseDTO {
 
     @JsonProperty("Header")
@@ -17,7 +21,7 @@ public class InquireDemandDepositAccountListResponseDTO {
     @JsonProperty("REC")
     private List<REC> rec;
 
-    @Data
+    @Getter
     public static class REC {
         private String bankCode;
         private String bankName;
@@ -26,7 +30,7 @@ public class InquireDemandDepositAccountListResponseDTO {
         private String accountName;
         private String accountTypeCode;
         private String accountTypeName;
-        private String accountCreateDate;
+        private String accountCreatedDate;
         private String accountExpiryDate;
         private Long dailyTransferLimit;
         private Long oneTimeTransferLimit;
