@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AccountNoResponseDTO {
+public class CreatePersonalAccountResponseDTO {
     private String message;
-    private String accountNo;
 }

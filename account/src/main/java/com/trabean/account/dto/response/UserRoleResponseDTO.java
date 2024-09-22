@@ -1,11 +1,15 @@
 package com.trabean.account.dto.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Data
 @Builder
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserRoleResponseDTO {
-    private String userRole;
     private String message;
+    private String userRole;
 }
