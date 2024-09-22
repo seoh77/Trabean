@@ -1,12 +1,15 @@
 package com.trabean.account.domain;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "userAccounts")
+@Builder
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserAccountRelation {
@@ -19,8 +22,9 @@ public class UserAccountRelation {
     @Column(nullable = false)
     private Long userId;
 
-    @Column(nullable = false)
-    private Long accountId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accountId", nullable = false)
+    private Account account;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
