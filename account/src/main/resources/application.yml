@@ -13,14 +13,10 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        use_sql_comments: true  # SQL에 주석 추가
-        generate_statistics: true  # 통계 로그 활성화
 
 logging:
   level:
     org.hibernate.SQL: debug
-    org.hibernate.type.descriptor.sql.BasicBinder: trace  # 바인딩 값 로그 출력
-    org.hibernate.type: trace  # SQL 타입 관련 디버깅 로그 활성화
 
 # SSAFY 금융 API 관리자 KEY
 API_KEY: ${API_KEY}
