@@ -185,7 +185,7 @@ public class AccountService {
     }
 
     // 개인 통장 상세 조회 서비스 로직
-    public AccountDetailResponseDTO getAccountDetail(AccountDetailRequestDTO requestDTO, String startDate, String endDate, String transactionType) {
+    public PersonalAccountDetailResponseDTO getAccountDetail(PersonalAccountDetailRequestDTO requestDTO, String startDate, String endDate, String transactionType) {
         String userKey = requestDTO.getUserKey();
         String accountNo = requestDTO.getAccountNo();
 
@@ -221,9 +221,9 @@ public class AccountService {
 
             ResponseCode responseCode = inquireTransactionHistoryListResponseDTO.getHeader().getResponseCode();
             String responseMessage = inquireTransactionHistoryListResponseDTO.getHeader().getResponseMessage();
-            List<AccountDetailResponseDTO.Transaction> transactionList = getTransactionList(inquireTransactionHistoryListResponseDTO);
+            List<PersonalAccountDetailResponseDTO.Transaction> transactionList = getTransactionList(inquireTransactionHistoryListResponseDTO);
 
-            return AccountDetailResponseDTO.builder()
+            return PersonalAccountDetailResponseDTO.builder()
                     .responseCode(responseCode)
                     .responseMessage(responseMessage)
                     .bankName(bankName)
@@ -234,7 +234,7 @@ public class AccountService {
             ResponseCode responseCode = e.getErrorResponse().getResponseCode();
             String responseMessage = e.getErrorResponse().getResponseMessage();
 
-            return AccountDetailResponseDTO.builder()
+            return PersonalAccountDetailResponseDTO.builder()
                     .responseCode(responseCode)
                     .responseMessage(responseMessage)
                     .build();
@@ -339,9 +339,9 @@ public class AccountService {
     }
 
     // SSAFY API 계좌 거래 내역 조회 responseDTO -> 거래 내역 리스트
-    private List<AccountDetailResponseDTO.Transaction> getTransactionList(InquireTransactionHistoryListResponseDTO inquireTransactionHistoryListResponseDTO) {
+    private List<PersonalAccountDetailResponseDTO.Transaction> getTransactionList(InquireTransactionHistoryListResponseDTO inquireTransactionHistoryListResponseDTO) {
         return inquireTransactionHistoryListResponseDTO.getRec().getList().stream()
-                .map(item -> AccountDetailResponseDTO.Transaction.builder()
+                .map(item -> PersonalAccountDetailResponseDTO.Transaction.builder()
                         .transactionType(item.getTransactionType())
                         .transactionSummary(item.getTransactionSummary())
                         .transactionDate(item.getTransactionDate())

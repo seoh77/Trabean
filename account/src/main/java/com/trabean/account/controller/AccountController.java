@@ -71,11 +71,11 @@ public class AccountController {
 
     // 개인 통장 상세 조회 API
     @PostMapping("/personal")
-    public ResponseEntity<AccountDetailResponseDTO> getAccountDetail(@RequestParam(defaultValue = "19000101") String startDate,
-                                                                     @RequestParam(defaultValue = "21000101") String endDate,
-                                                                     @RequestParam(defaultValue = "A") String transactionType,
-                                                                     @RequestBody AccountDetailRequestDTO requestDTO){
-        AccountDetailResponseDTO responseDTO = accountService.getAccountDetail(requestDTO, startDate, endDate, transactionType);
+    public ResponseEntity<PersonalAccountDetailResponseDTO> getAccountDetail(@RequestParam(defaultValue = "19000101") String startDate,
+                                                                             @RequestParam(defaultValue = "21000101") String endDate,
+                                                                             @RequestParam(defaultValue = "A") String transactionType,
+                                                                             @RequestBody PersonalAccountDetailRequestDTO requestDTO){
+        PersonalAccountDetailResponseDTO responseDTO = accountService.getAccountDetail(requestDTO, startDate, endDate, transactionType);
         ResponseCode responseCode = responseDTO.getResponseCode();
 
         switch (responseCode) {

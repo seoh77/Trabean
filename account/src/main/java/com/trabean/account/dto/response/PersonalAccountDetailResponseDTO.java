@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class AccountDetailResponseDTO {
+public class PersonalAccountDetailResponseDTO {
     private ResponseCode responseCode;
     private String responseMessage;
 
