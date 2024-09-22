@@ -22,7 +22,7 @@ public class AccountController {
     private final AccountService accountService;
 
     // 개인 통장 생성 API
-    @PostMapping("/personal")
+    @PostMapping("/personal/new")
     public ResponseEntity<CreatePersonalAccountResponseDTO> createPersonalAccount(@RequestBody CreatePersonalAccountRequestDTO requestDTO) {
         CreatePersonalAccountResponseDTO responseDTO = accountService.createPersonalAccount(requestDTO);
         ResponseCode responseCode = responseDTO.getResponseCode();
@@ -38,7 +38,7 @@ public class AccountController {
     }
 
     // 한화 여행통장 생성 API
-    @PostMapping("/travel/domestic")
+    @PostMapping("/travel/domestic/new")
     public ResponseEntity<CreateDomesticTravelAccountResponseDTO> createDomesticTravelAccount(@RequestBody CreateDomesticTravelAccountRequestDTO requestDTO) {
         CreateDomesticTravelAccountResponseDTO responseDTO = accountService.createDomesticTravelAccount(requestDTO);
         ResponseCode responseCode = responseDTO.getResponseCode();
@@ -62,6 +62,28 @@ public class AccountController {
         switch (responseCode) {
             case H0000 -> {
                 return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+            }
+            default -> {
+                return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
+            }
+        }
+    }
+
+    // 개인 통장 상세 조회 API
+    @PostMapping("/personal")
+    public ResponseEntity<AccountDetailResponseDTO> getAccountDetail(@RequestParam(defaultValue = "19000101") String startDate,
+                                                                     @RequestParam(defaultValue = "21000101") String endDate,
+                                                                     @RequestParam(defaultValue = "A") String transactionType,
+                                                                     @RequestBody AccountDetailRequestDTO requestDTO){
+        AccountDetailResponseDTO responseDTO = accountService.getAccountDetail(requestDTO, startDate, endDate, transactionType);
+        ResponseCode responseCode = responseDTO.getResponseCode();
+
+        switch (responseCode) {
+            case H0000 -> {
+                return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+            }
+            case A1003 -> {
+                return new ResponseEntity<>(responseDTO, HttpStatus.NOT_FOUND);
             }
             default -> {
                 return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
