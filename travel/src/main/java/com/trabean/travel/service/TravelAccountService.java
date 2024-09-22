@@ -41,8 +41,6 @@ public class TravelAccountService {
             throw new RuntimeException("KRW 계좌를 찾을 수 없습니다.");
         }
 
-        List<ForeignTravelAccount> foreignTravelAccounts = foreignTravelAccountRepository.findByParentAccountId(
-                parentId);
         List<TravelAccountResponseDto> list = new ArrayList<>();
 
         // 계좌번호 조회
@@ -66,6 +64,8 @@ public class TravelAccountService {
         Double accountKRWBalance = 0.0;
 
         list.add(new TravelAccountResponseDto(krwTravelAccount.getAccountId(), "한국", "KRW", accountKRWBalance));
+
+        List<ForeignTravelAccount> foreignTravelAccounts = krwTravelAccount.getChildAccounts();
 
         for (ForeignTravelAccount foreignTravelAccount : foreignTravelAccounts) {
             Long accountId = foreignTravelAccount.getAccountId();
@@ -96,12 +96,12 @@ public class TravelAccountService {
     }
 
     public TravelAccountIdResponseDto findAccountIdByCurrency(Long parentId, String currency) {
+        KrwTravelAccount krwTravelAccount = krwTravelAccountRepository.findByAccountId(parentId);
+
         if (currency.equals("KRW")) {
-            KrwTravelAccount krwTravelAccount = krwTravelAccountRepository.findByAccountId(parentId);
             return new TravelAccountIdResponseDto(krwTravelAccount.getAccountId());
         } else {
-            List<ForeignTravelAccount> foreignTravelAccounts = foreignTravelAccountRepository.findByParentAccountId(
-                    parentId);
+            List<ForeignTravelAccount> foreignTravelAccounts = krwTravelAccount.getChildAccounts();
 
             for (ForeignTravelAccount foreignTravelAccount : foreignTravelAccounts) {
                 String accountCurreny = foreignTravelAccount.getExchangeCurrency();

@@ -1,9 +1,11 @@
 package com.trabean.travel.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.trabean.travel.dto.request.SaveForeignAccountRequestDto;
 import com.trabean.travel.dto.response.TravelAccountIdResponseDto;
 import com.trabean.travel.dto.response.TravelListAccountResponseDto;
 import com.trabean.travel.entity.KrwTravelAccount;
+import com.trabean.travel.service.ForeignTravelAccountService;
 import com.trabean.travel.service.KrwTravelAccountService;
 import com.trabean.travel.service.TargetAmountService;
 import com.trabean.travel.service.TravelAccountService;
@@ -27,6 +29,7 @@ public class TravelAccountController {
     private final TravelAccountService travelAccountService;
     private final TargetAmountService targetAmountService;
     private final KrwTravelAccountService krwTravelAccountService;
+    private final ForeignTravelAccountService foreignTravelAccountService;
 
     @GetMapping("{parentAccountId}")
     public ResponseEntity<TravelListAccountResponseDto> getTravelListAccount(@PathVariable Long parentAccountId)
@@ -62,6 +65,13 @@ public class TravelAccountController {
     @PostMapping("/krw-account/save")
     public ResponseEntity<Void> saveKrwAccountSave(@RequestBody KrwTravelAccount krwTravelAccount) {
         krwTravelAccountService.save(krwTravelAccount);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PostMapping("/foreign-account/save")
+    public ResponseEntity<Void> saveForeignAccountSave(
+            @RequestBody SaveForeignAccountRequestDto saveForeignAccountRequestDto) {
+        foreignTravelAccountService.save(saveForeignAccountRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

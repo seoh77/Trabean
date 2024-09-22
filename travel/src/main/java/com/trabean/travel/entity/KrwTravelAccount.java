@@ -1,11 +1,12 @@
 package com.trabean.travel.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,7 +16,6 @@ import lombok.Setter;
 public class KrwTravelAccount {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long accountId;
 
     @Setter
@@ -25,5 +25,8 @@ public class KrwTravelAccount {
     @Setter
     @Column(nullable = false)
     private Long targetAmount;
+
+    @OneToMany(mappedBy = "parentAccount", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ForeignTravelAccount> childAccounts;
 
 }
