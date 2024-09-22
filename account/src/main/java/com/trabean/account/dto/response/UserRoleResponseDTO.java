@@ -1,5 +1,6 @@
 package com.trabean.account.dto.response;
 
+import com.trabean.account.domain.UserAccountRelation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,5 +12,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserRoleResponseDTO {
     private String message;
-    private String userRole;
+    private UserAccountRelation.UserRole userRole;
 }
