@@ -198,17 +198,11 @@ public class AccountService {
                 .accountNo(accountNo)
                 .build();
 
-        ResponseCode responseCode;
-        String responseMessage;
-        String bankName;
-        Long accountBalance;
-        List<AccountDetailResponseDTO.Transaction> transactionList;
-
         try {
             InquireDemandDepositAccountResponseDTO inquireDemandDepositAccountResponseDTO = domesticClient.inquireDemandDepositAccount(inquireDemandDepositAccountRequestDTO);
 
-            bankName = inquireDemandDepositAccountResponseDTO.getRec().getBankName();
-            accountBalance = inquireDemandDepositAccountResponseDTO.getRec().getAccountBalance();
+            String bankName = inquireDemandDepositAccountResponseDTO.getRec().getBankName();
+            Long accountBalance = inquireDemandDepositAccountResponseDTO.getRec().getAccountBalance();
 
             // SSAFY 계좌 거래 내역 조회 요청
             InquireTransactionHistoryListRequestDTO inquireTransactionHistoryListRequestDTO = InquireTransactionHistoryListRequestDTO.builder()
@@ -225,27 +219,26 @@ public class AccountService {
 
             InquireTransactionHistoryListResponseDTO inquireTransactionHistoryListResponseDTO = domesticClient.inquireTransactionHistoryList(inquireTransactionHistoryListRequestDTO);
 
-            responseCode = inquireTransactionHistoryListResponseDTO.getHeader().getResponseCode();
-            responseMessage = inquireTransactionHistoryListResponseDTO.getHeader().getResponseMessage();
-            transactionList = getTransactionList(inquireTransactionHistoryListResponseDTO);
+            ResponseCode responseCode = inquireTransactionHistoryListResponseDTO.getHeader().getResponseCode();
+            String responseMessage = inquireTransactionHistoryListResponseDTO.getHeader().getResponseMessage();
+            List<AccountDetailResponseDTO.Transaction> transactionList = getTransactionList(inquireTransactionHistoryListResponseDTO);
 
+            return AccountDetailResponseDTO.builder()
+                    .responseCode(responseCode)
+                    .responseMessage(responseMessage)
+                    .bankName(bankName)
+                    .accountBalance(accountBalance)
+                    .transactionList(transactionList)
+                    .build();
         } catch (CustomFeignClientException e) {
-            responseCode = e.getErrorResponse().getResponseCode();
-            responseMessage = e.getErrorResponse().getResponseMessage();
+            ResponseCode responseCode = e.getErrorResponse().getResponseCode();
+            String responseMessage = e.getErrorResponse().getResponseMessage();
 
             return AccountDetailResponseDTO.builder()
                     .responseCode(responseCode)
                     .responseMessage(responseMessage)
                     .build();
         }
-
-        return AccountDetailResponseDTO.builder()
-                .responseCode(responseCode)
-                .responseMessage(responseMessage)
-                .bankName(bankName)
-                .accountBalance(accountBalance)
-                .transactionList(transactionList)
-                .build();
     }
 
     // 통장 계좌번호 조회 서비스 로직
@@ -279,21 +272,12 @@ public class AccountService {
 
     // SSAFY API 통장 목록 조회 responseDTO -> 통장 목록 리스트
     private List<AccountListResponseDTO.Account> getAccountList(InquireDemandDepositAccountListResponseDTO inquireDemandDepositAccountListResponseDTO) {
-
         return inquireDemandDepositAccountListResponseDTO.getRec().stream()
-                .map(rec -> {
-                    Long accountId = accountRepository.findByAccountNo(rec.getAccountNo())
-                            .orElseThrow(() -> new AccountNotFoundException("해당 계좌를 찾을 수 없습니다."))
-                            .getAccountId();
-
-                    return AccountListResponseDTO.Account.builder()
-                            .accountId(accountId)
-                            .bankCode(rec.getBankCode())
-                            .bankName(rec.getBankName())
-                            .accountNo(rec.getAccountNo())
-                            .accountBalance(rec.getAccountBalance())
-                            .build();
-                })
+                .map(rec -> AccountListResponseDTO.Account.builder()
+                        .bankName(rec.getBankName())
+                        .accountNo(rec.getAccountNo())
+                        .accountBalance(rec.getAccountBalance())
+                        .build())
                 .collect(Collectors.toList());
     }
 
