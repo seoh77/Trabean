@@ -1,10 +1,7 @@
 package com.trabean.verification.service;
 
-import com.trabean.ssafy.api.account.domestic.client.DomesticClient;
-import com.trabean.ssafy.api.account.domestic.dto.requestDTO.InquireDemandDepositAccountRequestDTO;
-import com.trabean.ssafy.api.account.domestic.dto.requestDTO.InquireTransactionHistoryRequestDTO;
-import com.trabean.ssafy.api.account.domestic.dto.responseDTO.InquireDemandDepositAccountResponseDTO;
-import com.trabean.ssafy.api.account.domestic.dto.responseDTO.InquireTransactionHistoryResponseDTO;
+import com.trabean.ssafy.api.config.CustomFeignClientException;
+import com.trabean.ssafy.api.response.code.ResponseCode;
 import com.trabean.ssafy.api.verification.client.VerificationClient;
 import com.trabean.ssafy.api.verification.dto.requestDTO.CheckAuthCodeRequestDTO;
 import com.trabean.ssafy.api.verification.dto.requestDTO.OpenAccountAuthRequestDTO;
@@ -22,60 +19,49 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class VerificationService {
 
-    private final DomesticClient domesticClient;
     private final VerificationClient verificationClient;
 
-    public AccountVerificationResponseDTO getAccountVerification(AccountVerificationRequestDTO requestDTO){
+    // 1원 인증(1원 송금) 서비스 로직
+    public AccountVerificationResponseDTO getAccountVerification(AccountVerificationRequestDTO requestDTO) {
         String userKey = requestDTO.getUserKey();
         String accountNo = requestDTO.getAccountNo();
 
-        InquireDemandDepositAccountRequestDTO inquireDemandDepositAccountRequestDTO = InquireDemandDepositAccountRequestDTO.builder()
-                .header(RequestHeader.builder()
-                        .apiName("inquireDemandDepositAccount")
-                        .userKey(userKey)
-                        .build())
-                .accountNo(accountNo)
-                .build();
-
-        InquireDemandDepositAccountResponseDTO inquireDemandDepositAccountResponseDTO = domesticClient.inquireDemandDepositAccount(inquireDemandDepositAccountRequestDTO);
-
-        String verifiedAccountNo = inquireDemandDepositAccountResponseDTO.getRec().getAccountNo();
-
+        // SSAFY API 1원 송금 요청
         OpenAccountAuthRequestDTO openAccountAuthRequestDTO = OpenAccountAuthRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName("openAccountAuth")
                         .userKey(userKey)
                         .build())
-                .accountNo(verifiedAccountNo)
+                .accountNo(accountNo)
                 .build();
 
-        OpenAccountAuthResponseDTO openAccountAuthResponseDTO = verificationClient.openAccountAuth(openAccountAuthRequestDTO);
+        ResponseCode responseCode;
+        String responseMessage;
 
-        Long transactionUniqueNo = openAccountAuthResponseDTO.getRec().getTransactionUniqueNo();
+        try {
+            OpenAccountAuthResponseDTO openAccountAuthResponseDTO = verificationClient.openAccountAuth(openAccountAuthRequestDTO);
 
-        InquireTransactionHistoryRequestDTO inquireTransactionHistoryRequestDTO = InquireTransactionHistoryRequestDTO.builder()
-                .header(RequestHeader.builder()
-                        .apiName("inquireTransactionHistory")
-                        .userKey(userKey)
-                        .build())
-                .accountNo(verifiedAccountNo)
-                .transactionUniqueNo(transactionUniqueNo)
-                .build();
+            responseCode = openAccountAuthResponseDTO.getHeader().getResponseCode();
+            responseMessage = openAccountAuthResponseDTO.getHeader().getResponseMessage();
 
-        InquireTransactionHistoryResponseDTO inquireTransactionHistoryResponseDTO = domesticClient.inquireTransactionHistory(inquireTransactionHistoryRequestDTO);
-
-        String message = inquireTransactionHistoryResponseDTO.getHeader().getResponseMessage();
+        } catch (CustomFeignClientException e) {
+            responseCode = e.getErrorResponse().getResponseCode();
+            responseMessage = e.getErrorResponse().getResponseMessage();
+        }
 
         return AccountVerificationResponseDTO.builder()
-                .message(message)
+                .responseCode(responseCode)
+                .responseMessage(responseMessage)
                 .build();
     }
 
+    // 1원 인증(인증번호검증) 서비스 로직
     public OneWonVerificationResponseDTO getOneWonVerification(OneWonVerificationRequestDTO requestDTO) {
         String userKey = requestDTO.getUserKey();
         String accountNo = requestDTO.getAccountNo();
         String otp = requestDTO.getOtp();
 
+        // SSAFY API 1원 송금 검증 요청
         CheckAuthCodeRequestDTO checkAuthCodeRequestDTO = CheckAuthCodeRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName("checkAuthCode")
@@ -85,12 +71,24 @@ public class VerificationService {
                 .authCode(otp)
                 .build();
 
-        CheckAuthCodeResponseDTO checkAuthCodeResponseDTO = verificationClient.checkAuthCode(checkAuthCodeRequestDTO);
+        ResponseCode responseCode;
+        String responseMessage;
 
-        String message = checkAuthCodeResponseDTO.getRec().getStatus();
+        try {
+            CheckAuthCodeResponseDTO checkAuthCodeResponseDTO = verificationClient.checkAuthCode(checkAuthCodeRequestDTO);
+
+            responseCode = checkAuthCodeResponseDTO.getHeader().getResponseCode();
+            responseMessage = checkAuthCodeResponseDTO.getHeader().getResponseMessage();
+
+        } catch (CustomFeignClientException e) {
+            responseCode = e.getErrorResponse().getResponseCode();
+            responseMessage = e.getErrorResponse().getResponseMessage();
+        }
 
         return OneWonVerificationResponseDTO.builder()
-                .message(message)
+                .responseCode(responseCode)
+                .responseMessage(responseMessage)
                 .build();
     }
+
 }
