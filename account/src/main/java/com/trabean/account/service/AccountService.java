@@ -13,14 +13,22 @@ import com.trabean.ssafy.api.account.domestic.dto.requestDTO.CreateDemandDeposit
 import com.trabean.ssafy.api.account.domestic.dto.requestDTO.InquireDemandDepositAccountListRequestDTO;
 import com.trabean.ssafy.api.account.domestic.dto.responseDTO.CreateDemandDepositAccountResponseDTO;
 import com.trabean.ssafy.api.account.domestic.dto.responseDTO.InquireDemandDepositAccountListResponseDTO;
+import com.trabean.ssafy.api.config.CustomFeignClientException;
+import com.trabean.ssafy.api.response.code.ResponseCode;
 import com.trabean.util.RequestHeader;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.trabean.constant.Constants.DOMESTIC_TRAVEL_ACCOUNT_TYPE_UNIQUE_NO;
+import static com.trabean.constant.Constants.PERSONAL_ACCOUNT_TYPE_UNIQUE_NO;
+
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class AccountService {
 
@@ -29,18 +37,13 @@ public class AccountService {
 
     private final DomesticClient domesticClient;
 
-    // 개인 통장 상품 고유번호
-    private final String PERSONAL_ACCOUNT_TYPE_UNIQUE_NO = "001-1-45f35a47cc6649";
-
-    // 한화 여행통장 상품 고유번호
-    private final String DOMESTIC_TRAVEL_ACCOUNT_TYPE_UNIQUE_NO = "001-1-2e58332128994c";
-
     // 개인 통장 생성 서비스 로직
     public CreatePersonalAccountResponseDTO createPersonalAccount(CreatePersonalAccountRequestDTO requestDTO) {
         String userKey = requestDTO.getUserKey();
         Long userId = requestDTO.getUserId();
         String password = requestDTO.getPassword();
 
+        // SSAFY API 계좌 생성 요청
         CreateDemandDepositAccountRequestDTO createDemandDepositAccountRequestDTO = CreateDemandDepositAccountRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName("createDemandDepositAccount")
@@ -49,28 +52,42 @@ public class AccountService {
                 .accountTypeUniqueNo(PERSONAL_ACCOUNT_TYPE_UNIQUE_NO)
                 .build();
 
-        CreateDemandDepositAccountResponseDTO createDemandDepositAccountResponseDTO = domesticClient.createDemandDepositAccount(createDemandDepositAccountRequestDTO);
+        ResponseCode responseCode;
+        String responseMessage;
 
-        String accountNo = createDemandDepositAccountResponseDTO.getRec().getAccountNo();
+        try {
+            CreateDemandDepositAccountResponseDTO createDemandDepositAccountResponseDTO = domesticClient.createDemandDepositAccount(createDemandDepositAccountRequestDTO);
 
-        Account account = Account.builder()
-                .accountNo(accountNo)
-                .password(password)
-                .userId(userId)
-                .build();
+            responseCode = createDemandDepositAccountResponseDTO.getHeader().getResponseCode();
+            responseMessage = createDemandDepositAccountResponseDTO.getHeader().getResponseMessage();
 
-        Account savedAccount = accountRepository.save(account);
+            String accountNo = createDemandDepositAccountResponseDTO.getRec().getAccountNo();
 
-        UserAccountRelation userAccountRelation = UserAccountRelation.builder()
-                .userId(userId)
-                .account(savedAccount)
-                .userRole(UserAccountRelation.UserRole.ADMIN)
-                .build();
+            // Account 테이블에 저장
+            Account account = Account.builder()
+                    .accountNo(accountNo)
+                    .password(password)
+                    .userId(userId)
+                    .build();
 
-        userAccountRelationRepository.save(userAccountRelation);
+            Account savedAccount = accountRepository.save(account);
 
+            // UserAccountRelation 테이블에 저장
+            UserAccountRelation userAccountRelation = UserAccountRelation.builder()
+                    .userId(userId)
+                    .account(savedAccount)
+                    .userRole(UserAccountRelation.UserRole.ADMIN)
+                    .build();
+
+            userAccountRelationRepository.save(userAccountRelation);
+
+        } catch (CustomFeignClientException e) {
+            responseCode = e.getErrorResponse().getResponseCode();
+            responseMessage = e.getErrorResponse().getResponseMessage();
+        }
         return CreatePersonalAccountResponseDTO.builder()
-                .message("개인 통장 생성 성공")
+                .responseCode(responseCode)
+                .responseMessage(responseMessage)
                 .build();
     }
 
@@ -80,6 +97,7 @@ public class AccountService {
         Long userId = requestDTO.getUserId();
         String password = requestDTO.getPassword();
 
+        // SSAFY API 계좌 생성 요청
         CreateDemandDepositAccountRequestDTO createDemandDepositAccountRequestDTO = CreateDemandDepositAccountRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName("createDemandDepositAccount")
@@ -88,28 +106,42 @@ public class AccountService {
                 .accountTypeUniqueNo(DOMESTIC_TRAVEL_ACCOUNT_TYPE_UNIQUE_NO)
                 .build();
 
-        CreateDemandDepositAccountResponseDTO createDemandDepositAccountResponseDTO = domesticClient.createDemandDepositAccount(createDemandDepositAccountRequestDTO);
+        ResponseCode responseCode;
+        String responseMessage;
 
-        String accountNo = createDemandDepositAccountResponseDTO.getRec().getAccountNo();
+        try {
+            CreateDemandDepositAccountResponseDTO createDemandDepositAccountResponseDTO = domesticClient.createDemandDepositAccount(createDemandDepositAccountRequestDTO);
 
-        Account account = Account.builder()
-                .accountNo(accountNo)
-                .password(password)
-                .userId(userId)
-                .build();
+            responseCode = createDemandDepositAccountResponseDTO.getHeader().getResponseCode();
+            responseMessage = createDemandDepositAccountResponseDTO.getHeader().getResponseMessage();
 
-        Account savedAccount = accountRepository.save(account);
+            String accountNo = createDemandDepositAccountResponseDTO.getRec().getAccountNo();
 
-        UserAccountRelation userAccountRelation = UserAccountRelation.builder()
-                .userId(userId)
-                .account(savedAccount)
-                .userRole(UserAccountRelation.UserRole.ADMIN)
-                .build();
+            // Account 테이블에 저장
+            Account account = Account.builder()
+                    .accountNo(accountNo)
+                    .password(password)
+                    .userId(userId)
+                    .build();
 
-        userAccountRelationRepository.save(userAccountRelation);
+            Account savedAccount = accountRepository.save(account);
 
+            // UserAccountRelation 테이블에 저장
+            UserAccountRelation userAccountRelation = UserAccountRelation.builder()
+                    .userId(userId)
+                    .account(savedAccount)
+                    .userRole(UserAccountRelation.UserRole.ADMIN)
+                    .build();
+
+            userAccountRelationRepository.save(userAccountRelation);
+
+        } catch (CustomFeignClientException e) {
+            responseCode = e.getErrorResponse().getResponseCode();
+            responseMessage = e.getErrorResponse().getResponseMessage();
+        }
         return CreateDomesticTravelAccountResponseDTO.builder()
-                .message("한화 여행통장 생성 성공")
+                .responseCode(responseCode)
+                .responseMessage(responseMessage)
                 .build();
     }
 
@@ -117,6 +149,7 @@ public class AccountService {
     public AccountListResponseDTO getAccountList(AccountListRequestDTO requestDTO) {
         String userKey = requestDTO.getUserKey();
 
+        // SSAFY API 계좌 목록 조회 요청
         InquireDemandDepositAccountListRequestDTO inquireDemandDepositAccountListRequestDTO = InquireDemandDepositAccountListRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName("inquireDemandDepositAccountList")
@@ -124,9 +157,27 @@ public class AccountService {
                         .build())
                 .build();
 
-        InquireDemandDepositAccountListResponseDTO inquireDemandDepositAccountListResponseDTO = domesticClient.inquireDemandDepositAccountList(inquireDemandDepositAccountListRequestDTO);
+        ResponseCode responseCode;
+        String responseMessage;
+        List<AccountListResponseDTO.Account> accountList;
 
-        return convertInquireDemandDepositAccountListResponseDTOToAccountListResponseDTO(inquireDemandDepositAccountListResponseDTO);
+        try {
+            InquireDemandDepositAccountListResponseDTO inquireDemandDepositAccountListResponseDTO = domesticClient.inquireDemandDepositAccountList(inquireDemandDepositAccountListRequestDTO);
+
+            responseCode = inquireDemandDepositAccountListResponseDTO.getHeader().getResponseCode();
+            responseMessage = inquireDemandDepositAccountListResponseDTO.getHeader().getResponseMessage();
+            accountList = getAccountList(inquireDemandDepositAccountListResponseDTO);
+
+        } catch (CustomFeignClientException e) {
+            responseCode = e.getErrorResponse().getResponseCode();
+            responseMessage = e.getErrorResponse().getResponseMessage();
+            accountList = new ArrayList<>();
+        }
+        return AccountListResponseDTO.builder()
+                .responseCode(responseCode)
+                .responseMessage(responseMessage)
+                .accountList(accountList)
+                .build();
     }
 
     // 통장 계좌번호 조회 서비스 로직
@@ -148,10 +199,9 @@ public class AccountService {
         Long userId = requestDTO.getUserId();
         Long accountId = requestDTO.getAccountId();
 
-        String userRole = userAccountRelationRepository.findByUserIdAndAccountId(userId, accountId)
+        UserAccountRelation.UserRole userRole = userAccountRelationRepository.findByUserIdAndAccountId(userId, accountId)
                 .orElseThrow(() -> new UserAccountRelationNotFoundException("잘못된 요청입니다."))
-                .getUserRole()
-                .name();
+                .getUserRole();
 
         return UserRoleResponseDTO.builder()
                 .message("통장 권한 조회 성공")
@@ -159,27 +209,24 @@ public class AccountService {
                 .build();
     }
 
-    // SSAFY API 통장 목록 조회 responseDTO -> Trabean 통장 목록 조회 responseDTO
-    private AccountListResponseDTO convertInquireDemandDepositAccountListResponseDTOToAccountListResponseDTO(InquireDemandDepositAccountListResponseDTO inquireDemandDepositAccountListResponseDTO) {
-        List<AccountListResponseDTO.Account> accountList = inquireDemandDepositAccountListResponseDTO.getRec().stream()
+    // SSAFY API 통장 목록 조회 responseDTO -> 통장 목록 리스트
+    private List<AccountListResponseDTO.Account> getAccountList(InquireDemandDepositAccountListResponseDTO inquireDemandDepositAccountListResponseDTO) {
+
+        return inquireDemandDepositAccountListResponseDTO.getRec().stream()
                 .map(rec -> {
                     Long accountId = accountRepository.findByAccountNo(rec.getAccountNo())
-                            .orElseThrow(() -> new IllegalArgumentException("걍 버그 : " + rec.getAccountNo()))
+                            .orElseThrow(() -> new AccountNotFoundException("해당 계좌를 찾을 수 없습니다."))
                             .getAccountId();
 
                     return AccountListResponseDTO.Account.builder()
                             .accountId(accountId)
+                            .bankCode(rec.getBankCode())
+                            .bankName(rec.getBankName())
                             .accountNo(rec.getAccountNo())
-                            .accountName(rec.getAccountName())
                             .accountBalance(rec.getAccountBalance())
                             .build();
                 })
                 .collect(Collectors.toList());
-
-        return AccountListResponseDTO.builder()
-                .message("통장 목록 조회 성공")
-                .accountList(accountList)
-                .build();
     }
 
 }
