@@ -6,22 +6,41 @@ import com.trabean.ssafy.api.account.foriegn.dto.requestDTO.InquireForeignCurren
 import com.trabean.ssafy.api.account.foriegn.dto.responseDTO.CreateForeignCurrencyDemandDepositAccountResponseDTO;
 import com.trabean.ssafy.api.account.foriegn.dto.responseDTO.InquireForeignCurrencyDemandDepositAccountListResponseDTO;
 import com.trabean.ssafy.api.account.foriegn.dto.responseDTO.InquireForeignCurrencyDemandDepositAccountResponseDTO;
+import com.trabean.ssafy.api.config.FeignClientConfiguration;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "foreignClient", url = "https://finopenapi.ssafy.io/ssafy/api/v1/edu/demandDeposit/foreignCurrency")
+/**
+ * SSAFY 금융 API p.222 ~ p.265 외화 수시입출금 관련 요청 처리 클라이언트
+ */
+@FeignClient(name = "foreignClient", url = "https://finopenapi.ssafy.io/ssafy/api/v1/edu/demandDeposit/foreignCurrency", configuration = FeignClientConfiguration.class)
 public interface ForeignClient {
 
-    // SSAFY 금융 API p.228 - 외화 계좌 생성
+    /**
+     * SSAFY 금융 API p.228 - 외화 계좌 생성
+     *
+     * @param requestDTO
+     * @return
+     */
     @PostMapping("/createForeignCurrencyDemandDepositAccount")
     CreateForeignCurrencyDemandDepositAccountResponseDTO createForeignCurrencyDemandDepositAccount(@RequestBody CreateForeignCurrencyDemandDepositAccountRequestDTO requestDTO);
 
-    // SSAFY 금융 API p.231 - 계좌 목록 조회
+    /**
+     * SSAFY 금융 API p.231 - 계좌 목록 조회
+     *
+     * @param requestDTO
+     * @return
+     */
     @PostMapping("/inquireForeignCurrencyDemandDepositAccountList")
     InquireForeignCurrencyDemandDepositAccountListResponseDTO inquireForeignCurrencyDemandDepositAccountList(@RequestBody InquireForeignCurrencyDemandDepositAccountListRequestDTO requestDTO);
 
-    // SSAFY 금융 API p.235 - 외화 계좌 조회 (단건)
+    /**
+     * SSAFY 금융 API p.235 - 외화 계좌 조회 (단건)
+     *
+     * @param requestDTO
+     * @return
+     */
     @PostMapping("/inquireForeignCurrencyDemandDepositAccount")
     InquireForeignCurrencyDemandDepositAccountResponseDTO inquireForeignCurrencyDemandDepositAccount(@RequestBody InquireForeignCurrencyDemandDepositAccountRequestDTO requestDTO);
 
@@ -44,11 +63,11 @@ public interface ForeignClient {
     // 만드나?
 
     // SSAFY 금융 API p.256 - 외화 계좌 거래 내역 조회
-    // 만들자
+    // 만드나?
 
     // SSAFY 금융 API p.260 - 계좌 거래 내역 조회 (단건)
-    // 만들자
+    // 만드나?
 
     // SSAFY 금융 API p.263 - 외화 계좌 해지
-    // 만들자
+    // 만드나?
 }
