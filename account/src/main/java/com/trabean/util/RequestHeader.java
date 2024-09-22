@@ -5,6 +5,8 @@ import lombok.Getter;
 
 import java.security.SecureRandom;
 
+import static com.trabean.constant.Constants.*;
+
 /**
  * {@code RequestHeader} 클래스는 SSAFY 금융 API 요청 헤더 정보를 구성하는 클래스입니다.
  * 이 클래스는 빌더 패턴을 사용하여 객체를 생성하며, apiName과 userKey를 제외한 필드를 자동으로 설정합니다.
@@ -24,11 +26,6 @@ import java.security.SecureRandom;
 @Builder
 @Getter
 public class RequestHeader {
-
-    private static final String INSTITUTION_CODE = "00100";
-    private static final String FINTECH_APP_NO = "001";
-    private static final String API_KEY = System.getenv("API_KEY");
-
     private final String apiName;
     private final String transmissionDate;
     private final String transmissionTime;
@@ -106,4 +103,5 @@ public class RequestHeader {
             return sb.toString();
         }
     }
+
 }

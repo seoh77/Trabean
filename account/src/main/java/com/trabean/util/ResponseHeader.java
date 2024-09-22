@@ -1,5 +1,6 @@
 package com.trabean.util;
 
+import com.trabean.ssafy.api.response.code.ResponseCode;
 import lombok.Getter;
 
 /**
@@ -13,7 +14,7 @@ import lombok.Getter;
  */
 @Getter
 public class ResponseHeader {
-    private String responseCode;
+    private ResponseCode responseCode;
     private String responseMessage;
     private String apiName;
     private String transmissionDate;
