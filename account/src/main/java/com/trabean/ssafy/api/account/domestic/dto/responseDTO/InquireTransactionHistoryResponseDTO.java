@@ -1,15 +1,20 @@
-package com.trabean.ssafy.api.account.domestic.dto.responseDTO.temp;
+package com.trabean.ssafy.api.account.domestic.dto.responseDTO;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.trabean.util.ResponseHeader;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import java.util.List;
-
-@Data
+/**
+ * SSAFY 금융 API p.66 - 계좌 거래 내역 조회 (단건) responseDTO
+ */
 @Builder
-public class InquireTransactionHistoryListResponseDTO {
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+public class InquireTransactionHistoryResponseDTO {
 
     @JsonProperty("Header")
     private ResponseHeader header;
@@ -17,14 +22,8 @@ public class InquireTransactionHistoryListResponseDTO {
     @JsonProperty("REC")
     private REC rec;
 
-    @Data
+    @Getter
     public static class REC {
-        private String totalCount;
-        private List<Item> list;
-    }
-
-    @Data
-    public static class Item {
         private Long transactionUniqueNo;
         private String transactionDate;
         private String transactionTime;

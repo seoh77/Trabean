@@ -7,6 +7,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * SSAFY 금융 API p.35 - 계좌 생성 responseDTO
+ */
 @Builder
 @Getter
 @NoArgsConstructor
@@ -20,8 +23,6 @@ public class CreateDemandDepositAccountResponseDTO {
     private REC rec;
 
     @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
     public static class REC {
         private String bankCode;
         private String accountNo;
@@ -29,8 +30,6 @@ public class CreateDemandDepositAccountResponseDTO {
     }
 
     @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
     public static class Currency {
         private String currency;
         private String currencyName;

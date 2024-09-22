@@ -1,13 +1,16 @@
-package com.trabean.ssafy.api.account.domestic.dto.requestDTO.temp;
+package com.trabean.ssafy.api.account.domestic.dto.requestDTO;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.trabean.util.RequestHeader;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+/**
+ * SSAFY 금융 API p.42 - 계좌 조회 (단건) requestDTO
+ */
 @Builder
-public class InquireDemandDepositAccountBalanceRequestDTO {
+@Getter
+public class InquireDemandDepositAccountRequestDTO {
 
     @JsonProperty("Header")
     private RequestHeader header;

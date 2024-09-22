@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * SSAFY 금융 API p.38 - 계좌 목록 조회 responseDTO
+ */
 @Builder
 @Getter
 @NoArgsConstructor

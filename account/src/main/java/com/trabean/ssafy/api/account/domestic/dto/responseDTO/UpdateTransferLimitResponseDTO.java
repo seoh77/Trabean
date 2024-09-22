@@ -1,13 +1,20 @@
-package com.trabean.ssafy.api.account.domestic.dto.responseDTO.temp;
+package com.trabean.ssafy.api.account.domestic.dto.responseDTO;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.trabean.util.ResponseHeader;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Data
+/**
+ * SSAFY 금융 API p.59 - 계좌 이체 한도 변경 responseDTO
+ */
 @Builder
-public class UpdateTranferLimitResponseDTO {
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+public class UpdateTransferLimitResponseDTO {
 
     @JsonProperty("Header")
     private ResponseHeader header;
@@ -15,7 +22,7 @@ public class UpdateTranferLimitResponseDTO {
     @JsonProperty("REC")
     private REC rec;
 
-    @Data
+    @Getter
     public static class REC {
         private String bankCode;
         private String bankName;

@@ -5,6 +5,9 @@ import com.trabean.util.RequestHeader;
 import lombok.Builder;
 import lombok.Getter;
 
+/**
+ * SSAFY 금융 API p.38 - 계좌 목록 조회 requestDTO
+ */
 @Builder
 @Getter
 public class InquireDemandDepositAccountListRequestDTO {

@@ -1,12 +1,19 @@
-package com.trabean.ssafy.api.account.domestic.dto.responseDTO.temp;
+package com.trabean.ssafy.api.account.domestic.dto.responseDTO;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.trabean.util.ResponseHeader;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Data
+/**
+ * SSAFY 금융 API p.42 - 계좌 조회 (단건) responseDTO
+ */
 @Builder
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class InquireDemandDepositAccountResponseDTO {
 
     @JsonProperty("Header")
@@ -15,7 +22,7 @@ public class InquireDemandDepositAccountResponseDTO {
     @JsonProperty("REC")
     private REC rec;
 
-    @Data
+    @Getter
     public static class REC {
         private String bankCode;
         private String bankName;
