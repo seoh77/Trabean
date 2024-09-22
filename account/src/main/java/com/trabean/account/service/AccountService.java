@@ -241,6 +241,63 @@ public class AccountService {
         }
     }
 
+    // 한화 여행통장 상세 조회 서비스 로직
+    public DomesticTravelAccountDetailResponseDTO getDomesticTravelAccountDetail(DomesticTravelAccountDetailRequestDTO requestDTO, String startDate, String endDate, String transactionType) {
+        String userKey = requestDTO.getUserKey();
+        String accountNo = requestDTO.getAccountNo();
+
+        // SSAFY 계좌 조회 (단건) 요청
+        InquireDemandDepositAccountRequestDTO inquireDemandDepositAccountRequestDTO = InquireDemandDepositAccountRequestDTO.builder()
+                .header(RequestHeader.builder()
+                        .apiName("inquireDemandDepositAccount")
+                        .userKey(userKey)
+                        .build())
+                .accountNo(accountNo)
+                .build();
+
+        try {
+            InquireDemandDepositAccountResponseDTO inquireDemandDepositAccountResponseDTO = domesticClient.inquireDemandDepositAccount(inquireDemandDepositAccountRequestDTO);
+
+            String bankName = inquireDemandDepositAccountResponseDTO.getRec().getBankName();
+            Long accountBalance = inquireDemandDepositAccountResponseDTO.getRec().getAccountBalance();
+
+            // SSAFY 계좌 거래 내역 조회 요청
+            InquireTransactionHistoryListRequestDTO inquireTransactionHistoryListRequestDTO = InquireTransactionHistoryListRequestDTO.builder()
+                    .header(RequestHeader.builder()
+                            .apiName("inquireTransactionHistoryList")
+                            .userKey(userKey)
+                            .build())
+                    .accountNo(accountNo)
+                    .startDate(startDate)
+                    .endDate(endDate)
+                    .transactionType(transactionType)
+                    .orderByType("DESC")
+                    .build();
+
+            InquireTransactionHistoryListResponseDTO inquireTransactionHistoryListResponseDTO = domesticClient.inquireTransactionHistoryList(inquireTransactionHistoryListRequestDTO);
+
+            ResponseCode responseCode = inquireTransactionHistoryListResponseDTO.getHeader().getResponseCode();
+            String responseMessage = inquireTransactionHistoryListResponseDTO.getHeader().getResponseMessage();
+            List<DomesticTravelAccountDetailResponseDTO.Transaction> transactionList = getDomesticTravelAccountTransactionList(inquireTransactionHistoryListResponseDTO);
+
+            return DomesticTravelAccountDetailResponseDTO.builder()
+                    .responseCode(responseCode)
+                    .responseMessage(responseMessage)
+                    .bankName(bankName)
+                    .accountBalance(accountBalance)
+                    .transactionList(transactionList)
+                    .build();
+        } catch (CustomFeignClientException e) {
+            ResponseCode responseCode = e.getErrorResponse().getResponseCode();
+            String responseMessage = e.getErrorResponse().getResponseMessage();
+
+            return DomesticTravelAccountDetailResponseDTO.builder()
+                    .responseCode(responseCode)
+                    .responseMessage(responseMessage)
+                    .build();
+        }
+    }
+
     // 통장 계좌번호 조회 서비스 로직
     public AccountNoResponseDTO getAccountNoById(AccountNoRequestDTO requestDTO) {
         Long accountId = requestDTO.getAccountId();
@@ -294,4 +351,19 @@ public class AccountService {
                         .build())
                 .collect(Collectors.toList());
     }
+
+    // SSAFY API 계좌 거래 내역 조회 responseDTO -> 거래 내역 리스트
+    private List<DomesticTravelAccountDetailResponseDTO.Transaction> getDomesticTravelAccountTransactionList(InquireTransactionHistoryListResponseDTO inquireTransactionHistoryListResponseDTO) {
+        return inquireTransactionHistoryListResponseDTO.getRec().getList().stream()
+                .map(item -> DomesticTravelAccountDetailResponseDTO.Transaction.builder()
+                        .transactionType(item.getTransactionType())
+                        .transactionSummary(item.getTransactionSummary())
+                        .transactionDate(item.getTransactionDate())
+                        .transactionTime(item.getTransactionTime())
+                        .transactionBalance(item.getTransactionBalance())
+                        .transactionAfterBalance(item.getTransactionAfterBalance())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
 }

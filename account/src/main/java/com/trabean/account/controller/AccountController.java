@@ -91,6 +91,28 @@ public class AccountController {
         }
     }
 
+    // 한화 여행통장 상세 조회 API
+    @PostMapping("/travel/domestic")
+    public ResponseEntity<DomesticTravelAccountDetailResponseDTO> getDomesticTravelAccountDetail(@RequestParam(defaultValue = "19000101") String startDate,
+                                                                     @RequestParam(defaultValue = "21000101") String endDate,
+                                                                     @RequestParam(defaultValue = "A") String transactionType,
+                                                                     @RequestBody DomesticTravelAccountDetailRequestDTO requestDTO){
+        DomesticTravelAccountDetailResponseDTO responseDTO = accountService.getDomesticTravelAccountDetail(requestDTO, startDate, endDate, transactionType);
+        ResponseCode responseCode = responseDTO.getResponseCode();
+
+        switch (responseCode) {
+            case H0000 -> {
+                return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+            }
+            case A1003 -> {
+                return new ResponseEntity<>(responseDTO, HttpStatus.NOT_FOUND);
+            }
+            default -> {
+                return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
+            }
+        }
+    }
+
     // 통장 계좌번호 조회 API
     @PostMapping("/get-account-number")
     public ResponseEntity<?> getAccountNo(@RequestBody AccountNoRequestDTO requestDTO) {
