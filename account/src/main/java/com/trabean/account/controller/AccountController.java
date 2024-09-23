@@ -4,6 +4,8 @@ import com.trabean.account.dto.request.*;
 import com.trabean.account.dto.response.*;
 import com.trabean.account.service.AccountService;
 import com.trabean.exception.AccountNotFoundException;
+import com.trabean.exception.InvalidPasswordException;
+import com.trabean.exception.InvalidRequestException;
 import com.trabean.exception.UserAccountRelationNotFoundException;
 import com.trabean.ssafy.api.response.code.ResponseCode;
 import lombok.RequiredArgsConstructor;
@@ -143,6 +145,21 @@ public class AccountController {
             return new ResponseEntity<>(responseDTO, HttpStatus.OK);
         } catch (UserAccountRelationNotFoundException e) {
             return new ResponseEntity<>(Collections.singletonMap("message", e.getMessage()), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // 통장 비밀번호 검증 API
+    @PostMapping("/verify-password")
+    public ResponseEntity<?> verifyPassword(@RequestBody VerifyPasswordRequestDTO requestDTO) {
+        try {
+            VerifyPasswordResponseDTO responseDTO = accountService.verifyPassword(requestDTO);
+            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+        } catch (InvalidRequestException e) {
+            return new ResponseEntity<>(Collections.singletonMap("message", e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (AccountNotFoundException e) {
+            return new ResponseEntity<>(Collections.singletonMap("message", e.getMessage()), HttpStatus.NOT_FOUND);
+        } catch (InvalidPasswordException e) {
+            return new ResponseEntity<>(Collections.singletonMap("message", e.getMessage()), HttpStatus.UNAUTHORIZED);
         }
     }
 

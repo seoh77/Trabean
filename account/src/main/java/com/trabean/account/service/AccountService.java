@@ -7,6 +7,8 @@ import com.trabean.account.dto.response.*;
 import com.trabean.account.repository.AccountRepository;
 import com.trabean.account.repository.UserAccountRelationRepository;
 import com.trabean.exception.AccountNotFoundException;
+import com.trabean.exception.InvalidPasswordException;
+import com.trabean.exception.InvalidRequestException;
 import com.trabean.exception.UserAccountRelationNotFoundException;
 import com.trabean.ssafy.api.account.domestic.client.DomesticClient;
 import com.trabean.ssafy.api.account.domestic.dto.requestDTO.CreateDemandDepositAccountRequestDTO;
@@ -342,6 +344,36 @@ public class AccountService {
         }
         else{
             throw new UserAccountRelationNotFoundException("잘못된 요청입니다.");
+        }
+    }
+
+    // 통장 비밀번호 검증 서비스 로직
+    public VerifyPasswordResponseDTO verifyPassword(VerifyPasswordRequestDTO requestDTO) {
+        if(requestDTO.getAccountId() == null && requestDTO.getAccountNo() == null){
+            throw new InvalidRequestException("잘못된 요청입니다.");
+        }
+
+        Account account;
+
+        if(requestDTO.getAccountId() != null){
+            Long accountId = requestDTO.getAccountId();
+            account = accountRepository.findById(accountId).orElseThrow(() -> new AccountNotFoundException("해당 계좌를 찾을 수 없습니다."));
+        }
+        else{
+            String accountNo = requestDTO.getAccountNo();
+            account = accountRepository.findByAccountNo(accountNo).orElseThrow(() -> new AccountNotFoundException("해당 계좌를 찾을 수 없습니다."));
+        }
+
+        String password = requestDTO.getPassword();
+        String savedPassword = account.getPassword();
+
+        if(password.equals(savedPassword)){
+           return VerifyPasswordResponseDTO.builder()
+                   .message("통장 비밀번호 검증 성공")
+                   .build();
+        }
+        else{
+            throw new InvalidPasswordException("비밀번호가 틀렸습니다.");
         }
     }
 
