@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b3d9fcae-7d7f-4e5c-9ea6-0a4d03bce3db" name="Changes" comment="docs : nginx 설정을 위한 추가 파일">
-      <change afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nginx.conf" afterDir="false" />
+    <list default="true" id="b3d9fcae-7d7f-4e5c-9ea6-0a4d03bce3db" name="Changes" comment="docs : Frontend 배포와 Nginx 실행을 위한 Dockerfile, nginx.conf 작성">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,7 +69,7 @@
       <workItem from="1727057425351" duration="366000" />
       <workItem from="1727057832436" duration="71000" />
       <workItem from="1727057909968" duration="15000" />
-      <workItem from="1727057931339" duration="1277000" />
+      <workItem from="1727057931339" duration="2976000" />
     </task>
     <task id="LOCAL-00001" summary="docs : nginx 설정을 위한 추가 파일">
       <option name="closed" value="true" />
@@ -79,7 +79,15 @@
       <option name="project" value="LOCAL" />
       <updated>1727057764029</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="docs : Frontend 배포와 Nginx 실행을 위한 Dockerfile, nginx.conf 작성">
+      <option name="closed" value="true" />
+      <created>1727062349321</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1727062349321</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -87,6 +95,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="docs : nginx 설정을 위한 추가 파일" />
-    <option name="LAST_COMMIT_MESSAGE" value="docs : nginx 설정을 위한 추가 파일" />
+    <MESSAGE value="docs : Frontend 배포와 Nginx 실행을 위한 Dockerfile, nginx.conf 작성" />
+    <option name="LAST_COMMIT_MESSAGE" value="docs : Frontend 배포와 Nginx 실행을 위한 Dockerfile, nginx.conf 작성" />
   </component>
 </project>
