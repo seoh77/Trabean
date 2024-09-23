@@ -327,6 +327,24 @@ public class AccountService {
                 .build();
     }
 
+    // 통장 권한 변경 서비스 로직
+    public UpdateUserRoleResponseDTO updateUserRole(UpdateUserRoleRequestDTO requestDTO) {
+        Long userId = requestDTO.getUserId();
+        Long accountId = requestDTO.getAccountId();
+        UserAccountRelation.UserRole userRole = requestDTO.getUserRole();
+
+        int updatedTuples = userAccountRelationRepository.updateUserRoleByUserIdAndAccountId(userId, accountId, userRole);
+
+        if(updatedTuples == 1){
+            return UpdateUserRoleResponseDTO.builder()
+                    .message("통장 권한 변경 성공")
+                    .build();
+        }
+        else{
+            throw new UserAccountRelationNotFoundException("잘못된 요청입니다.");
+        }
+    }
+
     // SSAFY API 통장 목록 조회 responseDTO -> 통장 목록 리스트
     private List<AccountListResponseDTO.Account> getAccountList(InquireDemandDepositAccountListResponseDTO inquireDemandDepositAccountListResponseDTO) {
         return inquireDemandDepositAccountListResponseDTO.getRec().stream()

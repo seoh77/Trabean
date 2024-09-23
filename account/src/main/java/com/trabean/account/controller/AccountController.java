@@ -135,4 +135,15 @@ public class AccountController {
         }
     }
 
+    // 통장 권한 변경 API
+    @PostMapping("/update-user-role")
+    public ResponseEntity<?> updateUserRole(@RequestBody UpdateUserRoleRequestDTO requestDTO) {
+        try {
+            UpdateUserRoleResponseDTO responseDTO = accountService.updateUserRole(requestDTO);
+            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+        } catch (UserAccountRelationNotFoundException e) {
+            return new ResponseEntity<>(Collections.singletonMap("message", e.getMessage()), HttpStatus.NOT_FOUND);
+        }
+    }
+
 }
