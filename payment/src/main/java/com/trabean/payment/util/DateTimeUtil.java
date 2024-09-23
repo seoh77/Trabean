@@ -9,7 +9,7 @@ public class DateTimeUtil {
     // 현재 날짜를 yyyyMMdd 형태로 반환
     public static String getTransmissionDate() {
         LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyMMdd");
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         return now.format(dateFormatter);
     }
 

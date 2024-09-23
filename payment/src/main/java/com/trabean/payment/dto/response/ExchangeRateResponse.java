@@ -1,5 +1,6 @@
 package com.trabean.payment.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,8 +9,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExchangeRateResponse {
-    private Header Header;
-    private REC REC;
+
+    @JsonProperty("Header")
+    private Header header;
+
+    @JsonProperty("REC")
+    private REC rec;
 
     @Getter
     @NoArgsConstructor
@@ -32,8 +37,8 @@ public class ExchangeRateResponse {
     public static class REC {
         private Long id;
         private String currency;
-        private Double exchangeRate;
-        private Double exchangeMin;
+        private String exchangeRate;
+        private String exchangeMin;
         private String created;
     }
 }

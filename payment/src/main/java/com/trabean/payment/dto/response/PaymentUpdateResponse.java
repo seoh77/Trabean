@@ -11,7 +11,7 @@ public class PaymentUpdateResponse {
     private String status;
     private String message;
     private PaymentData data;
-    
+
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
@@ -21,5 +21,6 @@ public class PaymentUpdateResponse {
         private Double foreignAmount;
         private Long krwAmount;
         private String merchantName;
+        private String transactionId;
     }
 }

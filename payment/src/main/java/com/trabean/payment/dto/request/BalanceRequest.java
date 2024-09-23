@@ -8,13 +8,13 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ExchangeRateRequest {
+public class BalanceRequest {
 
     @JsonProperty("Header")
     private Header header;  // 필드명은 소문자로, 직렬화 시에는 대문자로 변환
 
-    @JsonProperty("currency")
-    private String currency;
+    @JsonProperty("accountNo")
+    private String accountNo;
 
 
 }

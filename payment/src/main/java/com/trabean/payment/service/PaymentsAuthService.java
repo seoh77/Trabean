@@ -6,7 +6,9 @@ import com.trabean.payment.exception.PaymentsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -17,13 +19,19 @@ public class PaymentsAuthService {
 
     private final RestTemplate restTemplate;
 
-    @Value("${external.api.userRoleUrl}")
+    @Value("http://j11a604.p.ssafy.io:8081/api/accounts/get-user-role")
     private String userRoleUrl;
 
-    public Long checkAuthPayment(String userKey, Long accountId) {
+    public void checkAuthPayment(Long userId, Long accountId) {
         // 유저 권한 확인 API 호출
-        String requestBody = String.format("{\"userKey\":\"%s\", \"accountId\":%d}", userKey, accountId);
-        HttpEntity<String> entity = new HttpEntity<>(requestBody);
+        String requestBody = String.format("{\"userId\":\"%s\", \"accountId\":%d}", userId, accountId);
+
+        // HttpHeaders에 Content-Type을 application/json으로 설정
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(
+                MediaType.APPLICATION_JSON);
+
+        HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
 
         UserRoleResponse userRoleResponse;
 
@@ -38,8 +46,6 @@ public class PaymentsAuthService {
             if (userRoleResponse.getUserRole() == UserRole.NONE_PAYER) {
                 throw new PaymentsException("권한이 없는 사용자입니다.", HttpStatus.FORBIDDEN);
             }
-
-            return userRoleResponse.getUserId();
 
         } catch (RestClientException e) {
             // RestTemplate에서 발생한 예외 처리
