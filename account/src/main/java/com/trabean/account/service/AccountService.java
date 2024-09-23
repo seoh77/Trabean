@@ -24,14 +24,14 @@ import com.trabean.ssafy.api.response.code.ResponseCode;
 import com.trabean.util.RequestHeader;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.trabean.constant.Constants.DOMESTIC_TRAVEL_ACCOUNT_TYPE_UNIQUE_NO;
-import static com.trabean.constant.Constants.PERSONAL_ACCOUNT_TYPE_UNIQUE_NO;
+import static com.trabean.constant.Constants.*;
 
 @Service
 @Transactional
@@ -42,6 +42,8 @@ public class AccountService {
     private final UserAccountRelationRepository userAccountRelationRepository;
 
     private final DomesticClient domesticClient;
+
+    private final PasswordEncoder passwordEncoder;
 
     // 개인 통장 생성 서비스 로직
     public CreatePersonalAccountResponseDTO createPersonalAccount(CreatePersonalAccountRequestDTO requestDTO) {
@@ -68,11 +70,12 @@ public class AccountService {
             responseMessage = createDemandDepositAccountResponseDTO.getHeader().getResponseMessage();
 
             String accountNo = createDemandDepositAccountResponseDTO.getRec().getAccountNo();
+            String hashedPassword = passwordEncoder.encode(password + PEPPER);
 
             // Account 테이블에 저장
             Account account = Account.builder()
                     .accountNo(accountNo)
-                    .password(password)
+                    .password(hashedPassword)
                     .userId(userId)
                     .build();
 
@@ -367,7 +370,7 @@ public class AccountService {
         String password = requestDTO.getPassword();
         String savedPassword = account.getPassword();
 
-        if(password.equals(savedPassword)){
+        if(passwordEncoder.matches(password + PEPPER, savedPassword)){
            return VerifyPasswordResponseDTO.builder()
                    .message("통장 비밀번호 검증 성공")
                    .build();
