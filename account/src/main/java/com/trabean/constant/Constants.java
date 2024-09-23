@@ -15,4 +15,10 @@ public class Constants {
      * 한화 여행통장 상품 고유번호
      */
     public static final String DOMESTIC_TRAVEL_ACCOUNT_TYPE_UNIQUE_NO = "001-1-2e58332128994c";
+
+    /**
+     * 통장 비밀번호 해싱용 pepper
+     * SHA-256 (Trabean)
+     */
+    public static final String PEPPER = "ac052c71c986b28977452cb7ffa50f78725c7f5a52264d639561866f31edf26e";
 }
