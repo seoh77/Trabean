@@ -35,7 +35,7 @@
 //    private MockRestServiceServer mockServer;
 //
 //    @Value("${external.api.userRoleUrl}")
-//    private String USER_ROLE_API_URL = "http://j11a604.p.ssafy.io:8084/api/userRole";
+//    private String USER_ROLE_API_URL = "http://localhost/api/userRole";
 //
 //    @Test
 //    @DisplayName("결제 권한 있는 유저 테스트")

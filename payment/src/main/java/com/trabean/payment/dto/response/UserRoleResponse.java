@@ -11,8 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class UserRoleResponse {
-    private String status;
     private String message;
-    private Long userId;
     private UserRole userRole;
 }
