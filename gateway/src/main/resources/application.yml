@@ -13,32 +13,32 @@ spring:
       mvc:
         routes: # ??? ?? ??아
           - id: accountRoute  # ??? ID
-            uri: http://j11a604.p.ssafy.io:8081 # ??? ??? URI (??? ?? URI? ???? ?)
+            uri: lb://ACCOUNT # ??? ??? URI (??? ?? URI? ???? ?)
             predicates: # ??? ????? ??
               - Path=/api/accounts/**  # /account/** ??? ?? ??? ??
 
           - id: chatbotRoute
-            uri: http://j11a604.p.ssafy.io:8082
+            uri: lb://CHATBOT
             predicates:
               - Path=/api/chatbot/**
 
           - id: notificationRoute
-            uri: http://j11a604.p.ssafy.io:8083
+            uri: lb://NOTIFICATION
             predicates:
               - Path=/api/notification/**
 
           - id: paymentRoute
-            uri: http://j11a604.p.ssafy.io:8084
+            uri: lb://PAYMENT
             predicates:
               - Path=/api/payments/**
 
           - id: travelRoute
-            uri: http://j11a604.p.ssafy.io:8085
+            uri: lb://TRAVEL
             predicates:
               - Path=/api/travel/**
 
           - id: userRoute
-            uri: http://j11a604.p.ssafy.io:8086
+            uri: lb://USER
             predicates:
               - Path=/api/user/**
 # Eureka ??
