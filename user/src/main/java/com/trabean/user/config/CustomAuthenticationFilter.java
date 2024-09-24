@@ -9,6 +9,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import com.trabean.user.user.entity.User;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,11 +44,25 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException {
         // 인증 성공 시 토큰 발급
-        String token = tokenProvider.generateToken((com.trabean.user.user.entity.User) authResult.getPrincipal(), java.time.Duration.ofMinutes(30));
+        String token = tokenProvider.generateToken((User) authResult.getPrincipal(), java.time.Duration.ofMinutes(30));
+        
+        // 현재 인증된 사용자 정보에서 userKey 가져오기
+        User loggedInUser = (User) authResult.getPrincipal();
+        String userKey = loggedInUser.getUser_key();  // User 객체의 userKey 속성 가져오기
+    
+        // 응답 헤더와 바디에 토큰 및 사용자 정보 설정
         response.setHeader("Authorization", "Bearer " + token);
         response.setContentType("application/json");
-        response.getWriter().write(new ObjectMapper().writeValueAsString(Map.of("accessToken", token)));
+        
+        // 응답 바디에 Access Token과 userKey를 함께 전달
+        Map<String, String> responseBody = new HashMap<>();
+        responseBody.put("accessToken", token);
+        responseBody.put("userKey", userKey);
+        
+        // JSON으로 변환하여 응답에 기록
+        response.getWriter().write(new ObjectMapper().writeValueAsString(responseBody));
     }
+    
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
