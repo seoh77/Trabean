@@ -4,11 +4,11 @@ import com.trabean.payment.dto.request.RequestPaymentRequest;
 import com.trabean.payment.dto.request.UpdatePaymentInfoRequest;
 import com.trabean.payment.dto.response.PaymentUpdateResponse;
 import com.trabean.payment.enums.PaymentStatus;
-import com.trabean.payment.service.PaymentUpdateDetailService;
+import com.trabean.payment.service.PaymentsUpdateInfoService;
 import com.trabean.payment.service.PaymentsAuthService;
-import com.trabean.payment.service.PaymentsRequestService;
-import com.trabean.payment.service.PaymentsService;
-import com.trabean.payment.service.WithdrawalService;
+import com.trabean.payment.service.PaymentsAccountService;
+import com.trabean.payment.service.PaymentsValidateService;
+import com.trabean.payment.service.PaymentsWithdrawalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,37 +26,39 @@ import org.springframework.web.bind.annotation.RestController;
 public class PaymentsController {
 
     private final PaymentsAuthService paymentsAuthService;
-    private final PaymentsService paymentsService;
-    private final PaymentsRequestService paymentsRequestService;
-    private final PaymentUpdateDetailService paymentUpdateDetailService;
-    private final WithdrawalService withdrawalService;
+    private final PaymentsValidateService paymentsValidateService;
+    private final PaymentsAccountService paymentsAccountService;
+    private final PaymentsUpdateInfoService paymentsUpdateInfoService;
+    private final PaymentsWithdrawalService paymentsWithdrawalService;
 
     // QR인식 후 결제 정보 업데이트
     @PostMapping("/info")
     public PaymentUpdateResponse updatePaymentInfo(@RequestBody UpdatePaymentInfoRequest request) {
-        // 서비스 호출
-        return paymentUpdateDetailService.updatePayment(request);
+
+        return paymentsUpdateInfoService.updatePayment(request);
     }
 
     // 결제 요청
     @PostMapping("/{accountId}")
     public ResponseEntity<String> requestPayment(@PathVariable Long accountId,
                                                  @RequestBody RequestPaymentRequest request) {
+        // 결제 권한 검증
+        paymentsAuthService.checkAuthPayment(request.getUserId(), accountId);
 
         // transactionId 검증
-        paymentsService.validateTransactionId(request.getTransactionId(), request.getPayId());
+        paymentsValidateService.validateTransactionId(request.getTransactionId(), request.getPayId());
 
         // 잔액 검증
-        paymentsRequestService.validateAmount(accountId, request);
+        paymentsAccountService.validateAmount(accountId, request);
 
         // 데이터 무결성 검증
-        paymentsService.validatePaymentData(request.getPayId(), request.getMerchantId(), request.getForeignAmount());
+        paymentsValidateService.validatePaymentData(request.getPayId(), request.getMerchantId(), request.getForeignAmount());
 
         // 출금 처리
-        withdrawalService.withdrawaltoPay(request, accountId);
+        paymentsWithdrawalService.withdrawaltoPay(request, accountId);
 
         // 결제 상태 완료로 변경
-        paymentsService.updatePaymentStatus(request.getPayId(), PaymentStatus.SUCCESS);
+        paymentsUpdateInfoService.updatePaymentStatus(request.getPayId(), PaymentStatus.SUCCESS);
 
         // 성공적으로 처리된 경우
         return new ResponseEntity<>("결제 정보가 성공적으로 업데이트되었습니다.", HttpStatus.OK);

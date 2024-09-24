@@ -1,6 +1,8 @@
 package com.trabean.payment.entity;
 
 import com.trabean.payment.enums.PaymentStatus;
+import com.trabean.payment.exception.PaymentsException;
+import com.trabean.payment.repository.PaymentsRepository;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -18,6 +20,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.http.HttpStatus;
 
 @Entity
 @Table
@@ -75,18 +78,8 @@ public class Payments {
         return payment;
     }
 
-    // 결제 상태 변경
+    // 결제 상태를 변경하는 메서드
     public void updatePaymentStatus(PaymentStatus status) {
         this.paymentStatus = status;
     }
-
-    // QR 인식 후 결제 정보 업데이트
-//    public void updatePaymentDetails(Long krwAmount, Double foreignAmount, Merchants merchant) {
-//        // 성공 시
-//        this.krwAmount = krwAmount;
-//        this.foreignAmount = foreignAmount;
-//        this.merchant = merchant;
-//        this.paymentStatus = PaymentStatus.PENDING;
-//        this.paymentDate = new Timestamp(System.currentTimeMillis()); // 시간 업데이트
-//    }
 }

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class PaymentsService {
+public class PaymentsValidateService {
 
     private final PaymentsRepository paymentsRepository;
 
@@ -60,11 +60,4 @@ public class PaymentsService {
         }
     }
 
-    // 결제 상태 변경 메서드
-    public void updatePaymentStatus(Long payId, PaymentStatus status) {
-        Payments payment = paymentsRepository.findById(payId)
-                .orElseThrow(() -> new PaymentsException("결제 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
-        payment.updatePaymentStatus(status);  // 결제 상태 업데이트
-        paymentsRepository.save(payment);  // 변경된 상태 저장
-    }
 }

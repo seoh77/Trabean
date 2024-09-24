@@ -8,6 +8,7 @@ import com.trabean.payment.entity.Merchants;
 import com.trabean.payment.exception.PaymentsException;
 import com.trabean.payment.repository.MerchantsRepository;
 import com.trabean.payment.util.ApiName;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,12 +23,13 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
-public class WithdrawalService {
+@Transactional
+public class PaymentsWithdrawalService {
 
     private final RestTemplate restTemplate;
     private final MerchantsRepository merchantsRepository;
-    private final PaymentsRequestService paymentsRequestService;
-    private static final Logger logger = LoggerFactory.getLogger(WithdrawalService.class);
+    private final PaymentsAccountService paymentsAccountService;
+    private static final Logger logger = LoggerFactory.getLogger(PaymentsWithdrawalService.class);
 
     @Value("https://finopenapi.ssafy.io/ssafy/api/v1/edu/demandDeposit/updateDemandDepositAccountWithdrawal")
     private String withdrawalKrwUrl;
@@ -42,7 +44,7 @@ public class WithdrawalService {
                 .orElseThrow(() -> new PaymentsException("잘못된 merchantId값 입니다.", HttpStatus.NOT_FOUND));
 
         // 계좌 정보 조회
-        String accountNo = paymentsRequestService.getAccountNumber(accountId);
+        String accountNo = paymentsAccountService.getAccountNumber(accountId);
 
         // 한화 출금일 경우
         if (merchant.getExchangeCurrency().equals("KRW")) {
