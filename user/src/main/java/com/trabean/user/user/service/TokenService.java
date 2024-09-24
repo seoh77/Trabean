@@ -22,8 +22,8 @@ public class TokenService {
 		if (!tokenProvider.validToken(refreshToken)) {
 			throw new IllegalArgumentException("Invalid refresh token");
 		}
-		Long userId = refreshTokenService.findByRefreshToken(refreshToken).getUserId();
-		User user = userService.findById(userId);
+		String email = refreshTokenService.findByRefreshToken(refreshToken).getEmail();
+		User user = userService.findByEmail(email);
 
 		return tokenProvider.generateToken(user, Duration.ofHours(2));
 	}

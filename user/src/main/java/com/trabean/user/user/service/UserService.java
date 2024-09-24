@@ -38,8 +38,8 @@ public class UserService {
                 .build()).getUser_id());
     }
 
-    public User findById(Long userId) {
-        return userRepository.findById(userId)
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
     }
 }

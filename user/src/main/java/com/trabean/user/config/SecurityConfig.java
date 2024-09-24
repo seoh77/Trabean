@@ -1,8 +1,7 @@
 package com.trabean.user.config;
 
-import com.trabean.user.config.jwt.JwtAccessDeniedHandler;
-import com.trabean.user.config.jwt.JwtAuthenticationEntryPoint;
 import com.trabean.user.config.jwt.TokenProvider;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -27,8 +26,6 @@ import lombok.RequiredArgsConstructor;
 @Slf4j
 public class SecurityConfig {
 	private final TokenProvider tokenProvider;
-	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-	private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 	private final UserDetailsService userService;
 
 	@Value("${app.api.url}")
@@ -54,14 +51,13 @@ public class SecurityConfig {
 								new AntPathRequestMatcher(baseUrl+ "/api/**"))
 						.permitAll()
 						.anyRequest().authenticated())
-				.formLogin(formLogin -> formLogin
-						.loginPage(baseUrl + "/api/user/login")
-						.defaultSuccessUrl(baseUrl+"/api/accounts"))
 				.logout(logout -> logout
-						.logoutSuccessUrl(baseUrl + "/api/user/login")
-						.invalidateHttpSession(true)
-				)
-				.csrf(AbstractHttpConfigurer::disable) //csrf 비활성화
+						.logoutSuccessHandler((request, response, authentication) -> {
+							response.setStatus(HttpServletResponse.SC_OK);
+							response.getWriter().write("Logout successful");
+						})
+						.invalidateHttpSession(true))
+				.csrf(AbstractHttpConfigurer::disable)
 				.build();
 	}
 
