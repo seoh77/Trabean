@@ -3,6 +3,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.trabean.user.config.jwt.TokenProvider;
 import com.trabean.user.user.dto.LoginRequest;
+import com.trabean.user.user.dto.UserResponse;
 import com.trabean.user.user.entity.RefreshToken;
 import com.trabean.user.user.repository.RefreshTokenRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,6 +18,7 @@ import com.trabean.user.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 import java.time.Duration;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -78,5 +80,19 @@ public class UserService {
         );
 
         return accessToken;
+    }
+
+    // userId로 사용자 조회 및 payment_account_id 반환
+    public UserResponse getUserPaymentAccount(Long userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            // User 객체를 UserResponse로 변환
+            return new UserResponse(user.getPayment_account_id());
+        }
+
+        // 사용자를 찾지 못한 경우 기본값을 반환
+        return new UserResponse( null);
     }
 }

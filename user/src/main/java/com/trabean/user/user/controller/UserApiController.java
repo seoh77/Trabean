@@ -1,5 +1,6 @@
 package com.trabean.user.user.controller;
 
+import com.trabean.user.user.dto.UserResponse;
 import com.fasterxml.jackson.databind.ObjectMapper; // JSON 파싱을 위한 라이브러리
 import com.trabean.user.user.dto.AddUserRequest;
 import com.trabean.user.user.service.ExternalApiService;
@@ -13,11 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.trabean.user.user.dto.LoginRequest;
 
 @RequestMapping("/api/user")
@@ -71,6 +68,18 @@ public class UserApiController {
 		} catch (RuntimeException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
+	}
+	// 사용자 정보 조회 및 payment_account_id 반환
+	@GetMapping("/{userId}")
+	public ResponseEntity<UserResponse> getUserPaymentAccount(@PathVariable Long userId) {
+		UserResponse userResponse = userService.getUserPaymentAccount(userId);
+
+		// 만약 payment_account_id가 null이면, userId로 설정
+		if (userResponse.getPaymentAccountId() == null) {
+			userResponse.setPaymentAccountId(null);
+		}
+
+		return ResponseEntity.ok(userResponse);
 	}
 
 }
