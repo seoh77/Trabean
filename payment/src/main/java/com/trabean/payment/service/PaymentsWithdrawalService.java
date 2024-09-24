@@ -69,14 +69,14 @@ public class PaymentsWithdrawalService {
 
             // 결과 로그 남기기
             if (response != null && response.getRec() != null) {
-                logger.info("한화 출금 성공: {}", response.getRec().getTransactionDate());
+                logger.info("출금 성공: {}", response.getRec().getTransactionDate());
             } else {
-                logger.warn("한화 출금 return 값이 null 입니다.");
+                logger.warn("출금 return 값이 null 입니다.");
             }
 
         } catch (FeignException e) {
-            logger.error("한화 출금 API 호출 중 오류 발생: {}", e.getMessage());
-            throw new PaymentsException("한화 출금 API 호출 중 오류 발생" + e.getMessage(),
+            logger.error("출금 API 호출 중 오류 발생: {}", e.getMessage());
+            throw new PaymentsException("출금 API 호출 중 오류 발생" + e.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
