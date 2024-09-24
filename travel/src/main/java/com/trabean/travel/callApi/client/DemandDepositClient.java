@@ -1,7 +1,7 @@
 package com.trabean.travel.callApi.client;
 
-import com.trabean.travel.callApi.dto.request.InquireDemandDepositAccountBalanceRequestDto;
-import com.trabean.travel.callApi.dto.response.InquireDemandDepositAccountBalanceResponseDto;
+import com.trabean.travel.callApi.dto.request.GetKrwAccountBalanceRequestDto;
+import com.trabean.travel.callApi.dto.response.GetKrwAccountBalanceResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.FeignClientsConfiguration;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,7 +14,7 @@ public interface DemandDepositClient {
      * 계좌번호로 계좌 잔액조회
      */
     @PostMapping("/inquireDemandDepositAccountBalance")
-    InquireDemandDepositAccountBalanceResponseDto inquireDemandDepositAccountBalance(
-            @RequestBody InquireDemandDepositAccountBalanceRequestDto inquireDemandDepositAccountBalanceRequestDto);
+    GetKrwAccountBalanceResponseDto getKrwAccountBalance(
+            @RequestBody GetKrwAccountBalanceRequestDto getKrwAccountBalanceRequestDto);
 
 }

@@ -3,9 +3,9 @@ package com.trabean.travel.service;
 import com.trabean.travel.callApi.client.AccountClient;
 import com.trabean.travel.callApi.client.DemandDepositClient;
 import com.trabean.travel.callApi.dto.request.GetAccountNumberRequestDto;
-import com.trabean.travel.callApi.dto.request.InquireDemandDepositAccountBalanceRequestDto;
+import com.trabean.travel.callApi.dto.request.GetKrwAccountBalanceRequestDto;
 import com.trabean.travel.callApi.dto.response.GetAccountNumberResponseDto;
-import com.trabean.travel.callApi.dto.response.InquireDemandDepositAccountBalanceResponseDto;
+import com.trabean.travel.callApi.dto.response.GetKrwAccountBalanceResponseDto;
 import com.trabean.travel.dto.response.TravelAccountIdResponseDto;
 import com.trabean.travel.dto.response.TravelAccountResponseDto;
 import com.trabean.travel.dto.response.TravelListAccountResponseDto;
@@ -52,18 +52,18 @@ public class TravelAccountService {
         // krwTravelAccount 잔액조회
         Double accountKRWBalance = 0.0;
 
-        InquireDemandDepositAccountBalanceRequestDto inquireDemandDepositAccountBalanceRequestDto
-                = new InquireDemandDepositAccountBalanceRequestDto(
+        GetKrwAccountBalanceRequestDto getKrwAccountBalanceRequestDto
+                = new GetKrwAccountBalanceRequestDto(
                 RequestHeader.builder()
                         .apiName("inquireDemandDepositAccountBalance")
                         .userKey("dcdf0b3e-93f2-4cbe-85fb-7c0a961e182f")
                         .build(),
                 accountKRWNo);
 
-        InquireDemandDepositAccountBalanceResponseDto inquireDemandDepositAccountBalanceResponseDto = demandDepositClient.inquireDemandDepositAccountBalance(
-                inquireDemandDepositAccountBalanceRequestDto);
+        GetKrwAccountBalanceResponseDto getKrwAccountBalanceResponseDto = demandDepositClient.getKrwAccountBalance(
+                getKrwAccountBalanceRequestDto);
 
-        accountKRWBalance = (double) inquireDemandDepositAccountBalanceResponseDto.getRec().getAccountBalance();
+        accountKRWBalance = (double) getKrwAccountBalanceResponseDto.getRec().getAccountBalance();
 
         list.add(new TravelAccountResponseDto(krwTravelAccount.getAccountId(), "한국", "KRW", accountKRWBalance));
 
