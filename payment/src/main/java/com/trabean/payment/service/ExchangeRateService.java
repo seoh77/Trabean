@@ -1,5 +1,6 @@
 package com.trabean.payment.service;
 
+import com.trabean.payment.client.ssafy.ExchangeClient;
 import com.trabean.payment.dto.request.ExchangeRateRequest;
 import com.trabean.payment.dto.request.Header;
 import com.trabean.payment.dto.response.ExchangeRateResponse;
@@ -21,11 +22,8 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class ExchangeRateService {
 
-    private final RestTemplate restTemplate;
+    private final ExchangeClient exchangeClient;
     private static final Logger logger = LoggerFactory.getLogger(ExchangeRateService.class);
-
-    @Value("https://finopenapi.ssafy.io/ssafy/api/v1/edu/exchangeRate/search") // 환율조회 api
-    private String exchangeUrl;
 
     public Long calculateKrw(String currency, Double foreignAmount) {
         // 원화를 넣을 경우 그대로 return
@@ -39,15 +37,9 @@ public class ExchangeRateService {
                 currency
         );
 
-        // HTTP 요청 헤더 설정
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        // HttpEntity 생성 (요청 본문과 헤더 포함)
-        HttpEntity<ExchangeRateRequest> entity = new HttpEntity<>(exchangeRateRequest, headers);
-
         try {
             // API 호출: POST 요청으로 데이터 전송
+            exchangeClient.getExchangeRate(exchangeRateRequest);
             ExchangeRateResponse response = restTemplate.postForObject(exchangeUrl, entity, ExchangeRateResponse.class);
 
             // 결과 로그 남기기 (환율 정보)

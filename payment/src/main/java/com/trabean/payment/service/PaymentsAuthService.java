@@ -1,5 +1,6 @@
 package com.trabean.payment.service;
 
+import com.trabean.payment.client.AccountClient;
 import com.trabean.payment.dto.response.UserRoleResponse;
 import com.trabean.payment.enums.UserRole;
 import com.trabean.payment.exception.PaymentsException;
@@ -17,27 +18,15 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class PaymentsAuthService {
 
-    private final RestTemplate restTemplate;
-
-    @Value("http://j11a604.p.ssafy.io:8081/api/accounts/get-user-role")
-    private String userRoleUrl;
+    private final AccountClient accountClient;
 
     public void checkAuthPayment(Long userId, Long accountId) {
         // 유저 권한 확인 API 호출
         String requestBody = String.format("{\"userId\":\"%s\", \"accountId\":%d}", userId, accountId);
 
-        // HttpHeaders에 Content-Type을 application/json으로 설정
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(
-                MediaType.APPLICATION_JSON);
-
-        HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
-
-        UserRoleResponse userRoleResponse;
-
         try {
             // API 호출
-            userRoleResponse = restTemplate.postForObject(userRoleUrl, entity, UserRoleResponse.class);
+            UserRoleResponse userRoleResponse = accountClient.getUserRole(requestBody);
 
             // 유저 권한 확인 후 처리
             if (userRoleResponse == null) {
