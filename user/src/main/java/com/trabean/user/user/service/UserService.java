@@ -1,7 +1,12 @@
 package com.trabean.user.user.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.trabean.user.config.jwt.TokenProvider;
+import com.trabean.user.user.dto.LoginRequest;
+import com.trabean.user.user.entity.RefreshToken;
+import com.trabean.user.user.repository.RefreshTokenRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,6 +16,8 @@ import com.trabean.user.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
+import java.time.Duration;
+
 @RequiredArgsConstructor
 @Service
 public class UserService {
@@ -19,6 +26,10 @@ public class UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ExternalApiService externalApiService; // 외부 API 호출을 위한 서비스 주입
     private final ObjectMapper objectMapper = new ObjectMapper(); // JSON 파싱을 위한 ObjectMapper
+
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final TokenProvider tokenProvider;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public String save(AddUserRequest addUserRequestDto) throws Exception {
@@ -41,5 +52,31 @@ public class UserService {
     public User findByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
+    }
+
+    // 로그인 처리 로직
+    public String login(LoginRequest loginRequest) {
+        // 사용자 이메일로 데이터베이스에서 사용자 찾기
+        User user = userRepository.findByEmail(loginRequest.getEmail())
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
+        // 비밀번호 확인
+        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+        }
+
+        // Access Token 발급
+        String accessToken = tokenProvider.generateToken(user, Duration.ofMinutes(30));
+
+        // Refresh Token 발급 및 저장
+        String refreshToken = tokenProvider.generateToken(user, Duration.ofDays(7));
+        refreshTokenRepository.save(
+                RefreshToken.builder()
+                        .email(user.getEmail())
+                        .refreshToken(refreshToken)
+                        .build()
+        );
+
+        return accessToken;
     }
 }

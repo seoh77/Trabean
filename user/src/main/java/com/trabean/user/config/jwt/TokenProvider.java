@@ -1,38 +1,36 @@
 package com.trabean.user.config.jwt;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-//import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
+import java.security.Key;
 import java.util.Date;
-
-import java.time.Duration;
 import java.util.Collections;
 import java.util.Set;
 
-import org.springframework.stereotype.Service;
-
 import com.trabean.user.user.entity.User;
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Header;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@Service
-@Slf4j
 @Component
+@Slf4j
 public class TokenProvider {
 
 	private final JwtProperties jwtProperties;
 
-	public String generateToken(User user, Duration expiredAt) {
+	// SecretKey를 생성하여 Key 객체로 변환
+	private Key getSigningKey() {
+		byte[] keyBytes = Decoders.BASE64.decode(jwtProperties.getSecretKey());
+		return Keys.hmacShaKeyFor(keyBytes);
+	}
+
+	public String generateToken(User user, java.time.Duration expiredAt) {
 		Date now = new Date();
 		return makeToken(new Date(now.getTime() + expiredAt.toMillis()), user);
 	}
@@ -46,18 +44,19 @@ public class TokenProvider {
 				.setIssuedAt(now)
 				.setExpiration(expiredAt)
 				.setSubject(user.getEmail())
-				.claim("id", user.getUser_id())
-				.signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey())
+				.claim("email", user.getEmail())
+				.signWith(getSigningKey(), SignatureAlgorithm.HS256) // SecretKey 객체를 사용하여 서명
 				.compact();
 	}
 
 	public boolean validToken(String token) {
-
-
 		try {
-			Jwts.parserBuilder().setSigningKey(jwtProperties.getSecretKey()).build().parseClaimsJws(token);
+			Jwts.parserBuilder()
+					.setSigningKey(getSigningKey()) // SecretKey 객체 사용
+					.build()
+					.parseClaimsJws(token);
 			return true;
-		} catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+		} catch (SecurityException | MalformedJwtException e) {
 			log.info("잘못된 JWT 서명입니다.");
 		} catch (ExpiredJwtException e) {
 			log.info("만료된 JWT 토큰입니다.");
@@ -68,8 +67,6 @@ public class TokenProvider {
 		}
 		return false;
 	}
-
-
 
 	public Authentication getAuthentication(String token) {
 		Claims claims = getClaims(token);
@@ -83,8 +80,9 @@ public class TokenProvider {
 	}
 
 	public Claims getClaims(String token) {
-		return Jwts.parser()
-				.setSigningKey(jwtProperties.getSecretKey())
+		return Jwts.parserBuilder()
+				.setSigningKey(getSigningKey()) // SecretKey 객체 사용
+				.build()
 				.parseClaimsJws(token)
 				.getBody();
 	}

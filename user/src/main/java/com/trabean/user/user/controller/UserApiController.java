@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.trabean.user.user.dto.LoginRequest;
 
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
@@ -28,6 +29,7 @@ public class UserApiController {
 	private final UserService userService;
 	private final ExternalApiService externalApiService;
 	private final ObjectMapper objectMapper = new ObjectMapper(); // JSON 파서
+
 
 	@PostMapping("/signup")
 	public ResponseEntity<String> signup(@RequestBody AddUserRequest request) {
@@ -58,4 +60,17 @@ public class UserApiController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다: " + e.getMessage());
 		}
 	}
+
+	// 로그인 요청 처리
+	@PostMapping("/login")
+	public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+		try {
+			// 로그인 로직 호출 및 Access Token 반환
+			String accessToken = userService.login(loginRequest);
+			return ResponseEntity.ok().body("Bearer " + accessToken);
+		} catch (RuntimeException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
+
 }
