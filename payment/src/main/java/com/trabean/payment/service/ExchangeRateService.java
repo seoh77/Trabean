@@ -39,8 +39,7 @@ public class ExchangeRateService {
 
         try {
             // API 호출: POST 요청으로 데이터 전송
-            exchangeClient.getExchangeRate(exchangeRateRequest);
-            ExchangeRateResponse response = restTemplate.postForObject(exchangeUrl, entity, ExchangeRateResponse.class);
+            ExchangeRateResponse response = exchangeClient.getExchangeRate(exchangeRateRequest);
 
             // 결과 로그 남기기 (환율 정보)
             if (response != null && response.getRec() != null) {
