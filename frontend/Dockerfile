@@ -14,8 +14,8 @@ COPY --from=build-stage /app/build /usr/share/nginx/html
 
 # copy the custom nginx configuration file
 COPY nginx.conf /etc/nginx/nginx.conf
-COPY /etc/ssl/cert.pem /etc/ssl/cert.pem
-COPY /etc/ssl/key.pem /etc/ssl/key.pem
+#COPY /etc/ssl/cert.pem /etc/ssl/cert.pem
+#COPY /etc/ssl/key.pem /etc/ssl/key.pem
 
 EXPOSE 443
 CMD ["nginx", "-g", "daemon off;"]
