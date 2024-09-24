@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b3d9fcae-7d7f-4e5c-9ea6-0a4d03bce3db" name="Changes" comment="docs : SSL 인증서 저장경로 수정">
+    <list default="true" id="b3d9fcae-7d7f-4e5c-9ea6-0a4d03bce3db" name="Changes" comment="docs : SSL 인증서 파일 Pipeline에서 해결하는 방식으로 변경">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nginx.conf" beforeDir="false" afterPath="$PROJECT_DIR$/nginx.conf" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,7 +46,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "frontend",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/ssafy/2학기 특화플젝/notification/S11P21A604/notification",
+    "last_opened_file_path": "C:/ssafy/2학기 특화플젝/develop/S11P21A604",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.stylelint": "true",
     "node.js.detected.package.tslint": "true",
@@ -79,7 +78,7 @@
       <workItem from="1727057832436" duration="71000" />
       <workItem from="1727057909968" duration="15000" />
       <workItem from="1727057931339" duration="6624000" />
-      <workItem from="1727137160395" duration="13832000" />
+      <workItem from="1727137160395" duration="15408000" />
     </task>
     <task id="LOCAL-00001" summary="docs : nginx 설정을 위한 추가 파일">
       <option name="closed" value="true" />
@@ -137,7 +136,15 @@
       <option name="project" value="LOCAL" />
       <updated>1727158875364</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="docs : SSL 인증서 파일 Pipeline에서 해결하는 방식으로 변경">
+      <option name="closed" value="true" />
+      <created>1727160890991</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1727160890991</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -149,7 +156,8 @@
     <MESSAGE value="docs : 빌드 디렉토리명 dist 에서 build로 수정" />
     <MESSAGE value="docs : https 설정을 위한 SSL 인증 추가" />
     <MESSAGE value="docs : SSL 인증서 저장경로 수정" />
-    <option name="LAST_COMMIT_MESSAGE" value="docs : SSL 인증서 저장경로 수정" />
+    <MESSAGE value="docs : SSL 인증서 파일 Pipeline에서 해결하는 방식으로 변경" />
+    <option name="LAST_COMMIT_MESSAGE" value="docs : SSL 인증서 파일 Pipeline에서 해결하는 방식으로 변경" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
