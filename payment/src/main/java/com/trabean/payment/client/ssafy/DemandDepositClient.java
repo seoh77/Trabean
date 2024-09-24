@@ -1,9 +1,9 @@
 package com.trabean.payment.client.ssafy;
 
 import com.trabean.payment.dto.request.BalanceRequest;
-import com.trabean.payment.dto.request.ExchangeRateRequest;
+import com.trabean.payment.dto.request.WithdrawalRequest;
 import com.trabean.payment.dto.response.BalanceResponse;
-import com.trabean.payment.dto.response.ExchangeRateResponse;
+import com.trabean.payment.dto.response.WithdrawalResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,4 +17,10 @@ public interface DemandDepositClient {
 
     @PostMapping(value = "/inquireDemandDepositAccountBalance", consumes = MediaType.APPLICATION_JSON_VALUE)
     BalanceResponse getKRWBalance(@RequestBody BalanceRequest request);
+
+    @PostMapping(value = "/updateDemandDepositAccountWithdrawal", consumes = MediaType.APPLICATION_JSON_VALUE)
+    WithdrawalResponse withdrawKRW(@RequestBody WithdrawalRequest request);
+
+    @PostMapping(value = "/foreignCurrency/updateForeignCurrencyDemandDepositAccountWithdrawal", consumes = MediaType.APPLICATION_JSON_VALUE)
+    WithdrawalResponse withdrawFOR(@RequestBody WithdrawalRequest request);
 }
