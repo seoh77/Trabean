@@ -1,31 +1,32 @@
 package com.trabean.travel.service;
 
+import com.trabean.travel.callApi.client.AccountClient;
+import com.trabean.travel.callApi.client.DemandDepositClient;
+import com.trabean.travel.callApi.dto.request.GetAccountNumberRequestDto;
+import com.trabean.travel.callApi.dto.request.InquireDemandDepositAccountBalanceRequestDto;
+import com.trabean.travel.callApi.dto.response.GetAccountNumberResponseDto;
+import com.trabean.travel.callApi.dto.response.InquireDemandDepositAccountBalanceResponseDto;
 import com.trabean.travel.dto.response.TravelAccountIdResponseDto;
 import com.trabean.travel.dto.response.TravelAccountResponseDto;
 import com.trabean.travel.dto.response.TravelListAccountResponseDto;
 import com.trabean.travel.entity.ForeignTravelAccount;
 import com.trabean.travel.entity.KrwTravelAccount;
-import com.trabean.travel.repository.ForeignTravelAccountRepository;
 import com.trabean.travel.repository.KrwTravelAccountRepository;
+import com.trabean.util.RequestHeader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
 public class TravelAccountService {
 
-    private final ForeignTravelAccountRepository foreignTravelAccountRepository;
     private final KrwTravelAccountRepository krwTravelAccountRepository;
+
+    private final AccountClient accountClient;
+    private final DemandDepositClient demandDepositClient;
 
     @Transactional
     public Long updateTravelAccountName(Long accountId, String accountName) {
@@ -44,24 +45,25 @@ public class TravelAccountService {
         List<TravelAccountResponseDto> list = new ArrayList<>();
 
         // 계좌번호 조회
-        RestTemplate restTemplate = new RestTemplate();
-        String url = "http://j11a604.p.ssafy.io:8081/api/accounts/get-account-number";
-        Map<String, Long> requestBody = new HashMap<>();
-        requestBody.put("accountId", parentId);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Content-Type", "application/json");
-        HttpEntity<Map<String, Long>> requestEntity = new HttpEntity<>(requestBody, headers);
-
-        ResponseEntity<Map> responseEntity = restTemplate.exchange(url, HttpMethod.POST, requestEntity, Map.class);
-
-        Map<String, String> responseBody = responseEntity.getBody();
-        String accountKRWNo = responseBody.get("accountNo");
-
-        System.out.println("accountKRWNo = " + accountKRWNo);
+        GetAccountNumberResponseDto getAccountNumberResponseDto = accountClient.getAccount(
+                new GetAccountNumberRequestDto(parentId));
+        String accountKRWNo = getAccountNumberResponseDto.getAccountNo();
 
         // krwTravelAccount 잔액조회
         Double accountKRWBalance = 0.0;
+
+        InquireDemandDepositAccountBalanceRequestDto inquireDemandDepositAccountBalanceRequestDto
+                = new InquireDemandDepositAccountBalanceRequestDto(
+                RequestHeader.builder()
+                        .apiName("inquireDemandDepositAccountBalance")
+                        .userKey("dcdf0b3e-93f2-4cbe-85fb-7c0a961e182f")
+                        .build(),
+                accountKRWNo);
+
+        InquireDemandDepositAccountBalanceResponseDto inquireDemandDepositAccountBalanceResponseDto = demandDepositClient.inquireDemandDepositAccountBalance(
+                inquireDemandDepositAccountBalanceRequestDto);
+
+        accountKRWBalance = (double) inquireDemandDepositAccountBalanceResponseDto.getRec().getAccountBalance();
 
         list.add(new TravelAccountResponseDto(krwTravelAccount.getAccountId(), "한국", "KRW", accountKRWBalance));
 
