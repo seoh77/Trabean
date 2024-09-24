@@ -16,5 +16,4 @@ public class BalanceRequest {
     @JsonProperty("accountNo")
     private String accountNo;
 
-
 }

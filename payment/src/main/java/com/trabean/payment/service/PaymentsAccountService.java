@@ -1,6 +1,7 @@
 package com.trabean.payment.service;
 
 import com.trabean.payment.client.AccountClient;
+import com.trabean.payment.client.TravelClient;
 import com.trabean.payment.client.ssafy.DemandDepositClient;
 import com.trabean.payment.dto.request.BalanceRequest;
 import com.trabean.payment.dto.request.Header;
@@ -10,7 +11,6 @@ import com.trabean.payment.dto.response.BalanceResponse;
 import com.trabean.payment.entity.Merchants;
 import com.trabean.payment.exception.PaymentsException;
 import com.trabean.payment.repository.MerchantsRepository;
-import com.trabean.payment.repository.PaymentsRepository;
 import com.trabean.payment.util.ApiName;
 import feign.FeignException;
 import java.util.Map;
@@ -18,26 +18,20 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
 public class PaymentsAccountService {
 
-
     private final AccountClient accountClient;
+    private final DemandDepositClient demandDepositClient;
+    private final TravelClient travelClient;
     private final MerchantsRepository merchantsRepository;
     private static final Logger logger = LoggerFactory.getLogger(PaymentsAccountService.class);
-    private final DemandDepositClient demandDepositClient;
+    private final PaymentsUpdateInfoService paymentsUpdateInfoService;
 
     // 유저 키 임시 설정
     @Value("${external.key.userKey}")
@@ -63,22 +57,8 @@ public class PaymentsAccountService {
     }
 
     // 잔액 조회 후 검증
-    public void validateAmount(Long accountId, RequestPaymentRequest requestPaymentRequest) {
-        String apiType;
-        String accountNo;
-
-        // Merchant 정보 조회
-        Merchants merchant = merchantsRepository.findById(requestPaymentRequest.getMerchantId())
-                .orElseThrow(() -> new PaymentsException("잘못된 merchantId값 입니다.", HttpStatus.NOT_FOUND));
-
-        // 한화인지 외화인지 구별
-        if (merchant.getExchangeCurrency().equals("KRW")) {
-            apiType = ApiName.KRW_BALANCE;
-        } else {
-            apiType = ApiName.FOREIGN_BALANCE;
-        }
-
-        accountNo = getAccountNumber(accountId);
+    public void validateAmount(Long accountId, String apiType, RequestPaymentRequest requestPaymentRequest) {
+        String accountNo = getAccountNumber(accountId);
 
         // BalanceRequest 생성
         BalanceRequest balanceRequest = new BalanceRequest(
@@ -99,18 +79,37 @@ public class PaymentsAccountService {
                 logger.info("계좌 잔액 조회: {}", response.getRec().getAccountBalance());
 
                 if (response.getRec().getAccountBalance() < requestPaymentRequest.getForeignAmount()) {
+
+//                    유저의 메인 계좌 가져와서 한국계좌도 돈 부족한지 확인하고 거기도 부족하면 진짜 회생불가 오류.
+//                    만약에 거기는 잔액있으면 에러코드 따로 보내기. BALANCE_ERROR_FOREIGN_ACCOUNT + 환전시 금액 보내주기
+
                     logger.info("계좌 잔액 부족");
                     throw new PaymentsException("계좌 잔액이 부족합니다. 현재 잔액: " + response.getRec().getAccountBalance(),
-                            HttpStatus.BAD_REQUEST);
+                            HttpStatus.PAYMENT_REQUIRED); // 402
                 } else {
                     logger.info("계좌 출금 가능");
                 }
             } else {
                 logger.warn("계좌 잔액 조회 실패");
+                throw new PaymentsException("응답값이 잘못되었습니다. 잔액이 null 값 입니다.",
+                        HttpStatus.NOT_FOUND); // 404
             }
         } catch (RestClientException e) {
             logger.error("계좌 잔액 조회 API 호출 중 오류 발생: {}", e.getMessage());
             throw new PaymentsException("계좌 잔액 조회 API 호출 중 오류 발생" + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public Long getFORAccount(Long merchantId, Long accountId) {
+        Merchants merchant = merchantsRepository.findById(merchantId)
+                .orElseThrow(() -> new PaymentsException("잘못된 merchantId값 입니다.", HttpStatus.BAD_REQUEST)); // 400
+
+        // 한국 결제일 경우
+        if (merchant.getExchangeCurrency().equals("KRW")) {
+            return accountId;
+        }
+        Map<String, Long> response = travelClient.getFORAccount(accountId, merchant.getExchangeCurrency());
+
+        return response.getOrDefault("foreignTravelAccountsId", null);
     }
 }

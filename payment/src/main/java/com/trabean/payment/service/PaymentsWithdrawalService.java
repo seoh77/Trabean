@@ -5,7 +5,6 @@ import com.trabean.payment.dto.request.Header;
 import com.trabean.payment.dto.request.RequestPaymentRequest;
 import com.trabean.payment.dto.request.WithdrawalRequest;
 import com.trabean.payment.dto.response.WithdrawalResponse;
-import com.trabean.payment.entity.Merchants;
 import com.trabean.payment.exception.PaymentsException;
 import com.trabean.payment.repository.MerchantsRepository;
 import com.trabean.payment.util.ApiName;
@@ -15,13 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
@@ -37,25 +31,15 @@ public class PaymentsWithdrawalService {
     @Value("${external.key.userKey}")
     private String userKey;
 
-    public void withdrawaltoPay(RequestPaymentRequest request, Long accountId) {
-        // Merchant 정보 조회
-        Merchants merchant = merchantsRepository.findById(request.getMerchantId())
-                .orElseThrow(() -> new PaymentsException("잘못된 merchantId값 입니다.", HttpStatus.NOT_FOUND));
-
+    public void withdrawalToPay(RequestPaymentRequest request, Long accountId, String apiType) {
         // 계좌 정보 조회
         String accountNo = paymentsAccountService.getAccountNumber(accountId);
-
-        // 한화 or 외화 구분
-        String apiType;
-        if (merchant.getExchangeCurrency().equals("KRW")) {
-            apiType = ApiName.KRW_WITHDRAW;
-        } else {
-            apiType = ApiName.FOREIGN_WITHDRAW;
-        }
+        Long price = apiType.equals(ApiName.KRW_WITHDRAW) ? request.getKrwAmount()
+                : (long) request.getForeignAmount().doubleValue();
 
         WithdrawalRequest withdrawalRequest = new WithdrawalRequest(
                 Header.builder().apiName(apiType).userKey(userKey).build(),
-                accountNo, (long) request.getForeignAmount().doubleValue(), "(수시 입출금): 출금"
+                accountNo, price, "(수시 입출금): 출금"
         );
 
         try {

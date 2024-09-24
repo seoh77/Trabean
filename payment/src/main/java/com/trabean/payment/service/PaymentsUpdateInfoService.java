@@ -76,4 +76,16 @@ public class PaymentsUpdateInfoService {
         // 변경된 정보 저장
         paymentsRepository.save(payment);
     }
+
+    public void changePaymentAccount(Long payId, Long accountId) {
+        // 결제 정보를 레포지토리에서 가져옴
+        Payments payment = paymentsRepository.findById(payId)
+                .orElseThrow(() -> new PaymentsException("결제 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
+
+        // 결제 상태 변경
+        payment.updatePaymentAccount(accountId);
+
+        // 정보 저장
+        paymentsRepository.save(payment);
+    }
 }
