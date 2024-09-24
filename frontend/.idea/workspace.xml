@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b3d9fcae-7d7f-4e5c-9ea6-0a4d03bce3db" name="Changes" comment="docs : nginx의 server_name Value 수정">
+    <list default="true" id="b3d9fcae-7d7f-4e5c-9ea6-0a4d03bce3db" name="Changes" comment="docs : https 설정을 위한 SSL 인증 추가">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/nginx.conf" beforeDir="false" afterPath="$PROJECT_DIR$/nginx.conf" afterDir="false" />
     </list>
@@ -79,7 +79,7 @@
       <workItem from="1727057832436" duration="71000" />
       <workItem from="1727057909968" duration="15000" />
       <workItem from="1727057931339" duration="6624000" />
-      <workItem from="1727137160395" duration="3313000" />
+      <workItem from="1727137160395" duration="7971000" />
     </task>
     <task id="LOCAL-00001" summary="docs : nginx 설정을 위한 추가 파일">
       <option name="closed" value="true" />
@@ -105,7 +105,15 @@
       <option name="project" value="LOCAL" />
       <updated>1727063994224</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="docs : https 설정을 위한 SSL 인증 추가">
+      <option name="closed" value="true" />
+      <created>1727141460064</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1727141460064</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -115,7 +123,8 @@
     <MESSAGE value="docs : nginx 설정을 위한 추가 파일" />
     <MESSAGE value="docs : Frontend 배포와 Nginx 실행을 위한 Dockerfile, nginx.conf 작성" />
     <MESSAGE value="docs : 빌드 디렉토리명 dist 에서 build로 수정" />
-    <option name="LAST_COMMIT_MESSAGE" value="docs : 빌드 디렉토리명 dist 에서 build로 수정" />
+    <MESSAGE value="docs : https 설정을 위한 SSL 인증 추가" />
+    <option name="LAST_COMMIT_MESSAGE" value="docs : https 설정을 위한 SSL 인증 추가" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
