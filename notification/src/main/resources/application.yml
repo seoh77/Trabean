@@ -1,0 +1,40 @@
+spring:
+  datasource:
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+  application:
+    name: notification
+server:
+  port: 8083
+
+# Eureka ??
+eureka:
+  instance:
+    prefer-ip-address: true  # ???? ?? ? IP ??? ??
+  client:
+    register-with-eureka: true  # Eureka ??? ?? ??
+    fetch-registry: true  # Eureka ???? ??? ??? ??? ???? ??
+    service-url:
+      defaultZone: http://j11a604.p.ssafy.io:8761/eureka # Eureka ??? ?? URL (??? ?? URL? ???? ?)
+
+# ?? ????? ??
+management:
+  endpoint:
+    web:
+      exposure:
+        include: "*"  # ?? ?? ????? ??
+
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
