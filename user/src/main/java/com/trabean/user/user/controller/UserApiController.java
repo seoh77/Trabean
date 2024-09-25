@@ -70,7 +70,7 @@ public class UserApiController {
 		}
 	}
 	// 사용자 정보 조회 및 payment_account_id 반환
-	@GetMapping("/{userId}")
+	@GetMapping("paymentaccount/{userId}")
 	public ResponseEntity<UserResponse> getUserPaymentAccount(@PathVariable Long userId) {
 		UserResponse userResponse = userService.getUserPaymentAccount(userId);
 
