@@ -28,7 +28,7 @@ public class PaymentsWithdrawalService {
     private static final Logger logger = LoggerFactory.getLogger(PaymentsWithdrawalService.class);
 
     // 유저 키 임시 설정
-    @Value("${external.key.userKey}")
+    @Value("9e10349e-91e9-474d-afb4-564b24178d9f")
     private String userKey;
 
     public void withdrawalToPay(RequestPaymentRequest request, Long accountId, String apiType) {
