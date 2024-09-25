@@ -38,8 +38,8 @@ public class PaymentsHistoryService {
                 payments.stream().mapToLong(Data::getKrwAmount).sum(), // 총 금액 계산
                 payments,
                 new PaymentsHistoryResponse.Pagination(
-                        (long) paymentsPage.getNumber(),
-                        (long) paymentsPage.getTotalPages() + 1,
+                        (long) paymentsPage.getNumber() + 1,
+                        (long) paymentsPage.getTotalPages(),
                         paymentsPage.getTotalElements()
                 )
         );
