@@ -1,0 +1,56 @@
+server:
+  port: 8086
+
+spring:
+  application:
+    name: user
+  datasource:
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+# JWT ??
+jwt:
+  issuer: yhyh
+  header: Authorization
+  secretKey: NiOeyFbN1Gqo10bPgUyTFsRMkJpGLXSvGP04eFqj5B30r5TcrtlSXfQ7TndvYjNvfkEKLqILn0j1SmKODO1Yw3JpBBgI3nVPEahqxeY8qbPSFGyzyEVxnl4AQcrnVneI
+  access-token-validity-in-seconds: 360000
+
+# API ??
+app:
+  api:
+    url: http://localhost:8080
+    # production-url: http://j11a604.p.ssafy.io:8081/
+
+# ?? ?? ??
+API_KEY: ${API_KEY}
+
+# Eureka ??
+eureka:
+  instance:
+    prefer-ip-address: true  # ???? ?? ? IP ??? ??
+  client:
+    register-with-eureka: true  # Eureka ??? ?? ??
+    fetch-registry: true  # Eureka ???? ??? ??? ??? ???? ??
+    service-url:
+      defaultZone: http://j11a604.p.ssafy.io:8761/eureka # Eureka ??? ?? URL (??? ?? URL? ???? ?)
+
+# ?? ????? ??
+management:
+  endpoint:
+    web:
+      exposure:
+        include: "*"  # ?? ?? ????? ??
+
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
