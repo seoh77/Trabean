@@ -6,6 +6,7 @@ import com.trabean.payment.dto.response.PaymentsHistoryResponse;
 import com.trabean.payment.dto.response.PaymentsHistoryResponse.Data;
 import com.trabean.payment.entity.Payments;
 import com.trabean.payment.enums.MerchantCategory;
+import com.trabean.payment.exception.PaymentsException;
 import com.trabean.payment.repository.CategorySummary;
 import com.trabean.payment.repository.PaymentsRepository;
 import java.time.LocalDate;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -122,11 +124,18 @@ public class PaymentsHistoryService {
             endDate = LocalDate.now();
         }
 
+        MerchantCategory categoryEnum;
+        try {
+            categoryEnum = MerchantCategory.valueOf(categoryName);
+        } catch (IllegalArgumentException e) {
+            throw new PaymentsException("올바르지 않은 카테고리 이름입니다. 전송된 카테고리 이름: " + categoryName, HttpStatus.BAD_REQUEST);
+        }
+
         // 페이지 처리
         Pageable pageable = PageRequest.of(page, 20);  // 한 페이지에 20개의 결과 반환
         Page<com.trabean.payment.entity.Payments> paymentsPage = paymentsRepository.findAllByCategoryAndDateRange(
                 accountId, startDate, endDate,
-                MerchantCategory.valueOf(categoryName), pageable);
+                categoryEnum, pageable);
 
         // 전체 결제 금액 계산
         Long categoryTotalAmount = paymentsPage.getContent().stream()
