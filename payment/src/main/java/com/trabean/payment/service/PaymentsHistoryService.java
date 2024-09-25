@@ -55,7 +55,7 @@ public class PaymentsHistoryService {
                 payment.getPaymentDate().toString(),
                 payment.getKrwAmount(),
                 payment.getForeignAmount(),
-                payment.getUserId().toString(), // userName 대신 userId 사용
+                payment.getUserId(), // userName 대신 userId 사용
                 payment.getMerchant().getCategory() // 카테고리 필드 예시
         );
     }

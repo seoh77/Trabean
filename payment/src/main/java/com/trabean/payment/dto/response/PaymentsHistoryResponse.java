@@ -22,7 +22,7 @@ public class PaymentsHistoryResponse {
         private String paymentDate;
         private Long krwAmount;
         private Double foreignAmount;
-        private String userName;
+        private Long userId;
         private MerchantCategory category;
     }
 
