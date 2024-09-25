@@ -2,11 +2,14 @@ package com.trabean.payment.controller;
 
 import com.trabean.payment.dto.request.RequestPaymentRequest;
 import com.trabean.payment.dto.request.UpdatePaymentInfoRequest;
+import com.trabean.payment.dto.request.ValidatePasswordRequest;
 import com.trabean.payment.dto.response.ChartResponse;
 import com.trabean.payment.dto.response.PaymentResponse;
 import com.trabean.payment.dto.response.PaymentUpdateResponse;
 import com.trabean.payment.dto.response.PaymentsHistoryCategoryResponse;
 import com.trabean.payment.dto.response.PaymentsHistoryResponse;
+import com.trabean.payment.service.PaymentsAccountService;
+import com.trabean.payment.service.PaymentsAuthService;
 import com.trabean.payment.service.PaymentsHistoryService;
 import com.trabean.payment.service.PaymentsService;
 import com.trabean.payment.service.PaymentsUpdateInfoService;
@@ -32,6 +35,8 @@ public class PaymentsController {
     private final PaymentsUpdateInfoService paymentsUpdateInfoService;
     private final PaymentsService paymentsService;
     private final PaymentsHistoryService paymentsHistoryService;
+    private final PaymentsAccountService paymentsAccountService;
+    private final PaymentsAuthService paymentsAuthService;
 
     // QR 인식 후 결제 정보 업데이트
     @PostMapping("/info")
@@ -99,6 +104,13 @@ public class PaymentsController {
         PaymentsHistoryCategoryResponse response = paymentsHistoryService.getPaymentsByCategoryName(
                 travelAccountId, categoryName.toUpperCase(), startdate, enddate, actualPage
         );
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/validate")
+    public ResponseEntity<String> validatePayment(@RequestBody ValidatePasswordRequest request) {
+        // 성공시 트랜잭션 id 발급
+        String response = paymentsAuthService.checkAccountPassword(request);
         return ResponseEntity.ok(response);
     }
 }

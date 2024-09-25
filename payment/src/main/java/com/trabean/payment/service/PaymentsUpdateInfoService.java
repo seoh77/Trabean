@@ -50,7 +50,7 @@ public class PaymentsUpdateInfoService {
         schedulePendingToCancelPayment(payment, 5); // 5분 동안 결제 진행 안 할 경우 취소
 
         PaymentData data = new PaymentData(payment.getPayId(), payment.getAccountId(), payment.getForeignAmount(),
-                payment.getKrwAmount(), payment.getMerchant().getName(), payment.getTransactionId());
+                payment.getKrwAmount(), payment.getMerchant().getName());
         return new PaymentUpdateResponse("SUCCESS", "결제 정보 업데이트에 성공하셨습니다.", data);
     }
 

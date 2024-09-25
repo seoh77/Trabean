@@ -27,7 +27,7 @@ public class PaymentsService {
     private void validateRequestPayment(Long accountId, RequestPaymentRequest request) {
         // 결제 권한 검증
         paymentsAuthService.checkAuthPayment(request.getUserId(), accountId);
-
+        
         // transactionId 검증
         paymentsValidateService.validateTransactionId(request.getTransactionId(), request.getPayId());
 

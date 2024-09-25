@@ -105,7 +105,6 @@ public class PaymentsHistoryService {
 
         // 응답 DTO 생성
         return new ChartResponse(totalAmount, categoryList);
-
     }
 
     private double calculatePercent(Long categoryAmount, Long totalAmount) {

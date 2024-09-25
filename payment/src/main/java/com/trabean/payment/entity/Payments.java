@@ -90,4 +90,12 @@ public class Payments {
     public void updateKrwAmount(Long krwAmount) {
         this.krwAmount = krwAmount;
     }
+
+    // 비밀번호 에러 횟수 업데이트
+    public void updateErrorCount() {
+        this.passwordErrorCount++;
+        if (this.passwordErrorCount == 5) {
+            this.paymentStatus = PaymentStatus.PASSWORD_ERROR;
+        }
+    }
 }

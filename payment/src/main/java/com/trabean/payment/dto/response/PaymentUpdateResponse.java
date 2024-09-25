@@ -21,6 +21,5 @@ public class PaymentUpdateResponse {
         private Double foreignAmount;
         private Long krwAmount;
         private String merchantName;
-        private String transactionId;
     }
 }
