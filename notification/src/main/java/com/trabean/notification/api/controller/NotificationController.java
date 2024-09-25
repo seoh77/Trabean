@@ -1,6 +1,7 @@
 package com.trabean.notification.api.controller;
 
 
+import com.trabean.notification.api.dto.feignClient.TestDto;
 import com.trabean.notification.api.service.NotificationService;
 import com.trabean.notification.db.entity.Notification;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +34,7 @@ public class NotificationController {
 
 
         List<Notification> notifications = notificationService.getNotifications();
-
-        return ResponseEntity.ok().body("으갸갸갸갹");
+        TestDto dto = new TestDto("으갸갸갸갸");
+        return ResponseEntity.ok().body(dto);
     }
 }
