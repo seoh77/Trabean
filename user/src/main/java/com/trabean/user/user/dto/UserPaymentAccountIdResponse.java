@@ -9,7 +9,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResponse {
+public class UserPaymentAccountIdResponse {
 //    private Long userId;
+
     private String paymentAccountId;
+
+//    private String userName;
 }

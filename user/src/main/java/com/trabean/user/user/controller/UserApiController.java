@@ -1,19 +1,16 @@
 package com.trabean.user.user.controller;
 
-import com.trabean.user.user.dto.UserResponse;
+import com.trabean.user.user.dto.UserNameResponse;
+import com.trabean.user.user.dto.UserPaymentAccountIdResponse;
 import com.fasterxml.jackson.databind.ObjectMapper; // JSON 파싱을 위한 라이브러리
 import com.trabean.user.user.dto.AddUserRequest;
 import com.trabean.user.user.service.ExternalApiService;
 import com.trabean.user.user.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 import com.trabean.user.user.dto.LoginRequest;
 
@@ -71,15 +68,27 @@ public class UserApiController {
 	}
 	// 사용자 정보 조회 및 payment_account_id 반환
 	@GetMapping("paymentaccount/{userId}")
-	public ResponseEntity<UserResponse> getUserPaymentAccount(@PathVariable Long userId) {
-		UserResponse userResponse = userService.getUserPaymentAccount(userId);
+	public ResponseEntity<UserPaymentAccountIdResponse> getUserPaymentAccount(@PathVariable Long userId) {
+		UserPaymentAccountIdResponse userPaymentAccountIdResponse = userService.getUserPaymentAccount(userId);
 
-		// 만약 payment_account_id가 null이면, userId로 설정
-		if (userResponse.getPaymentAccountId() == null) {
-			userResponse.setPaymentAccountId(null);
+		// 만약 payment_account_id가 null이면, null로 설정
+		if (userPaymentAccountIdResponse.getPaymentAccountId() == null) {
+			userPaymentAccountIdResponse.setPaymentAccountId(null);
 		}
 
-		return ResponseEntity.ok(userResponse);
+		return ResponseEntity.ok(userPaymentAccountIdResponse);
+	}
+	// 사용자 정보 조회 및 name 반환
+	@GetMapping("name/{userId}")
+	public ResponseEntity<UserNameResponse> getUserName(@PathVariable Long userId) {
+		UserNameResponse userNameResponse = userService.getUserName(userId);
+
+		// 만약 name가 null이면, null로 설정
+		if (userNameResponse.getUserName() == null) {
+			userNameResponse.setUserName(null);
+		}
+
+		return ResponseEntity.ok(userNameResponse);
 	}
 
 }
