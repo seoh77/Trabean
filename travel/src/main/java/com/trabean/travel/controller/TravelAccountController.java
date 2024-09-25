@@ -1,12 +1,15 @@
 package com.trabean.travel.controller;
 
+import com.trabean.travel.dto.request.ExchangeEstimateRequestDto;
 import com.trabean.travel.dto.request.ForeignAccountHistoryRequestDto;
 import com.trabean.travel.dto.request.InvitaionRequestDto;
 import com.trabean.travel.dto.request.SaveForeignAccountRequestDto;
+import com.trabean.travel.dto.response.ExchangeEstimateResponseDto;
 import com.trabean.travel.dto.response.ForeignAccountHistoryResponseDto;
 import com.trabean.travel.dto.response.TravelAccountIdResponseDto;
 import com.trabean.travel.dto.response.TravelListAccountResponseDto;
 import com.trabean.travel.entity.KrwTravelAccount;
+import com.trabean.travel.service.ExchangeService;
 import com.trabean.travel.service.ForeignTravelAccountService;
 import com.trabean.travel.service.KrwTravelAccountService;
 import com.trabean.travel.service.MemberService;
@@ -34,6 +37,7 @@ public class TravelAccountController {
     private final KrwTravelAccountService krwTravelAccountService;
     private final ForeignTravelAccountService foreignTravelAccountService;
     private final MemberService memberService;
+    private final ExchangeService exchangeService;
 
     @GetMapping("{parentAccountId}")
     public ResponseEntity<TravelListAccountResponseDto> getTravelListAccount(@PathVariable Long parentAccountId) {
@@ -94,5 +98,11 @@ public class TravelAccountController {
         ForeignAccountHistoryResponseDto foreignAccountHistoryResponseDto
                 = foreignTravelAccountService.findForeignAccountHistory(foreignAccountHistoryRequestDto);
         return ResponseEntity.ok(foreignAccountHistoryResponseDto);
+    }
+
+    @PostMapping("/exchange/estimate")
+    public ResponseEntity<ExchangeEstimateResponseDto> getExchangeEstimate(
+            @RequestBody ExchangeEstimateRequestDto requestDto) {
+        return ResponseEntity.ok(exchangeService.exchangeEstimate(requestDto));
     }
 }
