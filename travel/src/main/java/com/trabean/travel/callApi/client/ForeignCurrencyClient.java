@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface ForeignCurrencyClient {
 
     /**
-     * 계좌번호로 외화 계좌 잔액 조회
+     * SSAFY API : 계좌번호로 외화 계좌 잔액 조회
      */
     @PostMapping("/inquireForeignCurrencyDemandDepositAccountBalance")
     GetAccountBalanceResponseDto getForeignAccountBalance(
             @RequestBody GetAccountBalanceRequestDto getAccountBalanceRequestDto);
 
     /**
-     * 외화 계좌 거래 내역 조회
+     * SSAFY API : 외화 계좌 거래 내역 조회
      */
     @PostMapping("/inquireForeignCurrencyTransactionHistoryList")
     AccountHistoryResponseDto getForeignAccountHistoryList(

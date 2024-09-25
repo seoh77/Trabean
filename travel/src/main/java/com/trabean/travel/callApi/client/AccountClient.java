@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface AccountClient {
 
     /**
-     * accountId로 계좌번호 조회
+     * Account API : accountId로 계좌번호 조회
      */
     @PostMapping("/get-account-number")
     GetAccountNumberResponseDto getAccount(@RequestBody GetAccountNumberRequestDto getAccountNumberRequestDto);

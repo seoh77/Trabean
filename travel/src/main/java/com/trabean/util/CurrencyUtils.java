@@ -15,6 +15,8 @@ public class CurrencyUtils {
             return "스위스";
         } else if ("CAD".equals(currency)) {
             return "캐나다";
+        } else if ("KRW".equals(currency)) {
+            return "한국";
         }
 
         return null;
