@@ -1,4 +1,4 @@
-package com.trabean.account.dto.response;
+package com.trabean.internal.dto.responseDTO;
 
 import com.trabean.account.domain.UserAccountRelation;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package com.trabean.account.dto.response;
+package com.trabean.internal.dto.responseDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class VerifyPasswordResponseDTO {
+public class AccountNoResponseDTO {
     private String message;
+    private String accountNo;
 }
