@@ -4,6 +4,8 @@ package com.trabean.notification.api.controller;
 import com.trabean.notification.api.service.NotificationService;
 import com.trabean.notification.db.entity.Notification;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +18,7 @@ import java.util.List;
 @RequestMapping("/api/notification")
 
 public class NotificationController {
+    private static final Logger logger = LoggerFactory.getLogger(NotificationController.class);
 
     private final NotificationService notificationService;
 
@@ -26,6 +29,9 @@ public class NotificationController {
 
     @GetMapping("/allNotification")
     public ResponseEntity<?> getAllNotification() {
+        logger.info("여기왔따!!!!!!!!!!!!!!!!"); // 로그 추가
+
+
         List<Notification> notifications = notificationService.getNotifications();
 
         return ResponseEntity.ok().body("으갸갸갸갹");
