@@ -13,12 +13,12 @@ spring:
       mvc:
         routes: # ??? ?? ??아
           - id: accountRoute  # ??? ID
-            uri: lb://ACCOUNT # ??? ??? URI (??? ?? URI? ???? ?)
+            uri: lb://account # ??? ??? URI (??? ?? URI? ???? ?)
             predicates: # ??? ????? ??
               - Path=/api/accounts/**  # /account/** ??? ?? ??? ??
 
           - id: chatbotRoute
-            uri: lb://CHATBOT
+            uri: lb://chatbot
             predicates:
               - Path=/api/chatbot/**
 
@@ -28,7 +28,7 @@ spring:
               - Path=/api/notification/**
 
           - id: paymentRoute
-            uri: lb://PAYMENT
+            uri: lb://payment
             predicates:
               - Path=/api/payments/**
 
@@ -38,7 +38,7 @@ spring:
               - Path=/api/travel/**
 
           - id: userRoute
-            uri: lb://USER
+            uri: lb://user
             predicates:
               - Path=/api/user/**
 # Eureka ??
