@@ -11,11 +11,13 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PaymentsRepository extends JpaRepository<Payments, Long> {
-    @Query("SELECT p FROM Payments p WHERE p.accountId = :accountId AND DATE(p.paymentDate) BETWEEN :startdate AND :enddate")
+    @Query("SELECT p FROM Payments p WHERE p.accountId = :accountId AND p.paymentStatus = 'SUCCESS' AND DATE(p.paymentDate) BETWEEN :startdate AND :enddate")
     Page<Payments> findAllByAccountIdDateRange(
             @Param("accountId") Long accountId,
             @Param("startdate") LocalDate startdate,
             @Param("enddate") LocalDate enddate,
             Pageable pageable
     );
+
+//    @Query("SELECT p FROM Payments p WHERE p.accountId = :accountId AND ")
 }

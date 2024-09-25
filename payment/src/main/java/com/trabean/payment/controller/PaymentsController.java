@@ -78,4 +78,28 @@ public class PaymentsController {
 
         return ResponseEntity.ok(response);
     }
+
+    // 차트 조회
+//    @GetMapping("/{travelAccountId}/chart")
+//    public ResponseEntity<PaymentsHistoryResponse> getChart(
+//            @PathVariable Long travelAccountId,
+//            @RequestParam(required = false) @DateTimeFormat(pattern = "yyMMdd") LocalDate startdate,
+//            @RequestParam(required = false) @DateTimeFormat(pattern = "yyMMdd") LocalDate enddate) {
+//
+//        // startdate가 null 이면 과거 무한대값으로 설정
+//        if (startdate == null) {
+//            startdate = LocalDate.of(1970, 1, 1);  // 과거의 무한대
+//        }
+//
+//        // enddate가 null 이면 오늘 날짜로 설정
+//        if (enddate == null) {
+//            enddate = LocalDate.now();  // 오늘 날짜
+//        }
+//
+//        // 서비스 호출해서 결제 내역 가져오기
+//        PaymentsHistoryResponse response = paymentsHistoryService.getPaymentHistory(travelAccountId, startdate,
+//                enddate);
+//
+//        return ResponseEntity.ok(response);
+//    }
 }

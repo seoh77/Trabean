@@ -59,4 +59,8 @@ public class PaymentsHistoryService {
                 payment.getMerchant().getCategory() // 카테고리 필드 예시
         );
     }
+
+//    public ChartResponse getChart(Long travelAccountId, LocalDate startdate, LocalDate enddate) {
+//
+//    }
 }
