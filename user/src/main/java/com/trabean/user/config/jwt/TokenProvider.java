@@ -30,21 +30,33 @@ public class TokenProvider {
 		return Keys.hmacShaKeyFor(keyBytes);
 	}
 
+	// Access Token 생성
 	public String generateToken(User user, java.time.Duration expiredAt) {
 		Date now = new Date();
-		return makeToken(new Date(now.getTime() + expiredAt.toMillis()), user);
-	}
-
-	private String makeToken(Date expiredAt, User user) {
-		Date now = new Date();
-
 		return Jwts.builder()
 				.setHeaderParam(Header.TYPE, Header.JWT_TYPE)
 				.setIssuer(jwtProperties.getIssuer())
 				.setIssuedAt(now)
-				.setExpiration(expiredAt)
+				.setExpiration(new Date(now.getTime() + expiredAt.toMillis()))
 				.setSubject(user.getEmail())
 				.claim("email", user.getEmail())
+				.claim("userId", user.getUser_id()) // 필요한 클레임 추가
+				.claim("username", user.getUsername())
+				.claim("userKey", user.getUser_key())
+				.signWith(getSigningKey(), SignatureAlgorithm.HS256) // SecretKey 객체를 사용하여 서명
+				.compact();
+	}
+
+	// Refresh Token 생성
+	public String generateRefreshToken(User user, java.time.Duration expiredAt) {
+		Date now = new Date();
+		return Jwts.builder()
+				.setHeaderParam(Header.TYPE, Header.JWT_TYPE)
+				.setIssuer(jwtProperties.getIssuer())
+				.setIssuedAt(now)
+				.setExpiration(new Date(now.getTime() + expiredAt.toMillis()))
+				.setSubject(user.getEmail())
+				.claim("type", "refresh") // Refresh Token이라는 것을 나타내는 클레임 추가
 				.signWith(getSigningKey(), SignatureAlgorithm.HS256) // SecretKey 객체를 사용하여 서명
 				.compact();
 	}

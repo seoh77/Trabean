@@ -2,6 +2,7 @@ package com.trabean.user.config;
 
 import com.trabean.user.config.jwt.TokenProvider;
 import com.trabean.user.config.CustomAuthenticationFilter;
+import com.trabean.user.user.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -25,12 +26,12 @@ public class SecurityConfig {
 
 	private final TokenProvider tokenProvider;
 	private final UserDetailsService userService;
-
+	private final RefreshTokenService refreshTokenService;
 	// 특정 HTTP 요청에 대한 웹 기반 보안 구성
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		// CustomAuthenticationFilter를 설정하고 필터 체인에 추가
-		CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager(http), tokenProvider);
+		CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager(http), tokenProvider, refreshTokenService);
 		customAuthenticationFilter.setFilterProcessesUrl("/api/user/login"); // 로그인 처리 URL 설정
 
 		return http
