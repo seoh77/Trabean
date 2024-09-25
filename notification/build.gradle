@@ -41,7 +41,10 @@ dependencies {
 		Eureka 서버 등록을 위함
 	* */
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
-
+	/*
+         Spring Cloud Openfeign 설정
+     * */
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
