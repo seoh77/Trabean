@@ -18,37 +18,36 @@ spring:
   # Spring Cloud Gateway ??
   cloud:
     gateway:
-      mvc:
-        routes: # ??? ?? ??아
-          - id: accountRoute  # ??? ID
-            uri: lb://account # ??? ??? URI (??? ?? URI? ???? ?)
-            predicates: # ??? ????? ??
-              - Path=/api/accounts/**  # /account/** ??? ?? ??? ??
+      routes: # ??? ?? ??아
+        - id: accountRoute  # ??? ID
+          uri: lb://account # ??? ??? URI (??? ?? URI? ???? ?)
+          predicates: # ??? ????? ??
+            - Path=/api/accounts/**  # /account/** ??? ?? ??? ??
 
-          - id: chatbotRoute
-            uri: lb://chatbot
-            predicates:
-              - Path=/api/chatbot/**
+        - id: chatbotRoute
+          uri: lb://chatbot
+          predicates:
+            - Path=/api/chatbot/**
 
-          - id: notificationRoute
-            uri: lb://notification
-            predicates:
-              - Path=/api/notification/**
+        - id: notificationRoute
+          uri: lb://notification
+          predicates:
+            - Path=/api/notification/**
 
-          - id: paymentRoute
-            uri: lb://payment
-            predicates:
-              - Path=/api/payments/**
+        - id: paymentRoute
+          uri: lb://payment
+          predicates:
+            - Path=/api/payments/**
 
-          - id: travelRoute
-            uri: lb://travel
-            predicates:
-              - Path=/api/travel/**
+        - id: travelRoute
+          uri: lb://travel
+          predicates:
+            - Path=/api/travel/**
 
-          - id: userRoute
-            uri: lb://user
-            predicates:
-              - Path=/api/user/**
+        - id: userRoute
+          uri: lb://user
+          predicates:
+            - Path=/api/user/**
 
 # ?? ????? ??
 management:
