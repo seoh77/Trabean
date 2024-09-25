@@ -1,8 +1,10 @@
 package com.trabean.payment.service;
 
+import com.trabean.payment.dto.response.ChartResponse;
 import com.trabean.payment.dto.response.PaymentsHistoryResponse;
 import com.trabean.payment.dto.response.PaymentsHistoryResponse.Data;
 import com.trabean.payment.entity.Payments;
+import com.trabean.payment.repository.CategorySummary;
 import com.trabean.payment.repository.PaymentsRepository;
 import java.time.LocalDate;
 import java.util.List;
@@ -23,6 +25,17 @@ public class PaymentsHistoryService {
 
     public PaymentsHistoryResponse getPaymentHistory(Long travelAccountId, LocalDate startdate, LocalDate enddate,
                                                      int page) {
+
+        // startdate가 null이면 과거 무한대값으로 설정
+        if (startdate == null) {
+            startdate = LocalDate.of(1970, 1, 1);
+        }
+
+        // enddate가 null이면 오늘 날짜로 설정
+        if (enddate == null) {
+            enddate = LocalDate.now();
+        }
+
         Pageable pageable = PageRequest.of(page, 20);  // 20개씩 페이지 처리
         Page<Payments> paymentsPage = paymentsRepository.findAllByAccountIdDateRange(
                 travelAccountId, startdate, enddate, pageable);
@@ -60,7 +73,38 @@ public class PaymentsHistoryService {
         );
     }
 
-//    public ChartResponse getChart(Long travelAccountId, LocalDate startdate, LocalDate enddate) {
-//
-//    }
+    public ChartResponse getChart(Long travelAccountId, LocalDate startdate, LocalDate enddate) {
+        // startdate가 null이면 과거 무한대값으로 설정
+        if (startdate == null) {
+            startdate = LocalDate.of(1970, 1, 1);
+        }
+
+        // enddate가 null이면 오늘 날짜로 설정
+        if (enddate == null) {
+            enddate = LocalDate.now();
+        }
+
+        // 카테고리별 총 결제 금액 조회
+        List<CategorySummary> categorySummaries = paymentsRepository.findCategorySummaryByAccountIdAndDateRange(
+                travelAccountId, startdate, enddate);
+
+        // 전체 결제 금액 계산
+        long totalAmount = categorySummaries.stream().mapToLong(CategorySummary::getTotalAmount).sum();
+
+        // 카테고리별 총 금액과 비율 계산
+        List<ChartResponse.Category> categoryList = categorySummaries.stream()
+                .map(summary -> new ChartResponse.Category(
+                        summary.getCategory(),
+                        summary.getTotalAmount(),
+                        calculatePercent(summary.getTotalAmount(), totalAmount)))
+                .collect(Collectors.toList());
+
+        // 응답 DTO 생성
+        return new ChartResponse(totalAmount, categoryList);
+
+    }
+
+    private double calculatePercent(Long categoryAmount, Long totalAmount) {
+        return totalAmount > 0 ? Math.round((categoryAmount * 100.0 / totalAmount) * 100) / 100.0 : 0;
+    }
 }

@@ -78,6 +78,19 @@ public class PaymentsUpdateInfoService {
         paymentsRepository.save(payment);
     }
 
+    // 결제 성공 시 정보 업데이트
+    public void updateSuccess(Long payId) {
+        updatePaymentStatus(payId, PaymentStatus.SUCCESS);
+        Payments payment = paymentsRepository.findById(payId)
+                .orElseThrow(() -> new PaymentsException("결제 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
+        if (payment.getKrwAmount() == null) {
+            Merchants merchant = payment.getMerchant();
+            Long krwAmount = exchangeRateService.calculateKrw(merchant.getExchangeCurrency(),
+                    payment.getForeignAmount());
+            payment.updateKrwAmount(krwAmount);
+        }
+    }
+
     public void changePaymentAccount(Long payId, Long accountId) {
         // 결제 정보를 레포지토리에서 가져옴
         Payments payment = paymentsRepository.findById(payId)

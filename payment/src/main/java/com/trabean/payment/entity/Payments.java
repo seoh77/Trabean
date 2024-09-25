@@ -85,4 +85,9 @@ public class Payments {
         this.accountId = accountId;
         this.paymentDate = new Timestamp(System.currentTimeMillis());
     }
+
+    // 결제 금액(한국돈) 업데이트하는 메서드
+    public void updateKrwAmount(Long krwAmount) {
+        this.krwAmount = krwAmount;
+    }
 }

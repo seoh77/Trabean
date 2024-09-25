@@ -3,7 +3,6 @@ package com.trabean.payment.service;
 import com.trabean.payment.dto.request.RequestPaymentRequest;
 import com.trabean.payment.dto.response.PaymentResponse;
 import com.trabean.payment.entity.Payments;
-import com.trabean.payment.enums.PaymentStatus;
 import com.trabean.payment.exception.PaymentsException;
 import com.trabean.payment.repository.PaymentsRepository;
 import com.trabean.payment.util.ApiName;
@@ -91,7 +90,7 @@ public class PaymentsService {
         paymentsWithdrawalService.withdrawalToPay(request, paymentAccountId, payApiType);
 
         // 결제 상태를 성공으로 업데이트
-        paymentsUpdateInfoService.updatePaymentStatus(request.getPayId(), PaymentStatus.SUCCESS);
+        paymentsUpdateInfoService.updateSuccess(request.getPayId());
 
         // 응답 생성
         PaymentResponse.PaymentInfo paymentInfo = PaymentResponse.PaymentInfo.builder()
