@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class InquireDemandDepositAccountBalanceResponseDto {
+public class GetAccountBalanceResponseDto {
 
     @JsonProperty("Header")
     private ResponseHeader header;

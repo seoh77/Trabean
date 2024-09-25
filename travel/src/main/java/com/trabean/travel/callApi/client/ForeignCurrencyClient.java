@@ -3,18 +3,17 @@ package com.trabean.travel.callApi.client;
 import com.trabean.travel.callApi.dto.request.GetAccountBalanceRequestDto;
 import com.trabean.travel.callApi.dto.response.GetAccountBalanceResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.cloud.openfeign.FeignClientsConfiguration;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "demandDepositClient", url = "https://finopenapi.ssafy.io/ssafy/api/v1/edu/demandDeposit", configuration = FeignClientsConfiguration.class)
-public interface DemandDepositClient {
+@FeignClient(name = "foreignCurrencyClient", url = "https://finopenapi.ssafy.io/ssafy/api/v1/edu/demandDeposit/foreignCurrency", configuration = FeignClient.class)
+public interface ForeignCurrencyClient {
 
     /**
-     * 계좌번호로 계좌 잔액조회
+     * 계좌번호로 계좌 조회 (외환)
      */
-    @PostMapping("/inquireDemandDepositAccountBalance")
-    GetAccountBalanceResponseDto getKrwAccountBalance(
+    @PostMapping("/inquireForeignCurrencyDemandDepositAccountBalance")
+    GetAccountBalanceResponseDto getForeignAccountBalance(
             @RequestBody GetAccountBalanceRequestDto getAccountBalanceRequestDto);
 
 }

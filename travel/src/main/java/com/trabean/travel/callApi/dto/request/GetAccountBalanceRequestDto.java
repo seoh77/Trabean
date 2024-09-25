@@ -9,7 +9,7 @@ import lombok.Getter;
 @Builder
 @Getter
 @AllArgsConstructor
-public class InquireDemandDepositAccountBalanceRequestDto {
+public class GetAccountBalanceRequestDto {
 
     @JsonProperty("Header")
     private RequestHeader header;

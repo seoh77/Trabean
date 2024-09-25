@@ -2,10 +2,11 @@ package com.trabean.travel.service;
 
 import com.trabean.travel.callApi.client.AccountClient;
 import com.trabean.travel.callApi.client.DemandDepositClient;
+import com.trabean.travel.callApi.client.ForeignCurrencyClient;
+import com.trabean.travel.callApi.dto.request.GetAccountBalanceRequestDto;
 import com.trabean.travel.callApi.dto.request.GetAccountNumberRequestDto;
-import com.trabean.travel.callApi.dto.request.InquireDemandDepositAccountBalanceRequestDto;
+import com.trabean.travel.callApi.dto.response.GetAccountBalanceResponseDto;
 import com.trabean.travel.callApi.dto.response.GetAccountNumberResponseDto;
-import com.trabean.travel.callApi.dto.response.InquireDemandDepositAccountBalanceResponseDto;
 import com.trabean.travel.dto.response.TravelAccountIdResponseDto;
 import com.trabean.travel.dto.response.TravelAccountResponseDto;
 import com.trabean.travel.dto.response.TravelListAccountResponseDto;
@@ -16,6 +17,7 @@ import com.trabean.util.RequestHeader;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +29,10 @@ public class TravelAccountService {
 
     private final AccountClient accountClient;
     private final DemandDepositClient demandDepositClient;
+    private final ForeignCurrencyClient foreignCurrencyClient;
+
+    @Value("${api.userKey}")
+    private String userKey;
 
     @Transactional
     public Long updateTravelAccountName(Long accountId, String accountName) {
@@ -45,25 +51,23 @@ public class TravelAccountService {
         List<TravelAccountResponseDto> list = new ArrayList<>();
 
         // 계좌번호 조회
-        GetAccountNumberResponseDto getAccountNumberResponseDto = accountClient.getAccount(
-                new GetAccountNumberRequestDto(parentId));
-        String accountKRWNo = getAccountNumberResponseDto.getAccountNo();
+        String accountKRWNo = getAccountNo(parentId);
 
         // krwTravelAccount 잔액조회
         Double accountKRWBalance = 0.0;
 
-        InquireDemandDepositAccountBalanceRequestDto inquireDemandDepositAccountBalanceRequestDto
-                = new InquireDemandDepositAccountBalanceRequestDto(
+        GetAccountBalanceRequestDto getAccountBalanceRequestDto
+                = new GetAccountBalanceRequestDto(
                 RequestHeader.builder()
                         .apiName("inquireDemandDepositAccountBalance")
-                        .userKey("dcdf0b3e-93f2-4cbe-85fb-7c0a961e182f")
+                        .userKey(userKey)
                         .build(),
                 accountKRWNo);
 
-        InquireDemandDepositAccountBalanceResponseDto inquireDemandDepositAccountBalanceResponseDto = demandDepositClient.inquireDemandDepositAccountBalance(
-                inquireDemandDepositAccountBalanceRequestDto);
+        GetAccountBalanceResponseDto getAccountBalanceResponseDto = demandDepositClient.getKrwAccountBalance(
+                getAccountBalanceRequestDto);
 
-        accountKRWBalance = (double) inquireDemandDepositAccountBalanceResponseDto.getRec().getAccountBalance();
+        accountKRWBalance = (double) getAccountBalanceResponseDto.getRec().getAccountBalance();
 
         list.add(new TravelAccountResponseDto(krwTravelAccount.getAccountId(), "한국", "KRW", accountKRWBalance));
 
@@ -88,13 +92,34 @@ public class TravelAccountService {
                 country = "캐나다";
             }
 
-            // 외화통장 잔액조회
-            Double accountBalance = 0.0;
+            // 외화통장 계좌번호 조회
+            String foreignAccountNo = getAccountNo(accountId);
 
-            list.add(new TravelAccountResponseDto(accountId, country, exchangeCurrency, accountBalance));
+            // 외화통장 잔액조회
+            Double foreignAccountBalance = 0.0;
+
+            getAccountBalanceRequestDto = new GetAccountBalanceRequestDto(
+                    RequestHeader.builder()
+                            .apiName("inquireForeignCurrencyDemandDepositAccountBalance")
+                            .userKey(userKey)
+                            .build(),
+                    foreignAccountNo);
+
+            getAccountBalanceResponseDto = foreignCurrencyClient.getForeignAccountBalance(getAccountBalanceRequestDto);
+            foreignAccountBalance = (double) getAccountBalanceResponseDto.getRec().getAccountBalance();
+
+            list.add(new TravelAccountResponseDto(accountId, country, exchangeCurrency, foreignAccountBalance));
         }
 
         return new TravelListAccountResponseDto(krwTravelAccount.getAccountName(), list);
+    }
+
+    public String getAccountNo(Long accountId) {
+        GetAccountNumberResponseDto getAccountNumberResponseDto = accountClient.getAccount(
+                new GetAccountNumberRequestDto(accountId));
+        String accountNo = getAccountNumberResponseDto.getAccountNo();
+
+        return accountNo;
     }
 
     public TravelAccountIdResponseDto findAccountIdByCurrency(Long parentId, String currency) {
