@@ -28,6 +28,6 @@ public class NotificationController {
     public ResponseEntity<?> getAllNotification() {
         List<Notification> notifications = notificationService.getNotifications();
 
-        return ResponseEntity.ok().body(notifications);
+        return ResponseEntity.ok().body("으갸갸갸갹");
     }
 }
