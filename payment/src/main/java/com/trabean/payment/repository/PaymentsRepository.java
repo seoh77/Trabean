@@ -1,6 +1,7 @@
 package com.trabean.payment.repository;
 
 import com.trabean.payment.entity.Payments;
+import com.trabean.payment.enums.MerchantCategory;
 import java.time.LocalDate;
 import java.util.List;
 import org.springframework.data.domain.Page;
@@ -29,4 +30,16 @@ public interface PaymentsRepository extends JpaRepository<Payments, Long> {
             @Param("accountId") Long accountId,
             @Param("startdate") LocalDate startdate,
             @Param("enddate") LocalDate enddate);
+
+    @Query("SELECT p FROM Payments p JOIN p.merchant m "
+            + "WHERE p.accountId = :accountId AND m.category = :categoryName "
+            + "AND p.paymentStatus = 'SUCCESS' "
+            + "AND DATE(p.paymentDate) BETWEEN :startdate AND :enddate")
+    Page<Payments> findAllByCategoryAndDateRange(
+            @Param("accountId") Long accountId,
+            @Param("startdate") LocalDate startdate,
+            @Param("enddate") LocalDate enddate,
+            @Param("categoryName") MerchantCategory categoryName,
+            Pageable pageable);
+
 }

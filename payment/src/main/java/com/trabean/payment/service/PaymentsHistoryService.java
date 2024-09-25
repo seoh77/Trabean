@@ -1,9 +1,11 @@
 package com.trabean.payment.service;
 
 import com.trabean.payment.dto.response.ChartResponse;
+import com.trabean.payment.dto.response.PaymentsHistoryCategoryResponse;
 import com.trabean.payment.dto.response.PaymentsHistoryResponse;
 import com.trabean.payment.dto.response.PaymentsHistoryResponse.Data;
 import com.trabean.payment.entity.Payments;
+import com.trabean.payment.enums.MerchantCategory;
 import com.trabean.payment.repository.CategorySummary;
 import com.trabean.payment.repository.PaymentsRepository;
 import java.time.LocalDate;
@@ -106,5 +108,56 @@ public class PaymentsHistoryService {
 
     private double calculatePercent(Long categoryAmount, Long totalAmount) {
         return totalAmount > 0 ? Math.round((categoryAmount * 100.0 / totalAmount) * 100) / 100.0 : 0;
+    }
+
+    public PaymentsHistoryCategoryResponse getPaymentsByCategoryName(Long accountId, String categoryName,
+                                                                     LocalDate startDate, LocalDate endDate, int page) {
+        // startDate 가 null 이면 과거 무한대값으로 설정
+        if (startDate == null) {
+            startDate = LocalDate.of(1970, 1, 1);
+        }
+
+        // endDate 가 null 이면 오늘 날짜로 설정
+        if (endDate == null) {
+            endDate = LocalDate.now();
+        }
+
+        // 페이지 처리
+        Pageable pageable = PageRequest.of(page, 20);  // 한 페이지에 20개의 결과 반환
+        Page<com.trabean.payment.entity.Payments> paymentsPage = paymentsRepository.findAllByCategoryAndDateRange(
+                accountId, startDate, endDate,
+                MerchantCategory.valueOf(categoryName), pageable);
+
+        // 전체 결제 금액 계산
+        Long categoryTotalAmount = paymentsPage.getContent().stream()
+                .mapToLong(com.trabean.payment.entity.Payments::getKrwAmount)
+                .sum();
+
+        // 결제 내역 리스트로 변환
+        List<PaymentsHistoryCategoryResponse.Payments> payments = paymentsPage.getContent().stream()
+                .map(payment -> new PaymentsHistoryCategoryResponse.Payments(
+                        payment.getPayId(),
+                        payment.getMerchant().getMerchantId(),
+                        payment.getMerchant().getName(),
+                        payment.getPaymentDate().toString(),
+                        payment.getKrwAmount(),
+                        payment.getForeignAmount(),
+                        payment.getUserId()
+                )).collect(Collectors.toList());
+
+        // 페이지 정보 생성
+        PaymentsHistoryCategoryResponse.Pagination pagination = new PaymentsHistoryCategoryResponse.Pagination(
+                (long) paymentsPage.getNumber() + 1,  // 1부터 시작
+                (long) paymentsPage.getTotalPages(),
+                paymentsPage.getTotalElements()
+        );
+
+        // 응답 DTO 생성 및 반환
+        return new PaymentsHistoryCategoryResponse(
+                MerchantCategory.valueOf(categoryName),
+                categoryTotalAmount,
+                payments,
+                List.of(pagination)
+        );
     }
 }

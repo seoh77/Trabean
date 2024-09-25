@@ -5,6 +5,7 @@ import com.trabean.payment.dto.request.UpdatePaymentInfoRequest;
 import com.trabean.payment.dto.response.ChartResponse;
 import com.trabean.payment.dto.response.PaymentResponse;
 import com.trabean.payment.dto.response.PaymentUpdateResponse;
+import com.trabean.payment.dto.response.PaymentsHistoryCategoryResponse;
 import com.trabean.payment.dto.response.PaymentsHistoryResponse;
 import com.trabean.payment.service.PaymentsHistoryService;
 import com.trabean.payment.service.PaymentsService;
@@ -81,6 +82,23 @@ public class PaymentsController {
         ChartResponse response = paymentsHistoryService.getChart(travelAccountId, startdate,
                 enddate);
 
+        return ResponseEntity.ok(response);
+    }
+
+    // 카테고리별 결제 내역 조회
+    @GetMapping("/{travelAccountId}/{categoryName}")
+    public ResponseEntity<PaymentsHistoryCategoryResponse> getPaymentsByCategory(
+            @PathVariable Long travelAccountId,
+            @PathVariable String categoryName,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyMMdd") LocalDate startdate,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyMMdd") LocalDate enddate,
+            @RequestParam(defaultValue = "1") int page) {
+
+        int actualPage = (page > 0) ? page - 1 : 0;
+
+        PaymentsHistoryCategoryResponse response = paymentsHistoryService.getPaymentsByCategoryName(
+                travelAccountId, categoryName.toUpperCase(), startdate, enddate, actualPage
+        );
         return ResponseEntity.ok(response);
     }
 }

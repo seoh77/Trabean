@@ -2,6 +2,7 @@ package com.trabean.payment.service;
 
 import com.trabean.payment.client.AccountClient;
 import com.trabean.payment.client.TravelClient;
+import com.trabean.payment.client.UserClient;
 import com.trabean.payment.client.ssafy.DemandDepositClient;
 import com.trabean.payment.dto.request.BalanceRequest;
 import com.trabean.payment.dto.request.Header;
@@ -9,8 +10,10 @@ import com.trabean.payment.dto.request.RequestPaymentRequest;
 import com.trabean.payment.dto.response.AccountNoResponse;
 import com.trabean.payment.dto.response.BalanceResponse;
 import com.trabean.payment.entity.Merchants;
+import com.trabean.payment.entity.Payments;
 import com.trabean.payment.exception.PaymentsException;
 import com.trabean.payment.repository.MerchantsRepository;
+import com.trabean.payment.repository.PaymentsRepository;
 import com.trabean.payment.util.ApiName;
 import feign.FeignException;
 import java.util.Map;
@@ -32,6 +35,8 @@ public class PaymentsAccountService {
     private final MerchantsRepository merchantsRepository;
     private static final Logger logger = LoggerFactory.getLogger(PaymentsAccountService.class);
     private final PaymentsUpdateInfoService paymentsUpdateInfoService;
+    private final UserClient userClient;
+    private final PaymentsRepository paymentsRepository;
 
     // 유저 키 임시 설정
     @Value("9e10349e-91e9-474d-afb4-564b24178d9f")
@@ -76,7 +81,7 @@ public class PaymentsAccountService {
                 // 잔액 부족
                 if (response.getRec().getAccountBalance() < requestPaymentRequest.getKrwAmount()) {
                     logger.info("한화 계좌 잔액 부족");
-                    throw new PaymentsException("계좌 잔액이 부족합니다. 현재 잔액: " + response.getRec().getAccountBalance(),
+                    throw new PaymentsException("계좌 잔액이 부족합니다." + response.getRec().getAccountBalance(),
                             HttpStatus.PAYMENT_REQUIRED); // 402
                 } else {
                     logger.info("한화 계좌 출금 가능");
@@ -108,17 +113,22 @@ public class PaymentsAccountService {
 
             // 결과 로그 남기기
             if (response != null && response.getRec() != null) {
-                logger.info("계좌 잔액 조회: {}", response.getRec().getAccountBalance());
+                logger.info("외화 계좌 잔액 조회: {}", response.getRec().getAccountBalance());
 
                 // 잔액 부족
                 if (response.getRec().getAccountBalance() < requestPaymentRequest.getForeignAmount()) {
+                    logger.info("외화 계좌 잔액 부족");
 
-//                    유저의 메인 계좌 가져와서 한국계좌도 돈 부족한지 확인하고 거기도 부족하면 진짜 회생불가 오류.
-//                    만약에 거기는 잔액있으면 에러코드 따로 보내기. BALANCE_ERROR_FOREIGN_ACCOUNT + 환전시 금액 보내주기
-                    logger.info("외화 계좌 잔액 부족 + 한화 계좌 잔액 부족");
+                    // 한국 계좌 잔액도 검증해봄
+                    Long krwAccountId = getMainAccount(requestPaymentRequest.getUserId());
+                    validateKrwAmount(krwAccountId, requestPaymentRequest);
+    
+                    Payments payment = paymentsRepository.findById(requestPaymentRequest.getPayId()).orElseThrow(() ->
+                            new PaymentsException("결제 정보를 확인할 수 없습니다.", HttpStatus.NOT_FOUND));
+
                     throw new PaymentsException(
-                            "잔액이 부족하여 외화 결제를 할 수 없습니다. 현재 잔액: " + response.getRec().getAccountBalance(),
-                            HttpStatus.PAYMENT_REQUIRED); // 402
+                            "FOREIGN_ACCOUNT_BALANCE_ERROR", payment.getKrwAmount(),
+                            HttpStatus.PAYMENT_REQUIRED); // 402 한화로 결제할 경우 결제 금액 보여줌.
                 } else {
                     logger.info("외화 계좌 출금 가능");
                 }
@@ -144,5 +154,11 @@ public class PaymentsAccountService {
         Map<String, Long> response = travelClient.getFORAccount(accountId, merchant.getExchangeCurrency());
 
         return response.getOrDefault("foreignTravelAccountsId", null);
+    }
+
+    public Long getMainAccount(Long userId) {
+        Map<String, Long> response = userClient.getPaymentAccount(userId);
+
+        return response.getOrDefault("paymentAccountId", null);
     }
 }
