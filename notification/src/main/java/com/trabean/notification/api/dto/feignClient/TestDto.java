@@ -6,14 +6,11 @@ import lombok.*;
 
 @Getter
 @Setter
-@RequiredArgsConstructor
 @NoArgsConstructor
-
+@AllArgsConstructor
 public class TestDto {
 
     private String text;
 
-    public TestDto(String text) {
-        this.text = text;
-    }
+
 }
