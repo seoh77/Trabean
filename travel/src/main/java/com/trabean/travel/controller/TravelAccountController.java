@@ -1,8 +1,9 @@
 package com.trabean.travel.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.trabean.travel.dto.request.ForeignAccountHistoryRequestDto;
 import com.trabean.travel.dto.request.InvitaionRequestDto;
 import com.trabean.travel.dto.request.SaveForeignAccountRequestDto;
+import com.trabean.travel.dto.response.ForeignAccountHistoryResponseDto;
 import com.trabean.travel.dto.response.TravelAccountIdResponseDto;
 import com.trabean.travel.dto.response.TravelListAccountResponseDto;
 import com.trabean.travel.entity.KrwTravelAccount;
@@ -35,8 +36,7 @@ public class TravelAccountController {
     private final MemberService memberService;
 
     @GetMapping("{parentAccountId}")
-    public ResponseEntity<TravelListAccountResponseDto> getTravelListAccount(@PathVariable Long parentAccountId)
-            throws JsonProcessingException {
+    public ResponseEntity<TravelListAccountResponseDto> getTravelListAccount(@PathVariable Long parentAccountId) {
         return ResponseEntity.ok(travelAccountService.findAllTravelAccount(parentAccountId));
     }
 
@@ -82,5 +82,17 @@ public class TravelAccountController {
     public ResponseEntity<Void> invite(@RequestBody InvitaionRequestDto invitaionRequestDto) {
         memberService.invite(invitaionRequestDto);
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @GetMapping("/foreign/{accountId}")
+    public ResponseEntity<ForeignAccountHistoryResponseDto> getForeignAccountHistory(
+            @PathVariable Long accountId, @RequestParam String startDate, @RequestParam String endDate,
+            @RequestParam String transactionType) {
+        ForeignAccountHistoryRequestDto foreignAccountHistoryRequestDto
+                = new ForeignAccountHistoryRequestDto(accountId, startDate, endDate, transactionType);
+
+        ForeignAccountHistoryResponseDto foreignAccountHistoryResponseDto
+                = foreignTravelAccountService.findForeignAccountHistory(foreignAccountHistoryRequestDto);
+        return ResponseEntity.ok(foreignAccountHistoryResponseDto);
     }
 }
