@@ -33,7 +33,7 @@ spring:
               - Path=/api/payments/**
 
           - id: travelRoute
-            uri: lb://TRAVEL
+            uri: lb://travel
             predicates:
               - Path=/api/travel/**
 
