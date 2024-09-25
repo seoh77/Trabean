@@ -17,40 +17,40 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
 
-# JWT ??
+# JWT 설정
 jwt:
   issuer: yhyh
   header: Authorization
   secretKey: NiOeyFbN1Gqo10bPgUyTFsRMkJpGLXSvGP04eFqj5B30r5TcrtlSXfQ7TndvYjNvfkEKLqILn0j1SmKODO1Yw3JpBBgI3nVPEahqxeY8qbPSFGyzyEVxnl4AQcrnVneI
   access-token-validity-in-seconds: 360000
 
-# API ??
+# API 설정
 app:
   api:
     url: http://localhost:8080
     # production-url: http://j11a604.p.ssafy.io:8081/
 
-# ?? ?? ??
+# 외부 API 키 설정
 API_KEY: ${API_KEY}
 
-# Eureka ??
+# Eureka 설정
 eureka:
-  instance:
-    prefer-ip-address: true  # ???? ?? ? IP ??? ??
   client:
-    register-with-eureka: true  # Eureka ??? ?? ??
-    fetch-registry: true  # Eureka ???? ??? ??? ??? ???? ??
+    register-with-eureka: true  # Eureka에 서비스 등록 여부
+    fetch-registry: true  # Eureka 레지스트리 정보를 클라이언트가 가져오는지 여부
     service-url:
-      defaultZone: http://j11a604.p.ssafy.io:8761/eureka # Eureka ??? ?? URL (??? ?? URL? ???? ?)
+      defaultZone: http://j11a604.p.ssafy.io:8761/eureka # Eureka 서버 URL (여기에 맞게 변경하세요)
 
-# ?? ????? ??
+# 관리 엔드포인트 설정
 management:
   endpoint:
     web:
       exposure:
-        include: "*"  # ?? ?? ????? ??
+        include: "*"  # 모든 엔드포인트를 노출시킴
 
-
+# 로깅 설정
 logging:
   level:
     org.springframework.cloud.gateway: DEBUG
+    org.hibernate: DEBUG
+    org.springframework: DEBUG
