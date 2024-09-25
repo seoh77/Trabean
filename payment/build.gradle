@@ -53,6 +53,10 @@ dependencies {
 
 }
 
+ext {
+    set('springCloudVersion', "2023.0.3")
+}
+
 tasks.named('test') {
     useJUnitPlatform()
 }
