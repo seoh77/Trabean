@@ -8,7 +8,6 @@ import com.trabean.travel.callApi.dto.response.GetAccountBalanceResponseDto;
 import com.trabean.travel.callApi.dto.response.GetAccountNumberResponseDto;
 import com.trabean.util.RequestHeader;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,8 +17,7 @@ public class CommonAccountService {
     private final AccountClient accountClient;
     private final ForeignCurrencyClient foreignCurrencyClient;
 
-    @Value("${api.userKey}")
-    private String userKey;
+    private String userKey = "9e10349e-91e9-474d-afb4-564b24178d9f";
 
     /**
      * 계좌번호 조회

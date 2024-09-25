@@ -19,7 +19,6 @@ import com.trabean.travel.repository.KrwTravelAccountRepository;
 import com.trabean.util.RequestHeader;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,8 +34,7 @@ public class ForeignTravelAccountService {
 
     private final CommonAccountService commonAccountService;
 
-    @Value("${api.userKey}")
-    private String userKey;
+    private String userKey = "9e10349e-91e9-474d-afb4-564b24178d9f";
 
     @Transactional
     public void save(SaveForeignAccountRequestDto saveForeignAccountRequestDto) {
