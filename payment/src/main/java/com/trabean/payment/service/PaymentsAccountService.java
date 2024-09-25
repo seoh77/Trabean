@@ -56,41 +56,74 @@ public class PaymentsAccountService {
         }
     }
 
-    // 잔액 조회 후 검증
-    public void validateAmount(Long accountId, String apiType, RequestPaymentRequest requestPaymentRequest) {
-        String accountNo = getAccountNumber(accountId);
+    // 한화 잔액 조회 후 검증
+    public void validateKrwAmount(Long krwAccountId, RequestPaymentRequest requestPaymentRequest) {
+        String accountNo = getAccountNumber(krwAccountId);
 
         // BalanceRequest 생성
         BalanceRequest balanceRequest = new BalanceRequest(
-                Header.builder().apiName(apiType).userKey(userKey).build(),
+                Header.builder().apiName(ApiName.KRW_BALANCE).userKey(userKey).build(),
                 accountNo
         );
 
         try {
-            BalanceResponse response;
-            if (apiType.equals(ApiName.KRW_BALANCE)) {
-                response = demandDepositClient.getKRWBalance(balanceRequest);
+            BalanceResponse response = demandDepositClient.getKRWBalance(balanceRequest);
+
+            // 결과 로그 남기기
+            if (response != null && response.getRec() != null) {
+                logger.info("한화 계좌 잔액 조회: {}", response.getRec().getAccountBalance());
+
+                // 잔액 부족
+                if (response.getRec().getAccountBalance() < requestPaymentRequest.getKrwAmount()) {
+                    logger.info("한화 계좌 잔액 부족");
+                    throw new PaymentsException("계좌 잔액이 부족합니다. 현재 잔액: " + response.getRec().getAccountBalance(),
+                            HttpStatus.PAYMENT_REQUIRED); // 402
+                } else {
+                    logger.info("한화 계좌 출금 가능");
+                }
             } else {
-                response = demandDepositClient.getFORBalance(balanceRequest);
+                logger.warn("한화 계좌 잔액 조회 실패");
+                throw new PaymentsException("응답값이 잘못되었습니다. 잔액이 null 값 입니다.",
+                        HttpStatus.NOT_FOUND); // 404
             }
+        } catch (RestClientException e) {
+            logger.error("한화 계좌 잔액 조회 API 호출 중 오류 발생: {}", e.getMessage());
+            throw new PaymentsException("한화 계좌 잔액 조회 API 호출 중 오류 발생" + e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // 외화 계좌 잔액 조회 후 검증
+    public void validateForeignAmount(Long foreignAccountId, RequestPaymentRequest requestPaymentRequest) {
+        String accountNo = getAccountNumber(foreignAccountId);
+
+        // BalanceRequest 생성
+        BalanceRequest balanceRequest = new BalanceRequest(
+                Header.builder().apiName(ApiName.FOREIGN_BALANCE).userKey(userKey).build(),
+                accountNo
+        );
+
+        try {
+            BalanceResponse response = demandDepositClient.getFORBalance(balanceRequest);
 
             // 결과 로그 남기기
             if (response != null && response.getRec() != null) {
                 logger.info("계좌 잔액 조회: {}", response.getRec().getAccountBalance());
 
+                // 잔액 부족
                 if (response.getRec().getAccountBalance() < requestPaymentRequest.getForeignAmount()) {
 
 //                    유저의 메인 계좌 가져와서 한국계좌도 돈 부족한지 확인하고 거기도 부족하면 진짜 회생불가 오류.
 //                    만약에 거기는 잔액있으면 에러코드 따로 보내기. BALANCE_ERROR_FOREIGN_ACCOUNT + 환전시 금액 보내주기
-
-                    logger.info("계좌 잔액 부족");
-                    throw new PaymentsException("계좌 잔액이 부족합니다. 현재 잔액: " + response.getRec().getAccountBalance(),
+                    logger.info("외화 계좌 잔액 부족 + 한화 계좌 잔액 부족");
+                    throw new PaymentsException(
+                            "잔액이 부족하여 외화 결제를 할 수 없습니다. 현재 잔액: " + response.getRec().getAccountBalance(),
                             HttpStatus.PAYMENT_REQUIRED); // 402
                 } else {
-                    logger.info("계좌 출금 가능");
+                    logger.info("외화 계좌 출금 가능");
                 }
             } else {
-                logger.warn("계좌 잔액 조회 실패");
+                logger.warn("외화 계좌 잔액 조회 실패");
                 throw new PaymentsException("응답값이 잘못되었습니다. 잔액이 null 값 입니다.",
                         HttpStatus.NOT_FOUND); // 404
             }

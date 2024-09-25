@@ -47,11 +47,12 @@ public class PaymentsService {
         // 결제 요청 검증
         validateRequestPayment(accountId, request);
 
-        // 외화 결제 여부를 확인 -> 재결제일수도있으니 파라미터로 받기.
+        // 외화 결제 여부를 확인
         if (request.getForeignAmount() != null) {
+            paymentsAccountService.getFORAccount(request.getMerchantId(), accountId);
             return processForeignPayment(accountId, request);
         } else {
-            // 외화가 없을 경우, 한화로 재결제 처리
+            // 재결제 처리
             return processKrwPayment(accountId, request);
         }
     }
@@ -80,7 +81,11 @@ public class PaymentsService {
     private PaymentResponse executePayment(Long accountId, Long paymentAccountId, RequestPaymentRequest request,
                                            String searchApiType, String payApiType) {
         // 잔액 검증
-        paymentsAccountService.validateAmount(paymentAccountId, searchApiType, request);
+        if (payApiType.equals(ApiName.KRW_WITHDRAW)) {
+            paymentsAccountService.validateKrwAmount(paymentAccountId, request);
+        } else {
+            paymentsAccountService.validateForeignAmount(paymentAccountId, request);
+        }
 
         // 출금 처리
         paymentsWithdrawalService.withdrawalToPay(request, paymentAccountId, payApiType);
