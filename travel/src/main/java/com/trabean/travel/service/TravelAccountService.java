@@ -1,12 +1,10 @@
 package com.trabean.travel.service;
 
-import com.trabean.travel.callApi.client.AccountClient;
+import static com.trabean.util.CurrencyUtils.changeCurrency;
+
 import com.trabean.travel.callApi.client.DemandDepositClient;
-import com.trabean.travel.callApi.client.ForeignCurrencyClient;
 import com.trabean.travel.callApi.dto.request.GetAccountBalanceRequestDto;
-import com.trabean.travel.callApi.dto.request.GetAccountNumberRequestDto;
 import com.trabean.travel.callApi.dto.response.GetAccountBalanceResponseDto;
-import com.trabean.travel.callApi.dto.response.GetAccountNumberResponseDto;
 import com.trabean.travel.dto.response.TravelAccountIdResponseDto;
 import com.trabean.travel.dto.response.TravelAccountResponseDto;
 import com.trabean.travel.dto.response.TravelListAccountResponseDto;
@@ -27,9 +25,9 @@ public class TravelAccountService {
 
     private final KrwTravelAccountRepository krwTravelAccountRepository;
 
-    private final AccountClient accountClient;
     private final DemandDepositClient demandDepositClient;
-    private final ForeignCurrencyClient foreignCurrencyClient;
+
+    private final CommonAccountService commonAccountService;
 
     @Value("${api.userKey}")
     private String userKey;
@@ -51,7 +49,7 @@ public class TravelAccountService {
         List<TravelAccountResponseDto> list = new ArrayList<>();
 
         // 계좌번호 조회
-        String accountKRWNo = getAccountNo(parentId);
+        String accountKRWNo = commonAccountService.getAccountNo(parentId);
 
         // krwTravelAccount 잔액조회
         Double accountKRWBalance = 0.0;
@@ -76,50 +74,18 @@ public class TravelAccountService {
         for (ForeignTravelAccount foreignTravelAccount : foreignTravelAccounts) {
             Long accountId = foreignTravelAccount.getAccountId();
             String exchangeCurrency = foreignTravelAccount.getExchangeCurrency();
-            String country = "";
-
-            if (exchangeCurrency.equals("USD")) {
-                country = "미국";
-            } else if (exchangeCurrency.equals("EUR")) {
-                country = "유럽";
-            } else if (exchangeCurrency.equals("JPY")) {
-                country = "일본";
-            } else if (exchangeCurrency.equals("GBP")) {
-                country = "영국";
-            } else if (exchangeCurrency.equals("CHF")) {
-                country = "스위스";
-            } else if (exchangeCurrency.equals("CAD")) {
-                country = "캐나다";
-            }
+            String country = changeCurrency(exchangeCurrency);
 
             // 외화통장 계좌번호 조회
-            String foreignAccountNo = getAccountNo(accountId);
+            String foreignAccountNo = commonAccountService.getAccountNo(accountId);
 
             // 외화통장 잔액조회
-            Double foreignAccountBalance = 0.0;
-
-            getAccountBalanceRequestDto = new GetAccountBalanceRequestDto(
-                    RequestHeader.builder()
-                            .apiName("inquireForeignCurrencyDemandDepositAccountBalance")
-                            .userKey(userKey)
-                            .build(),
-                    foreignAccountNo);
-
-            getAccountBalanceResponseDto = foreignCurrencyClient.getForeignAccountBalance(getAccountBalanceRequestDto);
-            foreignAccountBalance = (double) getAccountBalanceResponseDto.getRec().getAccountBalance();
+            Double foreignAccountBalance = commonAccountService.getForeignAccountBalance(foreignAccountNo);
 
             list.add(new TravelAccountResponseDto(accountId, country, exchangeCurrency, foreignAccountBalance));
         }
 
         return new TravelListAccountResponseDto(krwTravelAccount.getAccountName(), list);
-    }
-
-    public String getAccountNo(Long accountId) {
-        GetAccountNumberResponseDto getAccountNumberResponseDto = accountClient.getAccount(
-                new GetAccountNumberRequestDto(accountId));
-        String accountNo = getAccountNumberResponseDto.getAccountNo();
-
-        return accountNo;
     }
 
     public TravelAccountIdResponseDto findAccountIdByCurrency(Long parentId, String currency) {
