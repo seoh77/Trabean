@@ -20,7 +20,6 @@ public class NotificationController {
 
     private final NotificationService notificationService;
     private final FeignController feignController;
-    private final FeignController2 feignController2;
 
     @GetMapping("/hello")
     public ResponseEntity<?> hello() {
@@ -46,21 +45,4 @@ public class NotificationController {
         return ResponseEntity.ok().body(testDto);
     }
 
-    @GetMapping("/allNotification2")
-    public ResponseEntity<?> getAllNotification2() {
-        logger.info("/allNotification2  여기왔따2222222222222222"); // 로그 추가
-        TestDto testDto = feignController2.tttt2();
-        logger.info("여기는 안와싸!!!!!!!!!!!!!!!!"); // 로그 추가
-
-        return ResponseEntity.ok().body(testDto);
-    }
-
-    @GetMapping("/test2")
-    public ResponseEntity<?> test2() {
-        logger.info("/test2  여기왔따22222222222222222"); // 로그 추가
-        TestDto testDto = new TestDto();
-        testDto.setText("2222222222222222222222222");
-
-        return ResponseEntity.ok().body(testDto);
-    }
 }
