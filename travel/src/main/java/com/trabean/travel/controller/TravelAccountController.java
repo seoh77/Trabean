@@ -1,10 +1,12 @@
 package com.trabean.travel.controller;
 
 import com.trabean.travel.dto.request.ExchangeEstimateRequestDto;
+import com.trabean.travel.dto.request.ExchangeRequestDto;
 import com.trabean.travel.dto.request.ForeignAccountHistoryRequestDto;
 import com.trabean.travel.dto.request.InvitaionRequestDto;
 import com.trabean.travel.dto.request.SaveForeignAccountRequestDto;
 import com.trabean.travel.dto.response.ExchangeEstimateResponseDto;
+import com.trabean.travel.dto.response.ExchangeResponseDto;
 import com.trabean.travel.dto.response.ForeignAccountHistoryResponseDto;
 import com.trabean.travel.dto.response.TravelAccountIdResponseDto;
 import com.trabean.travel.dto.response.TravelListAccountResponseDto;
@@ -104,5 +106,10 @@ public class TravelAccountController {
     public ResponseEntity<ExchangeEstimateResponseDto> getExchangeEstimate(
             @RequestBody ExchangeEstimateRequestDto requestDto) {
         return ResponseEntity.ok(exchangeService.exchangeEstimate(requestDto));
+    }
+
+    @PostMapping("/exchange")
+    public ResponseEntity<ExchangeResponseDto> exchange(@RequestBody ExchangeRequestDto exchangeRequestDto) {
+        return ResponseEntity.ok(exchangeService.exchange(exchangeRequestDto));
     }
 }
