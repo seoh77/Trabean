@@ -16,7 +16,8 @@ public class RefreshToken {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;  // SQL 테이블의 BIGINT 타입 id와 매핑됨
+	@Column(name="token_id", nullable = false)
+	private Long token_id;  // SQL 테이블의 BIGINT 타입 id와 매핑됨
 
 	@Column(nullable = false, length = 100)
 	private String email;  // SQL 테이블의 email과 매핑됨
