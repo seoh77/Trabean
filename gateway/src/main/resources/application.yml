@@ -20,32 +20,32 @@ spring:
     gateway:
       routes: # ??? ?? ??아
         - id: accountRoute  # ??? ID
-          uri: lb://account # ??? ??? URI (??? ?? URI? ???? ?)
+          uri: lb://ACCOUNT # ??? ??? URI (??? ?? URI? ???? ?)
           predicates: # ??? ????? ??
             - Path=/api/accounts/**  # /account/** ??? ?? ??? ??
 
         - id: chatbotRoute
-          uri: lb://chatbot
+          uri: lb://CHATBOT
           predicates:
             - Path=/api/chatbot/**
 
         - id: notificationRoute
-          uri: lb://notification
+          uri: lb://NOTIFICATION
           predicates:
             - Path=/api/notification/**
 
         - id: paymentRoute
-          uri: lb://payment
+          uri: lb://PAYMENT
           predicates:
             - Path=/api/payments/**
 
         - id: travelRoute
-          uri: lb://travel
+          uri: lb://TRAVEL
           predicates:
             - Path=/api/travel/**
 
         - id: userRoute
-          uri: lb://user
+          uri: lb://USER
           predicates:
             - Path=/api/user/**
 
