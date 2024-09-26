@@ -10,8 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component // 이 클래스가 Spring의 컴포넌트로 등록됨을 나타냄
-public class JwtTokenChecker {
-    private static final Logger logger = LoggerFactory.getLogger(JwtTokenChecker.class); // 로거 인스턴스 생성
+public class JwtManger {
+    private static final Logger logger = LoggerFactory.getLogger(JwtManger.class); // 로거 인스턴스 생성
 
     /**
      * JWT 토큰을 생성하는 과정에서 알고리즘(예: HMAC SHA256)과 key가 결합되어 Signature가 생성됩니다.
@@ -47,5 +47,21 @@ public class JwtTokenChecker {
             return false; // 유효하지 않은 토큰
         }
 
+    }
+
+    public Long getUserId(String accessToken) {
+
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(accessToken)
+                    .getBody()
+                    .get("userId", Long.class);
+
+        } catch (Exception e) {
+            logger.error("토큰에서 userId값을 가져오는데에 실패", e);
+            return null;
+        }
     }
 }

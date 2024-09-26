@@ -1,6 +1,9 @@
 package com.trabean.gateway.filter;
 
-import com.trabean.gateway.util.JwtTokenChecker;
+import com.trabean.gateway.client.dto.request.UserIdReq;
+import com.trabean.gateway.client.dto.response.UserKeyRes;
+import com.trabean.gateway.client.feign.UserFeign;
+import com.trabean.gateway.util.JwtManger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,17 +13,22 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+/**
+ * 글로벌 filter로 적용할지 특정 라우터에 적용할지는 yml 파일에서 설정
+ */
 @Component
 public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtFilter.class); // 로거 인스턴스 생성
-    private final JwtTokenChecker jwtTokenChecker; // JWT 유효성 검사를 위한
+    private final JwtManger jwtManger; // JWT 유효성 검사를 위한
+    private final UserFeign userFeign;
 
-    // 생성자에서 JwtTokenChecker를 주입받음
+    // 생성자에서 JwtManger와 UserFeign을 주입받음
     @Autowired
-    public JwtFilter(JwtTokenChecker jwtTokenChecker) {
+    public JwtFilter(JwtManger jwtManger, UserFeign userFeign) {
         super(Config.class); // 설정 클래스를 지정
-        this.jwtTokenChecker = jwtTokenChecker; // 주입받은 jwtTokenChecker를 필드에 저장
+        this.jwtManger = jwtManger; // 주입받은 jwtManger를 필드에 저장
+        this.userFeign = userFeign;
     }
 
     /**
@@ -28,10 +36,6 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
      */
     @Override
     public GatewayFilter apply(Config config) {
-        /**
-         * exchange: 요청/응답 정보를 다루는 객체
-         * chain: 다음 필터로 요청을 전달하는 객체
-         */
         return (exchange, chain) -> {
             logger.info("jwt filter!"); // 필터가 실행됨을 알림
 
@@ -46,18 +50,24 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
             }
 
             // accessToken의 유효성을 검사
-            if (!jwtTokenChecker.checkTokenValidation(accessToken)) {
+            if (!jwtManger.checkTokenValidation(accessToken)) {
                 logger.warn("accessToken is not valid."); // 유효하지 않은 accessToken 로그 출력
                 exchange.getResponse().setStatusCode(HttpStatus.BAD_REQUEST); // 400 Bad Request 응답 설정
                 return exchange.getResponse().setComplete(); // 응답을 완료 상태로 설정
             }
 
             logger.info("accessToken has been validated."); // 유효한 토큰 로그 출력
-            /**
-             * JWT는 userId값을 암호화하여 보관한다.
-             * JWT를 까서 userId값을 USER 마이크로서비스에 필요한 값을 달라고 요청
-             * 응답받은 데이터를 헤더에 넣어서 다음 요청으로 전송
-             */
+
+            // JWT에서 userId 추출
+            Long userId = jwtManger.getUserId(accessToken);
+            UserKeyRes userKeyRes = userFeign.getUserKey(new UserIdReq(userId));
+            String userKey = userKeyRes.getUserKey();
+
+            // userId와 userKey를 헤더에 추가하여 다음 요청으로 전달
+            exchange.getRequest().mutate()
+                    .header("userId", String.valueOf(userId)) // 헤더에 userId 추가
+                    .header("userKey", userKey) // 헤더에 userKey 추가
+                    .build();
 
             return chain.filter(exchange); // 다음 필터로 요청을 전달
         };
