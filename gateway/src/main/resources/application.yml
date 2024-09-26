@@ -65,8 +65,8 @@ spring:
             - Path=/api/user/**
 
 
-
 logging:
   level:
     root: INFO
-    com.trabean.gateway.filter.GatewayLoggingFilter: DEBUG  # 필터가 있는 패키지 경로로 변경
+    com.trabean.gateway: DEBUG
+
