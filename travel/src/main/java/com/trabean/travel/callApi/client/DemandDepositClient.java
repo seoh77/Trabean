@@ -1,7 +1,7 @@
 package com.trabean.travel.callApi.client;
 
-import com.trabean.travel.callApi.dto.request.GetAccountBalanceRequestDto;
-import com.trabean.travel.callApi.dto.response.GetAccountBalanceResponseDto;
+import com.trabean.travel.callApi.dto.request.AccountBalanceApiRequestDto;
+import com.trabean.travel.callApi.dto.response.AccountBalanceApiResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.FeignClientsConfiguration;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,7 +14,7 @@ public interface DemandDepositClient {
      * SSAFY API : 원화통장 계좌번호로 계좌 잔액조회
      */
     @PostMapping("/inquireDemandDepositAccountBalance")
-    GetAccountBalanceResponseDto getKrwAccountBalance(
-            @RequestBody GetAccountBalanceRequestDto getAccountBalanceRequestDto);
+    AccountBalanceApiResponseDto getKrwAccountBalance(
+            @RequestBody AccountBalanceApiRequestDto accountBalanceApiRequestDto);
 
 }

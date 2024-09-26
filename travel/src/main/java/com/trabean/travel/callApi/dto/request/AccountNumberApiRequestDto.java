@@ -1,13 +1,12 @@
-package com.trabean.travel.dto.request;
+package com.trabean.travel.callApi.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class InvitaionRequestDto {
+public class AccountNumberApiRequestDto {
 
-    private String email;
     private Long accountId;
 
 }

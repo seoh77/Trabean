@@ -3,8 +3,8 @@ package com.trabean.travel.service;
 import static com.trabean.util.CurrencyUtils.changeCurrency;
 
 import com.trabean.travel.callApi.client.DemandDepositClient;
-import com.trabean.travel.callApi.dto.request.GetAccountBalanceRequestDto;
-import com.trabean.travel.callApi.dto.response.GetAccountBalanceResponseDto;
+import com.trabean.travel.callApi.dto.request.AccountBalanceApiRequestDto;
+import com.trabean.travel.callApi.dto.response.AccountBalanceApiResponseDto;
 import com.trabean.travel.dto.response.TravelAccountIdResponseDto;
 import com.trabean.travel.dto.response.TravelAccountResponseDto;
 import com.trabean.travel.dto.response.TravelListAccountResponseDto;
@@ -52,18 +52,18 @@ public class TravelAccountService {
         // krwTravelAccount 잔액조회
         Double accountKRWBalance = 0.0;
 
-        GetAccountBalanceRequestDto getAccountBalanceRequestDto
-                = new GetAccountBalanceRequestDto(
+        AccountBalanceApiRequestDto getAccountBalanceRequestDto
+                = new AccountBalanceApiRequestDto(
                 RequestHeader.builder()
                         .apiName("inquireDemandDepositAccountBalance")
                         .userKey(userKey)
                         .build(),
                 accountKRWNo);
 
-        GetAccountBalanceResponseDto getAccountBalanceResponseDto = demandDepositClient.getKrwAccountBalance(
+        AccountBalanceApiResponseDto accountBalanceApiResponseDto = demandDepositClient.getKrwAccountBalance(
                 getAccountBalanceRequestDto);
 
-        accountKRWBalance = (double) getAccountBalanceResponseDto.getRec().getAccountBalance();
+        accountKRWBalance = (double) accountBalanceApiResponseDto.getRec().getAccountBalance();
 
         list.add(new TravelAccountResponseDto(krwTravelAccount.getAccountId(), "한국", "KRW", accountKRWBalance));
 
