@@ -7,12 +7,10 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class ExchangeApiRequestDto {
+public class AccountBalanceApiRequestDto {
 
     @JsonProperty("Header")
     private RequestHeader header;
     private String accountNo;
-    private String exchangeCurrency;
-    private String exchangeAmount;
 
 }

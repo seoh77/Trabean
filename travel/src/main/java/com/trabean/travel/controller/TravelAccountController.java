@@ -5,6 +5,7 @@ import com.trabean.travel.dto.request.ExchangeRequestDto;
 import com.trabean.travel.dto.request.ForeignAccountHistoryRequestDto;
 import com.trabean.travel.dto.request.InvitaionRequestDto;
 import com.trabean.travel.dto.request.SaveForeignAccountRequestDto;
+import com.trabean.travel.dto.response.AccountInfoResponseDto;
 import com.trabean.travel.dto.response.ExchangeEstimateResponseDto;
 import com.trabean.travel.dto.response.ExchangeResponseDto;
 import com.trabean.travel.dto.response.ForeignAccountHistoryResponseDto;
@@ -17,6 +18,7 @@ import com.trabean.travel.service.KrwTravelAccountService;
 import com.trabean.travel.service.MemberService;
 import com.trabean.travel.service.TargetAmountService;
 import com.trabean.travel.service.TravelAccountService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,19 +48,19 @@ public class TravelAccountController {
         return ResponseEntity.ok(travelAccountService.findAllTravelAccount(parentAccountId));
     }
 
-    @PutMapping("{accountId}")
+    @PutMapping("accountName/{accountId}")
     public ResponseEntity<Void> updateTravelAccountName(@PathVariable Long accountId, @RequestBody String accountName) {
         travelAccountService.updateTravelAccountName(accountId, accountName);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PutMapping("{accountId}/targetAmount")
+    @PutMapping("targetAmount/{accountId}")
     public ResponseEntity<Void> updateTargetAmount(@PathVariable Long accountId, @RequestBody Long targetAmount) {
         targetAmountService.updateTargetAmount(accountId, targetAmount);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping
+    @GetMapping("/currency")
     public ResponseEntity<TravelAccountIdResponseDto> getTravelAccountIdByCurrency(@RequestParam Long accountId,
                                                                                    @RequestParam String currency) {
         TravelAccountIdResponseDto travelAccountIdResponseDto = travelAccountService.findAccountIdByCurrency(accountId,
@@ -111,5 +113,15 @@ public class TravelAccountController {
     @PostMapping("/exchange")
     public ResponseEntity<ExchangeResponseDto> exchange(@RequestBody ExchangeRequestDto exchangeRequestDto) {
         return ResponseEntity.ok(exchangeService.exchange(exchangeRequestDto));
+    }
+
+    @GetMapping("/info/{accountId}")
+    public ResponseEntity<AccountInfoResponseDto> getAccountInfo(@PathVariable Long accountId) {
+        return ResponseEntity.ok(travelAccountService.getInfo(accountId));
+    }
+
+    @GetMapping("/childList/{accountId}")
+    public ResponseEntity<List<Long>> getChildList(@PathVariable Long accountId) {
+        return ResponseEntity.ok(travelAccountService.getChildList(accountId));
     }
 }

@@ -2,10 +2,10 @@ package com.trabean.travel.service;
 
 import com.trabean.travel.callApi.client.AccountClient;
 import com.trabean.travel.callApi.client.ForeignCurrencyClient;
-import com.trabean.travel.callApi.dto.request.GetAccountBalanceRequestDto;
-import com.trabean.travel.callApi.dto.request.GetAccountNumberRequestDto;
-import com.trabean.travel.callApi.dto.response.GetAccountBalanceResponseDto;
-import com.trabean.travel.callApi.dto.response.GetAccountNumberResponseDto;
+import com.trabean.travel.callApi.dto.request.AccountBalanceApiRequestDto;
+import com.trabean.travel.callApi.dto.request.AccountNumberApiRequestDto;
+import com.trabean.travel.callApi.dto.response.AccountBalanceApiResponseDto;
+import com.trabean.travel.callApi.dto.response.AccountNumberApiResponseDto;
 import com.trabean.util.RequestHeader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,26 +23,26 @@ public class CommonAccountService {
      * 계좌번호 조회
      */
     public String getAccountNo(Long accountId) {
-        GetAccountNumberResponseDto getAccountNumberResponseDto = accountClient.getAccount(
-                new GetAccountNumberRequestDto(accountId));
-        return getAccountNumberResponseDto.getAccountNo();
+        AccountNumberApiResponseDto accountNumberApiResponseDto = accountClient.getAccount(
+                new AccountNumberApiRequestDto(accountId));
+        return accountNumberApiResponseDto.getAccountNo();
     }
 
     /**
      * 외화 계좌 잔액 조회
      */
     public Double getForeignAccountBalance(String accountNo) {
-        GetAccountBalanceRequestDto getAccountBalanceRequestDto = new GetAccountBalanceRequestDto(
+        AccountBalanceApiRequestDto accountBalanceApiRequestDto = new AccountBalanceApiRequestDto(
                 RequestHeader.builder()
                         .apiName("inquireForeignCurrencyDemandDepositAccountBalance")
                         .userKey(userKey)
                         .build(),
                 accountNo);
 
-        GetAccountBalanceResponseDto getAccountBalanceResponseDto
-                = foreignCurrencyClient.getForeignAccountBalance(getAccountBalanceRequestDto);
+        AccountBalanceApiResponseDto accountBalanceApiResponseDto
+                = foreignCurrencyClient.getForeignAccountBalance(accountBalanceApiRequestDto);
 
-        return (double) getAccountBalanceResponseDto.getRec().getAccountBalance();
+        return (double) accountBalanceApiResponseDto.getRec().getAccountBalance();
     }
 
 }

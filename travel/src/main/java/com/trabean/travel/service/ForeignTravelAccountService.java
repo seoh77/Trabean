@@ -4,8 +4,8 @@ import static com.trabean.util.CurrencyUtils.changeCurrency;
 
 import com.trabean.travel.callApi.client.AccountClient;
 import com.trabean.travel.callApi.client.ForeignCurrencyClient;
-import com.trabean.travel.callApi.dto.request.AccountHistoryRequestDto;
-import com.trabean.travel.callApi.dto.response.AccountHistoryResponseDto;
+import com.trabean.travel.callApi.dto.request.AccountHistoryApiRequestDto;
+import com.trabean.travel.callApi.dto.response.AccountHistoryApiResponseDto;
 import com.trabean.travel.dto.request.ForeignAccountHistoryRequestDto;
 import com.trabean.travel.dto.request.SaveForeignAccountRequestDto;
 import com.trabean.travel.dto.response.AccountHistoryDetail;
@@ -58,8 +58,8 @@ public class ForeignTravelAccountService {
         Double accountBalance = commonAccountService.getForeignAccountBalance(accountNo);
 
         // 외화 계좌 거래 내역 조회
-        AccountHistoryRequestDto accountHistoryRequestDto =
-                new AccountHistoryRequestDto(
+        AccountHistoryApiRequestDto accountHistoryApiRequestDto =
+                new AccountHistoryApiRequestDto(
                         RequestHeader.builder()
                                 .apiName("inquireForeignCurrencyTransactionHistoryList")
                                 .userKey(userKey)
@@ -70,11 +70,11 @@ public class ForeignTravelAccountService {
                         foreignAccountHistoryRequestDto.getTransactionType(),
                         "ASC");
 
-        AccountHistoryResponseDto accountHistoryResponseDto = foreignCurrencyClient.getForeignAccountHistoryList(
-                accountHistoryRequestDto);
+        AccountHistoryApiResponseDto accountHistoryApiResponseDto = foreignCurrencyClient.getForeignAccountHistoryList(
+                accountHistoryApiRequestDto);
 
-        String totalCount = accountHistoryResponseDto.getRec().getTotalCount();
-        List<AccountHistoryDetail> list = accountHistoryResponseDto.getRec().getList();
+        String totalCount = accountHistoryApiResponseDto.getRec().getTotalCount();
+        List<AccountHistoryDetail> list = accountHistoryApiResponseDto.getRec().getList();
 
         return new ForeignAccountHistoryResponseDto(
                 country, exchangeCurrency, accountBalance, totalCount, list);

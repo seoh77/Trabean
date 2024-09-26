@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class AccountHistoryDetail {
+
     private Long transactionUniqueNo;
     private String transactionDate;
     private String transactionTime;
@@ -16,4 +17,5 @@ public class AccountHistoryDetail {
     private Double transactionAfterBalance;
     private String transactionSummary;
     private String transactionMemo;
+
 }

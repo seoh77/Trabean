@@ -3,15 +3,11 @@ package com.trabean.travel.callApi.dto.response;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.trabean.util.ResponseHeader;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-@Builder
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
-public class GetAccountBalanceResponseDto {
+public class AccountBalanceApiResponseDto {
 
     @JsonProperty("Header")
     private ResponseHeader header;
