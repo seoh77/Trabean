@@ -46,7 +46,7 @@ public class TravelAccountController {
         return ResponseEntity.ok(travelAccountService.findAllTravelAccount(parentAccountId));
     }
 
-    @PutMapping("{accountId}")
+    @PutMapping("accountName/{accountId}")
     public ResponseEntity<Void> updateTravelAccountName(@PathVariable Long accountId, @RequestBody String accountName) {
         travelAccountService.updateTravelAccountName(accountId, accountName);
         return ResponseEntity.status(HttpStatus.CREATED).build();
