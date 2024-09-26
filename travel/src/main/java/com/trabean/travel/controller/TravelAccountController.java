@@ -18,6 +18,7 @@ import com.trabean.travel.service.KrwTravelAccountService;
 import com.trabean.travel.service.MemberService;
 import com.trabean.travel.service.TargetAmountService;
 import com.trabean.travel.service.TravelAccountService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -117,5 +118,10 @@ public class TravelAccountController {
     @GetMapping("/info/{accountId}")
     public ResponseEntity<AccountInfoResponseDto> getAccountInfo(@PathVariable Long accountId) {
         return ResponseEntity.ok(travelAccountService.getInfo(accountId));
+    }
+
+    @GetMapping("/childList/{accountId}")
+    public ResponseEntity<List<Long>> getChildList(@PathVariable Long accountId) {
+        return ResponseEntity.ok(travelAccountService.getChildList(accountId));
     }
 }

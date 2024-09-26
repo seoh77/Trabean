@@ -110,4 +110,16 @@ public class TravelAccountService {
         KrwTravelAccount account = krwTravelAccountRepository.findByAccountId(accountId);
         return new AccountInfoResponseDto(account.getAccountName(), account.getTargetAmount());
     }
+
+    public List<Long> getChildList(Long accountId) {
+        List<ForeignTravelAccount> childAccounts = krwTravelAccountRepository.findByAccountId(accountId)
+                .getChildAccounts();
+        List<Long> list = new ArrayList<>();
+
+        for (ForeignTravelAccount account : childAccounts) {
+            list.add(account.getAccountId());
+        }
+
+        return list;
+    }
 }
