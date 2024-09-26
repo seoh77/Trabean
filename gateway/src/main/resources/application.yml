@@ -4,6 +4,8 @@ server:
 
 # Eureka ??
 eureka:
+  instance:
+    hostname: j11a604.p.ssafy.io
   client:
     register-with-eureka: true  # Eureka ??? ?? ??
     fetch-registry: true  # Eureka ???? ??? ??? ??? ???? ??
@@ -21,46 +23,32 @@ spring:
       routes: # ??? ?? ??아
         - id: accountRoute  # ??? ID
           uri: lb://ACCOUNT # ??? ??? URI (??? ?? URI? ???? ?)
-          filters:
-            - name: GatewayLoggingFilter  # 로깅 필터 추가
           predicates: # ??? ????? ??
             - Path=/api/accounts/**  # /account/** ??? ?? ??? ??
 
         - id: chatbotRoute
           uri: lb://CHATBOT
-          filters:
-            - name: GatewayLoggingFilter  # 로깅 필터 추가
           predicates:
             - Path=/api/chatbot/**
 
         - id: notificationRoute
           #          uri: http://j11a604.p.ssafy.io:8083
-
-          #          uri: lb://NOTIFICATION
-          uri: lb://1451b0530aa3
-          filters:
-            - name: GatewayLoggingFilter  # 로깅 필터 추가
+          uri: lb://NOTIFICATION
           predicates:
             - Path=/api/notification/**
 
         - id: paymentRoute
           uri: lb://PAYMENT
-          filters:
-            - name: GatewayLoggingFilter  # 로깅 필터 추가
           predicates:
             - Path=/api/payments/**
 
         - id: travelRoute
           uri: lb://TRAVEL
-          filters:
-            - name: GatewayLoggingFilter  # 로깅 필터 추가
           predicates:
             - Path=/api/travel/**
 
         - id: userRoute
           uri: lb://USER
-          filters:
-            - name: GatewayLoggingFilter  # 로깅 필터 추가
           predicates:
             - Path=/api/user/**
 
