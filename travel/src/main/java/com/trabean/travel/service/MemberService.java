@@ -31,11 +31,12 @@ public class MemberService {
 
         String email = invitaionRequestDto.getEmail();
 
-        Invitation invitation = new Invitation();
-        invitation.setEmail(email);
-        invitation.setAccepted(false);
-        invitation.setInviteDate(new Timestamp(System.currentTimeMillis()));
-        invitation.setAccount(account);
+        Invitation invitation = Invitation.builder()
+                .email(email)
+                .isAccepted(false)
+                .inviteDate(new Timestamp(System.currentTimeMillis()))
+                .account(account)
+                .build();
 
         try {
             sendMail(email);

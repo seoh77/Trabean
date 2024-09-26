@@ -33,7 +33,7 @@ public class TravelAccountService {
     @Transactional
     public Long updateTravelAccountName(Long accountId, String accountName) {
         KrwTravelAccount account = krwTravelAccountRepository.findByAccountId(accountId);
-        account.setAccountName(accountName);
+        account.changeAccountName(accountName);
         return accountId;
     }
 
