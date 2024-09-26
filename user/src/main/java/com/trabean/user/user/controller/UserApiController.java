@@ -91,4 +91,10 @@ public class UserApiController {
 		return ResponseEntity.ok(userNameResponse);
 	}
 
+
+
+	@GetMapping("email/{email}")
+	public ResponseEntity<Boolean> checkEmailDuplication(@PathVariable String email) {
+		return ResponseEntity.ok(userService.checkEmailDuplication(email));
+	}
 }

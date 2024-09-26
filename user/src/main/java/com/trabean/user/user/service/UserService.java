@@ -109,4 +109,8 @@ public class UserService {
         // 사용자를 찾지 못한 경우 기본값을 반환
         return new UserNameResponse(null);
     }
+
+    public boolean checkEmailDuplication(String email) {
+        return userRepository.existsByEmail(email);
+    }
 }
