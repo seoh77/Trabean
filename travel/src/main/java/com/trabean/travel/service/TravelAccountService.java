@@ -5,6 +5,7 @@ import static com.trabean.util.CurrencyUtils.changeCurrency;
 import com.trabean.travel.callApi.client.DemandDepositClient;
 import com.trabean.travel.callApi.dto.request.AccountBalanceApiRequestDto;
 import com.trabean.travel.callApi.dto.response.AccountBalanceApiResponseDto;
+import com.trabean.travel.dto.response.AccountInfoResponseDto;
 import com.trabean.travel.dto.response.TravelAccountIdResponseDto;
 import com.trabean.travel.dto.response.TravelAccountResponseDto;
 import com.trabean.travel.dto.response.TravelListAccountResponseDto;
@@ -105,4 +106,8 @@ public class TravelAccountService {
         return null;
     }
 
+    public AccountInfoResponseDto getInfo(Long accountId) {
+        KrwTravelAccount account = krwTravelAccountRepository.findByAccountId(accountId);
+        return new AccountInfoResponseDto(account.getAccountName(), account.getTargetAmount());
+    }
 }

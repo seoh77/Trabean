@@ -5,6 +5,7 @@ import com.trabean.travel.dto.request.ExchangeRequestDto;
 import com.trabean.travel.dto.request.ForeignAccountHistoryRequestDto;
 import com.trabean.travel.dto.request.InvitaionRequestDto;
 import com.trabean.travel.dto.request.SaveForeignAccountRequestDto;
+import com.trabean.travel.dto.response.AccountInfoResponseDto;
 import com.trabean.travel.dto.response.ExchangeEstimateResponseDto;
 import com.trabean.travel.dto.response.ExchangeResponseDto;
 import com.trabean.travel.dto.response.ForeignAccountHistoryResponseDto;
@@ -111,5 +112,10 @@ public class TravelAccountController {
     @PostMapping("/exchange")
     public ResponseEntity<ExchangeResponseDto> exchange(@RequestBody ExchangeRequestDto exchangeRequestDto) {
         return ResponseEntity.ok(exchangeService.exchange(exchangeRequestDto));
+    }
+
+    @GetMapping("/info/{accountId}")
+    public ResponseEntity<AccountInfoResponseDto> getAccountInfo(@PathVariable Long accountId) {
+        return ResponseEntity.ok(travelAccountService.getInfo(accountId));
     }
 }
