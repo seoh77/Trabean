@@ -52,7 +52,7 @@ public class TravelAccountController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PutMapping("{accountId}/targetAmount")
+    @PutMapping("targetAmount/{accountId}")
     public ResponseEntity<Void> updateTargetAmount(@PathVariable Long accountId, @RequestBody Long targetAmount) {
         targetAmountService.updateTargetAmount(accountId, targetAmount);
         return ResponseEntity.status(HttpStatus.CREATED).build();
