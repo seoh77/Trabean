@@ -3,6 +3,7 @@ package com.trabean.gateway.filter;
 import com.trabean.gateway.client.dto.request.UserIdReq;
 import com.trabean.gateway.client.dto.response.UserKeyRes;
 import com.trabean.gateway.client.feign.UserFeign;
+import com.trabean.gateway.util.Encryption;
 import com.trabean.gateway.util.JwtManger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,11 +64,22 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
             UserKeyRes userKeyRes = userFeign.getUserKey(new UserIdReq(userId));
             String userKey = userKeyRes.getUserKey();
 
-            // userId와 userKey를 헤더에 추가하여 다음 요청으로 전달
-            exchange.getRequest().mutate()
-                    .header("userId", String.valueOf(userId)) // 헤더에 userId 추가
-                    .header("userKey", userKey) // 헤더에 userKey 추가
-                    .build();
+            try {
+                // userId와 userKey를 암호화
+                String encryptedUserId = Encryption.encrypt(String.valueOf(userId));
+                String encryptedUserKey = Encryption.encrypt(userKey);
+
+                // 헤더에 암호화된 userId와 userKey 추가
+                exchange.getRequest().mutate()
+                        .header("userId", encryptedUserId)
+                        .header("userKey", encryptedUserKey)
+                        .build();
+
+            } catch (Exception e) {
+                logger.error("Encryption error: ", e);
+                exchange.getResponse().setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
+                return exchange.getResponse().setComplete();
+            }
 
             return chain.filter(exchange); // 다음 필터로 요청을 전달
         };
