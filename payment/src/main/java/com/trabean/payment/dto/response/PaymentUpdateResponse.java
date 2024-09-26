@@ -2,10 +2,8 @@ package com.trabean.payment.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
 public class PaymentUpdateResponse {
     private String status;
@@ -13,7 +11,6 @@ public class PaymentUpdateResponse {
     private PaymentData data;
 
     @Getter
-    @NoArgsConstructor
     @AllArgsConstructor
     public static class PaymentData {
         private Long payId;
