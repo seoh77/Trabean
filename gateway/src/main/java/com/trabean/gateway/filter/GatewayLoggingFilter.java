@@ -21,6 +21,10 @@ public class GatewayLoggingFilter extends AbstractGatewayFilterFactory<GatewayLo
         return (exchange, chain) -> {
             String requestPath = exchange.getRequest().getURI().toString();
             logger.info("Request Path: {}", requestPath);
+
+            String serviceId = exchange.getAttribute("org.springframework.cloud.gateway.serviceId");
+            logger.info("Service ID: {}", serviceId);
+
             return chain.filter(exchange).then(Mono.fromRunnable(() -> {
                 String responsePath = exchange.getResponse().getHeaders().getLocation() != null ?
                         exchange.getResponse().getHeaders().getLocation().toString() : "No response location";
