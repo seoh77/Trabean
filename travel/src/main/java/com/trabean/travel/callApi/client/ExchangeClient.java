@@ -1,6 +1,8 @@
 package com.trabean.travel.callApi.client;
 
+import com.trabean.travel.callApi.dto.request.ExchangeApiRequestDto;
 import com.trabean.travel.callApi.dto.request.ExchangeEstimateApiRequestDto;
+import com.trabean.travel.callApi.dto.response.ExchangeApiResponseDto;
 import com.trabean.travel.callApi.dto.response.ExchangeEstimateApiResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.FeignClientsConfiguration;
@@ -16,5 +18,11 @@ public interface ExchangeClient {
     @PostMapping("/estimate")
     ExchangeEstimateApiResponseDto getExchangeEstimate(
             @RequestBody ExchangeEstimateApiRequestDto exchangeEstimateApiRequestDto);
+
+    /**
+     * SSAFY API : 환전 신청
+     */
+    @PostMapping
+    ExchangeApiResponseDto exchange(@RequestBody ExchangeApiRequestDto exchangeApiRequestDto);
 
 }

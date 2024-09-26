@@ -1,8 +1,10 @@
 package com.trabean.travel.callApi.client;
 
 import com.trabean.travel.callApi.dto.request.AccountHistoryRequestDto;
+import com.trabean.travel.callApi.dto.request.DepositForeignAccountApiRequestDto;
 import com.trabean.travel.callApi.dto.request.GetAccountBalanceRequestDto;
 import com.trabean.travel.callApi.dto.response.AccountHistoryResponseDto;
+import com.trabean.travel.callApi.dto.response.DepositForeignAccountApiResponseDto;
 import com.trabean.travel.callApi.dto.response.GetAccountBalanceResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.FeignClientsConfiguration;
@@ -25,5 +27,12 @@ public interface ForeignCurrencyClient {
     @PostMapping("/inquireForeignCurrencyTransactionHistoryList")
     AccountHistoryResponseDto getForeignAccountHistoryList(
             @RequestBody AccountHistoryRequestDto accountHistoryRequestDto);
+
+    /**
+     * SSAFY API : 외화 계좌 입금
+     */
+    @PostMapping("/updateForeignCurrencyDemandDepositAccountDeposit")
+    DepositForeignAccountApiResponseDto updateForeignAccountDeposit(
+            @RequestBody DepositForeignAccountApiRequestDto depositForeignAccountApiRequestDto);
 
 }

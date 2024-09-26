@@ -39,10 +39,12 @@ public class ForeignTravelAccountService {
         Long parentAccountId = saveForeignAccountRequestDto.getParentAccountId();
         KrwTravelAccount parentAccount = krwTravelAccountRepository.findByAccountId(parentAccountId);
 
-        ForeignTravelAccount foreignTravelAccount = new ForeignTravelAccount();
-        foreignTravelAccount.setAccountId(saveForeignAccountRequestDto.getAccountId());
-        foreignTravelAccount.setExchangeCurrency(saveForeignAccountRequestDto.getExchangeCurrency());
-        foreignTravelAccount.setParentAccount(parentAccount);
+        ForeignTravelAccount foreignTravelAccount = ForeignTravelAccount.builder()
+                .accountId(saveForeignAccountRequestDto.getAccountId())
+                .exchangeCurrency(saveForeignAccountRequestDto.getExchangeCurrency())
+                .parentAccount(parentAccount)
+                .build();
+
         foreignTravelAccountRepository.save(foreignTravelAccount);
     }
 
