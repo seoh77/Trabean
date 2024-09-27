@@ -3,6 +3,7 @@ package com.trabean.notification.api.controller;
 
 import com.trabean.notification.api.dto.request.NotificationCreateReq;
 import com.trabean.notification.api.dto.response.NotificationReadRes;
+import com.trabean.notification.api.feign.UserFeign;
 import com.trabean.notification.api.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import java.util.List;
 public class NotificationController {
 
     private final NotificationService notificationService;
+    private final UserFeign userFeign;
 
     @PostMapping("")
     public ResponseEntity<?> saveNotification(@RequestBody NotificationCreateReq notificationCreateReq) {
@@ -35,4 +37,13 @@ public class NotificationController {
         notificationService.updateIsReadById(notificationId);
         return ResponseEntity.ok().build();
     }
+//
+//    @GetMapping("/test")
+//    public ResponseEntity<?> test() {
+//        System.out.println("들어옴");
+//        UserKeyReq userKeyReq = new UserKeyReq();
+//        userKeyReq.setUserId(8L);
+//        UserKeyRes userKey = userFeign.getUserKey(userKeyReq);
+//        return ResponseEntity.ok().body(userKey);
+//    }
 }
