@@ -7,7 +7,7 @@ import org.springframework.cloud.openfeign.FeignClientsConfiguration;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "accountClient", url = "http://j11a604.p.ssafy.io:8081/api/accounts", configuration = FeignClientsConfiguration.class)
+@FeignClient(name = "account", configuration = FeignClientsConfiguration.class)
 public interface AccountClient {
 
     /**
