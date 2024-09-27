@@ -5,8 +5,10 @@ import com.trabean.travel.dto.request.ExchangeRequestDto;
 import com.trabean.travel.dto.request.ForeignAccountHistoryRequestDto;
 import com.trabean.travel.dto.request.InvitaionRequestDto;
 import com.trabean.travel.dto.request.SaveForeignAccountRequestDto;
+import com.trabean.travel.dto.request.SplitRequestDto;
 import com.trabean.travel.dto.response.AccountInfoResponseDto;
 import com.trabean.travel.dto.response.ExchangeEstimateResponseDto;
+import com.trabean.travel.dto.response.ExchangeRateResponseDto;
 import com.trabean.travel.dto.response.ExchangeResponseDto;
 import com.trabean.travel.dto.response.ForeignAccountHistoryResponseDto;
 import com.trabean.travel.dto.response.TravelAccountIdResponseDto;
@@ -123,5 +125,16 @@ public class TravelAccountController {
     @GetMapping("/childList/{accountId}")
     public ResponseEntity<List<Long>> getChildList(@PathVariable Long accountId) {
         return ResponseEntity.ok(travelAccountService.getChildList(accountId));
+    }
+
+    @GetMapping("/exchangeRate")
+    public ResponseEntity<List<ExchangeRateResponseDto>> getExchangeRate() {
+        return ResponseEntity.ok(exchangeService.getExchangeRate());
+    }
+
+    @PostMapping("/split")
+    public ResponseEntity<Void> splitAmount(@RequestBody SplitRequestDto splitRequestDto) {
+        krwTravelAccountService.splitAmount(splitRequestDto);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
