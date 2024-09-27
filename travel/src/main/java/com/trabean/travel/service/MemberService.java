@@ -2,8 +2,10 @@ package com.trabean.travel.service;
 
 import com.trabean.travel.callApi.client.AccountClient;
 import com.trabean.travel.callApi.dto.request.MemberJoinApiRequestDto;
+import com.trabean.travel.callApi.dto.request.MemberRoleUpdateApiRequestDto;
 import com.trabean.travel.dto.request.InvitaionRequestDto;
 import com.trabean.travel.dto.request.MemberJoinRequestDto;
+import com.trabean.travel.dto.request.MemberRoleChangeRequestDto;
 import com.trabean.travel.entity.ForeignTravelAccount;
 import com.trabean.travel.entity.Invitation;
 import com.trabean.travel.entity.KrwTravelAccount;
@@ -72,9 +74,30 @@ public class MemberService {
 
     public String join(MemberJoinRequestDto memberJoinRequestDto) {
         Long userId = memberJoinRequestDto.getUserId();
-
         Long krwAccountId = memberJoinRequestDto.getAccountId();
-        KrwTravelAccount krwTravelAccount = krwTravelAccountRepository.findByAccountId(krwAccountId);
+        List<Long> foreignAccountIdList = getChildAccounts(krwAccountId);
+
+        MemberJoinApiRequestDto memberJoinApiRequestDto = new MemberJoinApiRequestDto(
+                userId, krwAccountId, foreignAccountIdList
+        );
+
+        return accountClient.joinMember(memberJoinApiRequestDto).getMessage();
+    }
+
+    public String changeRole(MemberRoleChangeRequestDto memberRoleChangeRequestDto) {
+        Long userId = memberRoleChangeRequestDto.getUserId();
+        Long krwAccountId = memberRoleChangeRequestDto.getAccountId();
+        List<Long> foreignAccountIdList = getChildAccounts(krwAccountId);
+        String userRole = memberRoleChangeRequestDto.getRole();
+
+        MemberRoleUpdateApiRequestDto memberRoleUpdateApiRequestDto =
+                new MemberRoleUpdateApiRequestDto(userId, krwAccountId, foreignAccountIdList, userRole);
+
+        return accountClient.updateUserRole(memberRoleUpdateApiRequestDto).getMessage();
+    }
+
+    public List<Long> getChildAccounts(Long parentAccountId) {
+        KrwTravelAccount krwTravelAccount = krwTravelAccountRepository.findByAccountId(parentAccountId);
 
         List<ForeignTravelAccount> foreignTravelAccounts = krwTravelAccount.getChildAccounts();
         List<Long> foreignAccountIdList = new ArrayList<>();
@@ -83,10 +106,6 @@ public class MemberService {
             foreignAccountIdList.add(account.getAccountId());
         }
 
-        MemberJoinApiRequestDto memberJoinApiRequestDto = new MemberJoinApiRequestDto(
-                userId, krwAccountId, foreignAccountIdList
-        );
-
-        return accountClient.joinMember(memberJoinApiRequestDto).getMessage();
+        return foreignAccountIdList;
     }
 }

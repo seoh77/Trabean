@@ -7,6 +7,7 @@ import com.trabean.travel.dto.request.ExchangeRequestDto;
 import com.trabean.travel.dto.request.ForeignAccountHistoryRequestDto;
 import com.trabean.travel.dto.request.InvitaionRequestDto;
 import com.trabean.travel.dto.request.MemberJoinRequestDto;
+import com.trabean.travel.dto.request.MemberRoleChangeRequestDto;
 import com.trabean.travel.dto.request.SaveForeignAccountRequestDto;
 import com.trabean.travel.dto.request.SaveKrwAccountRequestDto;
 import com.trabean.travel.dto.request.SplitRequestDto;
@@ -155,6 +156,17 @@ public class TravelAccountController {
 
         if (message.equals("통장 권한 변경 성공")) {
             return ResponseEntity.status(HttpStatus.CREATED).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    @PostMapping("/role")
+    public ResponseEntity<Void> changeRole(@RequestBody MemberRoleChangeRequestDto memberRoleChangeRequestDto) {
+        String message = memberService.changeRole(memberRoleChangeRequestDto);
+
+        if (message.equals("통장 권한 변경 성공")) {
+            return ResponseEntity.status(HttpStatus.OK).build();
         }
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
