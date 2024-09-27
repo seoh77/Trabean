@@ -58,9 +58,13 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         // Refresh Token을 DB에 저장
         refreshTokenService.saveRefreshToken(loggedInUser.getEmail(), refreshToken);
 
-        // 응답 헤더에 accessToken 설정
-        response.setHeader("Authorization", "Bearer " + accessToken);
-        response.setContentType("application/json");
+        // accessToken을 HTTPOnly 쿠키에 저장
+        Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
+        accessTokenCookie.setHttpOnly(true);
+        accessTokenCookie.setSecure(true); // HTTPS에서만 전송
+        accessTokenCookie.setPath("/"); // 전체 도메인에서 사용 가능
+        accessTokenCookie.setMaxAge(30 * 60); // 쿠키 만료 시간 설정 (30분)
+        response.addCookie(accessTokenCookie);
 
         // Refresh Token을 HTTPOnly 쿠키에 저장
         Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
@@ -72,12 +76,12 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         // 응답 바디에는 사용자 정보만 포함 (토큰은 제외)
         Map<String, String> responseBody = new HashMap<>();
-        responseBody.put("userKey", userKey);
+//        responseBody.put("userKey", userKey);
 //        responseBody.put("refreshToken", refreshToken);
 //        responseBody.put("accessToken", accessToken);
 
-        // JSON으로 변환하여 응답에 기록
-        response.getWriter().write(new ObjectMapper().writeValueAsString(responseBody));
+        // 응답 상태 설정 (OK 또는 로그인 성공)
+        response.setStatus(HttpServletResponse.SC_OK);
     }
 
 
