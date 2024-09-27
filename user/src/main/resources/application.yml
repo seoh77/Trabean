@@ -20,19 +20,16 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: bdjg1029@gmail.com
-    password: ruowdltoxbmxxrlg
+    password: tukpbkrlifdrruas
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enable: true
-            required: true
-          connectiontimeout: 5000
-          timeout: 5000
-          writetimeout: 5000
-    auth-code-expiration-millis: 1800000 # 30* 60 = 30분
-    default-encoding: UTF-8
+          ssl:
+            trust: smtp.gmail.com
+
 # JWT 설정
 jwt:
   issuer: yhyh
@@ -41,9 +38,10 @@ jwt:
   access-token-validity-in-seconds: 360000
 
 # API 설정
+# 이메일 인증 코드 만료 시간 설정 (분 단위)
 app:
   email-verification:
-    code-expiration-minutes:5
+    code-expiration-minutes: 5
   api:
     url: http://localhost:8080
     # production-url: http://j11a604.p.ssafy.io:8081/
