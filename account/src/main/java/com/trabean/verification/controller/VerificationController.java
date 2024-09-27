@@ -20,10 +20,9 @@ public class VerificationController {
 
     // 1원 인증(1원 송금) API
     @PostMapping("/account")
-    public ResponseEntity<AccountVerificationResponseDTO> getAccountVerification(@RequestHeader Long userId,
-                                                                                 @RequestHeader String userKey,
+    public ResponseEntity<AccountVerificationResponseDTO> getAccountVerification(@RequestHeader String userKey,
                                                                                  @RequestBody AccountVerificationRequestDTO requestDTO) {
-        AccountVerificationResponseDTO responseDTO = verificationService.getAccountVerification(userId, userKey, requestDTO);
+        AccountVerificationResponseDTO responseDTO = verificationService.getAccountVerification(userKey, requestDTO);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 

@@ -1,8 +1,6 @@
 package com.trabean.verification.service;
 
-import com.trabean.account.repository.UserAccountRelationRepository;
 import com.trabean.common.ResponseCode;
-import com.trabean.exception.UserAccountRelationNotFoundException;
 import com.trabean.external.ssafy.verification.client.VerificationClient;
 import com.trabean.external.ssafy.verification.dto.requestDTO.CheckAuthCodeRequestDTO;
 import com.trabean.external.ssafy.verification.dto.requestDTO.OpenAccountAuthRequestDTO;
@@ -15,22 +13,15 @@ import com.trabean.verification.dto.response.AccountVerificationResponseDTO;
 import com.trabean.verification.dto.response.OneWonVerificationResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class VerificationService {
 
     private final VerificationClient verificationClient;
-    private final UserAccountRelationRepository userAccountRelationRepository;
 
     // 1원 인증(1원 송금) 서비스 로직
-    public AccountVerificationResponseDTO getAccountVerification(Long userId, String userKey, AccountVerificationRequestDTO requestDTO) {
-
-        // 유저가 해당 계좌와 관계가 있는지 확인
-        userAccountRelationRepository.findByUserIdAndAccountId(userId, requestDTO.getAccountId())
-                .orElseThrow(UserAccountRelationNotFoundException::getInstance);
+    public AccountVerificationResponseDTO getAccountVerification(String userKey, AccountVerificationRequestDTO requestDTO) {
 
         // SSAFY API 1원 송금 요청
         OpenAccountAuthRequestDTO openAccountAuthRequestDTO = OpenAccountAuthRequestDTO.builder()
