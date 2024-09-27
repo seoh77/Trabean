@@ -1,14 +1,14 @@
 package com.trabean.notification.api.controller;
 
 
-import com.trabean.notification.api.dto.request.NotificationSaveReq;
+import com.trabean.notification.api.dto.request.NotificationCreateReq;
+import com.trabean.notification.api.dto.response.NotificationReadRes;
 import com.trabean.notification.api.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,10 +19,14 @@ public class NotificationController {
     private final NotificationService notificationService;
 
     @PostMapping("")
-    public ResponseEntity<?> saveNotification(@RequestBody NotificationSaveReq notificationSaveReq) {
-        notificationService.saveNotification(notificationSaveReq);
+    public ResponseEntity<?> saveNotification(@RequestBody NotificationCreateReq notificationCreateReq) {
+        notificationService.saveNotification(notificationCreateReq);
         return ResponseEntity.ok().build();
     }
 
-
+    @GetMapping("/{receiverId}")
+    public ResponseEntity<?> getNotification(@PathVariable Long receiverId) {
+        List<NotificationReadRes> notificationReadResList = notificationService.findByUserId(receiverId);
+        return ResponseEntity.ok().body(notificationReadResList);
+    }
 }

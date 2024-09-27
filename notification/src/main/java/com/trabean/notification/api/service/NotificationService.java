@@ -1,9 +1,14 @@
 package com.trabean.notification.api.service;
 
 
-import com.trabean.notification.api.dto.request.NotificationSaveReq;
+import com.trabean.notification.api.dto.request.NotificationCreateReq;
+import com.trabean.notification.api.dto.response.NotificationReadRes;
+
+import java.util.List;
 
 public interface NotificationService {
 
-    public void saveNotification(NotificationSaveReq notificationSaveReq);
+    public void saveNotification(NotificationCreateReq notificationCreateReq);
+
+    public List<NotificationReadRes> findByUserId(Long userId);
 }

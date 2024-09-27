@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class NotificationSaveReq {
+public class NotificationCreateReq {
 
     private Long senderId;
     private Long receiverId;
