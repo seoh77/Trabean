@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -25,8 +26,9 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
     private final UserFeign userFeign;
 
     // 생성자에서 JwtManger와 UserFeign을 주입받음
+    // @Lazy 사용하면 실제로 userFeign이 사용될때 주입
     @Autowired
-    public JwtFilter(JwtManger jwtManger, UserFeign userFeign) {
+    public JwtFilter(JwtManger jwtManger, @Lazy UserFeign userFeign) {
         super(Config.class); // 설정 클래스를 지정
         this.jwtManger = jwtManger; // 주입받은 jwtManger를 필드에 저장
         this.userFeign = userFeign;
