@@ -70,18 +70,20 @@ public class TravelAccountService {
 
         List<ForeignTravelAccount> foreignTravelAccounts = krwTravelAccount.getChildAccounts();
 
-        for (ForeignTravelAccount foreignTravelAccount : foreignTravelAccounts) {
-            Long accountId = foreignTravelAccount.getAccountId();
-            String exchangeCurrency = foreignTravelAccount.getExchangeCurrency();
-            String country = changeCurrency(exchangeCurrency);
+        if (!foreignTravelAccounts.isEmpty()) {
+            for (ForeignTravelAccount foreignTravelAccount : foreignTravelAccounts) {
+                Long accountId = foreignTravelAccount.getAccountId();
+                String exchangeCurrency = foreignTravelAccount.getExchangeCurrency();
+                String country = changeCurrency(exchangeCurrency);
 
-            // 외화통장 계좌번호 조회
-            String foreignAccountNo = commonAccountService.getAccountNo(accountId);
+                // 외화통장 계좌번호 조회
+                String foreignAccountNo = commonAccountService.getAccountNo(accountId);
 
-            // 외화통장 잔액조회
-            Double foreignAccountBalance = commonAccountService.getForeignAccountBalance(foreignAccountNo);
+                // 외화통장 잔액조회
+                Double foreignAccountBalance = commonAccountService.getForeignAccountBalance(foreignAccountNo);
 
-            list.add(new TravelAccountResponseDto(accountId, country, exchangeCurrency, foreignAccountBalance));
+                list.add(new TravelAccountResponseDto(accountId, country, exchangeCurrency, foreignAccountBalance));
+            }
         }
 
         return new TravelListAccountResponseDto(krwTravelAccount.getAccountName(), list);
