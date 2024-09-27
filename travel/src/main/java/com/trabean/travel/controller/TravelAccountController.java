@@ -1,6 +1,7 @@
 package com.trabean.travel.controller;
 
 import com.trabean.travel.dto.request.AccountChangeNameRequestDto;
+import com.trabean.travel.dto.request.AccountChangeTargetAmountRequestDto;
 import com.trabean.travel.dto.request.ExchangeEstimateRequestDto;
 import com.trabean.travel.dto.request.ExchangeRequestDto;
 import com.trabean.travel.dto.request.ForeignAccountHistoryRequestDto;
@@ -60,8 +61,11 @@ public class TravelAccountController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PutMapping("targetAmount/{accountId}")
-    public ResponseEntity<Void> updateTargetAmount(@PathVariable Long accountId, @RequestBody Long targetAmount) {
+    @PutMapping("/change/targetAmount")
+    public ResponseEntity<Void> updateTargetAmount(
+            @RequestBody AccountChangeTargetAmountRequestDto accountChangeTargetAmountRequestDto) {
+        Long accountId = accountChangeTargetAmountRequestDto.getAccountId();
+        Long targetAmount = accountChangeTargetAmountRequestDto.getTargetAmount();
         targetAmountService.updateTargetAmount(accountId, targetAmount);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
