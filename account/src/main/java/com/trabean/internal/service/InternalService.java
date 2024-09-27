@@ -7,13 +7,11 @@ import com.trabean.exception.*;
 import com.trabean.external.msa.user.client.UserClient;
 import com.trabean.external.msa.user.dto.request.UserKeyRequestDTO;
 import com.trabean.external.msa.user.dto.response.UserKeyResponseDTO;
-import com.trabean.internal.dto.requestDTO.AdminUserKeyRequestDTO;
-import com.trabean.internal.dto.requestDTO.UserRoleRequestDTO;
-import com.trabean.internal.dto.requestDTO.VerifyPasswordRequestDTO;
+import com.trabean.internal.dto.requestDTO.*;
 import com.trabean.internal.dto.responseDTO.AdminUserKeyResponseDTO;
+import com.trabean.internal.dto.responseDTO.UpdateUserRoleResponseDTO;
 import com.trabean.internal.dto.responseDTO.UserRoleResponseDTO;
 import com.trabean.account.repository.AccountRepository;
-import com.trabean.internal.dto.requestDTO.AccountNoRequestDTO;
 import com.trabean.internal.dto.responseDTO.VerifyPasswordResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -52,7 +50,7 @@ public class InternalService {
     // 통장 권한 조회 서비스 로직
     public UserRoleResponseDTO getUserRole(UserRoleRequestDTO requestDTO) {
 
-        UserAccountRelation.UserRole userRole = userAccountRelationRepository.findByUserIdAndAccountId(requestDTO.getUserId(), requestDTO.getAccountId())
+        UserAccountRelation.UserRole userRole = userAccountRelationRepository.findUserRoleByUserIdAndAccountId(requestDTO.getUserId(), requestDTO.getAccountId())
                 .orElseThrow(UserAccountRelationNotFoundException::getInstance)
                 .getUserRole();
 
@@ -62,10 +60,27 @@ public class InternalService {
                 .build();
     }
 
+    // 여행통장 결제 권한 변경 서비스 로직
+    public UpdateUserRoleResponseDTO updateUserRole(UpdateUserRoleRequestDTO requestDTO) {
+        int count = 0;
+
+        userAccountRelationRepository.updateUserRoleByUserIdAndAccountId(requestDTO.getUserId(), requestDTO.getDomesticAccountId(), requestDTO.getUserRole());
+        count++;
+
+        for(Long foreignAccountId : requestDTO.getForeignAccountIdList()){
+            userAccountRelationRepository.updateUserRoleByUserIdAndAccountId(requestDTO.getUserId(), foreignAccountId, requestDTO.getUserRole());
+            count++;
+        }
+
+        return UpdateUserRoleResponseDTO.builder()
+                .message("여행통장 결제 권한 변경 성공 : " + count + "개 바뀜")
+                .build();
+    }
+
     // 결제 비밀번호 검증 서비스 로직
     public VerifyPasswordResponseDTO verifyPassword(VerifyPasswordRequestDTO requestDTO) {
 
-        UserAccountRelation.UserRole userRole = userAccountRelationRepository.findByUserIdAndAccountId(requestDTO.getUserId(), requestDTO.getAccountId())
+        UserAccountRelation.UserRole userRole = userAccountRelationRepository.findUserRoleByUserIdAndAccountId(requestDTO.getUserId(), requestDTO.getAccountId())
                 .orElseThrow(UserAccountRelationNotFoundException::getInstance)
                 .getUserRole();
 
@@ -77,9 +92,7 @@ public class InternalService {
                 .orElseThrow(AccountNotFoundException::getInstance)
                 .getPassword();
 
-        String password = requestDTO.getPassword();
-
-        if(passwordEncoder.matches(password + PEPPER, savedPassword)){
+        if(passwordEncoder.matches(requestDTO.getPassword() + PEPPER, savedPassword)){
             return VerifyPasswordResponseDTO.builder()
                     .message("결제 비밀번호 검증 성공")
                     .build();
@@ -89,11 +102,10 @@ public class InternalService {
         }
     }
 
+    // 통장 주인의 userKey 조회 서비스 로직
     public AdminUserKeyResponseDTO getAdminUserKey(AdminUserKeyRequestDTO requestDTO) {
 
-        Long accountId = requestDTO.getAccountId();
-
-        List<UserAccountRelation> userAccountRelations = userAccountRelationRepository.findAllByAccountId(accountId);
+        List<UserAccountRelation> userAccountRelations = userAccountRelationRepository.findAllByAccountId(requestDTO.getAccountId());
 
         Long userId = userAccountRelations.stream()
                 .filter(relation -> relation.getUserRole() == UserAccountRelation.UserRole.ADMIN)
@@ -101,15 +113,12 @@ public class InternalService {
                 .findFirst()
                 .orElseThrow(UserAccountRelationNotFoundException::getInstance);
 
-        System.out.println("userId = " + userId);
-
+        // User 서버에 userKey 조회 요청
         UserKeyRequestDTO userKeyRequestDTO = UserKeyRequestDTO.builder()
                 .userId(userId)
                 .build();
 
         UserKeyResponseDTO userKeyResponseDTO = userClient.getUserKey(userKeyRequestDTO);
-
-        System.out.println("안녕");
 
         String userKey = userKeyResponseDTO.getUserKey();
 
@@ -117,4 +126,5 @@ public class InternalService {
                 .userKey(userKey)
                 .build();
     }
+
 }

@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface UserAccountRelationRepository extends JpaRepository<UserAccountRelation, Long> {
 
     @Query("SELECT u FROM UserAccountRelation u WHERE u.userId = :userId AND u.account.accountId = :accountId")
-    Optional<UserAccountRelation> findByUserIdAndAccountId(Long userId, Long accountId);
+    Optional<UserAccountRelation> findUserRoleByUserIdAndAccountId(Long userId, Long accountId);
 
     @Modifying
     @Query("UPDATE UserAccountRelation u SET u.userRole = :userRole WHERE u.userId = :userId AND u.account.accountId = :accountId")
