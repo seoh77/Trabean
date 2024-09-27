@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * SSAFY 금융 API 에서 요청 성공 시 반환하는 responseDTO
+ */
 @Builder
 @Getter
 @NoArgsConstructor
