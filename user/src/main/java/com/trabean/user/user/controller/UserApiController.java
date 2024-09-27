@@ -79,6 +79,7 @@ public class UserApiController {
 	// 사용자 정보 조회 및 name 반환
 	@GetMapping("/name/{userId}")
 	public ResponseEntity<UserNameResponse> getUserName(@PathVariable Long userId) {
+		logger.info("여기왔지롱");
 		UserNameResponse userNameResponse = userService.getUserName(userId);
 
 		// 만약 name가 null이면, null로 설정
