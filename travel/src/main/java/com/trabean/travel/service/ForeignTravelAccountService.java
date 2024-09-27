@@ -55,7 +55,7 @@ public class ForeignTravelAccountService {
         String exchangeCurrency = foreignTravelAccountRepository.findByAccountId(accountId).getExchangeCurrency();
         String country = changeCurrency(exchangeCurrency);
         String accountNo = commonAccountService.getAccountNo(accountId);
-        Double accountBalance = commonAccountService.getForeignAccountBalance(accountNo);
+        Double accountBalance = commonAccountService.getForeignAccountBalance(accountId, accountNo);
 
         // 외화 계좌 거래 내역 조회
         AccountHistoryApiRequestDto accountHistoryApiRequestDto =

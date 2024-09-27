@@ -1,7 +1,9 @@
 package com.trabean.travel.callApi.client;
 
 import com.trabean.travel.callApi.dto.request.AccountNumberApiRequestDto;
+import com.trabean.travel.callApi.dto.request.AdminUserKeyApiRequestDto;
 import com.trabean.travel.callApi.dto.response.AccountNumberApiResponseDto;
+import com.trabean.travel.callApi.dto.response.AdminUserKeyApiResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.FeignClientsConfiguration;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,5 +17,11 @@ public interface AccountClient {
      */
     @PostMapping("/internal/get-accountNo")
     AccountNumberApiResponseDto getAccount(@RequestBody AccountNumberApiRequestDto accountNumberApiRequestDto);
+
+    /**
+     * Account API : 통장 주인의 userKey 조회
+     */
+    @PostMapping("/internal/get-admin-userKey")
+    AdminUserKeyApiResponseDto getAdminUserKey(@RequestBody AdminUserKeyApiRequestDto adminUserKeyApiRequestDto);
 
 }

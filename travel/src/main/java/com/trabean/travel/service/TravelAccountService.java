@@ -52,12 +52,13 @@ public class TravelAccountService {
 
         // krwTravelAccount 잔액조회
         Double accountKRWBalance = 0.0;
+        String adminUserKey = commonAccountService.getUserKey(parentId);
 
         AccountBalanceApiRequestDto getAccountBalanceRequestDto
                 = new AccountBalanceApiRequestDto(
                 RequestHeader.builder()
                         .apiName("inquireDemandDepositAccountBalance")
-                        .userKey(userKey)
+                        .userKey(adminUserKey)
                         .build(),
                 accountKRWNo);
 
@@ -80,7 +81,8 @@ public class TravelAccountService {
                 String foreignAccountNo = commonAccountService.getAccountNo(accountId);
 
                 // 외화통장 잔액조회
-                Double foreignAccountBalance = commonAccountService.getForeignAccountBalance(foreignAccountNo);
+                Double foreignAccountBalance = commonAccountService.getForeignAccountBalance(accountId,
+                        foreignAccountNo);
 
                 list.add(new TravelAccountResponseDto(accountId, country, exchangeCurrency, foreignAccountBalance));
             }

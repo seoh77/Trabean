@@ -4,6 +4,7 @@ import com.trabean.travel.callApi.client.AccountClient;
 import com.trabean.travel.callApi.client.ForeignCurrencyClient;
 import com.trabean.travel.callApi.dto.request.AccountBalanceApiRequestDto;
 import com.trabean.travel.callApi.dto.request.AccountNumberApiRequestDto;
+import com.trabean.travel.callApi.dto.request.AdminUserKeyApiRequestDto;
 import com.trabean.travel.callApi.dto.response.AccountBalanceApiResponseDto;
 import com.trabean.travel.callApi.dto.response.AccountNumberApiResponseDto;
 import com.trabean.util.RequestHeader;
@@ -20,6 +21,13 @@ public class CommonAccountService {
     private String userKey = "9e10349e-91e9-474d-afb4-564b24178d9f";
 
     /**
+     * 통장 주인의 userKey 조회
+     */
+    public String getUserKey(Long parentId) {
+        return accountClient.getAdminUserKey(new AdminUserKeyApiRequestDto(parentId)).getUserKey();
+    }
+
+    /**
      * 계좌번호 조회
      */
     public String getAccountNo(Long accountId) {
@@ -31,11 +39,13 @@ public class CommonAccountService {
     /**
      * 외화 계좌 잔액 조회
      */
-    public Double getForeignAccountBalance(String accountNo) {
+    public Double getForeignAccountBalance(Long accountId, String accountNo) {
+        String adminUserKey = getUserKey(accountId);
+
         AccountBalanceApiRequestDto accountBalanceApiRequestDto = new AccountBalanceApiRequestDto(
                 RequestHeader.builder()
                         .apiName("inquireForeignCurrencyDemandDepositAccountBalance")
-                        .userKey(userKey)
+                        .userKey(adminUserKey)
                         .build(),
                 accountNo);
 
