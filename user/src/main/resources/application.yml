@@ -1,5 +1,5 @@
 server:
- port: 8086
+port: 8086
 
 spring:
   application:
@@ -17,21 +17,22 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
   mail:
-  host:
-  port: 587
-  username: bdjg1029@gmail.com
-  password: ruowdltoxbmxxrlg
-  properties:
-    mail:
-      smtp:
-        auth: true
-        starttls:
-          enable: true
-          required: true
-        connectiontimeout: 5000
-        timeout: 5000
-        writetimeout: 5000
-  auth-code-expiration-millis: 1800000 # 30* 60 = 30분
+    host: smtp.gmail.com
+    port: 587
+    username: bdjg1029@gmail.com
+    password: ruowdltoxbmxxrlg
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+    auth-code-expiration-millis: 1800000 # 30* 60 = 30분
+    default-encoding: UTF-8
 # JWT 설정
 jwt:
   issuer: yhyh
@@ -41,6 +42,8 @@ jwt:
 
 # API 설정
 app:
+  email-verification:
+    code-expiration-minutes:5
   api:
     url: http://localhost:8080
     # production-url: http://j11a604.p.ssafy.io:8081/
@@ -69,3 +72,5 @@ logging:
     org.springframework.cloud.gateway: DEBUG
     org.hibernate: DEBUG
     org.springframework: DEBUG
+    org.springframework.mail: DEBUG
+    org.springframework.security: DEBUG
