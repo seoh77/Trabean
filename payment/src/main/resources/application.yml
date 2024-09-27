@@ -32,13 +32,14 @@ server:
 
 # Eureka ??
 eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://j11a604.p.ssafy.io:8761/eureka
   instance:
     hostname: j11a604.p.ssafy.io
+  client:
+    register-with-eureka: true  # Eureka ??? ?? ??
+    fetch-registry: true  # Eureka ???? ??? ??? ??? ???? ??
+    service-url:
+      defaultZone: http://j11a604.p.ssafy.io:8761/eureka # Eureka ??? ?? URL (??? ?? URL? ???? ?)
+
 
 management:
   endpoint:
