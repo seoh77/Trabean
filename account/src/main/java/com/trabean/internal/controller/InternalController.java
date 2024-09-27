@@ -1,8 +1,10 @@
 package com.trabean.internal.controller;
 
 import com.trabean.account.dto.response.AccountNoResponseDTO;
+import com.trabean.internal.dto.requestDTO.AdminUserKeyRequestDTO;
 import com.trabean.internal.dto.requestDTO.UserRoleRequestDTO;
 import com.trabean.internal.dto.requestDTO.VerifyPasswordRequestDTO;
+import com.trabean.internal.dto.responseDTO.AdminUserKeyResponseDTO;
 import com.trabean.internal.dto.responseDTO.UserRoleResponseDTO;
 import com.trabean.internal.dto.requestDTO.AccountNoRequestDTO;
 import com.trabean.internal.dto.responseDTO.VerifyPasswordResponseDTO;
@@ -38,6 +40,13 @@ public class InternalController {
     @PostMapping("/verify-password")
     public ResponseEntity<VerifyPasswordResponseDTO> verifyPassword(@RequestBody VerifyPasswordRequestDTO requestDTO) {
         VerifyPasswordResponseDTO responseDTO = internalService.verifyPassword(requestDTO);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
+
+    //
+    @PostMapping("/get-admin-userKey")
+    public ResponseEntity<AdminUserKeyResponseDTO> getAdminUserKey(@RequestBody AdminUserKeyRequestDTO requestDTO) {
+        AdminUserKeyResponseDTO responseDTO = internalService.getAdminUserKey(requestDTO);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 }

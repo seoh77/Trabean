@@ -1,4 +1,4 @@
-package com.trabean.exception.dto;
+package com.trabean.internal.dto.responseDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class InternalErrorResponseDTO {
-    private String message;
+public class AdminUserKeyResponseDTO {
+    private String userKey;
 }

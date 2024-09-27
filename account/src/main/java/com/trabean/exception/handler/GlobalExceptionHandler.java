@@ -2,9 +2,9 @@ package com.trabean.exception.handler;
 
 import com.trabean.common.ResponseCode;
 import com.trabean.exception.*;
-import com.trabean.exception.dto.ExternalErrorResponseDTO;
-import com.trabean.exception.dto.InternalErrorResponseDTO;
-import com.trabean.exception.dto.SsafyErrorResponseDTO;
+import com.trabean.exception.dto.ExternalServerErrorResponseDTO;
+import com.trabean.exception.dto.InternalServerErrorResponseDTO;
+import com.trabean.exception.dto.SsafyServerErrorResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -20,8 +20,8 @@ public class GlobalExceptionHandler {
             AccountNotFoundException.class,
             UserAccountRelationNotFoundException.class
     })
-    public ResponseEntity<InternalErrorResponseDTO> handleNotFoundException(RuntimeException e) {
-        InternalErrorResponseDTO responseDTO = InternalErrorResponseDTO.builder()
+    public ResponseEntity<InternalServerErrorResponseDTO> handleNotFoundException(RuntimeException e) {
+        InternalServerErrorResponseDTO responseDTO = InternalServerErrorResponseDTO.builder()
                 .message(e.getMessage())
                 .build();
         return new ResponseEntity<>(responseDTO, HttpStatus.NOT_FOUND);
@@ -35,19 +35,30 @@ public class GlobalExceptionHandler {
             InvalidPasswordException.class,
             UnauthorizedUserRoleException.class
     })
-    public ResponseEntity<InternalErrorResponseDTO> handleUForbiddenException(RuntimeException e) {
-        InternalErrorResponseDTO responseDTO = InternalErrorResponseDTO.builder()
+    public ResponseEntity<InternalServerErrorResponseDTO> handleUForbiddenException(RuntimeException e) {
+        InternalServerErrorResponseDTO responseDTO = InternalServerErrorResponseDTO.builder()
                 .message(e.getMessage())
                 .build();
         return new ResponseEntity<>(responseDTO, HttpStatus.FORBIDDEN);
     }
 
     /**
+     * 내 서버에서 500 에러코드를 응답하는 상황
+     */
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<InternalServerErrorResponseDTO> handleInternalServerException(Exception e) {
+        InternalServerErrorResponseDTO responseDTO = InternalServerErrorResponseDTO.builder()
+                .message(e.getMessage())
+                .build();
+        return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
      * 다른 서버에서 에러 응답을 보내는 상황
      */
     @ExceptionHandler(InternalServerStatusException.class)
-    public ResponseEntity<ExternalErrorResponseDTO> handleInternalServerException(RuntimeException e) {
-        ExternalErrorResponseDTO responseDTO = ExternalErrorResponseDTO.builder()
+    public ResponseEntity<ExternalServerErrorResponseDTO> handleExternalServerException(RuntimeException e) {
+        ExternalServerErrorResponseDTO responseDTO = ExternalServerErrorResponseDTO.builder()
                 .message(e.getMessage())
                 .build();
         return new ResponseEntity<>(responseDTO, HttpStatus.BAD_GATEWAY);
@@ -57,8 +68,8 @@ public class GlobalExceptionHandler {
      * SSAFY 금융 API에서 에러 응답을 보내는 상황
      */
     @ExceptionHandler(CustomFeignClientException.class)
-    public ResponseEntity<SsafyErrorResponseDTO> handleCustomFeignClientException(CustomFeignClientException e) {
-        SsafyErrorResponseDTO responseDTO = SsafyErrorResponseDTO.builder()
+    public ResponseEntity<SsafyServerErrorResponseDTO> handleCustomFeignClientException(CustomFeignClientException e) {
+        SsafyServerErrorResponseDTO responseDTO = SsafyServerErrorResponseDTO.builder()
                 .responseCode(e.getErrorResponse().getResponseCode())
                 .responseMessage(e.getErrorResponse().getResponseMessage())
                 .build();

@@ -75,8 +75,7 @@ public class AccountService {
         CreateDemandDepositAccountResponseDTO createDemandDepositAccountResponseDTO = domesticClient.createDemandDepositAccount(createDemandDepositAccountRequestDTO);
 
         String accountNo = createDemandDepositAccountResponseDTO.getRec().getAccountNo();
-        String password = requestDTO.getPassword();
-        String hashedPassword = passwordEncoder.encode(password + PEPPER);
+        String hashedPassword = passwordEncoder.encode(requestDTO.getPassword() + PEPPER);
 
         // Account 테이블에 저장
         Account account = Account.builder()
@@ -120,8 +119,7 @@ public class AccountService {
         CreateDemandDepositAccountResponseDTO createDemandDepositAccountResponseDTO = domesticClient.createDemandDepositAccount(createDemandDepositAccountRequestDTO);
 
         String accountNo = createDemandDepositAccountResponseDTO.getRec().getAccountNo();
-        String password = requestDTO.getPassword();
-        String hashedPassword = passwordEncoder.encode(password + PEPPER);
+        String hashedPassword = passwordEncoder.encode(requestDTO.getPassword() + PEPPER);
 
         // Account 테이블에 저장
         Account account = Account.builder()

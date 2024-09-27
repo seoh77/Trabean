@@ -4,8 +4,13 @@ import com.trabean.account.domain.UserAccountRelation;
 import com.trabean.account.dto.response.AccountNoResponseDTO;
 import com.trabean.account.repository.UserAccountRelationRepository;
 import com.trabean.exception.*;
+import com.trabean.external.msa.travel.client.UserClient;
+import com.trabean.external.msa.travel.dto.requestDTO.FindUserKeyByUserIdRequestDTO;
+import com.trabean.external.msa.travel.dto.responseDTO.FindUserKeyByUserIdResponseDTO;
+import com.trabean.internal.dto.requestDTO.AdminUserKeyRequestDTO;
 import com.trabean.internal.dto.requestDTO.UserRoleRequestDTO;
 import com.trabean.internal.dto.requestDTO.VerifyPasswordRequestDTO;
+import com.trabean.internal.dto.responseDTO.AdminUserKeyResponseDTO;
 import com.trabean.internal.dto.responseDTO.UserRoleResponseDTO;
 import com.trabean.account.repository.AccountRepository;
 import com.trabean.internal.dto.requestDTO.AccountNoRequestDTO;
@@ -14,6 +19,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.trabean.constant.Constant.PEPPER;
 
@@ -24,6 +32,8 @@ public class InternalService {
 
     private final AccountRepository accountRepository;
     private final UserAccountRelationRepository userAccountRelationRepository;
+
+    private final UserClient userClient;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -80,4 +90,27 @@ public class InternalService {
         }
     }
 
+    public AdminUserKeyResponseDTO getAdminUserKey(AdminUserKeyRequestDTO requestDTO) {
+
+        Long accountId = requestDTO.getAccountId();
+
+        List<UserAccountRelation> userAccountRelations = userAccountRelationRepository.findAllByAccountId(accountId);
+        Long userId = userAccountRelations.stream()
+                .filter(relation -> relation.getUserRole() == UserAccountRelation.UserRole.ADMIN)
+                .map(UserAccountRelation::getUserId)
+                .findFirst()
+                .orElseThrow(UserAccountRelationNotFoundException::getInstance);
+
+        FindUserKeyByUserIdRequestDTO findUserKeyByUserIdRequestDTO = FindUserKeyByUserIdRequestDTO.builder()
+                .userId(userId)
+                .build();
+
+        FindUserKeyByUserIdResponseDTO findUserKeyByUserIdResponseDTO = userClient.getUserKey(findUserKeyByUserIdRequestDTO);
+
+        String userKey = findUserKeyByUserIdResponseDTO.getUserKey();
+
+        return AdminUserKeyResponseDTO.builder()
+                .userKey(userKey)
+                .build();
+    }
 }
