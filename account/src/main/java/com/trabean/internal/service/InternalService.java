@@ -95,17 +95,22 @@ public class InternalService {
         Long accountId = requestDTO.getAccountId();
 
         List<UserAccountRelation> userAccountRelations = userAccountRelationRepository.findAllByAccountId(accountId);
+
         Long userId = userAccountRelations.stream()
                 .filter(relation -> relation.getUserRole() == UserAccountRelation.UserRole.ADMIN)
                 .map(UserAccountRelation::getUserId)
                 .findFirst()
                 .orElseThrow(UserAccountRelationNotFoundException::getInstance);
 
+        System.out.println("userId = " + userId);
+
         FindUserKeyByUserIdRequestDTO findUserKeyByUserIdRequestDTO = FindUserKeyByUserIdRequestDTO.builder()
                 .userId(userId)
                 .build();
 
         FindUserKeyByUserIdResponseDTO findUserKeyByUserIdResponseDTO = userClient.getUserKey(findUserKeyByUserIdRequestDTO);
+
+        System.out.println("안녕");
 
         String userKey = findUserKeyByUserIdResponseDTO.getUserKey();
 

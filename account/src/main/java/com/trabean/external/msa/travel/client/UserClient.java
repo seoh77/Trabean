@@ -12,12 +12,12 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(name = "userClient", configuration = FeignClientConfiguration.class)
+@FeignClient(name = "user", configuration = FeignClientConfiguration.class)
 public interface UserClient {
 
     @GetMapping(value = "/api/user/name/{userId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     Map<String, String> getUserName(@PathVariable Long userId);
 
-    @PostMapping("/api/user/getuserkey")
+    @PostMapping(value = "/api/user/getuserkey", consumes = MediaType.APPLICATION_JSON_VALUE)
     FindUserKeyByUserIdResponseDTO getUserKey(@RequestBody FindUserKeyByUserIdRequestDTO requestDTO);
 }
