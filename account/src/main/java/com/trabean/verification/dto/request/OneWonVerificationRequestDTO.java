@@ -4,7 +4,6 @@ import lombok.Getter;
 
 @Getter
 public class OneWonVerificationRequestDTO {
-    private String userKey;
     private String accountNo;
     private String otp;
 }

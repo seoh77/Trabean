@@ -5,7 +5,7 @@ import lombok.Getter;
 
 import java.security.SecureRandom;
 
-import static com.trabean.constant.Constants.*;
+import static com.trabean.constant.Constant.*;
 
 /**
  * {@code RequestHeader} 클래스는 SSAFY 금융 API 요청 헤더 정보를 구성하는 클래스입니다.

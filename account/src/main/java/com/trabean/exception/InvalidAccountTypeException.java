@@ -1,7 +1,14 @@
 package com.trabean.exception;
 
 public class InvalidAccountTypeException extends RuntimeException {
-  public InvalidAccountTypeException(String message) {
-    super(message);
-  }
+
+    private static final InvalidAccountTypeException INSTANCE = new InvalidAccountTypeException("Invalid account type");
+
+    private InvalidAccountTypeException(String message) {
+        super(message);
+    }
+
+    public static InvalidAccountTypeException getInstance() {
+        return INSTANCE;
+    }
 }

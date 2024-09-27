@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public class CreateDomesticTravelAccountRequestDTO {
-    private String userKey;
-    private Long userId;
     private String password;
+    private String accountName;
+    private Long targetAmount;
 }

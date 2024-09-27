@@ -1,4 +1,4 @@
-package com.trabean.external.feign.ssafy.verification.dto.responseDTO;
+package com.trabean.external.ssafy.verification.dto.responseDTO;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.trabean.util.ResponseHeader;

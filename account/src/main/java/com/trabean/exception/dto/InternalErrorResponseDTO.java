@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ErrorResponseDTO {
+public class InternalErrorResponseDTO {
     private String message;
 }

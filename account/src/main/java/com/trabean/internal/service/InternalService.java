@@ -29,10 +29,9 @@ public class InternalService {
 
     // 통장 계좌번호 조회 서비스 로직
     public AccountNoResponseDTO getAccountNo(AccountNoRequestDTO requestDTO) {
-        Long accountId = requestDTO.getAccountId();
 
-        String accountNo = accountRepository.findById(accountId)
-                .orElseThrow(() -> new AccountNotFoundException("해당 계좌를 찾을 수 없습니다."))
+        String accountNo = accountRepository.findById(requestDTO.getAccountId())
+                .orElseThrow(AccountNotFoundException::getInstance)
                 .getAccountNo();
 
         return AccountNoResponseDTO.builder()
@@ -43,11 +42,9 @@ public class InternalService {
 
     // 통장 권한 조회 서비스 로직
     public UserRoleResponseDTO getUserRole(UserRoleRequestDTO requestDTO) {
-        Long userId = requestDTO.getUserId();
-        Long accountId = requestDTO.getAccountId();
 
-        UserAccountRelation.UserRole userRole = userAccountRelationRepository.findByUserIdAndAccountId(userId, accountId)
-                .orElseThrow(() -> new UserAccountRelationNotFoundException("잘못된 요청입니다."))
+        UserAccountRelation.UserRole userRole = userAccountRelationRepository.findByUserIdAndAccountId(requestDTO.getUserId(), requestDTO.getAccountId())
+                .orElseThrow(UserAccountRelationNotFoundException::getInstance)
                 .getUserRole();
 
         return UserRoleResponseDTO.builder()
@@ -58,19 +55,17 @@ public class InternalService {
 
     // 결제 비밀번호 검증 서비스 로직
     public VerifyPasswordResponseDTO verifyPassword(VerifyPasswordRequestDTO requestDTO) {
-        Long userId = requestDTO.getUserId();
-        Long accountId = requestDTO.getAccountId();
 
-        UserAccountRelation.UserRole userRole = userAccountRelationRepository.findByUserIdAndAccountId(userId, accountId)
-                .orElseThrow(() -> new UserAccountRelationNotFoundException("잘못된 요청입니다."))
+        UserAccountRelation.UserRole userRole = userAccountRelationRepository.findByUserIdAndAccountId(requestDTO.getUserId(), requestDTO.getAccountId())
+                .orElseThrow(UserAccountRelationNotFoundException::getInstance)
                 .getUserRole();
 
         if(userRole == UserAccountRelation.UserRole.NONE_PAYER) {
-            throw new UnauthorizedTransactionException("결제 권한이 없습니다.");
+            throw UnauthorizedUserRoleException.getInstance();
         }
 
-        String savedPassword = accountRepository.findById(accountId)
-                .orElseThrow(() -> new AccountNotFoundException("해당 계좌를 찾을 수 없습니다."))
+        String savedPassword = accountRepository.findById(requestDTO.getAccountId())
+                .orElseThrow(AccountNotFoundException::getInstance)
                 .getPassword();
 
         String password = requestDTO.getPassword();
@@ -81,7 +76,7 @@ public class InternalService {
                     .build();
         }
         else{
-            throw new InvalidPasswordException("비밀번호가 틀렸습니다.");
+            throw InvalidPasswordException.getInstance();
         }
     }
 

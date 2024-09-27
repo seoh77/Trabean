@@ -1,4 +1,4 @@
-package com.trabean.external.feign.config;
+package com.trabean.exception;
 
 import com.trabean.exception.dto.SsafyErrorResponseDTO;
 import lombok.Getter;

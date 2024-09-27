@@ -1,6 +1,6 @@
 package com.trabean.verification.dto.response;
 
-import com.trabean.ssafy.api.response.code.ResponseCode;
+import com.trabean.common.ResponseCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

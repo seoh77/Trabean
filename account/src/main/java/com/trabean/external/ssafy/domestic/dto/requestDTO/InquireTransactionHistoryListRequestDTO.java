@@ -1,4 +1,4 @@
-package com.trabean.external.feign.ssafy.domestic.dto.requestDTO;
+package com.trabean.external.ssafy.domestic.dto.requestDTO;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.trabean.util.RequestHeader;

@@ -2,8 +2,13 @@ package com.trabean.exception;
 
 public class InvalidPasswordException extends RuntimeException {
 
-    public InvalidPasswordException(String message) {
+    private static final InvalidPasswordException INSTANCE = new InvalidPasswordException("Invalid password");
+
+    private InvalidPasswordException(String message) {
         super(message);
     }
 
+    public static InvalidPasswordException getInstance() {
+        return INSTANCE;
+    }
 }

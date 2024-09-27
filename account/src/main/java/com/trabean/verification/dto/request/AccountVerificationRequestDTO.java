@@ -4,6 +4,6 @@ import lombok.Getter;
 
 @Getter
 public class AccountVerificationRequestDTO {
-    private String userKey;
+    private Long accountId;
     private String accountNo;
 }

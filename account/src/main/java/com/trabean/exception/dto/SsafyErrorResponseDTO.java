@@ -1,4 +1,4 @@
-package com.trabean.exception.dto.response;
+package com.trabean.exception.dto;
 
 import com.trabean.common.ResponseCode;
 import lombok.AllArgsConstructor;

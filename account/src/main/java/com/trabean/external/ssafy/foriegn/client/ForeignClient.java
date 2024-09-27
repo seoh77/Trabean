@@ -1,8 +1,8 @@
-package com.trabean.external.feign.ssafy.foriegn.client;
+package com.trabean.external.ssafy.foriegn.client;
 
-import com.trabean.external.feign.ssafy.foriegn.dto.requestDTO.CreateForeignCurrencyDemandDepositAccountRequestDTO;
-import com.trabean.external.feign.ssafy.foriegn.dto.responseDTO.CreateForeignCurrencyDemandDepositAccountResponseDTO;
-import com.trabean.external.feign.config.FeignClientConfiguration;
+import com.trabean.config.feign.FeignClientConfiguration;
+import com.trabean.external.ssafy.foriegn.dto.requestDTO.CreateForeignCurrencyDemandDepositAccountRequestDTO;
+import com.trabean.external.ssafy.foriegn.dto.responseDTO.CreateForeignCurrencyDemandDepositAccountResponseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

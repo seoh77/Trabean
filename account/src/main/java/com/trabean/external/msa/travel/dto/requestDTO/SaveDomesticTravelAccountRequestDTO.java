@@ -1,4 +1,4 @@
-package com.trabean.external.feign.msa.travel.dto.requestDTO;
+package com.trabean.external.msa.travel.dto.requestDTO;
 
 import lombok.Builder;
 import lombok.Getter;

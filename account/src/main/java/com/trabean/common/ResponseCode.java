@@ -1,4 +1,4 @@
-package com.trabean.ssafy.api.response.code;
+package com.trabean.common;
 
 /**
  * SSAFY 금융 API p.269 ~ p.273 에러코드

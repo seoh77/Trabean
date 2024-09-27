@@ -1,4 +1,4 @@
-package com.trabean.external.feign.config;
+package com.trabean.config.feign;
 
 import feign.codec.ErrorDecoder;
 import org.springframework.context.annotation.Bean;

@@ -1,7 +1,7 @@
 package com.trabean.account.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.trabean.ssafy.api.response.code.ResponseCode;
+import com.trabean.common.ResponseCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,8 +18,10 @@ public class PersonalAccountDetailResponseDTO {
     private ResponseCode responseCode;
     private String responseMessage;
 
-    private String bankName;
+    private Long accountId;
+    private String accountNo;
     private Long accountBalance;
+    private String bankName;
 
     private List<Transaction> transactionList;
 
