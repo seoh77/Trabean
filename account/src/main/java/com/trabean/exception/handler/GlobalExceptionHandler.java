@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import static com.trabean.common.ResponseCode.H0000;
+
 /**
  * 전역 예외 처리 핸들러
  */
@@ -79,16 +81,9 @@ public class GlobalExceptionHandler {
 
         ResponseCode responseCode = e.getErrorResponse().getResponseCode();
 
-        switch (responseCode) {
-            case H0000 -> {
-                return new ResponseEntity<>(responseDTO, HttpStatus.OK);
-            }
-            case A1003, A1086, A1087, A1088, A1090 -> {
-                return new ResponseEntity<>(responseDTO, HttpStatus.NOT_FOUND);
-            }
-            default -> {
-                return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
-            }
+        if(responseCode == H0000) {
+            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
         }
+        return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
     }
 }
