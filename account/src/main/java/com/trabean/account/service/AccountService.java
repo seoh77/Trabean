@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 import static com.trabean.constant.Constant.*;
 
 @Service
-@Transactional
+//@Transactional
 @RequiredArgsConstructor
 public class AccountService {
 
@@ -45,7 +45,7 @@ public class AccountService {
 
     private final PasswordEncoder passwordEncoder;
     
-    private UserClient userClient;
+    private final UserClient userClient;
 
     // 한화 여행 통장 멤버 목록 + 권한 반환 서비스 코드 : 민채
     public DomesticTravelAccountMemberResponseDTO getDomesticTravelMemberList(Long accountId) {
