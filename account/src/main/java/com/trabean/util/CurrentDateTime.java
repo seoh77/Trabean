@@ -3,6 +3,8 @@ package com.trabean.util;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -69,7 +71,8 @@ public class CurrentDateTime {
      * 현재 시간을 가져와 세 가지 형식으로 포맷합니다.
      */
     private CurrentDateTime() {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now1 = LocalDateTime.now();
+        ZonedDateTime now = now1.atZone(ZoneId.of("Asia/Seoul"));
 
         this.YYYYMMDDHHMMSS = now.format(FULL_FORMATTER);
         this.YYYYMMDD = now.format(DATE_FORMATTER);
