@@ -22,7 +22,7 @@ public class FeignClientErrorDecoder implements ErrorDecoder {
                 SsafyServerErrorResponseDTO errorResponse = objectMapper.readValue(response.body().asInputStream(), SsafyServerErrorResponseDTO.class);
                 return new CustomFeignClientException(errorResponse);
             }
-            return new InternalServerStatusException(methodKey);
+            return new InternalServerStatusException("범인 -> " + methodKey);
         } catch (IOException e) {
             return new RuntimeException(e.getMessage());
         }
