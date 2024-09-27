@@ -2,6 +2,7 @@ package com.trabean.util;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.security.SecureRandom;
 
@@ -23,6 +24,7 @@ import static com.trabean.constant.Constant.*;
  * @author FickleBoBo
  * @since 2024-09-21
  */
+@Slf4j
 @Builder
 @Getter
 public class RequestHeader {
@@ -58,6 +60,9 @@ public class RequestHeader {
             this.apiServiceCode = apiName;
             this.institutionTransactionUniqueNo = createInstitutionTransactionUniqueNo(currentDateTime.getYYYYMMDDHHMMSS());
             this.apiKey = API_KEY;
+
+            log.info("현재 날짜{}", this.transmissionDate);
+            log.info("현재 시각{}", this.transmissionTime);
             return this;
         }
     }
