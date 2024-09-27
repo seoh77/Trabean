@@ -1,9 +1,8 @@
 package com.trabean.user.user.controller;
 
-import com.trabean.user.user.dto.UserNameResponse;
-import com.trabean.user.user.dto.UserPaymentAccountIdResponse;
+import com.trabean.user.user.dto.*;
 import com.fasterxml.jackson.databind.ObjectMapper; // JSON 파싱을 위한 라이브러리
-import com.trabean.user.user.dto.AddUserRequest;
+import com.trabean.user.user.entity.User;
 import com.trabean.user.user.service.ExternalApiService;
 import com.trabean.user.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.trabean.user.user.dto.LoginRequest;
 
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
@@ -67,7 +65,7 @@ public class UserApiController {
 		}
 	}
 	// 사용자 정보 조회 및 payment_account_id 반환
-	@GetMapping("paymentaccount/{userId}")
+	@GetMapping("/paymentaccount/{userId}")
 	public ResponseEntity<UserPaymentAccountIdResponse> getUserPaymentAccount(@PathVariable Long userId) {
 		UserPaymentAccountIdResponse userPaymentAccountIdResponse = userService.getUserPaymentAccount(userId);
 
@@ -79,7 +77,7 @@ public class UserApiController {
 		return ResponseEntity.ok(userPaymentAccountIdResponse);
 	}
 	// 사용자 정보 조회 및 name 반환
-	@GetMapping("name/{userId}")
+	@GetMapping("/name/{userId}")
 	public ResponseEntity<UserNameResponse> getUserName(@PathVariable Long userId) {
 		UserNameResponse userNameResponse = userService.getUserName(userId);
 
@@ -91,9 +89,19 @@ public class UserApiController {
 		return ResponseEntity.ok(userNameResponse);
 	}
 
+	@PostMapping("/getuserkey")
+	public ResponseEntity<GetUserKeyResponse> getUserKey(@RequestBody GetUserKeyRequest request) {
+		User user = userService.findByUserId(request.getUserId());
 
+		if (user == null) {
+			return ResponseEntity.notFound().build();
+		}
 
-	@GetMapping("email/{email}")
+		GetUserKeyResponse response = new GetUserKeyResponse(user.getUser_key());
+		return ResponseEntity.ok(response);
+	}
+
+	@GetMapping("/email/{email}")
 	public ResponseEntity<Boolean> checkEmailDuplication(@PathVariable String email) {
 		return ResponseEntity.ok(userService.checkEmailDuplication(email));
 	}

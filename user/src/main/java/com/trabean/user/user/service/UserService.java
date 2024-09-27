@@ -113,4 +113,8 @@ public class UserService {
     public boolean checkEmailDuplication(String email) {
         return userRepository.existsByEmail(email);
     }
+
+    public User findByUserId(Long userId) {
+        return userRepository.findById(userId).orElse(null);
+    }
 }
