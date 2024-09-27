@@ -11,6 +11,7 @@ import com.trabean.common.ResponseCode;
 import com.trabean.external.msa.travel.client.TravelClient;
 import com.trabean.external.msa.user.client.UserClient;
 import com.trabean.external.msa.travel.dto.requestDTO.SaveDomesticTravelAccountRequestDTO;
+import com.trabean.external.msa.user.dto.response.UserNameResponseDTO;
 import com.trabean.external.ssafy.domestic.client.DomesticClient;
 import com.trabean.external.ssafy.domestic.dto.requestDTO.CreateDemandDepositAccountRequestDTO;
 import com.trabean.external.ssafy.domestic.dto.responseDTO.CreateDemandDepositAccountResponseDTO;
@@ -47,8 +48,8 @@ public class AccountService {
         List<UserAccountRelation> members = userAccountRelationRepository.findAllByAccountId(accountId);
         List<Member> responseMembers = new ArrayList<>();
         for (UserAccountRelation member : members) {
-            Map<String, String> temp = userClient.getUserName(member.getUserId());
-            responseMembers.add(Member.builder().userId(member.getUserId()).userName(temp.get("userName")).role(member.getUserRole()).build());
+            UserNameResponseDTO temp = userClient.getUserName(member.getUserId());
+            responseMembers.add(Member.builder().userId(member.getUserId()).userName(temp.getUserName()).role(member.getUserRole()).build());
         }
         return DomesticTravelAccountMemberResponseDTO.builder().memberCount(members.size()).members(responseMembers).build();
     }
