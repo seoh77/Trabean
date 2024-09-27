@@ -8,18 +8,14 @@ import com.trabean.account.dto.response.DomesticTravelAccountMemberResponseDTO.M
 import com.trabean.account.repository.AccountRepository;
 import com.trabean.account.repository.UserAccountRelationRepository;
 import com.trabean.common.ResponseCode;
-import com.trabean.exception.AccountNotFoundException;
-import com.trabean.exception.InvalidPasswordException;
-import com.trabean.exception.UserAccountRelationNotFoundException;
 import com.trabean.external.msa.travel.client.TravelClient;
-import com.trabean.external.msa.travel.client.UserClient;
+import com.trabean.external.msa.user.client.UserClient;
 import com.trabean.external.msa.travel.dto.requestDTO.SaveDomesticTravelAccountRequestDTO;
 import com.trabean.external.ssafy.domestic.client.DomesticClient;
 import com.trabean.external.ssafy.domestic.dto.requestDTO.CreateDemandDepositAccountRequestDTO;
 import com.trabean.external.ssafy.domestic.dto.responseDTO.CreateDemandDepositAccountResponseDTO;
-import com.trabean.internal.dto.responseDTO.UserRoleResponseDTO;
 import com.trabean.util.RequestHeader;
-import jakarta.transaction.Transactional;
+
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,7 +23,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.trabean.constant.Constant.*;
 
