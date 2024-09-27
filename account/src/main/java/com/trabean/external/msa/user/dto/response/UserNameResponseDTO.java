@@ -1,4 +1,4 @@
-package com.trabean.external.msa.travel.dto.responseDTO;
+package com.trabean.external.msa.user.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FindUserKeyByUserIdResponseDTO {
-    private String userKey;
+public class UserNameResponseDTO {
+    private String userName;
 }
