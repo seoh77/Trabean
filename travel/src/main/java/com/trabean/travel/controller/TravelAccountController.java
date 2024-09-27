@@ -7,6 +7,7 @@ import com.trabean.travel.dto.request.ExchangeRequestDto;
 import com.trabean.travel.dto.request.ForeignAccountHistoryRequestDto;
 import com.trabean.travel.dto.request.InvitaionRequestDto;
 import com.trabean.travel.dto.request.SaveForeignAccountRequestDto;
+import com.trabean.travel.dto.request.SaveKrwAccountRequestDto;
 import com.trabean.travel.dto.request.SplitRequestDto;
 import com.trabean.travel.dto.response.AccountInfoResponseDto;
 import com.trabean.travel.dto.response.ExchangeEstimateResponseDto;
@@ -15,7 +16,6 @@ import com.trabean.travel.dto.response.ExchangeResponseDto;
 import com.trabean.travel.dto.response.ForeignAccountHistoryResponseDto;
 import com.trabean.travel.dto.response.TravelAccountIdResponseDto;
 import com.trabean.travel.dto.response.TravelListAccountResponseDto;
-import com.trabean.travel.entity.KrwTravelAccount;
 import com.trabean.travel.service.ExchangeService;
 import com.trabean.travel.service.ForeignTravelAccountService;
 import com.trabean.travel.service.KrwTravelAccountService;
@@ -84,8 +84,8 @@ public class TravelAccountController {
     }
 
     @PostMapping("/krw-account/save")
-    public ResponseEntity<Void> saveKrwAccountSave(@RequestBody KrwTravelAccount krwTravelAccount) {
-        krwTravelAccountService.save(krwTravelAccount);
+    public ResponseEntity<Void> saveKrwAccountSave(@RequestBody SaveKrwAccountRequestDto saveKrwAccountRequestDto) {
+        krwTravelAccountService.save(saveKrwAccountRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

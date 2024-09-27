@@ -3,6 +3,7 @@ package com.trabean.travel.service;
 import com.trabean.travel.callApi.client.DemandDepositClient;
 import com.trabean.travel.callApi.dto.request.AccountTransferApiRequestDto;
 import com.trabean.travel.callApi.dto.response.AccountTransferApiResponseDto;
+import com.trabean.travel.dto.request.SaveKrwAccountRequestDto;
 import com.trabean.travel.dto.request.SplitRequestDto;
 import com.trabean.travel.entity.KrwTravelAccount;
 import com.trabean.travel.repository.KrwTravelAccountRepository;
@@ -24,8 +25,14 @@ public class KrwTravelAccountService {
     private String userKey = "9e10349e-91e9-474d-afb4-564b24178d9f";
 
     @Transactional
-    public void save(KrwTravelAccount krwTravelAccount) {
-        krwTravelAccountRepository.save(krwTravelAccount);
+    public void save(SaveKrwAccountRequestDto saveKrwAccountRequestDto) {
+        KrwTravelAccount account = KrwTravelAccount.builder()
+                .accountId(saveKrwAccountRequestDto.getAccountId())
+                .accountName(saveKrwAccountRequestDto.getAccountName())
+                .targetAmount(saveKrwAccountRequestDto.getTargetAmount())
+                .build();
+
+        krwTravelAccountRepository.save(account);
     }
 
     public void splitAmount(SplitRequestDto splitRequestDto) {
