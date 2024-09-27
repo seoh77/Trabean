@@ -1,3 +1,6 @@
+server:
+  port: 8083
+
 spring:
   datasource:
     url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul
@@ -14,14 +17,13 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
   application:
     name: notification
-  profiles:
-    active: local
 
-server:
-  port: 8083
+
 
 # Eureka ??
 eureka:
+  instance:
+    hostname: j11a604.p.ssafy.io
   #  instance:
   #    prefer-ip-address: true  # ???? ?? ? IP ??? ??
   # 위 설정을 사용하면 해당 서버를 ip로 찾아야하기 때문에 서버 이름으로 올바른 서버를 찾지 못한다.
@@ -29,14 +31,7 @@ eureka:
     register-with-eureka: true  # Eureka ??? ?? ??
     fetch-registry: true  # Eureka ???? ??? ??? ??? ???? ??
     service-url:
-      defaultZone: http://localhost:8761/eureka # Eureka ??? ?? URL (??? ?? URL? ???? ?)
-
-# ?? ????? ??
-management:
-  endpoint:
-    web:
-      exposure:
-        include: "*"  # ?? ?? ????? ??
+      defaultZone: http://j11a604.p.ssafy.io:8761/eureka # Eureka ??? ?? URL (??? ?? URL? ???? ?)
 
 
 logging:
