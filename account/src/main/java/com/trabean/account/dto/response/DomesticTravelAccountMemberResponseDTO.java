@@ -1,0 +1,25 @@
+package com.trabean.account.dto.response;
+
+import com.trabean.account.domain.UserAccountRelation.UserRole;
+import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Builder
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+public class DomesticTravelAccountMemberResponseDTO {
+    private Integer memberCount;
+    private List<Member> members;
+
+    @Builder
+    @Getter
+    public static class Member {
+        private Long userId;
+        private String userName;
+        private UserRole role;
+    }
+}

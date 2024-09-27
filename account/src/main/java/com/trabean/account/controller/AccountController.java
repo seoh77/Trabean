@@ -70,4 +70,10 @@ public class AccountController {
 //        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
 //    }
 
+    // 민채
+    @GetMapping("/travel/domestic/{accountId}/members")
+    public ResponseEntity<DomesticTravelAccountMemberResponseDTO> getTravelMembers(@PathVariable("accountId") Long accountId) {
+        DomesticTravelAccountMemberResponseDTO response = accountService.getDomesticTravelMemberList(accountId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

@@ -4,6 +4,7 @@ import com.trabean.account.domain.Account;
 import com.trabean.account.domain.UserAccountRelation;
 import com.trabean.account.dto.request.*;
 import com.trabean.account.dto.response.*;
+import com.trabean.account.dto.response.DomesticTravelAccountMemberResponseDTO.Member;
 import com.trabean.account.repository.AccountRepository;
 import com.trabean.account.repository.UserAccountRelationRepository;
 import com.trabean.common.ResponseCode;
@@ -11,6 +12,7 @@ import com.trabean.exception.AccountNotFoundException;
 import com.trabean.exception.InvalidPasswordException;
 import com.trabean.exception.UserAccountRelationNotFoundException;
 import com.trabean.external.msa.travel.client.TravelClient;
+import com.trabean.external.msa.travel.client.UserClient;
 import com.trabean.external.msa.travel.dto.requestDTO.SaveDomesticTravelAccountRequestDTO;
 import com.trabean.external.ssafy.domestic.client.DomesticClient;
 import com.trabean.external.ssafy.domestic.dto.requestDTO.CreateDemandDepositAccountRequestDTO;
@@ -18,6 +20,7 @@ import com.trabean.external.ssafy.domestic.dto.responseDTO.CreateDemandDepositAc
 import com.trabean.internal.dto.responseDTO.UserRoleResponseDTO;
 import com.trabean.util.RequestHeader;
 import jakarta.transaction.Transactional;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -41,6 +44,21 @@ public class AccountService {
     private final TravelClient travelClient;
 
     private final PasswordEncoder passwordEncoder;
+    
+    private UserClient userClient;
+
+    // 한화 여행 통장 멤버 목록 + 권한 반환 서비스 코드 : 민채
+    public DomesticTravelAccountMemberResponseDTO getDomesticTravelMemberList(Long accountId) {
+        List<UserAccountRelation> members = userAccountRelationRepository.findAllByAccountId(accountId);
+        List<Member> responseMembers = new ArrayList<>();
+        for (UserAccountRelation member : members) {
+            Map<String, String> temp = userClient.getUserName(member.getUserId());
+            responseMembers.add(Member.builder().userId(member.getUserId()).userName(temp.get("userName")).role(member.getUserRole()).build());
+        }
+        return DomesticTravelAccountMemberResponseDTO.builder().memberCount(members.size()).members(responseMembers).build();
+    }
+
+
 
     // 개인 통장 생성 서비스 로직
     public CreatePersonalAccountResponseDTO createPersonalAccount(Long userId, String userKey, CreatePersonalAccountRequestDTO requestDTO) {
