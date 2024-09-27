@@ -27,15 +27,19 @@ public class PaymentsWithdrawalService {
     private final DemandDepositClient demandDepositClient;
     private static final Logger logger = LoggerFactory.getLogger(PaymentsWithdrawalService.class);
 
-    // 유저 키 임시 설정
-    @Value("9e10349e-91e9-474d-afb4-564b24178d9f")
-    private String userKey;
-
+//    // 유저 키 임시 설정
+//    @Value("9e10349e-91e9-474d-afb4-564b24178d9f")
+//    private String userKey;
+//
     public void withdrawalToPay(RequestPaymentRequest request, Long accountId, String apiType) {
+        // 유저 키 조회
+        String userKey = paymentsAccountService.getAccountAdmin(accountId);
+
         // 계좌 정보 조회
         String accountNo = paymentsAccountService.getAccountNumber(accountId);
         Long price = apiType.equals(ApiName.KRW_WITHDRAW) ? request.getKrwAmount()
                 : (long) request.getForeignAmount().doubleValue();
+
 
         WithdrawalRequest withdrawalRequest = new WithdrawalRequest(
                 Header.builder().apiName(apiType).userKey(userKey).build(),

@@ -37,10 +37,11 @@ public class PaymentsAccountService {
     private final PaymentsUpdateInfoService paymentsUpdateInfoService;
     private final UserClient userClient;
     private final PaymentsRepository paymentsRepository;
+    private final PaymentsAccountService paymentsAccountService;
 
     // 유저 키 임시 설정
-    @Value("9e10349e-91e9-474d-afb4-564b24178d9f")
-    private String userKey;
+//    @Value("9e10349e-91e9-474d-afb4-564b24178d9f")
+//    private String userKey;
 
     // 계좌 번호 조회
     public String getAccountNumber(Long accountId) throws PaymentsException {
@@ -63,6 +64,9 @@ public class PaymentsAccountService {
 
     // 한화 잔액 조회 후 검증
     public void validateKrwAmount(Long krwAccountId, RequestPaymentRequest requestPaymentRequest) {
+        // 유저 키 받아오기
+        String userKey = paymentsAccountService.getAccountAdmin(krwAccountId);
+
         String accountNo = getAccountNumber(krwAccountId);
 
         // BalanceRequest 생성
@@ -100,6 +104,10 @@ public class PaymentsAccountService {
 
     // 외화 계좌 잔액 조회 후 검증
     public void validateForeignAmount(Long foreignAccountId, RequestPaymentRequest requestPaymentRequest) {
+        // 메인 통장 주인 userKey 받아오기
+        Long krwAccountId = getMainAccount(requestPaymentRequest.getUserId());
+        String userKey = paymentsAccountService.getAccountAdmin(krwAccountId);
+
         String accountNo = getAccountNumber(foreignAccountId);
 
         // BalanceRequest 생성
@@ -120,7 +128,6 @@ public class PaymentsAccountService {
                     logger.info("외화 계좌 잔액 부족");
 
                     // 한국 계좌 잔액도 검증해봄
-                    Long krwAccountId = getMainAccount(requestPaymentRequest.getUserId());
                     validateKrwAmount(krwAccountId, requestPaymentRequest);
     
                     Payments payment = paymentsRepository.findById(requestPaymentRequest.getPayId()).orElseThrow(() ->
@@ -160,5 +167,15 @@ public class PaymentsAccountService {
         Map<String, Long> response = userClient.getPaymentAccount(userId);
 
         return response.getOrDefault("paymentAccountId", null);
+    }
+
+    // 여행 통장 주인 조회
+    public String getAccountAdmin(Long accountId) throws PaymentsException {
+        String requestBody = String.format("{\"accountId\":\"%s\"}", accountId);
+        Map<String, String >response = accountClient.getAdminUser(requestBody);
+        if (response.get("userKey") == null) {
+            throw new PaymentsException("여행 통장 userKey 를 받아오는 데 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return response.get("userKey");
     }
 }
