@@ -3,8 +3,8 @@
 from fastapi import FastAPI, Depends
 from starlette.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
-from database import SessionLocal
-from models import Chatbot
+from app.db.database import SessionLocal
+from app.db.models import Chatbot
 
 app = FastAPI()
 
