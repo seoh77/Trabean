@@ -11,4 +11,6 @@ public interface NotificationService {
     public void saveNotification(NotificationCreateReq notificationCreateReq);
 
     public List<NotificationReadRes> findByUserId(Long userId);
+
+    void updateIsReadById(Long notificationId);
 }

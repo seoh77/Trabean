@@ -29,4 +29,10 @@ public class NotificationController {
         List<NotificationReadRes> notificationReadResList = notificationService.findByUserId(receiverId);
         return ResponseEntity.ok().body(notificationReadResList);
     }
+
+    @PatchMapping("/{notificationId}")
+    public ResponseEntity<?> updateIsRead(@PathVariable Long notificationId) {
+        notificationService.updateIsReadById(notificationId);
+        return ResponseEntity.ok().build();
+    }
 }
