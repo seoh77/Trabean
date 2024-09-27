@@ -34,10 +34,8 @@ public class PaymentsAccountService {
     private final TravelClient travelClient;
     private final MerchantsRepository merchantsRepository;
     private static final Logger logger = LoggerFactory.getLogger(PaymentsAccountService.class);
-    private final PaymentsUpdateInfoService paymentsUpdateInfoService;
     private final UserClient userClient;
     private final PaymentsRepository paymentsRepository;
-    private final PaymentsAccountService paymentsAccountService;
 
     // 유저 키 임시 설정
 //    @Value("9e10349e-91e9-474d-afb4-564b24178d9f")
@@ -65,7 +63,7 @@ public class PaymentsAccountService {
     // 한화 잔액 조회 후 검증
     public void validateKrwAmount(Long krwAccountId, RequestPaymentRequest requestPaymentRequest) {
         // 유저 키 받아오기
-        String userKey = paymentsAccountService.getAccountAdmin(krwAccountId);
+        String userKey = getAccountAdmin(krwAccountId);
 
         String accountNo = getAccountNumber(krwAccountId);
 
@@ -106,7 +104,7 @@ public class PaymentsAccountService {
     public void validateForeignAmount(Long foreignAccountId, RequestPaymentRequest requestPaymentRequest) {
         // 메인 통장 주인 userKey 받아오기
         Long krwAccountId = getMainAccount(requestPaymentRequest.getUserId());
-        String userKey = paymentsAccountService.getAccountAdmin(krwAccountId);
+        String userKey = getAccountAdmin(krwAccountId);
 
         String accountNo = getAccountNumber(foreignAccountId);
 
@@ -163,16 +161,16 @@ public class PaymentsAccountService {
         return response.getOrDefault("foreignTravelAccountsId", null);
     }
 
+    // 메인 여행통장 (한화) 불러오기
     public Long getMainAccount(Long userId) {
         Map<String, Long> response = userClient.getPaymentAccount(userId);
 
         return response.getOrDefault("paymentAccountId", null);
     }
 
-    // 여행 통장 주인 조회
     public String getAccountAdmin(Long accountId) throws PaymentsException {
         String requestBody = String.format("{\"accountId\":\"%s\"}", accountId);
-        Map<String, String >response = accountClient.getAdminUser(requestBody);
+        Map<String, String > response = accountClient.getAdminUser(requestBody);
         if (response.get("userKey") == null) {
             throw new PaymentsException("여행 통장 userKey 를 받아오는 데 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
         }

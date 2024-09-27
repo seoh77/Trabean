@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class PaymentsWithdrawalService {
 
-    private final MerchantsRepository merchantsRepository;
+    private final PaymentsAccountService paymentAccountService;
     private final PaymentsAccountService paymentsAccountService;
     private final DemandDepositClient demandDepositClient;
     private static final Logger logger = LoggerFactory.getLogger(PaymentsWithdrawalService.class);
@@ -33,7 +33,7 @@ public class PaymentsWithdrawalService {
 //
     public void withdrawalToPay(RequestPaymentRequest request, Long accountId, String apiType) {
         // 유저 키 조회
-        String userKey = paymentsAccountService.getAccountAdmin(accountId);
+        String userKey = paymentAccountService.getAccountAdmin(accountId);
 
         // 계좌 정보 조회
         String accountNo = paymentsAccountService.getAccountNumber(accountId);
