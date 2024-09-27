@@ -165,7 +165,7 @@ public class TravelAccountController {
     public ResponseEntity<Void> changeRole(@RequestBody MemberRoleChangeRequestDto memberRoleChangeRequestDto) {
         String message = memberService.changeRole(memberRoleChangeRequestDto);
 
-        if (message.equals("통장 권한 변경 성공")) {
+        if (message.equals("여행통장 결제 권한 변경 성공")) {
             return ResponseEntity.status(HttpStatus.OK).build();
         }
 

@@ -11,6 +11,7 @@ import com.trabean.travel.callApi.dto.response.MemberRoleUpdateApiResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.FeignClientsConfiguration;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(name = "account", path = "/api/accounts", configuration = FeignClientsConfiguration.class)
@@ -37,7 +38,7 @@ public interface AccountClient {
     /**
      * Account API : 여행통장 결제 권한 변경
      */
-    @PostMapping("/internal/update-userRole")
+    @PutMapping("/internal/update-userRole")
     MemberRoleUpdateApiResponseDto updateUserRole(
             @RequestBody MemberRoleUpdateApiRequestDto memberRoleUpdateApiRequestDto);
 }
