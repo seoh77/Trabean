@@ -2,10 +2,7 @@ package com.trabean.internal.controller;
 
 import com.trabean.account.dto.response.AccountNoResponseDTO;
 import com.trabean.internal.dto.requestDTO.*;
-import com.trabean.internal.dto.responseDTO.AdminUserKeyResponseDTO;
-import com.trabean.internal.dto.responseDTO.UpdateUserRoleResponseDTO;
-import com.trabean.internal.dto.responseDTO.UserRoleResponseDTO;
-import com.trabean.internal.dto.responseDTO.VerifyPasswordResponseDTO;
+import com.trabean.internal.dto.responseDTO.*;
 import com.trabean.internal.service.InternalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -49,6 +46,11 @@ public class InternalController {
     }
 
     // 여행통장 가입 API
+    @PostMapping("join-member")
+    public ResponseEntity<JoinTravelAccountResponseDTO> joinTravelAccount(@RequestBody JoinTravelAccountRequestDTO requestDTO) {
+        JoinTravelAccountResponseDTO responseDTO = internalService.joinTravelAccount(requestDTO);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
 
     // 통장 주인의 userKey 조회 API
     @PostMapping("/get-admin-userKey")

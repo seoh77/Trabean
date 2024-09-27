@@ -1,5 +1,6 @@
 package com.trabean.internal.service;
 
+import com.trabean.account.domain.Account;
 import com.trabean.account.domain.UserAccountRelation;
 import com.trabean.account.dto.response.AccountNoResponseDTO;
 import com.trabean.account.repository.UserAccountRelationRepository;
@@ -8,11 +9,8 @@ import com.trabean.external.msa.user.client.UserClient;
 import com.trabean.external.msa.user.dto.request.UserKeyRequestDTO;
 import com.trabean.external.msa.user.dto.response.UserKeyResponseDTO;
 import com.trabean.internal.dto.requestDTO.*;
-import com.trabean.internal.dto.responseDTO.AdminUserKeyResponseDTO;
-import com.trabean.internal.dto.responseDTO.UpdateUserRoleResponseDTO;
-import com.trabean.internal.dto.responseDTO.UserRoleResponseDTO;
+import com.trabean.internal.dto.responseDTO.*;
 import com.trabean.account.repository.AccountRepository;
-import com.trabean.internal.dto.responseDTO.VerifyPasswordResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -62,18 +60,15 @@ public class InternalService {
 
     // 여행통장 결제 권한 변경 서비스 로직
     public UpdateUserRoleResponseDTO updateUserRole(UpdateUserRoleRequestDTO requestDTO) {
-        int count = 0;
 
         userAccountRelationRepository.updateUserRoleByUserIdAndAccountId(requestDTO.getUserId(), requestDTO.getDomesticAccountId(), requestDTO.getUserRole());
-        count++;
 
         for(Long foreignAccountId : requestDTO.getForeignAccountIdList()){
             userAccountRelationRepository.updateUserRoleByUserIdAndAccountId(requestDTO.getUserId(), foreignAccountId, requestDTO.getUserRole());
-            count++;
         }
 
         return UpdateUserRoleResponseDTO.builder()
-                .message("여행통장 결제 권한 변경 성공 : " + count + "개 바뀜")
+                .message("여행통장 결제 권한 변경 성공")
                 .build();
     }
 
@@ -100,6 +95,36 @@ public class InternalService {
         else{
             throw InvalidPasswordException.getInstance();
         }
+    }
+
+    // 여행통장 가입 서비스 로직
+    public JoinTravelAccountResponseDTO joinTravelAccount(JoinTravelAccountRequestDTO requestDTO) {
+
+        UserAccountRelation domesticUserAccountRelation = UserAccountRelation.builder()
+                .userId(requestDTO.getUserId())
+                .account(Account.builder()
+                        .accountId(requestDTO.getDomesticAccountId())
+                        .build())
+                .userRole(UserAccountRelation.UserRole.NONE_PAYER)
+                .build();
+
+        userAccountRelationRepository.save(domesticUserAccountRelation);
+
+        for(Long foreignAccountId : requestDTO.getForeignAccountIdList()) {
+            UserAccountRelation foreignUserAccountRelation = UserAccountRelation.builder()
+                    .userId(requestDTO.getUserId())
+                    .account(Account.builder()
+                            .accountId(foreignAccountId)
+                            .build())
+                    .userRole(UserAccountRelation.UserRole.NONE_PAYER)
+                    .build();
+
+            userAccountRelationRepository.save(foreignUserAccountRelation);
+        }
+
+        return JoinTravelAccountResponseDTO.builder()
+                .message("여행통장 가입 성공")
+                .build();
     }
 
     // 통장 주인의 userKey 조회 서비스 로직
