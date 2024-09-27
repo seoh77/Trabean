@@ -1,6 +1,10 @@
 package com.trabean.travel.service;
 
+import com.trabean.travel.callApi.client.AccountClient;
+import com.trabean.travel.callApi.dto.request.MemberJoinApiRequestDto;
 import com.trabean.travel.dto.request.InvitaionRequestDto;
+import com.trabean.travel.dto.request.MemberJoinRequestDto;
+import com.trabean.travel.entity.ForeignTravelAccount;
 import com.trabean.travel.entity.Invitation;
 import com.trabean.travel.entity.KrwTravelAccount;
 import com.trabean.travel.repository.InvitationRepository;
@@ -8,6 +12,8 @@ import com.trabean.travel.repository.KrwTravelAccountRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -23,6 +29,8 @@ public class MemberService {
 
     private final InvitationRepository invitationRepository;
     private final KrwTravelAccountRepository krwTravelAccountRepository;
+
+    private final AccountClient accountClient;
 
     @Transactional
     public void invite(InvitaionRequestDto invitaionRequestDto) {
@@ -62,4 +70,23 @@ public class MemberService {
         mailSender.send(mimeMessage);
     }
 
+    public String join(MemberJoinRequestDto memberJoinRequestDto) {
+        Long userId = memberJoinRequestDto.getUserId();
+
+        Long krwAccountId = memberJoinRequestDto.getAccountId();
+        KrwTravelAccount krwTravelAccount = krwTravelAccountRepository.findByAccountId(krwAccountId);
+
+        List<ForeignTravelAccount> foreignTravelAccounts = krwTravelAccount.getChildAccounts();
+        List<Long> foreignAccountIdList = new ArrayList<>();
+
+        for (ForeignTravelAccount account : foreignTravelAccounts) {
+            foreignAccountIdList.add(account.getAccountId());
+        }
+
+        MemberJoinApiRequestDto memberJoinApiRequestDto = new MemberJoinApiRequestDto(
+                userId, krwAccountId, foreignAccountIdList
+        );
+
+        return accountClient.joinMember(memberJoinApiRequestDto).getMessage();
+    }
 }

@@ -6,6 +6,7 @@ import com.trabean.travel.dto.request.ExchangeEstimateRequestDto;
 import com.trabean.travel.dto.request.ExchangeRequestDto;
 import com.trabean.travel.dto.request.ForeignAccountHistoryRequestDto;
 import com.trabean.travel.dto.request.InvitaionRequestDto;
+import com.trabean.travel.dto.request.MemberJoinRequestDto;
 import com.trabean.travel.dto.request.SaveForeignAccountRequestDto;
 import com.trabean.travel.dto.request.SaveKrwAccountRequestDto;
 import com.trabean.travel.dto.request.SplitRequestDto;
@@ -146,5 +147,16 @@ public class TravelAccountController {
     public ResponseEntity<Void> splitAmount(@RequestBody SplitRequestDto splitRequestDto) {
         krwTravelAccountService.splitAmount(splitRequestDto);
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @PostMapping("/join")
+    public ResponseEntity<Void> joinTravelAccount(@RequestBody MemberJoinRequestDto memberJoinRequestDto) {
+        String message = memberService.join(memberJoinRequestDto);
+
+        if (message.equals("통장 권한 변경 성공")) {
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 }

@@ -2,8 +2,10 @@ package com.trabean.travel.callApi.client;
 
 import com.trabean.travel.callApi.dto.request.AccountNumberApiRequestDto;
 import com.trabean.travel.callApi.dto.request.AdminUserKeyApiRequestDto;
+import com.trabean.travel.callApi.dto.request.MemberJoinApiRequestDto;
 import com.trabean.travel.callApi.dto.response.AccountNumberApiResponseDto;
 import com.trabean.travel.callApi.dto.response.AdminUserKeyApiResponseDto;
+import com.trabean.travel.callApi.dto.response.MemberJoinApiResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.FeignClientsConfiguration;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,5 +25,11 @@ public interface AccountClient {
      */
     @PostMapping("/internal/get-admin-userKey")
     AdminUserKeyApiResponseDto getAdminUserKey(@RequestBody AdminUserKeyApiRequestDto adminUserKeyApiRequestDto);
+
+    /**
+     * Account API : 여행통장 가입
+     */
+    @PostMapping("/internal/join-member")
+    MemberJoinApiResponseDto joinMember(@RequestBody MemberJoinApiRequestDto memberJoinApiRequestDto);
 
 }
