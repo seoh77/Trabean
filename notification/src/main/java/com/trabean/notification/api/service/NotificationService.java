@@ -1,10 +1,9 @@
 package com.trabean.notification.api.service;
 
 
-import com.trabean.notification.db.entity.Notification;
-
-import java.util.List;
+import com.trabean.notification.api.dto.request.NotificationSaveReq;
 
 public interface NotificationService {
-    List<Notification> getNotifications();
+
+    public void saveNotification(NotificationSaveReq notificationSaveReq);
 }
