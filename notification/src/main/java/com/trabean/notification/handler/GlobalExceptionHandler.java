@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice(assignableTypes = NotificationController.class)
 public class GlobalExceptionHandler {
+
     @ExceptionHandler(NotificationSaveException.class)
     public ResponseEntity<?> handleNotificationSaveException(final NotificationSaveException e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
