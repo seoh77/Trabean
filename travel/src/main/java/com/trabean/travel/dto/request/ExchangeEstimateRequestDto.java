@@ -5,10 +5,10 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class SaveForeignAccountRequestDto {
+public class ExchangeEstimateRequestDto {
 
-    private Long accountId;
+    private String currency;
     private String exchangeCurrency;
-    private Long parentAccountId;
+    private double amount;
 
 }

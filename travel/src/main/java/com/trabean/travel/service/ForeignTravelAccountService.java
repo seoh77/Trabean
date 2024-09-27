@@ -4,10 +4,8 @@ import static com.trabean.util.CurrencyUtils.changeCurrency;
 
 import com.trabean.travel.callApi.client.AccountClient;
 import com.trabean.travel.callApi.client.ForeignCurrencyClient;
-import com.trabean.travel.callApi.dto.request.AccountHistoryRequestDto;
-import com.trabean.travel.callApi.dto.request.GetAccountNumberRequestDto;
-import com.trabean.travel.callApi.dto.response.AccountHistoryResponseDto;
-import com.trabean.travel.callApi.dto.response.GetAccountNumberResponseDto;
+import com.trabean.travel.callApi.dto.request.AccountHistoryApiRequestDto;
+import com.trabean.travel.callApi.dto.response.AccountHistoryApiResponseDto;
 import com.trabean.travel.dto.request.ForeignAccountHistoryRequestDto;
 import com.trabean.travel.dto.request.SaveForeignAccountRequestDto;
 import com.trabean.travel.dto.response.AccountHistoryDetail;
@@ -41,10 +39,12 @@ public class ForeignTravelAccountService {
         Long parentAccountId = saveForeignAccountRequestDto.getParentAccountId();
         KrwTravelAccount parentAccount = krwTravelAccountRepository.findByAccountId(parentAccountId);
 
-        ForeignTravelAccount foreignTravelAccount = new ForeignTravelAccount();
-        foreignTravelAccount.setAccountId(saveForeignAccountRequestDto.getAccountId());
-        foreignTravelAccount.setExchangeCurrency(saveForeignAccountRequestDto.getExchangeCurrency());
-        foreignTravelAccount.setParentAccount(parentAccount);
+        ForeignTravelAccount foreignTravelAccount = ForeignTravelAccount.builder()
+                .accountId(saveForeignAccountRequestDto.getAccountId())
+                .exchangeCurrency(saveForeignAccountRequestDto.getExchangeCurrency())
+                .parentAccount(parentAccount)
+                .build();
+
         foreignTravelAccountRepository.save(foreignTravelAccount);
     }
 
@@ -52,21 +52,14 @@ public class ForeignTravelAccountService {
             ForeignAccountHistoryRequestDto foreignAccountHistoryRequestDto) {
         Long accountId = foreignAccountHistoryRequestDto.getAccountId();
 
-        // 화폐단위 조회
         String exchangeCurrency = foreignTravelAccountRepository.findByAccountId(accountId).getExchangeCurrency();
         String country = changeCurrency(exchangeCurrency);
-
-        // 계좌번호 조회
-        GetAccountNumberResponseDto getAccountNumberResponseDto = accountClient.getAccount(
-                new GetAccountNumberRequestDto(accountId));
-        String accountNo = getAccountNumberResponseDto.getAccountNo();
-
-        // 잔액조회
+        String accountNo = commonAccountService.getAccountNo(accountId);
         Double accountBalance = commonAccountService.getForeignAccountBalance(accountNo);
 
         // 외화 계좌 거래 내역 조회
-        AccountHistoryRequestDto accountHistoryRequestDto =
-                new AccountHistoryRequestDto(
+        AccountHistoryApiRequestDto accountHistoryApiRequestDto =
+                new AccountHistoryApiRequestDto(
                         RequestHeader.builder()
                                 .apiName("inquireForeignCurrencyTransactionHistoryList")
                                 .userKey(userKey)
@@ -77,11 +70,11 @@ public class ForeignTravelAccountService {
                         foreignAccountHistoryRequestDto.getTransactionType(),
                         "ASC");
 
-        AccountHistoryResponseDto accountHistoryResponseDto = foreignCurrencyClient.getForeignAccountHistoryList(
-                accountHistoryRequestDto);
+        AccountHistoryApiResponseDto accountHistoryApiResponseDto = foreignCurrencyClient.getForeignAccountHistoryList(
+                accountHistoryApiRequestDto);
 
-        String totalCount = accountHistoryResponseDto.getRec().getTotalCount();
-        List<AccountHistoryDetail> list = accountHistoryResponseDto.getRec().getList();
+        String totalCount = accountHistoryApiResponseDto.getRec().getTotalCount();
+        List<AccountHistoryDetail> list = accountHistoryApiResponseDto.getRec().getList();
 
         return new ForeignAccountHistoryResponseDto(
                 country, exchangeCurrency, accountBalance, totalCount, list);

@@ -1,19 +1,13 @@
 package com.trabean.travel.callApi.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.trabean.travel.dto.response.AccountHistoryDetail;
 import com.trabean.util.ResponseHeader;
-import java.util.List;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-@Builder
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
-public class AccountHistoryResponseDto {
+public class DepositForeignAccountApiResponseDto {
 
     @JsonProperty("Header")
     private ResponseHeader header;
@@ -23,7 +17,8 @@ public class AccountHistoryResponseDto {
 
     @Getter
     public static class REC {
-        private String totalCount;
-        private List<AccountHistoryDetail> list;
+        private Long transactionUniqueNo;
+        private String transactionDate;
     }
+
 }

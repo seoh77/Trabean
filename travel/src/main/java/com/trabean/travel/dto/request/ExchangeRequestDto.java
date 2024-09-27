@@ -5,10 +5,11 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class SaveForeignAccountRequestDto {
+public class ExchangeRequestDto {
 
-    private Long accountId;
+    private String withdrawalAccountNo;
+    private String depositAccountNo;
     private String exchangeCurrency;
-    private Long parentAccountId;
+    private String exchangeAmount;
 
 }

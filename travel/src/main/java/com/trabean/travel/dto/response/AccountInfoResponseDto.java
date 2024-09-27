@@ -5,8 +5,9 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class TravelAccountIdResponseDto {
+public class AccountInfoResponseDto {
 
-    private Long foreignTravelAccountId;
+    private String name;
+    private Long targetAmount;
 
 }

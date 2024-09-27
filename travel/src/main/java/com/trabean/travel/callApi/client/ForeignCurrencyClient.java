@@ -1,9 +1,11 @@
 package com.trabean.travel.callApi.client;
 
-import com.trabean.travel.callApi.dto.request.AccountHistoryRequestDto;
-import com.trabean.travel.callApi.dto.request.GetAccountBalanceRequestDto;
-import com.trabean.travel.callApi.dto.response.AccountHistoryResponseDto;
-import com.trabean.travel.callApi.dto.response.GetAccountBalanceResponseDto;
+import com.trabean.travel.callApi.dto.request.AccountBalanceApiRequestDto;
+import com.trabean.travel.callApi.dto.request.AccountHistoryApiRequestDto;
+import com.trabean.travel.callApi.dto.request.DepositForeignAccountApiRequestDto;
+import com.trabean.travel.callApi.dto.response.AccountBalanceApiResponseDto;
+import com.trabean.travel.callApi.dto.response.AccountHistoryApiResponseDto;
+import com.trabean.travel.callApi.dto.response.DepositForeignAccountApiResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.FeignClientsConfiguration;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,17 +15,24 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface ForeignCurrencyClient {
 
     /**
-     * 계좌번호로 외화 계좌 잔액 조회
+     * SSAFY API : 계좌번호로 외화 계좌 잔액 조회
      */
     @PostMapping("/inquireForeignCurrencyDemandDepositAccountBalance")
-    GetAccountBalanceResponseDto getForeignAccountBalance(
-            @RequestBody GetAccountBalanceRequestDto getAccountBalanceRequestDto);
+    AccountBalanceApiResponseDto getForeignAccountBalance(
+            @RequestBody AccountBalanceApiRequestDto getAccountBalanceRequestDto);
 
     /**
-     * 외화 계좌 거래 내역 조회
+     * SSAFY API : 외화 계좌 거래 내역 조회
      */
     @PostMapping("/inquireForeignCurrencyTransactionHistoryList")
-    AccountHistoryResponseDto getForeignAccountHistoryList(
-            @RequestBody AccountHistoryRequestDto accountHistoryRequestDto);
+    AccountHistoryApiResponseDto getForeignAccountHistoryList(
+            @RequestBody AccountHistoryApiRequestDto accountHistoryApiRequestDto);
+
+    /**
+     * SSAFY API : 외화 계좌 입금
+     */
+    @PostMapping("/updateForeignCurrencyDemandDepositAccountDeposit")
+    DepositForeignAccountApiResponseDto updateForeignAccountDeposit(
+            @RequestBody DepositForeignAccountApiRequestDto depositForeignAccountApiRequestDto);
 
 }

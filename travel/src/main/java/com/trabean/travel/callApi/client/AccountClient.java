@@ -1,7 +1,7 @@
 package com.trabean.travel.callApi.client;
 
-import com.trabean.travel.callApi.dto.request.GetAccountNumberRequestDto;
-import com.trabean.travel.callApi.dto.response.GetAccountNumberResponseDto;
+import com.trabean.travel.callApi.dto.request.AccountNumberApiRequestDto;
+import com.trabean.travel.callApi.dto.response.AccountNumberApiResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.FeignClientsConfiguration;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface AccountClient {
 
     /**
-     * accountId로 계좌번호 조회
+     * Account API : accountId로 계좌번호 조회
      */
     @PostMapping("/get-account-number")
-    GetAccountNumberResponseDto getAccount(@RequestBody GetAccountNumberRequestDto getAccountNumberRequestDto);
+    AccountNumberApiResponseDto getAccount(@RequestBody AccountNumberApiRequestDto accountNumberApiRequestDto);
 
 }

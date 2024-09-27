@@ -12,6 +12,10 @@ public class FeignClientErrorDecoder implements ErrorDecoder {
     public Exception decode(String methodKey, Response response) {
         ObjectMapper objectMapper = new ObjectMapper();
 
+        if (response.body() == null) {
+            return new CustomFeignClientException(new ErrorResponseDTO(response.status() + "", "응답 본문이 없습니다."));
+        }
+
         try {
             ErrorResponseDTO errorResponse = objectMapper.readValue(response.body().asInputStream(),
                     ErrorResponseDTO.class);
