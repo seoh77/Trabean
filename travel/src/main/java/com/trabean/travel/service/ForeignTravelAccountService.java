@@ -58,17 +58,19 @@ public class ForeignTravelAccountService {
         Double accountBalance = commonAccountService.getForeignAccountBalance(accountId, accountNo);
 
         // 외화 계좌 거래 내역 조회
+        String adminUserKey = commonAccountService.getUserKey(accountId);
+
         AccountHistoryApiRequestDto accountHistoryApiRequestDto =
                 new AccountHistoryApiRequestDto(
                         RequestHeader.builder()
                                 .apiName("inquireForeignCurrencyTransactionHistoryList")
-                                .userKey(userKey)
+                                .userKey(adminUserKey)
                                 .build(),
                         accountNo,
                         foreignAccountHistoryRequestDto.getStartDate(),
                         foreignAccountHistoryRequestDto.getEndDate(),
                         foreignAccountHistoryRequestDto.getTransactionType(),
-                        "ASC");
+                        "DESC");
 
         AccountHistoryApiResponseDto accountHistoryApiResponseDto = foreignCurrencyClient.getForeignAccountHistoryList(
                 accountHistoryApiRequestDto);

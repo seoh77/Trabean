@@ -104,8 +104,10 @@ public class TravelAccountController {
 
     @GetMapping("/foreign/{accountId}")
     public ResponseEntity<ForeignAccountHistoryResponseDto> getForeignAccountHistory(
-            @PathVariable Long accountId, @RequestParam String startDate, @RequestParam String endDate,
-            @RequestParam String transactionType) {
+            @PathVariable Long accountId,
+            @RequestParam(defaultValue = "20240101") String startDate,
+            @RequestParam(defaultValue = "20241231") String endDate,
+            @RequestParam(defaultValue = "A") String transactionType) {
         ForeignAccountHistoryRequestDto foreignAccountHistoryRequestDto
                 = new ForeignAccountHistoryRequestDto(accountId, startDate, endDate, transactionType);
 
