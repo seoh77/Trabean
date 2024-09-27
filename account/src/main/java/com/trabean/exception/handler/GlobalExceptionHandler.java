@@ -1,26 +1,29 @@
 package com.trabean.exception.handler;
 
+import com.trabean.common.ExternalServerErrorResponseDTO;
+import com.trabean.common.InternalServerErrorResponseDTO;
 import com.trabean.common.ResponseCode;
+import com.trabean.common.SsafyErrorResponseDTO;
 import com.trabean.exception.*;
-import com.trabean.exception.dto.ExternalServerErrorResponseDTO;
-import com.trabean.exception.dto.InternalServerErrorResponseDTO;
-import com.trabean.exception.dto.SsafyServerErrorResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+/**
+ * 전역 예외 처리 핸들러
+ */
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
     /**
-     * 내 서버에서 404 에러코드를 응답하는 상황
+     * Account 서버에서 404 에러코드를 응답하는 상황 (DB 조회 실패)
      */
     @ExceptionHandler(value = {
             AccountNotFoundException.class,
             UserAccountRelationNotFoundException.class
     })
-    public ResponseEntity<InternalServerErrorResponseDTO> handleNotFoundException(RuntimeException e) {
+    public ResponseEntity<InternalServerErrorResponseDTO> handleNotFoundException(InternalServerErrorResponseDTO e) {
         InternalServerErrorResponseDTO responseDTO = InternalServerErrorResponseDTO.builder()
                 .message(e.getMessage())
                 .build();
@@ -28,14 +31,14 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 내 서버에서 401 에러코드를 응답하는 상황
+     * Account 서버에서 401 에러코드를 응답하는 상황 (요청 인가 실패)
      */
     @ExceptionHandler(value = {
             InvalidAccountTypeException.class,
             InvalidPasswordException.class,
             UnauthorizedUserRoleException.class
     })
-    public ResponseEntity<InternalServerErrorResponseDTO> handleUForbiddenException(RuntimeException e) {
+    public ResponseEntity<InternalServerErrorResponseDTO> handleUForbiddenException(InternalServerErrorResponseDTO e) {
         InternalServerErrorResponseDTO responseDTO = InternalServerErrorResponseDTO.builder()
                 .message(e.getMessage())
                 .build();
@@ -43,10 +46,10 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 내 서버에서 500 에러코드를 응답하는 상황
+     * Account 서버에서 500 에러코드를 응답하는 상황 (서버 내부 에러)
      */
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<InternalServerErrorResponseDTO> handleInternalServerException(Exception e) {
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<InternalServerErrorResponseDTO> handleInternalServerException(RuntimeException e) {
         InternalServerErrorResponseDTO responseDTO = InternalServerErrorResponseDTO.builder()
                 .message(e.getMessage())
                 .build();
@@ -56,8 +59,8 @@ public class GlobalExceptionHandler {
     /**
      * 다른 서버에서 에러 응답을 보내는 상황
      */
-    @ExceptionHandler(InternalServerStatusException.class)
-    public ResponseEntity<ExternalServerErrorResponseDTO> handleExternalServerException(RuntimeException e) {
+    @ExceptionHandler(ExternalServerErrorException.class)
+    public ResponseEntity<ExternalServerErrorResponseDTO> handleExternalServerException(ExternalServerErrorException e) {
         ExternalServerErrorResponseDTO responseDTO = ExternalServerErrorResponseDTO.builder()
                 .message(e.getMessage())
                 .build();
@@ -65,11 +68,11 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * SSAFY 금융 API에서 에러 응답을 보내는 상황
+     * SSAFY 금융 API 에서 에러 응답을 보내는 상황
      */
-    @ExceptionHandler(CustomFeignClientException.class)
-    public ResponseEntity<SsafyServerErrorResponseDTO> handleCustomFeignClientException(CustomFeignClientException e) {
-        SsafyServerErrorResponseDTO responseDTO = SsafyServerErrorResponseDTO.builder()
+    @ExceptionHandler(SsafyErrorException.class)
+    public ResponseEntity<SsafyErrorResponseDTO> handleCustomFeignClientException(SsafyErrorException e) {
+        SsafyErrorResponseDTO responseDTO = SsafyErrorResponseDTO.builder()
                 .responseCode(e.getErrorResponse().getResponseCode())
                 .responseMessage(e.getErrorResponse().getResponseMessage())
                 .build();
