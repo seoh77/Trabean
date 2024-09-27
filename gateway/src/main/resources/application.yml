@@ -43,7 +43,7 @@ spring:
           #          uri: http://j11a604.p.ssafy.io:8083
           uri: lb://NOTIFICATION
           predicates:
-            - Path=/api/notification/**
+            - Path=/api/notifications/**
 
         - id: paymentRoute
           uri: lb://PAYMENT
