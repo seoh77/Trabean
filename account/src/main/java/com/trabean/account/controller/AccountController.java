@@ -34,12 +34,12 @@ public class AccountController {
         return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
     }
 
-//    // 통장 목록 조회 API
-//    @PostMapping
-//    public ResponseEntity<AccountListResponseDTO> getAccountList(@RequestBody AccountListRequestDTO requestDTO) {
-//        AccountListResponseDTO responseDTO = accountService.getAccountList(requestDTO);
-//        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
-//    }
+    // 통장 목록 조회 API
+    @GetMapping
+    public ResponseEntity<AccountListResponseDTO> getAccountList(@RequestHeader String userKey) {
+        AccountListResponseDTO responseDTO = accountService.getAccountList(userKey);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
 
 //    // 개인 통장 상세 조회 API
 //    @GetMapping("/personal/{accountId}")

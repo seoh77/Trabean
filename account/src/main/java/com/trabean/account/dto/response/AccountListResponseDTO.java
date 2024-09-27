@@ -21,8 +21,9 @@ public class AccountListResponseDTO {
     @Builder
     @Getter
     public static class Account {
-        private String bankName;
+        private Long accountId;
         private String accountNo;
+        private String bankName;
         private Long accountBalance;
     }
 }

@@ -8,22 +8,26 @@ import com.trabean.account.dto.response.DomesticTravelAccountMemberResponseDTO.M
 import com.trabean.account.repository.AccountRepository;
 import com.trabean.account.repository.UserAccountRelationRepository;
 import com.trabean.common.ResponseCode;
+import com.trabean.exception.AccountNotFoundException;
+import com.trabean.exception.CustomFeignClientException;
 import com.trabean.external.msa.travel.client.TravelClient;
 import com.trabean.external.msa.user.client.UserClient;
 import com.trabean.external.msa.travel.dto.requestDTO.SaveDomesticTravelAccountRequestDTO;
 import com.trabean.external.msa.user.dto.response.UserNameResponseDTO;
 import com.trabean.external.ssafy.domestic.client.DomesticClient;
 import com.trabean.external.ssafy.domestic.dto.requestDTO.CreateDemandDepositAccountRequestDTO;
+import com.trabean.external.ssafy.domestic.dto.requestDTO.InquireDemandDepositAccountListRequestDTO;
 import com.trabean.external.ssafy.domestic.dto.responseDTO.CreateDemandDepositAccountResponseDTO;
+import com.trabean.external.ssafy.domestic.dto.responseDTO.InquireDemandDepositAccountListResponseDTO;
 import com.trabean.util.RequestHeader;
 
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.trabean.constant.Constant.*;
 
@@ -36,25 +40,10 @@ public class AccountService {
     private final UserAccountRelationRepository userAccountRelationRepository;
 
     private final DomesticClient domesticClient;
-
+    private final UserClient userClient;
     private final TravelClient travelClient;
 
     private final PasswordEncoder passwordEncoder;
-    
-    private final UserClient userClient;
-
-    // 한화 여행 통장 멤버 목록 + 권한 반환 서비스 코드 : 민채
-    public DomesticTravelAccountMemberResponseDTO getDomesticTravelMemberList(Long accountId) {
-        List<UserAccountRelation> members = userAccountRelationRepository.findAllByAccountId(accountId);
-        List<Member> responseMembers = new ArrayList<>();
-        for (UserAccountRelation member : members) {
-            UserNameResponseDTO temp = userClient.getUserName(member.getUserId());
-            responseMembers.add(Member.builder().userId(member.getUserId()).userName(temp.getUserName()).role(member.getUserRole()).build());
-        }
-        return DomesticTravelAccountMemberResponseDTO.builder().memberCount(members.size()).members(responseMembers).build();
-    }
-
-
 
     // 개인 통장 생성 서비스 로직
     public CreatePersonalAccountResponseDTO createPersonalAccount(Long userId, String userKey, CreatePersonalAccountRequestDTO requestDTO) {
@@ -153,40 +142,29 @@ public class AccountService {
                 .build();
     }
 
-//    // 통장 목록 조회 서비스 로직
-//    public AccountListResponseDTO getAccountList(AccountListRequestDTO requestDTO) {
-//        String userKey = requestDTO.getUserKey();
-//
-//        // SSAFY API 계좌 목록 조회 요청
-//        InquireDemandDepositAccountListRequestDTO inquireDemandDepositAccountListRequestDTO = InquireDemandDepositAccountListRequestDTO.builder()
-//                .header(RequestHeader.builder()
-//                        .apiName("inquireDemandDepositAccountList")
-//                        .userKey(userKey)
-//                        .build())
-//                .build();
-//
-//        ResponseCode responseCode;
-//        String responseMessage;
-//        List<AccountListResponseDTO.Account> accountList;
-//
-//        try {
-//            InquireDemandDepositAccountListResponseDTO inquireDemandDepositAccountListResponseDTO = domesticClient.inquireDemandDepositAccountList(inquireDemandDepositAccountListRequestDTO);
-//
-//            responseCode = inquireDemandDepositAccountListResponseDTO.getHeader().getResponseCode();
-//            responseMessage = inquireDemandDepositAccountListResponseDTO.getHeader().getResponseMessage();
-//            accountList = getAccountList(inquireDemandDepositAccountListResponseDTO);
-//
-//        } catch (CustomFeignClientException e) {
-//            responseCode = e.getErrorResponse().getResponseCode();
-//            responseMessage = e.getErrorResponse().getResponseMessage();
-//            accountList = new ArrayList<>();
-//        }
-//        return AccountListResponseDTO.builder()
-//                .responseCode(responseCode)
-//                .responseMessage(responseMessage)
-//                .accountList(accountList)
-//                .build();
-//    }
+    // 통장 목록 조회 서비스 로직
+    public AccountListResponseDTO getAccountList(String userKey) {
+
+        // SSAFY API 계좌 목록 조회 요청
+        InquireDemandDepositAccountListRequestDTO inquireDemandDepositAccountListRequestDTO = InquireDemandDepositAccountListRequestDTO.builder()
+                .header(RequestHeader.builder()
+                        .apiName("inquireDemandDepositAccountList")
+                        .userKey(userKey)
+                        .build())
+                .build();
+
+        InquireDemandDepositAccountListResponseDTO inquireDemandDepositAccountListResponseDTO = domesticClient.inquireDemandDepositAccountList(inquireDemandDepositAccountListRequestDTO);
+
+        ResponseCode responseCode = inquireDemandDepositAccountListResponseDTO.getHeader().getResponseCode();
+        String responseMessage = inquireDemandDepositAccountListResponseDTO.getHeader().getResponseMessage();
+        List<AccountListResponseDTO.Account> accountList = getAccountList(inquireDemandDepositAccountListResponseDTO);
+
+        return AccountListResponseDTO.builder()
+                .responseCode(responseCode)
+                .responseMessage(responseMessage)
+                .accountList(accountList)
+                .build();
+    }
 
 //    // 개인 통장 상세 조회 서비스 로직
 //    public PersonalAccountDetailResponseDTO getAccountDetail(Long userId, String userKey, Long accountId, String startDate, String endDate, String transactionType) {
@@ -321,16 +299,23 @@ public class AccountService {
 //        }
 //    }
 
-//    // SSAFY API 통장 목록 조회 responseDTO -> 통장 목록 리스트
-//    private List<AccountListResponseDTO.Account> getAccountList(InquireDemandDepositAccountListResponseDTO inquireDemandDepositAccountListResponseDTO) {
-//        return inquireDemandDepositAccountListResponseDTO.getRec().stream()
-//                .map(rec -> AccountListResponseDTO.Account.builder()
-//                        .bankName(rec.getBankName())
-//                        .accountNo(rec.getAccountNo())
-//                        .accountBalance(rec.getAccountBalance())
-//                        .build())
-//                .collect(Collectors.toList());
-//    }
+    // SSAFY API 통장 목록 조회 responseDTO -> 통장 목록 리스트
+    private List<AccountListResponseDTO.Account> getAccountList(InquireDemandDepositAccountListResponseDTO inquireDemandDepositAccountListResponseDTO) {
+        return inquireDemandDepositAccountListResponseDTO.getRec().stream()
+                .map(rec -> {
+                    Long accountId = accountRepository.findByAccountNo(rec.getAccountNo())
+                            .map(Account::getAccountId)
+                            .orElseThrow(AccountNotFoundException::getInstance);
+
+                    return AccountListResponseDTO.Account.builder()
+                            .accountId(accountId)
+                            .accountNo(rec.getAccountNo())
+                            .bankName(rec.getBankName())
+                            .accountBalance(rec.getAccountBalance())
+                            .build();
+                })
+                .collect(Collectors.toList());
+    }
 
 //    // SSAFY API 계좌 거래 내역 조회 responseDTO -> 거래 내역 리스트
 //    private List<PersonalAccountDetailResponseDTO.Transaction> getTransactionList(InquireTransactionHistoryListResponseDTO inquireTransactionHistoryListResponseDTO) {
@@ -359,5 +344,16 @@ public class AccountService {
 //                        .build())
 //                .collect(Collectors.toList());
 //    }
+
+    // 한화 여행 통장 멤버 목록 + 권한 반환 서비스 코드 : 민채
+    public DomesticTravelAccountMemberResponseDTO getDomesticTravelMemberList(Long accountId) {
+        List<UserAccountRelation> members = userAccountRelationRepository.findAllByAccountId(accountId);
+        List<Member> responseMembers = new ArrayList<>();
+        for (UserAccountRelation member : members) {
+            UserNameResponseDTO temp = userClient.getUserName(member.getUserId());
+            responseMembers.add(Member.builder().userId(member.getUserId()).userName(temp.getUserName()).role(member.getUserRole()).build());
+        }
+        return DomesticTravelAccountMemberResponseDTO.builder().memberCount(members.size()).members(responseMembers).build();
+    }
 
 }
