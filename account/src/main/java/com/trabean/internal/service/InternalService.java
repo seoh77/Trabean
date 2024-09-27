@@ -4,9 +4,9 @@ import com.trabean.account.domain.UserAccountRelation;
 import com.trabean.account.dto.response.AccountNoResponseDTO;
 import com.trabean.account.repository.UserAccountRelationRepository;
 import com.trabean.exception.*;
-import com.trabean.external.msa.travel.client.UserClient;
-import com.trabean.external.msa.travel.dto.requestDTO.FindUserKeyByUserIdRequestDTO;
-import com.trabean.external.msa.travel.dto.responseDTO.FindUserKeyByUserIdResponseDTO;
+import com.trabean.external.msa.user.client.UserClient;
+import com.trabean.external.msa.user.dto.request.UserKeyRequestDTO;
+import com.trabean.external.msa.user.dto.response.UserKeyResponseDTO;
 import com.trabean.internal.dto.requestDTO.AdminUserKeyRequestDTO;
 import com.trabean.internal.dto.requestDTO.UserRoleRequestDTO;
 import com.trabean.internal.dto.requestDTO.VerifyPasswordRequestDTO;
@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.trabean.constant.Constant.PEPPER;
 
@@ -104,15 +103,15 @@ public class InternalService {
 
         System.out.println("userId = " + userId);
 
-        FindUserKeyByUserIdRequestDTO findUserKeyByUserIdRequestDTO = FindUserKeyByUserIdRequestDTO.builder()
+        UserKeyRequestDTO userKeyRequestDTO = UserKeyRequestDTO.builder()
                 .userId(userId)
                 .build();
 
-        FindUserKeyByUserIdResponseDTO findUserKeyByUserIdResponseDTO = userClient.getUserKey(findUserKeyByUserIdRequestDTO);
+        UserKeyResponseDTO userKeyResponseDTO = userClient.getUserKey(userKeyRequestDTO);
 
         System.out.println("안녕");
 
-        String userKey = findUserKeyByUserIdResponseDTO.getUserKey();
+        String userKey = userKeyResponseDTO.getUserKey();
 
         return AdminUserKeyResponseDTO.builder()
                 .userKey(userKey)

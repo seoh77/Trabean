@@ -1,12 +1,10 @@
 package com.trabean.internal.controller;
 
 import com.trabean.account.dto.response.AccountNoResponseDTO;
-import com.trabean.internal.dto.requestDTO.AdminUserKeyRequestDTO;
-import com.trabean.internal.dto.requestDTO.UserRoleRequestDTO;
-import com.trabean.internal.dto.requestDTO.VerifyPasswordRequestDTO;
+import com.trabean.internal.dto.requestDTO.*;
 import com.trabean.internal.dto.responseDTO.AdminUserKeyResponseDTO;
+import com.trabean.internal.dto.responseDTO.UpdateUserRoleResponseDTO;
 import com.trabean.internal.dto.responseDTO.UserRoleResponseDTO;
-import com.trabean.internal.dto.requestDTO.AccountNoRequestDTO;
 import com.trabean.internal.dto.responseDTO.VerifyPasswordResponseDTO;
 import com.trabean.internal.service.InternalService;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +34,13 @@ public class InternalController {
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
+    // 여행통장 결제 권한 변경 API
+    @PutMapping("/update-userRole")
+    public ResponseEntity<UpdateUserRoleResponseDTO> updateUserRole(@RequestBody UpdateUserRoleRequestDTO requestDTO) {
+        UpdateUserRoleResponseDTO responseDTO = internalService.updateUserRole(requestDTO);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
+
     // 결제 비밀번호 검증 API
     @PostMapping("/verify-password")
     public ResponseEntity<VerifyPasswordResponseDTO> verifyPassword(@RequestBody VerifyPasswordRequestDTO requestDTO) {
@@ -43,7 +48,9 @@ public class InternalController {
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
-    //
+    // 여행통장 가입 API
+
+    // 통장 주인의 userKey 조회 API
     @PostMapping("/get-admin-userKey")
     public ResponseEntity<AdminUserKeyResponseDTO> getAdminUserKey(@RequestBody AdminUserKeyRequestDTO requestDTO) {
         AdminUserKeyResponseDTO responseDTO = internalService.getAdminUserKey(requestDTO);
