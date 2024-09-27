@@ -305,7 +305,7 @@ public class AccountService {
                     .build();
         }
         else{
-            throw new UserAccountRelationNotFoundException("잘못된 요청입니다.");
+            throw UserAccountRelationNotFoundException.getInstance();
         }
     }
 
@@ -320,19 +320,19 @@ public class AccountService {
 //                .collect(Collectors.toList());
 //    }
 
-    // SSAFY API 계좌 거래 내역 조회 responseDTO -> 거래 내역 리스트
-    private List<PersonalAccountDetailResponseDTO.Transaction> getTransactionList(InquireTransactionHistoryListResponseDTO inquireTransactionHistoryListResponseDTO) {
-        return inquireTransactionHistoryListResponseDTO.getRec().getList().stream()
-                .map(item -> PersonalAccountDetailResponseDTO.Transaction.builder()
-                        .transactionType(item.getTransactionType())
-                        .transactionSummary(item.getTransactionSummary())
-                        .transactionDate(item.getTransactionDate())
-                        .transactionTime(item.getTransactionTime())
-                        .transactionBalance(item.getTransactionBalance())
-                        .transactionAfterBalance(item.getTransactionAfterBalance())
-                        .build())
-                .collect(Collectors.toList());
-    }
+//    // SSAFY API 계좌 거래 내역 조회 responseDTO -> 거래 내역 리스트
+//    private List<PersonalAccountDetailResponseDTO.Transaction> getTransactionList(InquireTransactionHistoryListResponseDTO inquireTransactionHistoryListResponseDTO) {
+//        return inquireTransactionHistoryListResponseDTO.getRec().getList().stream()
+//                .map(item -> PersonalAccountDetailResponseDTO.Transaction.builder()
+//                        .transactionType(item.getTransactionType())
+//                        .transactionSummary(item.getTransactionSummary())
+//                        .transactionDate(item.getTransactionDate())
+//                        .transactionTime(item.getTransactionTime())
+//                        .transactionBalance(item.getTransactionBalance())
+//                        .transactionAfterBalance(item.getTransactionAfterBalance())
+//                        .build())
+//                .collect(Collectors.toList());
+//    }
 
 //    // SSAFY API 계좌 거래 내역 조회 responseDTO -> 거래 내역 리스트
 //    private List<DomesticTravelAccountDetailResponseDTO.Transaction> getDomesticTravelAccountTransactionList(InquireTransactionHistoryListResponseDTO inquireTransactionHistoryListResponseDTO) {

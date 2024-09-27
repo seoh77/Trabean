@@ -41,17 +41,17 @@ public class AccountController {
 //        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
 //    }
 
-    // 개인 통장 상세 조회 API
-    @GetMapping("/personal/{accountId}")
-    public ResponseEntity<PersonalAccountDetailResponseDTO> getAccountDetail(@RequestHeader Long userId,
-                                                                             @RequestHeader String userKey,
-                                                                             @PathVariable Long accountId,
-                                                                             @RequestParam(defaultValue = "19000101") String startDate,
-                                                                             @RequestParam(defaultValue = "21000101") String endDate,
-                                                                             @RequestParam(defaultValue = "A") String transactionType) {
-        PersonalAccountDetailResponseDTO responseDTO = accountService.getAccountDetail(userId, userKey, accountId, startDate, endDate, transactionType);
-        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
-    }
+//    // 개인 통장 상세 조회 API
+//    @GetMapping("/personal/{accountId}")
+//    public ResponseEntity<PersonalAccountDetailResponseDTO> getAccountDetail(@RequestHeader Long userId,
+//                                                                             @RequestHeader String userKey,
+//                                                                             @PathVariable Long accountId,
+//                                                                             @RequestParam(defaultValue = "19000101") String startDate,
+//                                                                             @RequestParam(defaultValue = "21000101") String endDate,
+//                                                                             @RequestParam(defaultValue = "A") String transactionType) {
+//        PersonalAccountDetailResponseDTO responseDTO = accountService.getAccountDetail(userId, userKey, accountId, startDate, endDate, transactionType);
+//        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+//    }
 
 //    // 한화 여행통장 상세 조회 API
 //    @PostMapping("/travel/domestic")
