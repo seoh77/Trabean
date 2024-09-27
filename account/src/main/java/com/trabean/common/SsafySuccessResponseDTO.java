@@ -1,4 +1,4 @@
-package com.trabean.exception.dto;
+package com.trabean.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class InternalServerErrorResponseDTO {
-    private String message;
+public class SsafySuccessResponseDTO {
+    private ResponseCode responseCode;
+    private String responseMessage;
 }

@@ -1,4 +1,4 @@
-package com.trabean.exception.dto;
+package com.trabean.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
