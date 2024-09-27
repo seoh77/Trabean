@@ -1,5 +1,6 @@
 package com.trabean.travel.controller;
 
+import com.trabean.travel.dto.request.AccountChangeNameRequestDto;
 import com.trabean.travel.dto.request.ExchangeEstimateRequestDto;
 import com.trabean.travel.dto.request.ExchangeRequestDto;
 import com.trabean.travel.dto.request.ForeignAccountHistoryRequestDto;
@@ -50,8 +51,11 @@ public class TravelAccountController {
         return ResponseEntity.ok(travelAccountService.findAllTravelAccount(parentAccountId));
     }
 
-    @PutMapping("accountName/{accountId}")
-    public ResponseEntity<Void> updateTravelAccountName(@PathVariable Long accountId, @RequestBody String accountName) {
+    @PutMapping("/change/accountName")
+    public ResponseEntity<Void> updateTravelAccountName(
+            @RequestBody AccountChangeNameRequestDto accountChangeNameRequestDto) {
+        Long accountId = accountChangeNameRequestDto.getAccountId();
+        String accountName = accountChangeNameRequestDto.getAccountName();
         travelAccountService.updateTravelAccountName(accountId, accountName);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
