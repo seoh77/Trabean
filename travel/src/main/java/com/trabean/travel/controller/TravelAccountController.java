@@ -154,7 +154,7 @@ public class TravelAccountController {
     public ResponseEntity<Void> joinTravelAccount(@RequestBody MemberJoinRequestDto memberJoinRequestDto) {
         String message = memberService.join(memberJoinRequestDto);
 
-        if (message.equals("통장 권한 변경 성공")) {
+        if (message.equals("여행통장 가입 성공")) {
             return ResponseEntity.status(HttpStatus.CREATED).build();
         }
 
