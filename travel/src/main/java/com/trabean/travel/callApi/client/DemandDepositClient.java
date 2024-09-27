@@ -1,7 +1,9 @@
 package com.trabean.travel.callApi.client;
 
 import com.trabean.travel.callApi.dto.request.AccountBalanceApiRequestDto;
+import com.trabean.travel.callApi.dto.request.AccountTransferApiRequestDto;
 import com.trabean.travel.callApi.dto.response.AccountBalanceApiResponseDto;
+import com.trabean.travel.callApi.dto.response.AccountTransferApiResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.FeignClientsConfiguration;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,5 +18,12 @@ public interface DemandDepositClient {
     @PostMapping("/inquireDemandDepositAccountBalance")
     AccountBalanceApiResponseDto getKrwAccountBalance(
             @RequestBody AccountBalanceApiRequestDto accountBalanceApiRequestDto);
+
+    /**
+     * SSAFY API : 계좌 이체
+     */
+    @PostMapping("/updateDemandDepositAccountTransfer")
+    AccountTransferApiResponseDto transferAccount(
+            @RequestBody AccountTransferApiRequestDto accountTransferApiRequestDto);
 
 }
