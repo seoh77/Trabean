@@ -1,6 +1,6 @@
 package com.trabean.internal.dto.requestDTO;
 
-import com.trabean.account.domain.UserAccountRelation;
+import com.trabean.account.domain.UserAccountRelation.UserRole;
 import lombok.Getter;
 
 import java.util.List;
@@ -10,5 +10,5 @@ public class UpdateUserRoleRequestDTO {
     private Long userId;
     private Long domesticAccountId;
     private List<Long> foreignAccountIdList;
-    private UserAccountRelation.UserRole userRole;
+    private UserRole userRole;
 }
