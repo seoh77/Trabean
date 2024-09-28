@@ -1,9 +1,6 @@
 package com.trabean.account.controller;
 
-import com.trabean.account.dto.request.CreateDomesticTravelAccountRequestDTO;
-import com.trabean.account.dto.request.CreateForeignTravelAccountRequestDTO;
-import com.trabean.account.dto.request.CreatePersonalAccountRequestDTO;
-import com.trabean.account.dto.request.VerifyAccountPasswordRequestDTO;
+import com.trabean.account.dto.request.*;
 import com.trabean.account.dto.response.DomesticTravelAccountDetailResponseDTO;
 import com.trabean.account.dto.response.DomesticTravelAccountMemberListResponseDTO;
 import com.trabean.account.dto.response.PersonalAccountDetailResponseDTO;
@@ -100,4 +97,23 @@ public class AccountController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    // 개인 통장 계좌 이체 API
+    @PostMapping("/personal/{accountId}/transfer")
+    public ResponseEntity<SsafySuccessResponseDTO> transferPersonalAccount(@RequestHeader Long userId,
+                                                                           @RequestHeader String userKey,
+                                                                           @PathVariable Long accountId,
+                                                                           @RequestBody TransferPersonalAccountRequestDTO requestDTO) {
+        SsafySuccessResponseDTO responseDTO = accountService.transferPersonalAccount(userId, userKey, accountId, requestDTO);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
+
+    // 한화 여행통장 계좌 이체 API
+    @PostMapping("/travel/domestic/{accountId}/transfer")
+    public ResponseEntity<SsafySuccessResponseDTO> transferDomesticTravelAccount(@RequestHeader Long userId,
+                                                                                 @RequestHeader String userKey,
+                                                                                 @PathVariable Long accountId,
+                                                                                 @RequestBody TransferDomesticTravelAccountRequestDTO requestDTO) {
+        SsafySuccessResponseDTO responseDTO = accountService.transferDomesticTravelAccount(userId, userKey, accountId, requestDTO);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
 }

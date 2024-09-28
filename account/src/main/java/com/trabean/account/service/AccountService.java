@@ -4,10 +4,7 @@ import com.trabean.account.domain.Account;
 import com.trabean.account.domain.Account.AccountType;
 import com.trabean.account.domain.UserAccountRelation;
 import com.trabean.account.domain.UserAccountRelation.UserRole;
-import com.trabean.account.dto.request.CreateDomesticTravelAccountRequestDTO;
-import com.trabean.account.dto.request.CreateForeignTravelAccountRequestDTO;
-import com.trabean.account.dto.request.CreatePersonalAccountRequestDTO;
-import com.trabean.account.dto.request.VerifyAccountPasswordRequestDTO;
+import com.trabean.account.dto.request.*;
 import com.trabean.account.dto.response.DomesticTravelAccountDetailResponseDTO;
 import com.trabean.account.dto.response.DomesticTravelAccountMemberListResponseDTO;
 import com.trabean.account.dto.response.DomesticTravelAccountMemberListResponseDTO.Member;
@@ -28,9 +25,11 @@ import com.trabean.external.ssafy.domestic.client.DomesticClient;
 import com.trabean.external.ssafy.domestic.dto.requestDTO.CreateDemandDepositAccountRequestDTO;
 import com.trabean.external.ssafy.domestic.dto.requestDTO.InquireDemandDepositAccountRequestDTO;
 import com.trabean.external.ssafy.domestic.dto.requestDTO.InquireTransactionHistoryListRequestDTO;
+import com.trabean.external.ssafy.domestic.dto.requestDTO.UpdateDemandDepositAccountTransferRequestDTO;
 import com.trabean.external.ssafy.domestic.dto.responseDTO.CreateDemandDepositAccountResponseDTO;
 import com.trabean.external.ssafy.domestic.dto.responseDTO.InquireDemandDepositAccountResponseDTO;
 import com.trabean.external.ssafy.domestic.dto.responseDTO.InquireTransactionHistoryListResponseDTO;
+import com.trabean.external.ssafy.domestic.dto.responseDTO.UpdateDemandDepositAccountTransferResponseDTO;
 import com.trabean.external.ssafy.foriegn.client.ForeignClient;
 import com.trabean.external.ssafy.foriegn.dto.requestDTO.CreateForeignCurrencyDemandDepositAccountRequestDTO;
 import com.trabean.external.ssafy.foriegn.dto.responseDTO.CreateForeignCurrencyDemandDepositAccountResponseDTO;
@@ -401,6 +400,7 @@ public class AccountService {
                 .orElseThrow(UserAccountRelationNotFoundException::getInstance)
                 .getUserRole();
 
+        // 조회가 되도 권한이 없는 멤버면 예외 던짐
         if(userRole == UserRole.NONE_PAYER) {
             throw UnauthorizedUserRoleException.getInstance();
         }
@@ -464,6 +464,101 @@ public class AccountService {
         return DomesticTravelAccountMemberListResponseDTO.builder()
                 .memberCount((long) members.size())
                 .members(members).build();
+    }
+
+    // 개인 통장 계좌 이체 서비스 로직
+    public SsafySuccessResponseDTO transferPersonalAccount(Long userId, String userKey, Long accountId, TransferPersonalAccountRequestDTO requestDTO) {
+
+        // 관계 테이블에서 조회가 안되는 관계면 예외 던짐
+        UserRole userRole = userAccountRelationRepository.findByUserIdAndAccountId(userId, accountId)
+                .orElseThrow(UserAccountRelationNotFoundException::getInstance)
+                .getUserRole();
+
+        if(userRole != UserRole.ADMIN) {
+            throw UserAccountRelationNotFoundException.getInstance();
+        }
+
+        // 계좌 테이블에서 조회가 안되는 계좌이거나 조회되도 개인 통장이 아니면 예외 던짐
+        accountRepository.findById(accountId)
+                .filter(account -> account.getAccountType() == AccountType.PERSONAL)
+                .orElseThrow(() -> {
+                    if (!accountRepository.existsById(accountId)) {
+                        return AccountNotFoundException.getInstance();
+                    } else {
+                        return InvalidAccountTypeException.getInstance();
+                    }
+                });
+
+        // SSAFY 금융 API 계좌 이체 요청
+        UpdateDemandDepositAccountTransferRequestDTO updateDemandDepositAccountTransferRequestDTO = UpdateDemandDepositAccountTransferRequestDTO.builder()
+                .header(RequestHeader.builder()
+                        .apiName("updateDemandDepositAccountTransfer")
+                        .userKey(userKey)
+                        .build())
+                .depositAccountNo(requestDTO.getDepositAccountNo())
+                .depositTransactionSummary(requestDTO.getDepositTransactionSummary())
+                .transactionBalance(requestDTO.getTransactionBalance())
+                .withdrawalAccountNo(requestDTO.getWithdrawalAccountNo())
+                .withdrawalTransactionSummary(requestDTO.getWithdrawalTransactionSummary())
+                .build();
+
+        UpdateDemandDepositAccountTransferResponseDTO updateDemandDepositAccountTransferResponseDTO = domesticClient.updateDemandDepositAccountTransfer(updateDemandDepositAccountTransferRequestDTO);
+
+        ResponseCode responseCode = updateDemandDepositAccountTransferResponseDTO.getHeader().getResponseCode();
+        String responseMessage = updateDemandDepositAccountTransferResponseDTO.getHeader().getResponseMessage();
+
+        return SsafySuccessResponseDTO.builder()
+                .responseCode(responseCode)
+                .responseMessage(responseMessage)
+                .build();
+    }
+
+    // 한화 여행통장 계좌 이체 서비스 로직
+    public SsafySuccessResponseDTO transferDomesticTravelAccount(Long userId, String userKey, Long accountId, TransferDomesticTravelAccountRequestDTO requestDTO) {
+
+        // 관계 테이블에서 조회가 안되는 관계면 예외 던짐
+        UserRole userRole = userAccountRelationRepository.findByUserIdAndAccountId(userId, accountId)
+                .orElseThrow(UserAccountRelationNotFoundException::getInstance)
+                .getUserRole();
+
+        // 조회가 되도 권한이 없는 멤버면 예외 던짐
+        if(userRole == UserRole.NONE_PAYER) {
+            throw UnauthorizedUserRoleException.getInstance();
+        }
+
+        // 계좌 테이블에서 조회가 안되는 계좌이거나 조회되도 한화 여행통장이 아니면 예외 던짐
+        accountRepository.findById(accountId)
+                .filter(account -> account.getAccountType() == AccountType.DOMESTIC)
+                .orElseThrow(() -> {
+                    if (!accountRepository.existsById(accountId)) {
+                        return AccountNotFoundException.getInstance();
+                    } else {
+                        return InvalidAccountTypeException.getInstance();
+                    }
+                });
+
+        // SSAFY 금융 API 계좌 이체 요청
+        UpdateDemandDepositAccountTransferRequestDTO updateDemandDepositAccountTransferRequestDTO = UpdateDemandDepositAccountTransferRequestDTO.builder()
+                .header(RequestHeader.builder()
+                        .apiName("updateDemandDepositAccountTransfer")
+                        .userKey(userKey)
+                        .build())
+                .depositAccountNo(requestDTO.getDepositAccountNo())
+                .depositTransactionSummary(requestDTO.getDepositTransactionSummary())
+                .transactionBalance(requestDTO.getTransactionBalance())
+                .withdrawalAccountNo(requestDTO.getWithdrawalAccountNo())
+                .withdrawalTransactionSummary(requestDTO.getWithdrawalTransactionSummary())
+                .build();
+
+        UpdateDemandDepositAccountTransferResponseDTO updateDemandDepositAccountTransferResponseDTO = domesticClient.updateDemandDepositAccountTransfer(updateDemandDepositAccountTransferRequestDTO);
+
+        ResponseCode responseCode = updateDemandDepositAccountTransferResponseDTO.getHeader().getResponseCode();
+        String responseMessage = updateDemandDepositAccountTransferResponseDTO.getHeader().getResponseMessage();
+
+        return SsafySuccessResponseDTO.builder()
+                .responseCode(responseCode)
+                .responseMessage(responseMessage)
+                .build();
     }
 
     // SSAFY 금융 API 계좌 거래 내역 responseDTO -> 개인 통장 거래 내역 리스트
