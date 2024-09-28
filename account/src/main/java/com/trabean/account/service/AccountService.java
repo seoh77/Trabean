@@ -1,26 +1,35 @@
 package com.trabean.account.service;
 
 import com.trabean.account.domain.Account;
+import com.trabean.account.domain.Account.AccountType;
 import com.trabean.account.domain.UserAccountRelation;
-import com.trabean.account.dto.request.*;
-import com.trabean.account.dto.response.*;
-import com.trabean.account.dto.response.DomesticTravelAccountMemberResponseDTO.Member;
+import com.trabean.account.domain.UserAccountRelation.UserRole;
+import com.trabean.account.dto.request.CreateDomesticTravelAccountRequestDTO;
+import com.trabean.account.dto.request.CreatePersonalAccountRequestDTO;
+import com.trabean.account.dto.request.VerifyAccountPasswordRequestDTO;
+import com.trabean.account.dto.response.DomesticTravelAccountDetailResponseDTO;
+import com.trabean.account.dto.response.DomesticTravelAccountMemberListResponseDTO;
+import com.trabean.account.dto.response.DomesticTravelAccountMemberListResponseDTO.Member;
+import com.trabean.account.dto.response.PersonalAccountDetailResponseDTO;
 import com.trabean.account.repository.AccountRepository;
 import com.trabean.account.repository.UserAccountRelationRepository;
+import com.trabean.common.InternalServerSuccessResponseDTO;
 import com.trabean.common.ResponseCode;
-import com.trabean.exception.AccountNotFoundException;
-import com.trabean.exception.CustomFeignClientException;
+import com.trabean.common.SsafySuccessResponseDTO;
+import com.trabean.exception.*;
 import com.trabean.external.msa.travel.client.TravelClient;
-import com.trabean.external.msa.user.client.UserClient;
 import com.trabean.external.msa.travel.dto.requestDTO.SaveDomesticTravelAccountRequestDTO;
+import com.trabean.external.msa.travel.dto.responseDTO.DomesticTravelAccountInfoResponseDTO;
+import com.trabean.external.msa.user.client.UserClient;
 import com.trabean.external.msa.user.dto.response.UserNameResponseDTO;
 import com.trabean.external.ssafy.domestic.client.DomesticClient;
 import com.trabean.external.ssafy.domestic.dto.requestDTO.CreateDemandDepositAccountRequestDTO;
-import com.trabean.external.ssafy.domestic.dto.requestDTO.InquireDemandDepositAccountListRequestDTO;
+import com.trabean.external.ssafy.domestic.dto.requestDTO.InquireDemandDepositAccountRequestDTO;
+import com.trabean.external.ssafy.domestic.dto.requestDTO.InquireTransactionHistoryListRequestDTO;
 import com.trabean.external.ssafy.domestic.dto.responseDTO.CreateDemandDepositAccountResponseDTO;
-import com.trabean.external.ssafy.domestic.dto.responseDTO.InquireDemandDepositAccountListResponseDTO;
+import com.trabean.external.ssafy.domestic.dto.responseDTO.InquireDemandDepositAccountResponseDTO;
+import com.trabean.external.ssafy.domestic.dto.responseDTO.InquireTransactionHistoryListResponseDTO;
 import com.trabean.util.RequestHeader;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -40,15 +49,16 @@ public class AccountService {
     private final UserAccountRelationRepository userAccountRelationRepository;
 
     private final DomesticClient domesticClient;
+
     private final UserClient userClient;
     private final TravelClient travelClient;
 
     private final PasswordEncoder passwordEncoder;
 
     // 개인 통장 생성 서비스 로직
-    public CreatePersonalAccountResponseDTO createPersonalAccount(Long userId, String userKey, CreatePersonalAccountRequestDTO requestDTO) {
+    public SsafySuccessResponseDTO createPersonalAccount(Long userId, String userKey, CreatePersonalAccountRequestDTO requestDTO) {
 
-        // SSAFY API 계좌 생성 요청
+        // SSAFY 금융 API 계좌 생성 요청
         CreateDemandDepositAccountRequestDTO createDemandDepositAccountRequestDTO = CreateDemandDepositAccountRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName("createDemandDepositAccount")
@@ -66,7 +76,7 @@ public class AccountService {
         Account account = Account.builder()
                 .accountNo(accountNo)
                 .password(hashedPassword)
-                .accountType(Account.AccountType.PERSONAL)
+                .accountType(AccountType.PERSONAL)
                 .build();
 
         Account savedAccount = accountRepository.save(account);
@@ -75,7 +85,7 @@ public class AccountService {
         UserAccountRelation userAccountRelation = UserAccountRelation.builder()
                 .userId(userId)
                 .account(savedAccount)
-                .userRole(UserAccountRelation.UserRole.ADMIN)
+                .userRole(UserRole.ADMIN)
                 .build();
 
         userAccountRelationRepository.save(userAccountRelation);
@@ -83,16 +93,16 @@ public class AccountService {
         ResponseCode responseCode = createDemandDepositAccountResponseDTO.getHeader().getResponseCode();
         String responseMessage = createDemandDepositAccountResponseDTO.getHeader().getResponseMessage();
 
-        return CreatePersonalAccountResponseDTO.builder()
+        return SsafySuccessResponseDTO.builder()
                 .responseCode(responseCode)
                 .responseMessage(responseMessage)
                 .build();
     }
 
     // 한화 여행통장 생성 서비스 로직
-    public CreateDomesticTravelAccountResponseDTO createDomesticTravelAccount(Long userId, String userKey, CreateDomesticTravelAccountRequestDTO requestDTO) {
+    public SsafySuccessResponseDTO createDomesticTravelAccount(Long userId, String userKey, CreateDomesticTravelAccountRequestDTO requestDTO) {
 
-        // SSAFY API 계좌 생성 요청
+        // SSAFY 금융 API 계좌 생성 요청
         CreateDemandDepositAccountRequestDTO createDemandDepositAccountRequestDTO = CreateDemandDepositAccountRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName("createDemandDepositAccount")
@@ -110,7 +120,7 @@ public class AccountService {
         Account account = Account.builder()
                 .accountNo(accountNo)
                 .password(hashedPassword)
-                .accountType(Account.AccountType.DOMESTIC)
+                .accountType(AccountType.DOMESTIC)
                 .build();
 
         Account savedAccount = accountRepository.save(account);
@@ -119,12 +129,12 @@ public class AccountService {
         UserAccountRelation userAccountRelation = UserAccountRelation.builder()
                 .userId(userId)
                 .account(savedAccount)
-                .userRole(UserAccountRelation.UserRole.ADMIN)
+                .userRole(UserRole.ADMIN)
                 .build();
 
         userAccountRelationRepository.save(userAccountRelation);
 
-        // Travel 서버에 여행통장 생성 요청
+        // Travel 서버에 원화계좌 생성시 원화여행계좌 테이블에 정보 저장 요청
         SaveDomesticTravelAccountRequestDTO saveDomesticTravelAccountRequestDTO = SaveDomesticTravelAccountRequestDTO.builder()
                 .accountId(savedAccount.getAccountId())
                 .accountName(requestDTO.getAccountName())
@@ -136,224 +146,271 @@ public class AccountService {
         ResponseCode responseCode = createDemandDepositAccountResponseDTO.getHeader().getResponseCode();
         String responseMessage = createDemandDepositAccountResponseDTO.getHeader().getResponseMessage();
 
-        return CreateDomesticTravelAccountResponseDTO.builder()
+        return SsafySuccessResponseDTO.builder()
                 .responseCode(responseCode)
                 .responseMessage(responseMessage)
                 .build();
     }
 
-    // 통장 목록 조회 서비스 로직
-    public AccountListResponseDTO getAccountList(String userKey) {
+    // 개인 통장 상세 조회 서비스 로직
+    public PersonalAccountDetailResponseDTO getPersonalAccountDetail(Long userId, String userKey, Long accountId, String startDate, String endDate, String transactionType) {
 
-        // SSAFY API 계좌 목록 조회 요청
-        InquireDemandDepositAccountListRequestDTO inquireDemandDepositAccountListRequestDTO = InquireDemandDepositAccountListRequestDTO.builder()
+        // 관계 테이블에서 조회가 안되는 관계면 예외 던짐
+        userAccountRelationRepository.findByUserIdAndAccountId(userId, accountId)
+                .orElseThrow(UserAccountRelationNotFoundException::getInstance);
+
+        // 계좌 테이블에서 조회가 안되는 계좌이거나 조회되도 개인 통장이 아니면 예외 던짐
+        String accountNo = accountRepository.findById(accountId)
+                .filter(account -> account.getAccountType() == AccountType.PERSONAL)
+                .orElseThrow(() -> {
+                    if (!accountRepository.existsById(accountId)) {
+                        return AccountNotFoundException.getInstance();
+                    } else {
+                        return InvalidAccountTypeException.getInstance();
+                    }
+                })
+                .getAccountNo();
+
+        // SSAFY 금융 API 계좌 조회 (단건) 요청
+        InquireDemandDepositAccountRequestDTO inquireDemandDepositAccountRequestDTO = InquireDemandDepositAccountRequestDTO.builder()
                 .header(RequestHeader.builder()
-                        .apiName("inquireDemandDepositAccountList")
+                        .apiName("inquireDemandDepositAccount")
                         .userKey(userKey)
                         .build())
+                .accountNo(accountNo)
                 .build();
 
-        InquireDemandDepositAccountListResponseDTO inquireDemandDepositAccountListResponseDTO = domesticClient.inquireDemandDepositAccountList(inquireDemandDepositAccountListRequestDTO);
+        InquireDemandDepositAccountResponseDTO inquireDemandDepositAccountResponseDTO = domesticClient.inquireDemandDepositAccount(inquireDemandDepositAccountRequestDTO);
 
-        ResponseCode responseCode = inquireDemandDepositAccountListResponseDTO.getHeader().getResponseCode();
-        String responseMessage = inquireDemandDepositAccountListResponseDTO.getHeader().getResponseMessage();
-        List<AccountListResponseDTO.Account> accountList = getAccountList(inquireDemandDepositAccountListResponseDTO);
+        // SSAFY 금융 API 계좌 거래 내역 조회 요청
+        InquireTransactionHistoryListRequestDTO inquireTransactionHistoryListRequestDTO = InquireTransactionHistoryListRequestDTO.builder()
+                .header(RequestHeader.builder()
+                        .apiName("inquireTransactionHistoryList")
+                        .userKey(userKey)
+                        .build())
+                .accountNo(accountNo)
+                .startDate(startDate)
+                .endDate(endDate)
+                .transactionType(transactionType)
+                .orderByType("DESC")
+                .build();
 
-        return AccountListResponseDTO.builder()
-                .responseCode(responseCode)
-                .responseMessage(responseMessage)
-                .accountList(accountList)
+        InquireTransactionHistoryListResponseDTO inquireTransactionHistoryListResponseDTO = domesticClient.inquireTransactionHistoryList(inquireTransactionHistoryListRequestDTO);
+
+        Long accountBalance = inquireDemandDepositAccountResponseDTO.getRec().getAccountBalance();
+        String bankName = inquireDemandDepositAccountResponseDTO.getRec().getBankName();
+
+        List<PersonalAccountDetailResponseDTO.Transaction> transactionList = getPersonalAccountTransactionList(inquireTransactionHistoryListResponseDTO);
+
+        return PersonalAccountDetailResponseDTO.builder()
+                .accountId(accountId)
+                .accountNo(accountNo)
+                .accountBalance(accountBalance)
+                .bankName(bankName)
+                .transactionList(transactionList)
                 .build();
     }
 
-//    // 개인 통장 상세 조회 서비스 로직
-//    public PersonalAccountDetailResponseDTO getAccountDetail(Long userId, String userKey, Long accountId, String startDate, String endDate, String transactionType) {
-//
-//        Account account = accountRepository.findById(accountId).orElseThrow();
-//
-//        // SSAFY 계좌 조회 (단건) 요청
-//        InquireDemandDepositAccountRequestDTO inquireDemandDepositAccountRequestDTO = InquireDemandDepositAccountRequestDTO.builder()
-//                .header(RequestHeader.builder()
-//                        .apiName("inquireDemandDepositAccount")
-//                        .userKey(userKey)
-//                        .build())
-//                .accountNo(accountNo)
-//                .build();
-//
-//        try {
-//            InquireDemandDepositAccountResponseDTO inquireDemandDepositAccountResponseDTO = domesticClient.inquireDemandDepositAccount(inquireDemandDepositAccountRequestDTO);
-//
-//            String bankName = inquireDemandDepositAccountResponseDTO.getRec().getBankName();
-//            Long accountBalance = inquireDemandDepositAccountResponseDTO.getRec().getAccountBalance();
-//
-//            // SSAFY 계좌 거래 내역 조회 요청
-//            InquireTransactionHistoryListRequestDTO inquireTransactionHistoryListRequestDTO = InquireTransactionHistoryListRequestDTO.builder()
-//                    .header(RequestHeader.builder()
-//                            .apiName("inquireTransactionHistoryList")
-//                            .userKey(userKey)
-//                            .build())
-//                    .accountNo(accountNo)
-//                    .startDate(startDate)
-//                    .endDate(endDate)
-//                    .transactionType(transactionType)
-//                    .orderByType("DESC")
-//                    .build();
-//
-//            InquireTransactionHistoryListResponseDTO inquireTransactionHistoryListResponseDTO = domesticClient.inquireTransactionHistoryList(inquireTransactionHistoryListRequestDTO);
-//
-//            ResponseCode responseCode = inquireTransactionHistoryListResponseDTO.getHeader().getResponseCode();
-//            String responseMessage = inquireTransactionHistoryListResponseDTO.getHeader().getResponseMessage();
-//            List<PersonalAccountDetailResponseDTO.Transaction> transactionList = getTransactionList(inquireTransactionHistoryListResponseDTO);
-//
-//            return PersonalAccountDetailResponseDTO.builder()
-//                    .responseCode(responseCode)
-//                    .responseMessage(responseMessage)
-//                    .bankName(bankName)
-//                    .accountBalance(accountBalance)
-//                    .transactionList(transactionList)
-//                    .build();
-//        } catch (CustomFeignClientException e) {
-//            ResponseCode responseCode = e.getErrorResponse().getResponseCode();
-//            String responseMessage = e.getErrorResponse().getResponseMessage();
-//
-//            return PersonalAccountDetailResponseDTO.builder()
-//                    .responseCode(responseCode)
-//                    .responseMessage(responseMessage)
-//                    .build();
-//        }
-//    }
+    // 한화 여행통장 상세 조회 서비스 로직
+    public DomesticTravelAccountDetailResponseDTO getDomesticTravelAccountDetail(Long userId, String userKey, Long accountId, String startDate, String endDate, String transactionType) {
 
-//    // 한화 여행통장 상세 조회 서비스 로직
-//    public DomesticTravelAccountDetailResponseDTO getDomesticTravelAccountDetail(DomesticTravelAccountDetailRequestDTO requestDTO, String startDate, String endDate, String transactionType) {
-//        String userKey = requestDTO.getUserKey();
-//        String accountNo = requestDTO.getAccountNo();
-//
-//        // SSAFY 계좌 조회 (단건) 요청
-//        InquireDemandDepositAccountRequestDTO inquireDemandDepositAccountRequestDTO = InquireDemandDepositAccountRequestDTO.builder()
-//                .header(RequestHeader.builder()
-//                        .apiName("inquireDemandDepositAccount")
-//                        .userKey(userKey)
-//                        .build())
-//                .accountNo(accountNo)
-//                .build();
-//
-//        try {
-//            InquireDemandDepositAccountResponseDTO inquireDemandDepositAccountResponseDTO = domesticClient.inquireDemandDepositAccount(inquireDemandDepositAccountRequestDTO);
-//
-//            String bankName = inquireDemandDepositAccountResponseDTO.getRec().getBankName();
-//            Long accountBalance = inquireDemandDepositAccountResponseDTO.getRec().getAccountBalance();
-//
-//            // SSAFY 계좌 거래 내역 조회 요청
-//            InquireTransactionHistoryListRequestDTO inquireTransactionHistoryListRequestDTO = InquireTransactionHistoryListRequestDTO.builder()
-//                    .header(RequestHeader.builder()
-//                            .apiName("inquireTransactionHistoryList")
-//                            .userKey(userKey)
-//                            .build())
-//                    .accountNo(accountNo)
-//                    .startDate(startDate)
-//                    .endDate(endDate)
-//                    .transactionType(transactionType)
-//                    .orderByType("DESC")
-//                    .build();
-//
-//            InquireTransactionHistoryListResponseDTO inquireTransactionHistoryListResponseDTO = domesticClient.inquireTransactionHistoryList(inquireTransactionHistoryListRequestDTO);
-//
-//            ResponseCode responseCode = inquireTransactionHistoryListResponseDTO.getHeader().getResponseCode();
-//            String responseMessage = inquireTransactionHistoryListResponseDTO.getHeader().getResponseMessage();
-//            List<DomesticTravelAccountDetailResponseDTO.Transaction> transactionList = getDomesticTravelAccountTransactionList(inquireTransactionHistoryListResponseDTO);
-//
-//            return DomesticTravelAccountDetailResponseDTO.builder()
-//                    .responseCode(responseCode)
-//                    .responseMessage(responseMessage)
-//                    .bankName(bankName)
-//                    .accountBalance(accountBalance)
-//                    .transactionList(transactionList)
-//                    .build();
-//        } catch (CustomFeignClientException e) {
-//            ResponseCode responseCode = e.getErrorResponse().getResponseCode();
-//            String responseMessage = e.getErrorResponse().getResponseMessage();
-//
-//            return DomesticTravelAccountDetailResponseDTO.builder()
-//                    .responseCode(responseCode)
-//                    .responseMessage(responseMessage)
-//                    .build();
-//        }
-//    }
+        // 관계 테이블에서 조회가 안되는 관계면 예외 던짐
+        userAccountRelationRepository.findByUserIdAndAccountId(userId, accountId)
+                .orElseThrow(UserAccountRelationNotFoundException::getInstance);
 
-
-//    // 통장 권한 변경 서비스 로직
-//    public UpdateUserRoleResponseDTO updateUserRole(UpdateUserRoleRequestDTO requestDTO) {
-//        Long userId = requestDTO.getUserId();
-//        Long accountId = requestDTO.getAccountId();
-//        UserAccountRelation.UserRole userRole = requestDTO.getUserRole();
-//
-//        int updatedTuples = userAccountRelationRepository.updateUserRoleByUserIdAndAccountId(userId, accountId, userRole);
-//
-//        if(updatedTuples == 1){
-//            return UpdateUserRoleResponseDTO.builder()
-//                    .message("통장 권한 변경 성공")
-//                    .build();
-//        }
-//        else{
-//            throw UserAccountRelationNotFoundException.getInstance();
-//        }
-//    }
-
-    // SSAFY API 통장 목록 조회 responseDTO -> 통장 목록 리스트
-    private List<AccountListResponseDTO.Account> getAccountList(InquireDemandDepositAccountListResponseDTO inquireDemandDepositAccountListResponseDTO) {
-        return inquireDemandDepositAccountListResponseDTO.getRec().stream()
-                .map(rec -> {
-                    Long accountId = accountRepository.findByAccountNo(rec.getAccountNo())
-                            .map(Account::getAccountId)
-                            .orElseThrow(AccountNotFoundException::getInstance);
-
-                    return AccountListResponseDTO.Account.builder()
-                            .accountId(accountId)
-                            .accountNo(rec.getAccountNo())
-                            .bankName(rec.getBankName())
-                            .accountBalance(rec.getAccountBalance())
-                            .build();
+        // 계좌 테이블에서 조회가 안되는 계좌이거나 조회되도 한화 여행통장이 아니면 예외 던짐
+        String accountNo = accountRepository.findById(accountId)
+                .filter(account -> account.getAccountType() == AccountType.DOMESTIC)
+                .orElseThrow(() -> {
+                    if (!accountRepository.existsById(accountId)) {
+                        return AccountNotFoundException.getInstance();
+                    } else {
+                        return InvalidAccountTypeException.getInstance();
+                    }
                 })
+                .getAccountNo();
+
+        // Travel 서버에 한화 여행통장 ID로 이름과 목표금액 반환 요청
+        DomesticTravelAccountInfoResponseDTO domesticTravelAccountInfo = travelClient.getDomesticTravelAccountInfo(accountId);
+
+        // SSAFY 금융 API 계좌 조회 (단건) 요청
+        InquireDemandDepositAccountRequestDTO inquireDemandDepositAccountRequestDTO = InquireDemandDepositAccountRequestDTO.builder()
+                .header(RequestHeader.builder()
+                        .apiName("inquireDemandDepositAccount")
+                        .userKey(userKey)
+                        .build())
+                .accountNo(accountNo)
+                .build();
+
+        InquireDemandDepositAccountResponseDTO inquireDemandDepositAccountResponseDTO = domesticClient.inquireDemandDepositAccount(inquireDemandDepositAccountRequestDTO);
+
+        // SSAFY 금융 API 계좌 거래 내역 조회 요청
+        InquireTransactionHistoryListRequestDTO inquireTransactionHistoryListRequestDTO = InquireTransactionHistoryListRequestDTO.builder()
+                .header(RequestHeader.builder()
+                        .apiName("inquireTransactionHistoryList")
+                        .userKey(userKey)
+                        .build())
+                .accountNo(accountNo)
+                .startDate(startDate)
+                .endDate(endDate)
+                .transactionType(transactionType)
+                .orderByType("DESC")
+                .build();
+
+        InquireTransactionHistoryListResponseDTO inquireTransactionHistoryListResponseDTO = domesticClient.inquireTransactionHistoryList(inquireTransactionHistoryListRequestDTO);
+
+        String accountName = domesticTravelAccountInfo.getAccountName();
+        Long targetBalance = domesticTravelAccountInfo.getTargetAmount();
+
+        Long accountBalance = inquireDemandDepositAccountResponseDTO.getRec().getAccountBalance();
+        String bankName = inquireDemandDepositAccountResponseDTO.getRec().getBankName();
+
+        List<DomesticTravelAccountDetailResponseDTO.Transaction> transactionList = getDomesticTravelAccountTransactionList(inquireTransactionHistoryListResponseDTO);
+
+        return DomesticTravelAccountDetailResponseDTO.builder()
+                .accountName(accountName)
+                .targetAmount(targetBalance)
+                .accountId(accountId)
+                .accountNo(accountNo)
+                .accountBalance(accountBalance)
+                .bankName(bankName)
+                .transactionList(transactionList)
+                .build();
+    }
+
+    // 개인 통장 계좌 이체 비밀번호 검증 API
+    public InternalServerSuccessResponseDTO verifyPersonalAccountPassword(Long userId, Long accountId, VerifyAccountPasswordRequestDTO requestDTO) {
+
+        // 관계 테이블에서 조회가 안되는 관계면 예외 던짐
+        UserRole userRole = userAccountRelationRepository.findByUserIdAndAccountId(userId, accountId)
+                .orElseThrow(UserAccountRelationNotFoundException::getInstance)
+                .getUserRole();
+
+        if(userRole != UserRole.ADMIN) {
+            throw UserAccountRelationNotFoundException.getInstance();
+        }
+
+        // 계좌 테이블에서 조회가 안되는 계좌이거나 조회되도 개인 통장이 아니면 예외 던짐
+        String savedPassword = accountRepository.findById(accountId)
+                .filter(account -> account.getAccountType() == AccountType.PERSONAL)
+                .orElseThrow(() -> {
+                    if (!accountRepository.existsById(accountId)) {
+                        return AccountNotFoundException.getInstance();
+                    } else {
+                        return InvalidAccountTypeException.getInstance();
+                    }
+                })
+                .getPassword();
+
+        if(passwordEncoder.matches(requestDTO.getPassword() + PEPPER, savedPassword)){
+            return InternalServerSuccessResponseDTO.builder()
+                    .message("통장 비밀번호 검증 성공")
+                    .build();
+        }
+        else{
+            throw InvalidPasswordException.getInstance();
+        }
+    }
+
+    // 한화 여행통장 계좌 이체 비밀번호 검증 API
+    public InternalServerSuccessResponseDTO verifyDomesticTravelAccountPassword(Long userId, Long accountId, VerifyAccountPasswordRequestDTO requestDTO) {
+
+        // 관계 테이블에서 조회가 안되는 관계면 예외 던짐
+        UserRole userRole = userAccountRelationRepository.findByUserIdAndAccountId(userId, accountId)
+                .orElseThrow(UserAccountRelationNotFoundException::getInstance)
+                .getUserRole();
+
+        if(userRole == UserRole.NONE_PAYER) {
+            throw UnauthorizedUserRoleException.getInstance();
+        }
+
+        // 계좌 테이블에서 조회가 안되는 계좌이거나 조회되도 한화 여행통장이 아니면 예외 던짐
+        String savedPassword = accountRepository.findById(accountId)
+                .filter(account -> account.getAccountType() == AccountType.DOMESTIC)
+                .orElseThrow(() -> {
+                    if (!accountRepository.existsById(accountId)) {
+                        return AccountNotFoundException.getInstance();
+                    } else {
+                        return InvalidAccountTypeException.getInstance();
+                    }
+                })
+                .getPassword();
+
+        if(passwordEncoder.matches(requestDTO.getPassword() + PEPPER, savedPassword)){
+            return InternalServerSuccessResponseDTO.builder()
+                    .message("통장 비밀번호 검증 성공")
+                    .build();
+        }
+        else{
+            throw InvalidPasswordException.getInstance();
+        }
+    }
+
+    // 한화 여행통장 멤버 목록 조회 서비스 로직 (민채)
+    public DomesticTravelAccountMemberListResponseDTO getDomesticTravelAccountMemberList(Long userId, Long accountId) {
+
+        // 관계 테이블에서 조회가 안되는 관계면 예외 던짐
+        userAccountRelationRepository.findByUserIdAndAccountId(userId, accountId)
+                .orElseThrow(UserAccountRelationNotFoundException::getInstance);
+
+        // 계좌 테이블에서 조회가 안되는 계좌이거나 조회되도 한화 여행통장이 아니면 예외 던짐
+        accountRepository.findById(accountId)
+                .filter(account -> account.getAccountType() == AccountType.DOMESTIC)
+                .orElseThrow(() -> {
+                    if (!accountRepository.existsById(accountId)) {
+                        return AccountNotFoundException.getInstance();
+                    } else {
+                        return InvalidAccountTypeException.getInstance();
+                    }
+                });
+
+        List<UserAccountRelation> userAccountRelations = userAccountRelationRepository.findAllByAccountId(accountId)
+                .orElse(new ArrayList<>());
+
+        List<Member> members = new ArrayList<>();
+
+        // User 서버에 userId로 userName 조회하는 요청을 모든 멤베에 대해 보냄
+        for (UserAccountRelation member : userAccountRelations) {
+            UserNameResponseDTO userNameResponseDTO = userClient.getUserName(member.getUserId());
+
+            members.add(DomesticTravelAccountMemberListResponseDTO.Member.builder()
+                    .userId(member.getUserId())
+                    .userName(userNameResponseDTO.getUserName())
+                    .role(member.getUserRole())
+                    .build());
+        }
+
+        return DomesticTravelAccountMemberListResponseDTO.builder()
+                .memberCount((long) members.size())
+                .members(members).build();
+    }
+
+    // SSAFY 금융 API 계좌 거래 내역 responseDTO -> 개인 통장 거래 내역 리스트
+    private List<PersonalAccountDetailResponseDTO.Transaction> getPersonalAccountTransactionList(InquireTransactionHistoryListResponseDTO inquireTransactionHistoryListResponseDTO) {
+        return inquireTransactionHistoryListResponseDTO.getRec().getList().stream()
+                .map(item -> PersonalAccountDetailResponseDTO.Transaction.builder()
+                        .transactionType(item.getTransactionType())
+                        .transactionSummary(item.getTransactionSummary())
+                        .transactionDate(item.getTransactionDate())
+                        .transactionTime(item.getTransactionTime())
+                        .transactionBalance(item.getTransactionBalance())
+                        .transactionAfterBalance(item.getTransactionAfterBalance())
+                        .build())
                 .collect(Collectors.toList());
     }
 
-//    // SSAFY API 계좌 거래 내역 조회 responseDTO -> 거래 내역 리스트
-//    private List<PersonalAccountDetailResponseDTO.Transaction> getTransactionList(InquireTransactionHistoryListResponseDTO inquireTransactionHistoryListResponseDTO) {
-//        return inquireTransactionHistoryListResponseDTO.getRec().getList().stream()
-//                .map(item -> PersonalAccountDetailResponseDTO.Transaction.builder()
-//                        .transactionType(item.getTransactionType())
-//                        .transactionSummary(item.getTransactionSummary())
-//                        .transactionDate(item.getTransactionDate())
-//                        .transactionTime(item.getTransactionTime())
-//                        .transactionBalance(item.getTransactionBalance())
-//                        .transactionAfterBalance(item.getTransactionAfterBalance())
-//                        .build())
-//                .collect(Collectors.toList());
-//    }
-
-//    // SSAFY API 계좌 거래 내역 조회 responseDTO -> 거래 내역 리스트
-//    private List<DomesticTravelAccountDetailResponseDTO.Transaction> getDomesticTravelAccountTransactionList(InquireTransactionHistoryListResponseDTO inquireTransactionHistoryListResponseDTO) {
-//        return inquireTransactionHistoryListResponseDTO.getRec().getList().stream()
-//                .map(item -> DomesticTravelAccountDetailResponseDTO.Transaction.builder()
-//                        .transactionType(item.getTransactionType())
-//                        .transactionSummary(item.getTransactionSummary())
-//                        .transactionDate(item.getTransactionDate())
-//                        .transactionTime(item.getTransactionTime())
-//                        .transactionBalance(item.getTransactionBalance())
-//                        .transactionAfterBalance(item.getTransactionAfterBalance())
-//                        .build())
-//                .collect(Collectors.toList());
-//    }
-
-    // 한화 여행 통장 멤버 목록 + 권한 반환 서비스 코드 : 민채
-    public DomesticTravelAccountMemberResponseDTO getDomesticTravelMemberList(Long accountId) {
-        List<UserAccountRelation> members = userAccountRelationRepository.findAllByAccountId(accountId);
-        List<Member> responseMembers = new ArrayList<>();
-        for (UserAccountRelation member : members) {
-            UserNameResponseDTO temp = userClient.getUserName(member.getUserId());
-            responseMembers.add(Member.builder().userId(member.getUserId()).userName(temp.getUserName()).role(member.getUserRole()).build());
-        }
-        return DomesticTravelAccountMemberResponseDTO.builder().memberCount(members.size()).members(responseMembers).build();
+    // SSAFY 금융 API 계좌 거래 내역 responseDTO -> 한화 여행 통장 거래 내역 리스트
+    private List<DomesticTravelAccountDetailResponseDTO.Transaction> getDomesticTravelAccountTransactionList(InquireTransactionHistoryListResponseDTO inquireTransactionHistoryListResponseDTO) {
+        return inquireTransactionHistoryListResponseDTO.getRec().getList().stream()
+                .map(item -> DomesticTravelAccountDetailResponseDTO.Transaction.builder()
+                        .transactionType(item.getTransactionType())
+                        .transactionSummary(item.getTransactionSummary())
+                        .transactionDate(item.getTransactionDate())
+                        .transactionTime(item.getTransactionTime())
+                        .transactionBalance(item.getTransactionBalance())
+                        .transactionAfterBalance(item.getTransactionAfterBalance())
+                        .build())
+                .collect(Collectors.toList());
     }
 
 }
