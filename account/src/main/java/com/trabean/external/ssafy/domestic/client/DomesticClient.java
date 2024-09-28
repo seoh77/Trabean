@@ -1,6 +1,6 @@
 package com.trabean.external.ssafy.domestic.client;
 
-import com.trabean.config.feign.FeignClientConfiguration;
+import com.trabean.config.feign.FeignClientConfig;
 import com.trabean.external.ssafy.domestic.dto.requestDTO.*;
 import com.trabean.external.ssafy.domestic.dto.responseDTO.*;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 /**
  * SSAFY 금융 API p.29 ~ p.71 수시입출금 관련 요청 처리 클라이언트
  */
-@FeignClient(name = "domesticClient", url = "https://finopenapi.ssafy.io/ssafy/api/v1/edu/demandDeposit", configuration = FeignClientConfiguration.class)
+@FeignClient(name = "domesticClient", url = "https://finopenapi.ssafy.io/ssafy/api/v1/edu/demandDeposit", configuration = FeignClientConfig.class)
 public interface DomesticClient {
 
     /**

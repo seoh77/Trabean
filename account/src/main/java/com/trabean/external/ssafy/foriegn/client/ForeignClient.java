@@ -1,6 +1,6 @@
 package com.trabean.external.ssafy.foriegn.client;
 
-import com.trabean.config.feign.FeignClientConfiguration;
+import com.trabean.config.feign.FeignClientConfig;
 import com.trabean.external.ssafy.foriegn.dto.requestDTO.CreateForeignCurrencyDemandDepositAccountRequestDTO;
 import com.trabean.external.ssafy.foriegn.dto.responseDTO.CreateForeignCurrencyDemandDepositAccountResponseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 /**
  * SSAFY 금융 API p.222 ~ p.265 외화 수시입출금 관련 요청 처리 클라이언트
  */
-@FeignClient(name = "foreignClient", url = "https://finopenapi.ssafy.io/ssafy/api/v1/edu/demandDeposit/foreignCurrency", configuration = FeignClientConfiguration.class)
+@FeignClient(name = "foreignClient", url = "https://finopenapi.ssafy.io/ssafy/api/v1/edu/demandDeposit/foreignCurrency", configuration = FeignClientConfig.class)
 public interface ForeignClient {
 
     /**
