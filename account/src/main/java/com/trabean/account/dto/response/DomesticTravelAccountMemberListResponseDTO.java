@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class DomesticTravelAccountMemberResponseDTO {
-    private Integer memberCount;
+public class DomesticTravelAccountMemberListResponseDTO {
+    private Long memberCount;
     private List<Member> members;
 
     @Builder

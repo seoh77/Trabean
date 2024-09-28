@@ -1,14 +1,17 @@
-package com.trabean.internal.dto.responseDTO;
+package com.trabean.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * 다른 서버에서 발생한 성공 응답에 대한 공용 responseDTO
+ */
 @Builder
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class JoinTravelAccountResponseDTO {
+public class ExternalServerSuccessResponseDTO {
     private String message;
 }

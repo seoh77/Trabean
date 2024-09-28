@@ -1,7 +1,5 @@
 package com.trabean.account.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.trabean.common.ResponseCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,13 +11,14 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class DomesticTravelAccountDetailResponseDTO {
-    private ResponseCode responseCode;
-    private String responseMessage;
+    private String accountName;
+    private Long targetAmount;
 
-    private String bankName;
+    private Long accountId;
+    private String accountNo;
     private Long accountBalance;
+    private String bankName;
 
     private List<Transaction> transactionList;
 
