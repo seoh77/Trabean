@@ -1,6 +1,5 @@
 package com.trabean.verification.service;
 
-import com.trabean.common.ResponseCode;
 import com.trabean.common.SsafySuccessResponseDTO;
 import com.trabean.external.ssafy.verification.client.VerificationClient;
 import com.trabean.external.ssafy.verification.dto.requestDTO.CheckAuthCodeRequestDTO;
@@ -30,15 +29,11 @@ public class VerificationService {
                         .build())
                 .accountNo(requestDTO.getAccountNo())
                 .build();
-
         OpenAccountAuthResponseDTO openAccountAuthResponseDTO = verificationClient.openAccountAuth(openAccountAuthRequestDTO);
 
-        ResponseCode responseCode = openAccountAuthResponseDTO.getHeader().getResponseCode();
-        String responseMessage = openAccountAuthResponseDTO.getHeader().getResponseMessage();
-
         return SsafySuccessResponseDTO.builder()
-                .responseCode(responseCode)
-                .responseMessage(responseMessage)
+                .responseCode(openAccountAuthResponseDTO.getHeader().getResponseCode())
+                .responseMessage(openAccountAuthResponseDTO.getHeader().getResponseMessage())
                 .build();
     }
 
@@ -54,15 +49,11 @@ public class VerificationService {
                 .accountNo(requestDTO.getAccountNo())
                 .authCode(requestDTO.getOtp())
                 .build();
-
         CheckAuthCodeResponseDTO checkAuthCodeResponseDTO = verificationClient.checkAuthCode(checkAuthCodeRequestDTO);
 
-        ResponseCode responseCode = checkAuthCodeResponseDTO.getHeader().getResponseCode();
-        String responseMessage = checkAuthCodeResponseDTO.getHeader().getResponseMessage();
-
         return SsafySuccessResponseDTO.builder()
-                .responseCode(responseCode)
-                .responseMessage(responseMessage)
+                .responseCode(checkAuthCodeResponseDTO.getHeader().getResponseCode())
+                .responseMessage(checkAuthCodeResponseDTO.getHeader().getResponseMessage())
                 .build();
     }
 
