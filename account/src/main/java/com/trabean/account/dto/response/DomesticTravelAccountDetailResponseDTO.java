@@ -1,5 +1,6 @@
 package com.trabean.account.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,14 +13,26 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DomesticTravelAccountDetailResponseDTO {
+
+    @JsonProperty("accountName")
     private String accountName;
+
+    @JsonProperty("targetAmount")
     private Long targetAmount;
 
+    @JsonProperty("accountId")
     private Long accountId;
+
+    @JsonProperty("accountNo")
     private String accountNo;
+
+    @JsonProperty("accountBalance")
     private Long accountBalance;
+
+    @JsonProperty("bankName")
     private String bankName;
 
+    @JsonProperty("transactionList")
     private List<Transaction> transactionList;
 
     @Builder

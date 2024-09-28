@@ -1,5 +1,6 @@
 package com.trabean.account.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.trabean.account.domain.UserAccountRelation.UserRole;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -12,7 +13,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DomesticTravelAccountMemberListResponseDTO {
+
+    @JsonProperty("memberCount")
     private Long memberCount;
+
+    @JsonProperty("members")
     private List<Member> members;
 
     @Builder
