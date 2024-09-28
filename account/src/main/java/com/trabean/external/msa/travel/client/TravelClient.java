@@ -2,6 +2,7 @@ package com.trabean.external.msa.travel.client;
 
 import com.trabean.config.feign.FeignClientConfig;
 import com.trabean.external.msa.travel.dto.requestDTO.SaveDomesticTravelAccountRequestDTO;
+import com.trabean.external.msa.travel.dto.requestDTO.SaveForeignTravelAccountRequestDTO;
 import com.trabean.external.msa.travel.dto.responseDTO.DomesticTravelAccountInfoResponseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,12 @@ public interface TravelClient {
      */
     @PostMapping("/api/travel/krw-account/save")
     void saveDomesticTravelAccount(@RequestBody SaveDomesticTravelAccountRequestDTO requestDTO);
+
+    /**
+     * 외화 여행통장 생성 요청
+     */
+    @PostMapping("/api/travel/foreign-account/save")
+    void saveForeignTravelAccount(@RequestBody SaveForeignTravelAccountRequestDTO requestDTO);
 
     /**
      * 한화 여행통장 정보 요청

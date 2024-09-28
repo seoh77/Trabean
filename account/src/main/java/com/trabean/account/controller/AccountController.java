@@ -1,6 +1,7 @@
 package com.trabean.account.controller;
 
 import com.trabean.account.dto.request.CreateDomesticTravelAccountRequestDTO;
+import com.trabean.account.dto.request.CreateForeignTravelAccountRequestDTO;
 import com.trabean.account.dto.request.CreatePersonalAccountRequestDTO;
 import com.trabean.account.dto.request.VerifyAccountPasswordRequestDTO;
 import com.trabean.account.dto.response.DomesticTravelAccountDetailResponseDTO;
@@ -37,6 +38,15 @@ public class AccountController {
                                                                                @RequestHeader String userKey,
                                                                                @RequestBody CreateDomesticTravelAccountRequestDTO requestDTO) {
         SsafySuccessResponseDTO responseDTO = accountService.createDomesticTravelAccount(userId, userKey, requestDTO);
+        return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
+    }
+
+    // 외화 여행통장 생성 API
+    @PostMapping("/travel/foreign")
+    public ResponseEntity<SsafySuccessResponseDTO> createForeignTravelAccount(@RequestHeader Long userId,
+                                                                              @RequestHeader String userKey,
+                                                                              @RequestBody CreateForeignTravelAccountRequestDTO requestDTO) {
+        SsafySuccessResponseDTO responseDTO = accountService.createForeignTravelAccount(userId, userKey, requestDTO);
         return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
     }
 

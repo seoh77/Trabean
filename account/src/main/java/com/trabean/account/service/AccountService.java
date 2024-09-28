@@ -5,6 +5,7 @@ import com.trabean.account.domain.Account.AccountType;
 import com.trabean.account.domain.UserAccountRelation;
 import com.trabean.account.domain.UserAccountRelation.UserRole;
 import com.trabean.account.dto.request.CreateDomesticTravelAccountRequestDTO;
+import com.trabean.account.dto.request.CreateForeignTravelAccountRequestDTO;
 import com.trabean.account.dto.request.CreatePersonalAccountRequestDTO;
 import com.trabean.account.dto.request.VerifyAccountPasswordRequestDTO;
 import com.trabean.account.dto.response.DomesticTravelAccountDetailResponseDTO;
@@ -19,6 +20,7 @@ import com.trabean.common.SsafySuccessResponseDTO;
 import com.trabean.exception.*;
 import com.trabean.external.msa.travel.client.TravelClient;
 import com.trabean.external.msa.travel.dto.requestDTO.SaveDomesticTravelAccountRequestDTO;
+import com.trabean.external.msa.travel.dto.requestDTO.SaveForeignTravelAccountRequestDTO;
 import com.trabean.external.msa.travel.dto.responseDTO.DomesticTravelAccountInfoResponseDTO;
 import com.trabean.external.msa.user.client.UserClient;
 import com.trabean.external.msa.user.dto.response.UserNameResponseDTO;
@@ -29,6 +31,9 @@ import com.trabean.external.ssafy.domestic.dto.requestDTO.InquireTransactionHist
 import com.trabean.external.ssafy.domestic.dto.responseDTO.CreateDemandDepositAccountResponseDTO;
 import com.trabean.external.ssafy.domestic.dto.responseDTO.InquireDemandDepositAccountResponseDTO;
 import com.trabean.external.ssafy.domestic.dto.responseDTO.InquireTransactionHistoryListResponseDTO;
+import com.trabean.external.ssafy.foriegn.client.ForeignClient;
+import com.trabean.external.ssafy.foriegn.dto.requestDTO.CreateForeignCurrencyDemandDepositAccountRequestDTO;
+import com.trabean.external.ssafy.foriegn.dto.responseDTO.CreateForeignCurrencyDemandDepositAccountResponseDTO;
 import com.trabean.util.RequestHeader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -49,6 +54,7 @@ public class AccountService {
     private final UserAccountRelationRepository userAccountRelationRepository;
 
     private final DomesticClient domesticClient;
+    private final ForeignClient foreignClient;
 
     private final UserClient userClient;
     private final TravelClient travelClient;
@@ -145,6 +151,81 @@ public class AccountService {
 
         ResponseCode responseCode = createDemandDepositAccountResponseDTO.getHeader().getResponseCode();
         String responseMessage = createDemandDepositAccountResponseDTO.getHeader().getResponseMessage();
+
+        return SsafySuccessResponseDTO.builder()
+                .responseCode(responseCode)
+                .responseMessage(responseMessage)
+                .build();
+    }
+
+    // 외화 여행통장 생성 서비스 로직
+    public SsafySuccessResponseDTO createForeignTravelAccount(Long userId, String userKey, CreateForeignTravelAccountRequestDTO requestDTO) {
+
+        // 관계 테이블에서 조회가 안되는 관계면 예외 던짐
+        UserRole userRole = userAccountRelationRepository.findByUserIdAndAccountId(userId, requestDTO.getDomesticAccountId())
+                .orElseThrow(UserAccountRelationNotFoundException::getInstance)
+                .getUserRole();
+
+        if(userRole == UserRole.ADMIN) {
+            throw UnauthorizedUserRoleException.getInstance();
+        }
+
+        // 계좌 테이블에서 조회가 안되는 계좌이거나 조회되도 한화 여행통장이 아니면 예외 던짐
+        String savedPassword = accountRepository.findById(requestDTO.getDomesticAccountId())
+                .filter(account -> account.getAccountType() == AccountType.DOMESTIC)
+                .orElseThrow(() -> {
+                    if (!accountRepository.existsById(requestDTO.getDomesticAccountId())) {
+                        return AccountNotFoundException.getInstance();
+                    } else {
+                        return InvalidAccountTypeException.getInstance();
+                    }
+                })
+                .getPassword();
+
+        // SSAFY 금융 API 계좌 생성 요청
+        CreateForeignCurrencyDemandDepositAccountRequestDTO createForeignCurrencyDemandDepositAccountRequestDTO = CreateForeignCurrencyDemandDepositAccountRequestDTO.builder()
+                .header(RequestHeader.builder()
+                        .apiName("createForeignCurrencyDemandDepositAccount")
+                        .userKey(userKey)
+                        .build())
+                .accountTypeUniqueNo(FOREIGN_TRAVEL_ACCOUNT_TYPE_UNIQUE_NO)
+                .currency(requestDTO.getCurrency())
+                .build();
+
+        CreateForeignCurrencyDemandDepositAccountResponseDTO createForeignCurrencyDemandDepositAccountResponseDTO = foreignClient.createForeignCurrencyDemandDepositAccount(createForeignCurrencyDemandDepositAccountRequestDTO);
+
+        String accountNo = createForeignCurrencyDemandDepositAccountResponseDTO.getRec().getAccountNo();
+        String currency = createForeignCurrencyDemandDepositAccountResponseDTO.getRec().getCurrency().getCurrency();
+
+        // Account 테이블에 저장
+        Account account = Account.builder()
+                .accountNo(accountNo)
+                .password(savedPassword)
+                .accountType(AccountType.FOREIGN)
+                .build();
+
+        Account savedAccount = accountRepository.save(account);
+
+        // UserAccountRelation 테이블에 저장
+        UserAccountRelation userAccountRelation = UserAccountRelation.builder()
+                .userId(userId)
+                .account(savedAccount)
+                .userRole(UserRole.NONE_PAYER)
+                .build();
+
+        userAccountRelationRepository.save(userAccountRelation);
+
+        // Travel 서버에 외화계좌 생성시 외화여행계좌 테이블에 정보 저장 요청
+        SaveForeignTravelAccountRequestDTO saveForeignTravelAccountRequestDTO = SaveForeignTravelAccountRequestDTO.builder()
+                .foreignAccountId(savedAccount.getAccountId())
+                .domesticAccountId(requestDTO.getDomesticAccountId())
+                .currency(currency)
+                .build();
+
+        travelClient.saveForeignTravelAccount(saveForeignTravelAccountRequestDTO);
+
+        ResponseCode responseCode = createForeignCurrencyDemandDepositAccountResponseDTO.getHeader().getResponseCode();
+        String responseMessage = createForeignCurrencyDemandDepositAccountResponseDTO.getHeader().getResponseMessage();
 
         return SsafySuccessResponseDTO.builder()
                 .responseCode(responseCode)
