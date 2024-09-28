@@ -166,7 +166,7 @@ public class AccountService {
                 .orElseThrow(UserAccountRelationNotFoundException::getInstance)
                 .getUserRole();
 
-        if(userRole == UserRole.ADMIN) {
+        if(userRole != UserRole.ADMIN) {
             throw UnauthorizedUserRoleException.getInstance();
         }
 
