@@ -1,6 +1,7 @@
 package com.trabean.account.controller;
 
 import com.trabean.account.dto.request.*;
+import com.trabean.account.dto.response.AccountListResponseDTO;
 import com.trabean.account.dto.response.DomesticTravelAccountDetailResponseDTO;
 import com.trabean.account.dto.response.DomesticTravelAccountMemberListResponseDTO;
 import com.trabean.account.dto.response.PersonalAccountDetailResponseDTO;
@@ -19,6 +20,13 @@ import org.springframework.web.bind.annotation.*;
 public class AccountController {
 
     private final AccountService accountService;
+
+    // 통장 목록 조회 APi
+    @GetMapping
+    public ResponseEntity<AccountListResponseDTO> getAccountList(@RequestHeader String userKey) {
+        AccountListResponseDTO responseDTO = accountService.getAccountList(userKey);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
 
     // 개인 통장 생성 API
     @PostMapping("/personal")

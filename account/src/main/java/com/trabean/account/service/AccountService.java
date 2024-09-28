@@ -5,6 +5,7 @@ import com.trabean.account.domain.Account.AccountType;
 import com.trabean.account.domain.UserAccountRelation;
 import com.trabean.account.domain.UserAccountRelation.UserRole;
 import com.trabean.account.dto.request.*;
+import com.trabean.account.dto.response.AccountListResponseDTO;
 import com.trabean.account.dto.response.DomesticTravelAccountDetailResponseDTO;
 import com.trabean.account.dto.response.DomesticTravelAccountMemberListResponseDTO;
 import com.trabean.account.dto.response.DomesticTravelAccountMemberListResponseDTO.Member;
@@ -21,14 +22,8 @@ import com.trabean.external.msa.travel.dto.responseDTO.DomesticTravelAccountInfo
 import com.trabean.external.msa.user.client.UserClient;
 import com.trabean.external.msa.user.dto.response.UserNameResponseDTO;
 import com.trabean.external.ssafy.domestic.client.DomesticClient;
-import com.trabean.external.ssafy.domestic.dto.requestDTO.CreateDemandDepositAccountRequestDTO;
-import com.trabean.external.ssafy.domestic.dto.requestDTO.InquireDemandDepositAccountRequestDTO;
-import com.trabean.external.ssafy.domestic.dto.requestDTO.InquireTransactionHistoryListRequestDTO;
-import com.trabean.external.ssafy.domestic.dto.requestDTO.UpdateDemandDepositAccountTransferRequestDTO;
-import com.trabean.external.ssafy.domestic.dto.responseDTO.CreateDemandDepositAccountResponseDTO;
-import com.trabean.external.ssafy.domestic.dto.responseDTO.InquireDemandDepositAccountResponseDTO;
-import com.trabean.external.ssafy.domestic.dto.responseDTO.InquireTransactionHistoryListResponseDTO;
-import com.trabean.external.ssafy.domestic.dto.responseDTO.UpdateDemandDepositAccountTransferResponseDTO;
+import com.trabean.external.ssafy.domestic.dto.requestDTO.*;
+import com.trabean.external.ssafy.domestic.dto.responseDTO.*;
 import com.trabean.external.ssafy.foriegn.client.ForeignClient;
 import com.trabean.external.ssafy.foriegn.dto.requestDTO.CreateForeignCurrencyDemandDepositAccountRequestDTO;
 import com.trabean.external.ssafy.foriegn.dto.responseDTO.CreateForeignCurrencyDemandDepositAccountResponseDTO;
@@ -61,6 +56,44 @@ public class AccountService {
     private final TravelClient travelClient;
 
     private final PasswordEncoder passwordEncoder;
+
+    // 통장 목록 조회 서비스 로직
+    public AccountListResponseDTO getAccountList(String userKey) {
+
+        // SSAFY 금융 API 계좌 목록 조회 요청
+        InquireDemandDepositAccountListRequestDTO inquireDemandDepositAccountListRequestDTO = InquireDemandDepositAccountListRequestDTO.builder()
+                .header(RequestHeader.builder()
+                        .apiName("inquireDemandDepositAccountList")
+                        .userKey(userKey)
+                        .build())
+                .build();
+        InquireDemandDepositAccountListResponseDTO inquireDemandDepositAccountListResponseDTO = domesticClient.inquireDemandDepositAccountList(inquireDemandDepositAccountListRequestDTO);
+
+        return AccountListResponseDTO.builder()
+                .mainAccount(null)
+                .accountList(getAccountList(inquireDemandDepositAccountListResponseDTO))
+                .build();
+    }
+
+    // SSAFY 금융 API 게좌 목록 responseDTO -> 계좌 목록 리스트
+    private List<AccountListResponseDTO.Account> getAccountList(InquireDemandDepositAccountListResponseDTO inquireDemandDepositAccountListResponseDTO) {
+        return inquireDemandDepositAccountListResponseDTO.getRec().stream()
+                .map(account -> {
+                    Account savedAccount = ValidationUtil.validateAccount(accountRepository.findByAccountNo(account.getAccountNo()));
+                    String savedAccountName = savedAccount.getAccountType() == AccountType.DOMESTIC
+                            ? travelClient.getDomesticTravelAccountInfo(savedAccount.getAccountId()).getAccountName()
+                            : "개인 입출금 통장";
+
+                    return AccountListResponseDTO.Account.builder()
+                            .accountId(savedAccount.getAccountId())
+                            .accountNo(account.getAccountNo())
+                            .accountName(savedAccountName)
+                            .bankName(account.getBankName())
+                            .accountBalance(account.getAccountBalance())
+                            .build();
+                })
+                .collect(Collectors.toList());
+    }
 
     // 개인 통장 생성 서비스 로직
     public SsafySuccessResponseDTO createPersonalAccount(Long userId, String userKey, CreatePersonalAccountRequestDTO requestDTO) {
