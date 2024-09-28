@@ -2,8 +2,9 @@ package com.trabean.internal.service;
 
 import com.trabean.account.domain.Account;
 import com.trabean.account.domain.UserAccountRelation;
-import com.trabean.account.dto.response.AccountNoResponseDTO;
+import com.trabean.account.domain.UserAccountRelation.UserRole;
 import com.trabean.account.repository.UserAccountRelationRepository;
+import com.trabean.common.InternalServerSuccessResponseDTO;
 import com.trabean.exception.*;
 import com.trabean.external.msa.user.client.UserClient;
 import com.trabean.external.msa.user.dto.request.UserKeyRequestDTO;
@@ -16,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.trabean.constant.Constant.PEPPER;
@@ -48,7 +50,7 @@ public class InternalService {
     // 통장 권한 조회 서비스 로직
     public UserRoleResponseDTO getUserRole(UserRoleRequestDTO requestDTO) {
 
-        UserAccountRelation.UserRole userRole = userAccountRelationRepository.findUserRoleByUserIdAndAccountId(requestDTO.getUserId(), requestDTO.getAccountId())
+        UserRole userRole = userAccountRelationRepository.findByUserIdAndAccountId(requestDTO.getUserId(), requestDTO.getAccountId())
                 .orElseThrow(UserAccountRelationNotFoundException::getInstance)
                 .getUserRole();
 
@@ -59,7 +61,7 @@ public class InternalService {
     }
 
     // 여행통장 결제 권한 변경 서비스 로직
-    public UpdateUserRoleResponseDTO updateUserRole(UpdateUserRoleRequestDTO requestDTO) {
+    public InternalServerSuccessResponseDTO updateUserRole(UpdateUserRoleRequestDTO requestDTO) {
 
         userAccountRelationRepository.updateUserRoleByUserIdAndAccountId(requestDTO.getUserId(), requestDTO.getDomesticAccountId(), requestDTO.getUserRole());
 
@@ -67,19 +69,19 @@ public class InternalService {
             userAccountRelationRepository.updateUserRoleByUserIdAndAccountId(requestDTO.getUserId(), foreignAccountId, requestDTO.getUserRole());
         }
 
-        return UpdateUserRoleResponseDTO.builder()
+        return InternalServerSuccessResponseDTO.builder()
                 .message("여행통장 결제 권한 변경 성공")
                 .build();
     }
 
     // 결제 비밀번호 검증 서비스 로직
-    public VerifyPasswordResponseDTO verifyPassword(VerifyPasswordRequestDTO requestDTO) {
+    public InternalServerSuccessResponseDTO verifyPassword(VerifyPasswordRequestDTO requestDTO) {
 
-        UserAccountRelation.UserRole userRole = userAccountRelationRepository.findUserRoleByUserIdAndAccountId(requestDTO.getUserId(), requestDTO.getAccountId())
+        UserRole userRole = userAccountRelationRepository.findByUserIdAndAccountId(requestDTO.getUserId(), requestDTO.getAccountId())
                 .orElseThrow(UserAccountRelationNotFoundException::getInstance)
                 .getUserRole();
 
-        if(userRole == UserAccountRelation.UserRole.NONE_PAYER) {
+        if(userRole == UserRole.NONE_PAYER) {
             throw UnauthorizedUserRoleException.getInstance();
         }
 
@@ -88,7 +90,7 @@ public class InternalService {
                 .getPassword();
 
         if(passwordEncoder.matches(requestDTO.getPassword() + PEPPER, savedPassword)){
-            return VerifyPasswordResponseDTO.builder()
+            return InternalServerSuccessResponseDTO.builder()
                     .message("결제 비밀번호 검증 성공")
                     .build();
         }
@@ -98,31 +100,33 @@ public class InternalService {
     }
 
     // 여행통장 가입 서비스 로직
-    public JoinTravelAccountResponseDTO joinTravelAccount(JoinTravelAccountRequestDTO requestDTO) {
+    public InternalServerSuccessResponseDTO joinTravelAccount(JoinTravelAccountRequestDTO requestDTO) {
 
+        // 한화 여행통장에 가입
         UserAccountRelation domesticUserAccountRelation = UserAccountRelation.builder()
                 .userId(requestDTO.getUserId())
                 .account(Account.builder()
                         .accountId(requestDTO.getDomesticAccountId())
                         .build())
-                .userRole(UserAccountRelation.UserRole.NONE_PAYER)
+                .userRole(UserRole.NONE_PAYER)
                 .build();
 
         userAccountRelationRepository.save(domesticUserAccountRelation);
 
+        // 한화 여행통장에 연결된 외화 여행통장에 가입
         for(Long foreignAccountId : requestDTO.getForeignAccountIdList()) {
             UserAccountRelation foreignUserAccountRelation = UserAccountRelation.builder()
                     .userId(requestDTO.getUserId())
                     .account(Account.builder()
                             .accountId(foreignAccountId)
                             .build())
-                    .userRole(UserAccountRelation.UserRole.NONE_PAYER)
+                    .userRole(UserRole.NONE_PAYER)
                     .build();
 
             userAccountRelationRepository.save(foreignUserAccountRelation);
         }
 
-        return JoinTravelAccountResponseDTO.builder()
+        return InternalServerSuccessResponseDTO.builder()
                 .message("여행통장 가입 성공")
                 .build();
     }
@@ -130,10 +134,11 @@ public class InternalService {
     // 통장 주인의 userKey 조회 서비스 로직
     public AdminUserKeyResponseDTO getAdminUserKey(AdminUserKeyRequestDTO requestDTO) {
 
-        List<UserAccountRelation> userAccountRelations = userAccountRelationRepository.findAllByAccountId(requestDTO.getAccountId());
+        List<UserAccountRelation> userAccountRelations = userAccountRelationRepository.findAllByAccountId(requestDTO.getAccountId())
+                .orElse(new ArrayList<>());
 
         Long userId = userAccountRelations.stream()
-                .filter(relation -> relation.getUserRole() == UserAccountRelation.UserRole.ADMIN)
+                .filter(relation -> relation.getUserRole() == UserRole.ADMIN)
                 .map(UserAccountRelation::getUserId)
                 .findFirst()
                 .orElseThrow(UserAccountRelationNotFoundException::getInstance);

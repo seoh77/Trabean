@@ -1,8 +1,10 @@
 package com.trabean.internal.controller;
 
-import com.trabean.account.dto.response.AccountNoResponseDTO;
+import com.trabean.common.InternalServerSuccessResponseDTO;
 import com.trabean.internal.dto.requestDTO.*;
-import com.trabean.internal.dto.responseDTO.*;
+import com.trabean.internal.dto.responseDTO.AccountNoResponseDTO;
+import com.trabean.internal.dto.responseDTO.AdminUserKeyResponseDTO;
+import com.trabean.internal.dto.responseDTO.UserRoleResponseDTO;
 import com.trabean.internal.service.InternalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,22 +35,22 @@ public class InternalController {
 
     // 여행통장 결제 권한 변경 API
     @PutMapping("/update-userRole")
-    public ResponseEntity<UpdateUserRoleResponseDTO> updateUserRole(@RequestBody UpdateUserRoleRequestDTO requestDTO) {
-        UpdateUserRoleResponseDTO responseDTO = internalService.updateUserRole(requestDTO);
+    public ResponseEntity<InternalServerSuccessResponseDTO> updateUserRole(@RequestBody UpdateUserRoleRequestDTO requestDTO) {
+        InternalServerSuccessResponseDTO responseDTO = internalService.updateUserRole(requestDTO);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
     // 결제 비밀번호 검증 API
     @PostMapping("/verify-password")
-    public ResponseEntity<VerifyPasswordResponseDTO> verifyPassword(@RequestBody VerifyPasswordRequestDTO requestDTO) {
-        VerifyPasswordResponseDTO responseDTO = internalService.verifyPassword(requestDTO);
+    public ResponseEntity<InternalServerSuccessResponseDTO> verifyPassword(@RequestBody VerifyPasswordRequestDTO requestDTO) {
+        InternalServerSuccessResponseDTO responseDTO = internalService.verifyPassword(requestDTO);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
     // 여행통장 가입 API
     @PostMapping("join-member")
-    public ResponseEntity<JoinTravelAccountResponseDTO> joinTravelAccount(@RequestBody JoinTravelAccountRequestDTO requestDTO) {
-        JoinTravelAccountResponseDTO responseDTO = internalService.joinTravelAccount(requestDTO);
+    public ResponseEntity<InternalServerSuccessResponseDTO> joinTravelAccount(@RequestBody JoinTravelAccountRequestDTO requestDTO) {
+        InternalServerSuccessResponseDTO responseDTO = internalService.joinTravelAccount(requestDTO);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
