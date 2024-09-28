@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * Account 서버에서 발생한 에러에 대한 responseDTO
+ * Account 서버에서 발생한 실패 응답에 대한 공용 responseDTO
  */
 @Builder
 @Getter
