@@ -3,21 +3,25 @@ package com.trabean.internal.service;
 import com.trabean.account.domain.Account;
 import com.trabean.account.domain.UserAccountRelation;
 import com.trabean.account.domain.UserAccountRelation.UserRole;
+import com.trabean.account.repository.AccountRepository;
 import com.trabean.account.repository.UserAccountRelationRepository;
 import com.trabean.common.InternalServerSuccessResponseDTO;
-import com.trabean.exception.*;
+import com.trabean.exception.InvalidPasswordException;
+import com.trabean.exception.UserAccountRelationNotFoundException;
 import com.trabean.external.msa.user.client.UserClient;
 import com.trabean.external.msa.user.dto.request.UserKeyRequestDTO;
 import com.trabean.external.msa.user.dto.response.UserKeyResponseDTO;
 import com.trabean.internal.dto.requestDTO.*;
-import com.trabean.internal.dto.responseDTO.*;
-import com.trabean.account.repository.AccountRepository;
+import com.trabean.internal.dto.responseDTO.AccountNoResponseDTO;
+import com.trabean.internal.dto.responseDTO.AdminUserKeyResponseDTO;
+import com.trabean.internal.dto.responseDTO.UserRoleResponseDTO;
+import com.trabean.util.ValidateInputDTO;
+import com.trabean.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.trabean.constant.Constant.PEPPER;
@@ -37,8 +41,7 @@ public class InternalService {
     // 통장 계좌번호 조회 서비스 로직
     public AccountNoResponseDTO getAccountNo(AccountNoRequestDTO requestDTO) {
 
-        String accountNo = accountRepository.findById(requestDTO.getAccountId())
-                .orElseThrow(AccountNotFoundException::getInstance)
+        String accountNo = ValidationUtil.validateAccount(accountRepository.findById(requestDTO.getAccountId()))
                 .getAccountNo();
 
         return AccountNoResponseDTO.builder()
@@ -50,8 +53,7 @@ public class InternalService {
     // 통장 권한 조회 서비스 로직
     public UserRoleResponseDTO getUserRole(UserRoleRequestDTO requestDTO) {
 
-        UserRole userRole = userAccountRelationRepository.findByUserIdAndAccountId(requestDTO.getUserId(), requestDTO.getAccountId())
-                .orElseThrow(UserAccountRelationNotFoundException::getInstance)
+        UserRole userRole = ValidationUtil.validateUserAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(requestDTO.getUserId(), requestDTO.getAccountId()))
                 .getUserRole();
 
         return UserRoleResponseDTO.builder()
@@ -77,16 +79,11 @@ public class InternalService {
     // 결제 비밀번호 검증 서비스 로직
     public InternalServerSuccessResponseDTO verifyPassword(VerifyPasswordRequestDTO requestDTO) {
 
-        UserRole userRole = userAccountRelationRepository.findByUserIdAndAccountId(requestDTO.getUserId(), requestDTO.getAccountId())
-                .orElseThrow(UserAccountRelationNotFoundException::getInstance)
-                .getUserRole();
-
-        if(userRole == UserRole.NONE_PAYER) {
-            throw UnauthorizedUserRoleException.getInstance();
-        }
-
-        String savedPassword = accountRepository.findById(requestDTO.getAccountId())
-                .orElseThrow(AccountNotFoundException::getInstance)
+        String savedPassword = ValidationUtil.validateInput(ValidateInputDTO.builder()
+                        .account(accountRepository.findById(requestDTO.getAccountId()))
+                        .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(requestDTO.getUserId(), requestDTO.getAccountId()))
+                        .isPayable(true)
+                        .build())
                 .getPassword();
 
         if(passwordEncoder.matches(requestDTO.getPassword() + PEPPER, savedPassword)){
@@ -110,7 +107,6 @@ public class InternalService {
                         .build())
                 .userRole(UserRole.NONE_PAYER)
                 .build();
-
         userAccountRelationRepository.save(domesticUserAccountRelation);
 
         // 한화 여행통장에 연결된 외화 여행통장에 가입
@@ -122,7 +118,6 @@ public class InternalService {
                             .build())
                     .userRole(UserRole.NONE_PAYER)
                     .build();
-
             userAccountRelationRepository.save(foreignUserAccountRelation);
         }
 
@@ -134,10 +129,9 @@ public class InternalService {
     // 통장 주인의 userKey 조회 서비스 로직
     public AdminUserKeyResponseDTO getAdminUserKey(AdminUserKeyRequestDTO requestDTO) {
 
-        List<UserAccountRelation> userAccountRelations = userAccountRelationRepository.findAllByAccountId(requestDTO.getAccountId())
-                .orElse(new ArrayList<>());
+        List<UserAccountRelation> userAccountRelationList = ValidationUtil.validateUserAccountRelationList(userAccountRelationRepository.findAllByAccountId(requestDTO.getAccountId()));
 
-        Long userId = userAccountRelations.stream()
+        Long userId = userAccountRelationList.stream()
                 .filter(relation -> relation.getUserRole() == UserRole.ADMIN)
                 .map(UserAccountRelation::getUserId)
                 .findFirst()
@@ -147,13 +141,10 @@ public class InternalService {
         UserKeyRequestDTO userKeyRequestDTO = UserKeyRequestDTO.builder()
                 .userId(userId)
                 .build();
-
         UserKeyResponseDTO userKeyResponseDTO = userClient.getUserKey(userKeyRequestDTO);
 
-        String userKey = userKeyResponseDTO.getUserKey();
-
         return AdminUserKeyResponseDTO.builder()
-                .userKey(userKey)
+                .userKey(userKeyResponseDTO.getUserKey())
                 .build();
     }
 
