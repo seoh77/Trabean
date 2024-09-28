@@ -1,9 +1,9 @@
 package com.trabean.config.feign;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.trabean.exception.CustomFeignClientException;
-import com.trabean.exception.InternalServerStatusException;
-import com.trabean.exception.dto.SsafyServerErrorResponseDTO;
+import com.trabean.common.SsafyErrorResponseDTO;
+import com.trabean.exception.SsafyErrorException;
+import com.trabean.exception.ExternalServerErrorException;
 import feign.Response;
 import feign.codec.ErrorDecoder;
 
@@ -19,10 +19,10 @@ public class FeignClientErrorDecoder implements ErrorDecoder {
             if(methodKey.startsWith("DomesticClient") ||
                     methodKey.startsWith("ForeignClient") ||
                     methodKey.startsWith("VerificationClient")) {
-                SsafyServerErrorResponseDTO errorResponse = objectMapper.readValue(response.body().asInputStream(), SsafyServerErrorResponseDTO.class);
-                return new CustomFeignClientException(errorResponse);
+                SsafyErrorResponseDTO errorResponse = objectMapper.readValue(response.body().asInputStream(), SsafyErrorResponseDTO.class);
+                return new SsafyErrorException(errorResponse);
             }
-            return new InternalServerStatusException("범인 -> " + methodKey);
+            return new ExternalServerErrorException("범인 -> " + methodKey);
         } catch (IOException e) {
             return new RuntimeException(e.getMessage());
         }
