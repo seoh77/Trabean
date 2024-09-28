@@ -1,5 +1,6 @@
 package com.trabean.internal.dto.responseDTO;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.trabean.account.domain.UserAccountRelation.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,6 +12,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserRoleResponseDTO {
+
+    @JsonProperty("message")
     private String message;
+
+    @JsonProperty("userRole")
     private UserRole userRole;
 }
