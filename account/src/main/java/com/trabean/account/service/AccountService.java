@@ -210,7 +210,7 @@ public class AccountService {
         UserAccountRelation userAccountRelation = UserAccountRelation.builder()
                 .userId(userId)
                 .account(savedAccount)
-                .userRole(UserRole.NONE_PAYER)
+                .userRole(UserRole.ADMIN)
                 .build();
 
         userAccountRelationRepository.save(userAccountRelation);
