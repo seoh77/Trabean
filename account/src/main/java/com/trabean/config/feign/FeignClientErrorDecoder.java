@@ -16,9 +16,7 @@ public class FeignClientErrorDecoder implements ErrorDecoder {
         ObjectMapper objectMapper = new ObjectMapper();
 
         try {
-            if(methodKey.startsWith("DomesticClient") ||
-                    methodKey.startsWith("ForeignClient") ||
-                    methodKey.startsWith("VerificationClient")) {
+            if(methodKey.startsWith("DomesticClient") || methodKey.startsWith("ForeignClient") || methodKey.startsWith("VerificationClient")) {
                 SsafyErrorResponseDTO errorResponse = objectMapper.readValue(response.body().asInputStream(), SsafyErrorResponseDTO.class);
                 return new SsafyErrorException(errorResponse);
             }
