@@ -1,5 +1,6 @@
 package com.trabean.common;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,6 +14,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SsafyErrorResponseDTO {
+
+    @JsonProperty("responseCode")
     private ResponseCode responseCode;
+
+    @JsonProperty("responseMessage")
     private String responseMessage;
 }
