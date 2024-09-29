@@ -5,7 +5,6 @@ import com.trabean.common.InternalServerErrorResponseDTO;
 import com.trabean.common.ResponseCode;
 import com.trabean.common.SsafyErrorResponseDTO;
 import com.trabean.exception.*;
-import jakarta.ws.rs.InternalServerErrorException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
