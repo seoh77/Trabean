@@ -1,8 +1,12 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
+from fastapi.responses import JSONResponse
 
 # 라우터 객체 생성
 router = APIRouter()
+router = APIRouter(
+    default_response_class=JSONResponse  # 여기에 기본 응답 클래스를 지정
+)
 
 # 요청 바디에서 사용될 모델 정의
 class ChatbotRequest(BaseModel):

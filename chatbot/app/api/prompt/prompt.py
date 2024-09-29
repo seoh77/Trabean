@@ -35,10 +35,10 @@ def get_retriever(question, k=4):
     relevant_docs = retriever.invoke(question)
 
     # 검색된 문서 출력
-    for doc in relevant_docs:
-        print(doc.page_content)
+    # for doc in relevant_docs:
+    #     print(doc.page_content)
 
-    return retriever
+    # return retriever
 
 
 # llm 모델 반환
