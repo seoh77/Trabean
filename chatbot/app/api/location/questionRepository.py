@@ -33,8 +33,8 @@ class QuestionOption:
         return priorityOptions
     
     # 여행 관광지 반환
-    async def getAttractionOptions(self, country, city, trans) -> List[Dict[str, str]]:
-        attractionOptions = await self.placeFetcher.getAttraction(country, city, trans)
+    async def getAttractionOptions(self, requestBody) -> List[Dict[str, str]]:
+        attractionOptions = await self.placeFetcher.getAttraction(requestBody)
         
         # `displayName`의 `text`만을 추출하여 단순화된 딕셔너리 형태로 반환
         if attractionOptions:
@@ -75,7 +75,11 @@ class PlaceFetcher:
     # city에 대한 주요 K개의 관광지 반환
     # Args : country(str) : 국가 , city(str) : 도시
     # return : [ {"id": str, "name" : str}]
-    async def getAttraction(self, country, city, trans) -> List[Dict[str, str]]:
+    async def getAttraction(self, requestBody) -> List[Dict[str, str]]:
+        country = requestBody["country"]
+        city = requestBody["city"]
+        trans = requestBody["trans"]
+        travelStyles = requestBody["travelStyle"]
         location = await self.getCityLocation(country, city)
         K = 9
         radius = 0
@@ -254,6 +258,7 @@ transportationsOptions = ["도보", "자전거", "자동차", "대중교통", "�
 # 여행 테마에 대한 답변 목록
 travelStyleOptions = [
     "체험/액티비티",
+    "관람",
     "쇼핑",
     "먹방",
     "유명 관광지",

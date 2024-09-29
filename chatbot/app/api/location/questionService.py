@@ -1,5 +1,6 @@
 from typing import List, Union, Dict, Optional
 from .questionRepository import QuestionOption  # 필요한 모듈 임포트
+from .questionSchemas import LocationRequest
 import asyncio  # 비동기 함수 사용을 위한 모듈
 
 class Question:
@@ -39,7 +40,7 @@ class ChatBotQuestion:
         return city_options
 
     # 비동기적으로 getQuestion 메서드를 정의
-    async def getQuestion(self, question_index: int, country: str, city: str, days: int, trans: str) -> dict:
+    async def getQuestion(self, question_index: int, country: str, requestBody: LocationRequest) -> dict:
         # 유효한 질문 인덱스인지 확인
         if question_index < 0 or question_index >= len(self.questions):
             return {"error": "Invalid question number"}
@@ -49,17 +50,14 @@ class ChatBotQuestion:
         if question_index == 1:
             if not country:
                 return "error : Country parameter is missing or empty"
-            # 비동기적으로 초기화된 질문 목록 설정
+            # 비동기적으로 county에 맞게 초기화된 질문 목록 설정
             question[1].options = await self.initializeQuestions(country)
 
         elif question_index == 5:
-            if days is None:
-                return {"error": "Days parameter is required for question index 3"}
-            
             # days를 이용해 질문을 설정 (예: 최대 선택 가능 개수)
-            question[5].questionText = f"방문하고 싶은 관광명소를 선택해주세요. (최대 {days}개)"
+            question[4].questionText = f"방문하고 싶은 관광명소를 선택해주세요. (최대 {requestBody.days}개)"
             
             # 비동기적으로 관광명소 옵션을 가져옴
-            question[5].options = await self.questionOption.getAttractionOptions(country, city, trans)
+            question[4].options = await self.questionOption.getAttractionOptions(country, requestBody)
 
         return question[question_index].to_dict()
