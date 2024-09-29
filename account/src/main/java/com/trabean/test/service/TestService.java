@@ -20,7 +20,7 @@ public class TestService {
     private final MemoClient memoClient;
 
     // 계좌 입금 서비스 로직
-    public SsafySuccessResponseDTO deposit(DepositRequestDTO requestDTO) {
+    public SsafySuccessResponseDTO depositTest(DepositRequestDTO requestDTO) {
 
         // SSAFY 금융 API 계좌 입금 요청
         UpdateDemandDepositAccountDepositRequestDTO updateDemandDepositAccountDepositRequestDTO = UpdateDemandDepositAccountDepositRequestDTO.builder()

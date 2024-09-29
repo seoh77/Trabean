@@ -18,8 +18,8 @@ public class TestController {
 
     // 계좌 입금 API
     @PostMapping("/deposit")
-    ResponseEntity<SsafySuccessResponseDTO> deposit(@RequestBody DepositRequestDTO requestDTO) {
-        SsafySuccessResponseDTO responseDTO = testService.deposit(requestDTO);
+    ResponseEntity<SsafySuccessResponseDTO> depositTest(@RequestBody DepositRequestDTO requestDTO) {
+        SsafySuccessResponseDTO responseDTO = testService.depositTest(requestDTO);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 }
