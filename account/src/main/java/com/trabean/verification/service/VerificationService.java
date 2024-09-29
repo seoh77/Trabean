@@ -6,6 +6,7 @@ import com.trabean.external.ssafy.verification.dto.requestDTO.CheckAuthCodeReque
 import com.trabean.external.ssafy.verification.dto.requestDTO.OpenAccountAuthRequestDTO;
 import com.trabean.external.ssafy.verification.dto.responseDTO.CheckAuthCodeResponseDTO;
 import com.trabean.external.ssafy.verification.dto.responseDTO.OpenAccountAuthResponseDTO;
+import com.trabean.interceptor.UserHeaderInterceptor;
 import com.trabean.util.RequestHeader;
 import com.trabean.verification.dto.request.AccountVerificationRequestDTO;
 import com.trabean.verification.dto.request.OneWonVerificationRequestDTO;
@@ -25,7 +26,7 @@ public class VerificationService {
         OpenAccountAuthRequestDTO openAccountAuthRequestDTO = OpenAccountAuthRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName("openAccountAuth")
-                        .userKey(userKey)
+                        .userKey(UserHeaderInterceptor.userKey.get())
                         .build())
                 .accountNo(requestDTO.getAccountNo())
                 .build();
@@ -44,7 +45,7 @@ public class VerificationService {
         CheckAuthCodeRequestDTO checkAuthCodeRequestDTO = CheckAuthCodeRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName("checkAuthCode")
-                        .userKey(userKey)
+                        .userKey(UserHeaderInterceptor.userKey.get())
                         .build())
                 .accountNo(requestDTO.getAccountNo())
                 .authCode(requestDTO.getOtp())
