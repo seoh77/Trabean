@@ -33,12 +33,9 @@ import com.trabean.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.trabean.constant.Constant.*;
@@ -82,6 +79,7 @@ public class AccountService {
         // User 서버에 userId로 mainAccountId 반환 요청
         Long mainAccountId = userClient.getMainAccountId(userId).getMainAccountId();
 
+        // Travel 서버에 한화 여행통장이름 이름 반환 요청
         for (InquireDemandDepositAccountListResponseDTO.REC account : inquireDemandDepositAccountListResponseDTO.getRec()) {
             Account savedAccount = ValidationUtil.validateAccount(accountRepository.findByAccountNo(account.getAccountNo()));
             String savedAccountName = savedAccount.getAccountType() == AccountType.DOMESTIC
@@ -113,9 +111,9 @@ public class AccountService {
     public LastTransactionListResponseDTO getLastTransactionList(Long userId, String userKey, Long accountId, String startDate, String endDate) {
 
         String accountNo = ValidationUtil.validateInput(ValidateInputDTO.builder()
-                .account(accountRepository.findById(accountId))
-                .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(userId, accountId))
-                .isPayable(true)
+                    .account(accountRepository.findById(accountId))
+                    .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(userId, accountId))
+                    .isPayable(true)
                 .build()).getAccountNo();
 
         // SSAFY 금융 API 계좌 거래 내역 조회 요청
@@ -295,12 +293,12 @@ public class AccountService {
     public SsafySuccessResponseDTO transferPersonalAccount(Long userId, String userKey, Long accountId, TransferPersonalAccountRequestDTO requestDTO) {
 
         ValidationUtil.validateInput(ValidateInputDTO.builder()
-                        .account(accountRepository.findById(accountId))
-                        .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(userId, accountId))
-                        .accountType(AccountType.PERSONAL)
-                        .userRole(UserRole.ADMIN)
-                        .isPayable(true)
-                        .build());
+                .account(accountRepository.findById(accountId))
+                .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(userId, accountId))
+                .accountType(AccountType.PERSONAL)
+                .userRole(UserRole.ADMIN)
+                .isPayable(true)
+                .build());
 
         // SSAFY 금융 API 계좌 이체 요청
         UpdateDemandDepositAccountTransferRequestDTO updateDemandDepositAccountTransferRequestDTO = UpdateDemandDepositAccountTransferRequestDTO.builder()
