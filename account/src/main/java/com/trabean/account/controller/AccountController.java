@@ -34,6 +34,14 @@ public class AccountController {
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
+    // 계좌 이체 한도 변경 API
+    @PutMapping("/{accountId}/transfer")
+    public ResponseEntity<SsafySuccessResponseDTO> updateTransferLimit(@PathVariable Long accountId,
+                                                                       @RequestBody UpdateAccountTransferLimitRequestDTO requestDTO) {
+        SsafySuccessResponseDTO responseDTO = accountService.updateTransferLimit(accountId, requestDTO);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
+
     // 개인 통장 생성 API
     @PostMapping("/personal")
     public ResponseEntity<SsafySuccessResponseDTO> createPersonalAccount(@RequestBody CreatePersonalAccountRequestDTO requestDTO) {

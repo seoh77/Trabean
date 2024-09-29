@@ -5,6 +5,7 @@ import com.trabean.account.domain.Account.AccountType;
 import com.trabean.account.domain.UserAccountRelation;
 import com.trabean.account.domain.UserAccountRelation.UserRole;
 import com.trabean.account.dto.request.*;
+import com.trabean.account.dto.request.UpdateAccountTransferLimitRequestDTO;
 import com.trabean.account.dto.response.*;
 import com.trabean.account.dto.response.DomesticTravelAccountMemberListResponseDTO.Member;
 import com.trabean.account.repository.AccountRepository;
@@ -186,6 +187,34 @@ public class AccountService {
 
         return RecentTransactionListResponseDTO.builder()
                 .accountList(accountList)
+                .build();
+    }
+
+    // 계좌 이체 한도 변경 서비스 로직
+    public SsafySuccessResponseDTO updateTransferLimit(Long accountId, UpdateAccountTransferLimitRequestDTO requestDTO) {
+
+        String accountNo = ValidationUtil.validateInput(ValidateInputDTO.builder()
+                        .account(accountRepository.findById(accountId))
+                        .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(UserHeaderInterceptor.userId.get(), accountId))
+                        .userRole(UserRole.ADMIN)
+                        .build())
+                .getAccountNo();
+
+        // SSAFY 금융 API 계좌 이체 한도 변경 요청
+        UpdateTransferLimitRequestDTO updateTransferLimitRequestDTO = UpdateTransferLimitRequestDTO.builder()
+                .header(RequestHeader.builder()
+                        .apiName("updateTransferLimit")
+                        .userKey(UserHeaderInterceptor.userKey.get())
+                        .build())
+                .accountNo(accountNo)
+                .oneTimeTransferLimit(requestDTO.getOneTimeTransferLimit())
+                .dailyTransferLimit(requestDTO.getDailyTransferLimit())
+                .build();
+        UpdateTransferLimitResponseDTO updateTransferLimitResponseDTO = domesticClient.updateTransferLimit(updateTransferLimitRequestDTO);
+
+        return SsafySuccessResponseDTO.builder()
+                .responseCode(updateTransferLimitResponseDTO.getHeader().getResponseCode())
+                .responseMessage(updateTransferLimitResponseDTO.getHeader().getResponseMessage())
                 .build();
     }
 
