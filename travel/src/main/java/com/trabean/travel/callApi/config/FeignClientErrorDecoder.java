@@ -1,8 +1,8 @@
 package com.trabean.travel.callApi.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.trabean.exception.InternalServerStatusException;
 import com.trabean.travel.callApi.dto.SsafyErrorResponseDTO;
-import com.trabean.travel.exception.InternalServerStatusException;
 import feign.Response;
 import feign.codec.ErrorDecoder;
 import java.io.IOException;

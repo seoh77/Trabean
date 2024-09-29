@@ -1,4 +1,4 @@
-package com.trabean.travel.exception;
+package com.trabean.exception;
 
 public class InternalServerStatusException extends RuntimeException {
     public InternalServerStatusException(String message) {
