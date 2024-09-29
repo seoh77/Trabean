@@ -19,6 +19,7 @@ import com.trabean.external.msa.travel.dto.requestDTO.SaveForeignTravelAccountRe
 import com.trabean.external.msa.travel.dto.responseDTO.DomesticTravelAccountInfoResponseDTO;
 import com.trabean.external.msa.user.client.UserClient;
 import com.trabean.external.msa.user.dto.request.MainAccountIdRequestDTO;
+import com.trabean.external.msa.user.dto.request.UserKeyRequestDTO;
 import com.trabean.external.msa.user.dto.response.UserNameResponseDTO;
 import com.trabean.external.ssafy.domestic.client.DomesticClient;
 import com.trabean.external.ssafy.domestic.dto.requestDTO.*;
@@ -140,9 +141,8 @@ public class AccountService {
                 .filter(transactionHistory -> transactionHistory.getTransactionAccountNo() != null && !transactionHistory.getTransactionAccountNo().trim().isEmpty())
                 .map(transactionHistory -> {
                     Account account = ValidationUtil.validateAccount(accountRepository.findByAccountNo(transactionHistory.getTransactionAccountNo()));
-                    Long accountId = account.getAccountId();
 
-                    List<UserAccountRelation> userAccountRelationList = ValidationUtil.validateUserAccountRelationList(userAccountRelationRepository.findAllByAccountId(accountId));
+                    List<UserAccountRelation> userAccountRelationList = ValidationUtil.validateUserAccountRelationList(userAccountRelationRepository.findAllByAccountId(account.getAccountId()));
 
                     Long userId = userAccountRelationList.stream()
                             .filter(relation -> relation.getUserRole() == UserRole.ADMIN)
@@ -150,12 +150,30 @@ public class AccountService {
                             .findFirst()
                             .orElseThrow(UserAccountRelationNotFoundException::getInstance);
 
+                    // User 서버에 userName 반환 요청
                     String adminName = userClient.getUserName(userId).getUserName();
 
+                    // User 서버에 userKey 반환 요청
+                    UserKeyRequestDTO userKeyRequestDTO = UserKeyRequestDTO.builder()
+                            .userId(userId)
+                            .build();
+                    String userKey = userClient.getUserKey(userKeyRequestDTO).getUserKey();
+
+                    // SSAFY 금융 API 계좌 조회 (단건) 요청
+                    InquireDemandDepositAccountRequestDTO inquireDemandDepositAccountRequestDTO = InquireDemandDepositAccountRequestDTO.builder()
+                            .header(RequestHeader.builder()
+                                    .apiName("inquireDemandDepositAccount")
+                                    .userKey(userKey)
+                                    .build())
+                            .accountNo(account.getAccountNo())
+                            .build();
+                    InquireDemandDepositAccountResponseDTO inquireDemandDepositAccountResponseDTO = domesticClient.inquireDemandDepositAccount(inquireDemandDepositAccountRequestDTO);
+
                     return LastTransactionListResponseDTO.Info.builder()
-                            .accountId(accountId)
+                            .accountId(account.getAccountId())
                             .accountNo(transactionHistory.getTransactionAccountNo())
                             .adminName(adminName)
+                            .bankName(inquireDemandDepositAccountResponseDTO.getRec().getBankName())
                             .build();
                 })
                 .distinct()

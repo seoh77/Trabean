@@ -21,5 +21,6 @@ public class LastTransactionListResponseDTO {
         private Long accountId;
         private String accountNo;
         private String adminName;
+        private String bankName;
     }
 }
