@@ -63,6 +63,7 @@ public class PaymentsAccountService {
     // 한화 잔액 조회 후 검증
     public void validateKrwAmount(Long krwAccountId, RequestPaymentRequest requestPaymentRequest) {
         // 유저 키 받아오기
+        logger.info("계좌 id를 통해 userKey 가져오기. 계좌 id: " + krwAccountId);
         String userKey = getAccountAdmin(krwAccountId);
 
         String accountNo = getAccountNumber(krwAccountId);
@@ -169,10 +170,10 @@ public class PaymentsAccountService {
     }
 
     public String getAccountAdmin(Long accountId) throws PaymentsException {
-        String requestBody = String.format("{\"accountId\":\"%s\"}", accountId);
+        String requestBody = String.format("{\"accountId\":\"%d\"}", accountId);
         Map<String, String > response = accountClient.getAdminUser(requestBody);
         if (response.get("userKey") == null) {
-            throw new PaymentsException("여행 통장 userKey 를 받아오는 데 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new PaymentsException("여행 통장 userKey 를 받아오는 데 실패했습니다: null", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return response.get("userKey");
     }
