@@ -1,4 +1,4 @@
-package com.trabean.exception;
+package com.trabean.exception.custom;
 
 import com.trabean.common.SsafyErrorResponseDTO;
 import lombok.Getter;

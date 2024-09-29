@@ -2,8 +2,8 @@ package com.trabean.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.trabean.common.SsafyErrorResponseDTO;
-import com.trabean.exception.SsafyErrorException;
-import com.trabean.exception.ExternalServerErrorException;
+import com.trabean.exception.custom.SsafyErrorException;
+import com.trabean.exception.custom.ExternalServerErrorException;
 import feign.Response;
 import feign.codec.ErrorDecoder;
 

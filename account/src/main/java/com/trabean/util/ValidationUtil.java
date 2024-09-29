@@ -3,10 +3,10 @@ package com.trabean.util;
 import com.trabean.account.domain.Account;
 import com.trabean.account.domain.UserAccountRelation;
 import com.trabean.account.domain.UserAccountRelation.UserRole;
-import com.trabean.exception.AccountNotFoundException;
-import com.trabean.exception.InvalidAccountTypeException;
-import com.trabean.exception.UnauthorizedUserRoleException;
-import com.trabean.exception.UserAccountRelationNotFoundException;
+import com.trabean.exception.custom.AccountNotFoundException;
+import com.trabean.exception.custom.InvalidAccountTypeException;
+import com.trabean.exception.custom.UnauthorizedUserRoleException;
+import com.trabean.exception.custom.UserAccountRelationNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
