@@ -194,6 +194,7 @@ public class AccountService {
                 .accountId(accountId)
                 .accountNo(accountNo)
                 .accountBalance(inquireDemandDepositAccountResponseDTO.getRec().getAccountBalance())
+                .accountName("개인 입출금 통장")
                 .bankName(inquireDemandDepositAccountResponseDTO.getRec().getBankName())
                 .transactionList(getPersonalAccountTransactionList(inquireTransactionHistoryListResponseDTO))
                 .build();

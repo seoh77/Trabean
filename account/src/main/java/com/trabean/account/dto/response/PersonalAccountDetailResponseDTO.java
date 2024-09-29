@@ -23,6 +23,9 @@ public class PersonalAccountDetailResponseDTO {
     @JsonProperty("accountBalance")
     private Long accountBalance;
 
+    @JsonProperty("accountName")
+    private String accountName;
+
     @JsonProperty("bankName")
     private String bankName;
 
