@@ -1,6 +1,6 @@
 package com.trabean.external.ssafy.foriegn.client;
 
-import com.trabean.config.feign.FeignClientConfig;
+import com.trabean.config.FeignClientConfig;
 import com.trabean.external.ssafy.foriegn.dto.requestDTO.CreateForeignCurrencyDemandDepositAccountRequestDTO;
 import com.trabean.external.ssafy.foriegn.dto.responseDTO.CreateForeignCurrencyDemandDepositAccountResponseDTO;
 import org.springframework.cloud.openfeign.FeignClient;

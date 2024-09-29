@@ -1,6 +1,6 @@
 package com.trabean.external.msa.user.client;
 
-import com.trabean.config.feign.FeignClientConfig;
+import com.trabean.config.FeignClientConfig;
 import com.trabean.external.msa.user.dto.request.MainAccountIdRequestDTO;
 import com.trabean.external.msa.user.dto.request.UserKeyRequestDTO;
 import com.trabean.external.msa.user.dto.response.MainAccountIdResponseDTO;

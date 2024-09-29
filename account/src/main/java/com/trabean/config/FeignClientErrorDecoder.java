@@ -1,4 +1,4 @@
-package com.trabean.config.feign;
+package com.trabean.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.trabean.common.SsafyErrorResponseDTO;

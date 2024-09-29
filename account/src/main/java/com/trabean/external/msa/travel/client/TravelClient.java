@@ -1,6 +1,6 @@
 package com.trabean.external.msa.travel.client;
 
-import com.trabean.config.feign.FeignClientConfig;
+import com.trabean.config.FeignClientConfig;
 import com.trabean.external.msa.travel.dto.requestDTO.SaveDomesticTravelAccountRequestDTO;
 import com.trabean.external.msa.travel.dto.requestDTO.SaveForeignTravelAccountRequestDTO;
 import com.trabean.external.msa.travel.dto.responseDTO.DomesticTravelAccountInfoResponseDTO;

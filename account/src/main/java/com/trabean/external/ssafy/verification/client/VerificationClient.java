@@ -1,6 +1,6 @@
 package com.trabean.external.ssafy.verification.client;
 
-import com.trabean.config.feign.FeignClientConfig;
+import com.trabean.config.FeignClientConfig;
 import com.trabean.external.ssafy.verification.dto.requestDTO.CheckAuthCodeRequestDTO;
 import com.trabean.external.ssafy.verification.dto.requestDTO.OpenAccountAuthRequestDTO;
 import com.trabean.external.ssafy.verification.dto.responseDTO.CheckAuthCodeResponseDTO;

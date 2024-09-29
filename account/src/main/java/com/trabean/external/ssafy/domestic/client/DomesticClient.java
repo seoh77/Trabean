@@ -1,6 +1,6 @@
 package com.trabean.external.ssafy.domestic.client;
 
-import com.trabean.config.feign.FeignClientConfig;
+import com.trabean.config.FeignClientConfig;
 import com.trabean.external.ssafy.domestic.dto.requestDTO.*;
 import com.trabean.external.ssafy.domestic.dto.responseDTO.*;
 import org.springframework.cloud.openfeign.FeignClient;
