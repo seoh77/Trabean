@@ -39,7 +39,7 @@ public class PaymentsWithdrawalService {
         String accountNo = paymentsAccountService.getAccountNumber(accountId);
         Long price = apiType.equals(ApiName.KRW_WITHDRAW) ? request.getKrwAmount()
                 : (long) request.getForeignAmount().doubleValue();
-
+        logger.info("출금 중 오류 발생 : " + request.getKrwAmount());
 
         WithdrawalRequest withdrawalRequest = new WithdrawalRequest(
                 Header.builder().apiName(apiType).userKey(userKey).build(),

@@ -77,12 +77,15 @@ public class PaymentsAccountService {
         try {
             BalanceResponse response = demandDepositClient.getKRWBalance(balanceRequest);
 
+            Payments payment = paymentsRepository.findById(requestPaymentRequest.getPayId()).orElseThrow(() ->
+                    new PaymentsException("결제 정보를 확인할 수 없습니다.", HttpStatus.NOT_FOUND));
+
             // 결과 로그 남기기
             if (response != null && response.getRec() != null) {
                 logger.info("한화 계좌 잔액 조회: {}", response.getRec().getAccountBalance());
 
                 // 잔액 부족
-                if (response.getRec().getAccountBalance() < requestPaymentRequest.getKrwAmount()) {
+                if (response.getRec().getAccountBalance() < payment.getKrwAmount()) {
                     logger.info("한화 계좌 잔액 부족");
                     throw new PaymentsException("계좌 잔액이 부족합니다." + response.getRec().getAccountBalance(),
                             HttpStatus.PAYMENT_REQUIRED); // 402
@@ -159,7 +162,7 @@ public class PaymentsAccountService {
         }
         Map<String, Long> response = travelClient.getFORAccount(accountId, merchant.getExchangeCurrency());
 
-        return response.getOrDefault("foreignTravelAccountsId", null);
+        return response.getOrDefault("foreignTravelAccountId", null);
     }
 
     // 메인 여행통장 (한화) 불러오기

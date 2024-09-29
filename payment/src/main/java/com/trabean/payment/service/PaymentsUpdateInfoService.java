@@ -47,7 +47,7 @@ public class PaymentsUpdateInfoService {
         paymentsRepository.save(payment);
 
         // 유효기간: 5분
-        schedulePendingToCancelPayment(payment, 5); // 5분 동안 결제 진행 안 할 경우 취소
+        schedulePendingToCancelPayment(payment, 10); // 10분 동안 결제 진행 안 할 경우 취소
 
         PaymentData data = new PaymentData(payment.getPayId(), payment.getAccountId(), payment.getForeignAmount(),
                 payment.getKrwAmount(), payment.getMerchant().getName());
