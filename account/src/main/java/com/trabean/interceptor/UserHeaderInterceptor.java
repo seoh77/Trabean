@@ -14,23 +14,23 @@ public class UserHeaderInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 
-        String userIdHeader = request.getHeader("userId");
-        String userKeyHeader = request.getHeader("userKey");
+        try {
+            String userIdHeader = request.getHeader("userId");
+            String userKeyHeader = request.getHeader("userKey");
 
-        if (userIdHeader != null) {
-            userId.set(userIdHeader);
+            if (userIdHeader != null) {
+                userId.set(userIdHeader);
+            }
+
+            if (userKeyHeader != null) {
+                userKey.set(userKeyHeader);
+            }
+
+            return true;
+        } finally {
+            userId.remove();
+            userKey.remove();
         }
-
-        if (userKeyHeader != null) {
-            userKey.set(userKeyHeader);
-        }
-
-        return true;
     }
 
-    @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-        userId.remove();
-        userKey.remove();
-    }
 }
