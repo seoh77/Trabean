@@ -18,8 +18,16 @@ public class NotificationRequestDTO {
     private Long accountId;
 
     @JsonProperty("notificationType")
-    private String notificationType;
+    private Type notificationType;
 
     @JsonProperty("amount")
     private Long amount;
+
+    @Getter
+    public static enum Type {
+        INVITE,
+        DEPOSIT,
+        WITHDRAW,
+        PAYMENT
+    }
 }
