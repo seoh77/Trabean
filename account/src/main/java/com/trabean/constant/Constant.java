@@ -1,7 +1,7 @@
 package com.trabean.constant;
 
 public class Constant {
-    
+
     /**
      * SSAFY 금융 API 공통 Header 상수
      */

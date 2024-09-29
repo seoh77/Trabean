@@ -27,10 +27,10 @@ public class AccountController {
 
     // 최근 이체 목록 조회 APi
     @GetMapping("/{accountId}/transfer")
-    public ResponseEntity<LastTransactionListResponseDTO> getLastTransactionList(@PathVariable Long accountId,
-                                                                                 @RequestParam(defaultValue = "19000101") String startDate,
-                                                                                 @RequestParam(defaultValue = "21000101") String endDate) {
-        LastTransactionListResponseDTO responseDTO = accountService.getLastTransactionList(accountId, startDate, endDate);
+    public ResponseEntity<RecentTransactionListResponseDTO> getRecentTransactionList(@PathVariable Long accountId,
+                                                                                     @RequestParam(defaultValue = "19000101") String startDate,
+                                                                                     @RequestParam(defaultValue = "21000101") String endDate) {
+        RecentTransactionListResponseDTO responseDTO = accountService.getRecentTransactionList(accountId, startDate, endDate);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 

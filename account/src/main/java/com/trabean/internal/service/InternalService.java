@@ -67,7 +67,7 @@ public class InternalService {
 
         userAccountRelationRepository.updateUserRoleByUserIdAndAccountId(requestDTO.getUserId(), requestDTO.getDomesticAccountId(), requestDTO.getUserRole());
 
-        for(Long foreignAccountId : requestDTO.getForeignAccountIdList()){
+        for (Long foreignAccountId : requestDTO.getForeignAccountIdList()) {
             userAccountRelationRepository.updateUserRoleByUserIdAndAccountId(requestDTO.getUserId(), foreignAccountId, requestDTO.getUserRole());
         }
 
@@ -86,14 +86,13 @@ public class InternalService {
                         .build())
                 .getPassword();
 
-        if(passwordEncoder.matches(requestDTO.getPassword() + PEPPER, savedPassword)){
-            return InternalServerSuccessResponseDTO.builder()
-                    .message("결제 비밀번호 검증 성공")
-                    .build();
-        }
-        else{
+        if (!passwordEncoder.matches(requestDTO.getPassword() + PEPPER, savedPassword)) {
             throw InvalidPasswordException.getInstance();
         }
+
+        return InternalServerSuccessResponseDTO.builder()
+                .message("결제 비밀번호 검증 성공")
+                .build();
     }
 
     // 여행통장 가입 서비스 로직
@@ -110,7 +109,7 @@ public class InternalService {
         userAccountRelationRepository.save(domesticUserAccountRelation);
 
         // 한화 여행통장에 연결된 외화 여행통장에 가입
-        for(Long foreignAccountId : requestDTO.getForeignAccountIdList()) {
+        for (Long foreignAccountId : requestDTO.getForeignAccountIdList()) {
             UserAccountRelation foreignUserAccountRelation = UserAccountRelation.builder()
                     .userId(requestDTO.getUserId())
                     .account(Account.builder()

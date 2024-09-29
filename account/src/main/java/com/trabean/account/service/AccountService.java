@@ -20,6 +20,7 @@ import com.trabean.external.msa.travel.dto.response.DomesticTravelAccountInfoRes
 import com.trabean.external.msa.user.client.UserClient;
 import com.trabean.external.msa.user.dto.request.MainAccountIdRequestDTO;
 import com.trabean.external.msa.user.dto.request.UserKeyRequestDTO;
+import com.trabean.external.msa.user.dto.response.UserKeyResponseDTO;
 import com.trabean.external.msa.user.dto.response.UserNameResponseDTO;
 import com.trabean.external.ssafy.domestic.client.DomesticClient;
 import com.trabean.external.ssafy.domestic.dto.request.*;
@@ -112,13 +113,14 @@ public class AccountService {
     }
 
     // 최근 이체 목록 조회 서비스 로직
-    public LastTransactionListResponseDTO getLastTransactionList(Long accountId, String startDate, String endDate) {
+    public RecentTransactionListResponseDTO getRecentTransactionList(Long accountId, String startDate, String endDate) {
 
         String accountNo = ValidationUtil.validateInput(ValidateInputDTO.builder()
                     .account(accountRepository.findById(accountId))
                     .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(UserHeaderInterceptor.userId.get(), accountId))
                     .isPayable(true)
-                .build()).getAccountNo();
+                    .build())
+                .getAccountNo();
 
         // SSAFY 금융 API 계좌 거래 내역 조회 요청
         InquireTransactionHistoryListRequestDTO inquireTransactionHistoryListRequestDTO = InquireTransactionHistoryListRequestDTO.builder()
@@ -138,8 +140,8 @@ public class AccountService {
     }
 
     // SSAFY 금융 API 계좌 거래 내역 responseDTO -> 최근 이체 목록 조회 responseDTO
-    public LastTransactionListResponseDTO getUniqueLastTransactionList(InquireTransactionHistoryListResponseDTO inquireTransactionHistoryListResponseDTO) {
-        List<LastTransactionListResponseDTO.Info> accountList = inquireTransactionHistoryListResponseDTO.getRec().getList().stream()
+    public RecentTransactionListResponseDTO getUniqueLastTransactionList(InquireTransactionHistoryListResponseDTO inquireTransactionHistoryListResponseDTO) {
+        List<RecentTransactionListResponseDTO.Info> accountList = inquireTransactionHistoryListResponseDTO.getRec().getList().stream()
                 .filter(transactionHistory -> transactionHistory.getTransactionAccountNo() != null && !transactionHistory.getTransactionAccountNo().trim().isEmpty())
                 .map(transactionHistory -> {
                     Account account = ValidationUtil.validateAccount(accountRepository.findByAccountNo(transactionHistory.getTransactionAccountNo()));
@@ -153,28 +155,28 @@ public class AccountService {
                             .orElseThrow(UserAccountRelationNotFoundException::getInstance);
 
                     // User 서버에 userName 반환 요청
-                    String adminName = userClient.getUserName(userId).getUserName();
+                    UserNameResponseDTO userNameResponseDTO = userClient.getUserName(userId);
 
                     // User 서버에 userKey 반환 요청
                     UserKeyRequestDTO userKeyRequestDTO = UserKeyRequestDTO.builder()
                             .userId(userId)
                             .build();
-                    String userKey = userClient.getUserKey(userKeyRequestDTO).getUserKey();
+                    UserKeyResponseDTO userKeyResponseDTO = userClient.getUserKey(userKeyRequestDTO);
 
                     // SSAFY 금융 API 계좌 조회 (단건) 요청
                     InquireDemandDepositAccountRequestDTO inquireDemandDepositAccountRequestDTO = InquireDemandDepositAccountRequestDTO.builder()
                             .header(RequestHeader.builder()
                                     .apiName("inquireDemandDepositAccount")
-                                    .userKey(userKey)
+                                    .userKey(userKeyResponseDTO.getUserKey())
                                     .build())
                             .accountNo(account.getAccountNo())
                             .build();
                     InquireDemandDepositAccountResponseDTO inquireDemandDepositAccountResponseDTO = domesticClient.inquireDemandDepositAccount(inquireDemandDepositAccountRequestDTO);
 
-                    return LastTransactionListResponseDTO.Info.builder()
+                    return RecentTransactionListResponseDTO.Info.builder()
                             .accountId(account.getAccountId())
                             .accountNo(transactionHistory.getTransactionAccountNo())
-                            .adminName(adminName)
+                            .adminName(userNameResponseDTO.getUserName())
                             .bankName(inquireDemandDepositAccountResponseDTO.getRec().getBankName())
                             .build();
                 })
@@ -182,7 +184,7 @@ public class AccountService {
                 .limit(6)
                 .collect(Collectors.toList());
 
-        return LastTransactionListResponseDTO.builder()
+        return RecentTransactionListResponseDTO.builder()
                 .accountList(accountList)
                 .build();
     }
@@ -220,7 +222,7 @@ public class AccountService {
         userAccountRelationRepository.save(userAccountRelation);
 
         // User 서버에 mainAccountId가 존재하는지 조회해서 존재 안하면 mainAccount로 저장
-        if(userClient.getMainAccountId(UserHeaderInterceptor.userId.get()).getMainAccountId() == null) {
+        if (userClient.getMainAccountId(UserHeaderInterceptor.userId.get()).getMainAccountId() == null) {
             MainAccountIdRequestDTO mainAccountIdRequestDTO = MainAccountIdRequestDTO.builder()
                     .userId(UserHeaderInterceptor.userId.get())
                     .mainAccountId(savedAccount.getAccountId())
@@ -349,14 +351,13 @@ public class AccountService {
                         .build())
                 .getPassword();
 
-        if(passwordEncoder.matches(requestDTO.getPassword() + PEPPER, savedPassword)){
-            return InternalServerSuccessResponseDTO.builder()
-                    .message("통장 비밀번호 검증 성공")
-                    .build();
-        }
-        else{
+        if (!passwordEncoder.matches(requestDTO.getPassword() + PEPPER, savedPassword)) {
             throw InvalidPasswordException.getInstance();
         }
+
+        return InternalServerSuccessResponseDTO.builder()
+                .message("통장 비밀번호 검증 성공")
+                .build();
     }
 
     // 한화 여행통장 생성 서비스 로직
@@ -521,14 +522,13 @@ public class AccountService {
                         .build())
                 .getPassword();
 
-        if(passwordEncoder.matches(requestDTO.getPassword() + PEPPER, savedPassword)){
-            return InternalServerSuccessResponseDTO.builder()
-                    .message("통장 비밀번호 검증 성공")
-                    .build();
-        }
-        else{
+        if (!passwordEncoder.matches(requestDTO.getPassword() + PEPPER, savedPassword)) {
             throw InvalidPasswordException.getInstance();
         }
+
+        return InternalServerSuccessResponseDTO.builder()
+                .message("통장 비밀번호 검증 성공")
+                .build();
     }
 
     // 한화 여행통장 멤버 목록 조회 서비스 로직 (민채)
