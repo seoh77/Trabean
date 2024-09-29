@@ -1,10 +1,7 @@
 package com.trabean.account.controller;
 
 import com.trabean.account.dto.request.*;
-import com.trabean.account.dto.response.AccountListResponseDTO;
-import com.trabean.account.dto.response.DomesticTravelAccountDetailResponseDTO;
-import com.trabean.account.dto.response.DomesticTravelAccountMemberListResponseDTO;
-import com.trabean.account.dto.response.PersonalAccountDetailResponseDTO;
+import com.trabean.account.dto.response.*;
 import com.trabean.account.service.AccountService;
 import com.trabean.common.InternalServerSuccessResponseDTO;
 import com.trabean.common.SsafySuccessResponseDTO;
@@ -26,6 +23,17 @@ public class AccountController {
     public ResponseEntity<AccountListResponseDTO> getAccountList(@RequestHeader Long userId,
                                                                  @RequestHeader String userKey) {
         AccountListResponseDTO responseDTO = accountService.getAccountList(userId, userKey);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
+
+    // 최근 이체 목록 조회 APi
+    @GetMapping("/{accountId}/transfer")
+    public ResponseEntity<LastTransactionListResponseDTO> getLastTransactionList(@RequestHeader Long userId,
+                                                                                 @RequestHeader String userKey,
+                                                                                 @PathVariable Long accountId,
+                                                                                 @RequestParam(defaultValue = "19000101") String startDate,
+                                                                                 @RequestParam(defaultValue = "21000101") String endDate) {
+        LastTransactionListResponseDTO responseDTO = accountService.getLastTransactionList(userId, userKey, accountId, startDate, endDate);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 

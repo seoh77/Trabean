@@ -5,16 +5,14 @@ import com.trabean.account.domain.Account.AccountType;
 import com.trabean.account.domain.UserAccountRelation;
 import com.trabean.account.domain.UserAccountRelation.UserRole;
 import com.trabean.account.dto.request.*;
-import com.trabean.account.dto.response.AccountListResponseDTO;
-import com.trabean.account.dto.response.DomesticTravelAccountDetailResponseDTO;
-import com.trabean.account.dto.response.DomesticTravelAccountMemberListResponseDTO;
+import com.trabean.account.dto.response.*;
 import com.trabean.account.dto.response.DomesticTravelAccountMemberListResponseDTO.Member;
-import com.trabean.account.dto.response.PersonalAccountDetailResponseDTO;
 import com.trabean.account.repository.AccountRepository;
 import com.trabean.account.repository.UserAccountRelationRepository;
 import com.trabean.common.InternalServerSuccessResponseDTO;
 import com.trabean.common.SsafySuccessResponseDTO;
 import com.trabean.exception.InvalidPasswordException;
+import com.trabean.exception.UserAccountRelationNotFoundException;
 import com.trabean.external.msa.travel.client.TravelClient;
 import com.trabean.external.msa.travel.dto.requestDTO.SaveDomesticTravelAccountRequestDTO;
 import com.trabean.external.msa.travel.dto.requestDTO.SaveForeignTravelAccountRequestDTO;
@@ -37,7 +35,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.trabean.constant.Constant.*;
@@ -104,6 +104,65 @@ public class AccountService {
 
         return AccountListResponseDTO.builder()
                 .mainAccount(mainAccount)
+                .accountList(accountList)
+                .build();
+    }
+
+    // 최근 이체 목록 조회 서비스 로직
+    public LastTransactionListResponseDTO getLastTransactionList(Long userId, String userKey, Long accountId, String startDate, String endDate) {
+
+        String accountNo = ValidationUtil.validateInput(ValidateInputDTO.builder()
+                .account(accountRepository.findById(accountId))
+                .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(userId, accountId))
+                .isPayable(true)
+                .build()).getAccountNo();
+
+        // SSAFY 금융 API 계좌 거래 내역 조회 요청
+        InquireTransactionHistoryListRequestDTO inquireTransactionHistoryListRequestDTO = InquireTransactionHistoryListRequestDTO.builder()
+                .header(RequestHeader.builder()
+                        .apiName("inquireTransactionHistoryList")
+                        .userKey(userKey)
+                        .build())
+                .accountNo(accountNo)
+                .startDate(startDate)
+                .endDate(endDate)
+                .transactionType("D")
+                .orderByType("DESC")
+                .build();
+        InquireTransactionHistoryListResponseDTO inquireTransactionHistoryListResponseDTO = domesticClient.inquireTransactionHistoryList(inquireTransactionHistoryListRequestDTO);
+
+        return getUniqueLastTransactionList(inquireTransactionHistoryListResponseDTO);
+    }
+
+    // SSAFY 금융 API 계좌 거래 내역 responseDTO -> 최근 이체 목록 조회 responseDTO
+    public LastTransactionListResponseDTO getUniqueLastTransactionList(InquireTransactionHistoryListResponseDTO inquireTransactionHistoryListResponseDTO) {
+        List<LastTransactionListResponseDTO.Info> accountList = inquireTransactionHistoryListResponseDTO.getRec().getList().stream()
+                .filter(transactionHistory -> transactionHistory.getTransactionAccountNo() != null && !transactionHistory.getTransactionAccountNo().trim().isEmpty())
+                .map(transactionHistory -> {
+                    Account account = ValidationUtil.validateAccount(accountRepository.findByAccountNo(transactionHistory.getTransactionAccountNo()));
+                    Long accountId = account.getAccountId();
+
+                    List<UserAccountRelation> userAccountRelationList = ValidationUtil.validateUserAccountRelationList(userAccountRelationRepository.findAllByAccountId(accountId));
+
+                    Long userId = userAccountRelationList.stream()
+                            .filter(relation -> relation.getUserRole() == UserRole.ADMIN)
+                            .map(UserAccountRelation::getUserId)
+                            .findFirst()
+                            .orElseThrow(UserAccountRelationNotFoundException::getInstance);
+
+                    String adminName = userClient.getUserName(userId).getUserName();
+
+                    return LastTransactionListResponseDTO.Info.builder()
+                            .accountId(accountId)
+                            .accountNo(transactionHistory.getTransactionAccountNo())
+                            .adminName(adminName)
+                            .build();
+                })
+                .distinct()
+                .limit(6)
+                .collect(Collectors.toList());
+
+        return LastTransactionListResponseDTO.builder()
                 .accountList(accountList)
                 .build();
     }
