@@ -14,8 +14,14 @@ chatBot = ChatBotQuestion()
 
 # GET 요청을 처리하는 엔드포인트
 @locationQuestionRouter.get("/location/{questionIndex}", response_model=QuestionOption)
-async def getQuestion(questionIndex: int, country: Optional[str] = Query(None, description="국가명을 입력하세요.")):
-    question = chatBot.getQuestion(questionIndex, country)
+async def getQuestion(
+    questionIndex: int, 
+    country: Optional[str] = Query(None, description="국가명을 입력하세요."),
+    city: Optional[str] = Query(None, description="도시명을 입력하세요."),
+    days: Optional[int] = Query(None, description="여행 일수를 입력하세요."),
+    trans: Optional[str] = Query(None, description="이동 수단을 입력하세요.")
+):
+    question = await chatBot.getQuestion(questionIndex, country, city, days, trans)
     if "error" in question:
         raise HTTPException(status_code=400, detail=question["error"])
     return question
