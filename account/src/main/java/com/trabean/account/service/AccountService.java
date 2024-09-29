@@ -20,6 +20,7 @@ import com.trabean.external.msa.travel.dto.requestDTO.SaveDomesticTravelAccountR
 import com.trabean.external.msa.travel.dto.requestDTO.SaveForeignTravelAccountRequestDTO;
 import com.trabean.external.msa.travel.dto.responseDTO.DomesticTravelAccountInfoResponseDTO;
 import com.trabean.external.msa.user.client.UserClient;
+import com.trabean.external.msa.user.dto.request.MainAccountIdRequestDTO;
 import com.trabean.external.msa.user.dto.response.UserNameResponseDTO;
 import com.trabean.external.ssafy.domestic.client.DomesticClient;
 import com.trabean.external.ssafy.domestic.dto.requestDTO.*;
@@ -138,6 +139,15 @@ public class AccountService {
                 .userRole(UserRole.ADMIN)
                 .build();
         userAccountRelationRepository.save(userAccountRelation);
+
+        // User 서버에 mainAccountId가 존재하는지 조회해서 존재 안하면 mainAccount로 저장
+        if(userClient.getMainAccountId(userId).getMainAccountId() == null) {
+            MainAccountIdRequestDTO mainAccountIdRequestDTO = MainAccountIdRequestDTO.builder()
+                    .userId(userId)
+                    .mainAccountId(savedAccount.getAccountId())
+                    .build();
+            userClient.updateMainAccountId(mainAccountIdRequestDTO);
+        }
 
         return SsafySuccessResponseDTO.builder()
                 .responseCode(createDemandDepositAccountResponseDTO.getHeader().getResponseCode())
