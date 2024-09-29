@@ -1,10 +1,7 @@
 package com.trabean.account.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -19,6 +16,7 @@ public class LastTransactionListResponseDTO {
 
     @Builder
     @Getter
+    @EqualsAndHashCode
     public static class Info {
         private Long accountId;
         private String accountNo;
