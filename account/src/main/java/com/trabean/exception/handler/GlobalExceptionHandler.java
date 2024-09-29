@@ -5,6 +5,7 @@ import com.trabean.common.InternalServerErrorResponseDTO;
 import com.trabean.common.ResponseCode;
 import com.trabean.common.SsafyErrorResponseDTO;
 import com.trabean.exception.*;
+import jakarta.ws.rs.InternalServerErrorException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -25,7 +26,7 @@ public class GlobalExceptionHandler {
             AccountNotFoundException.class,
             UserAccountRelationNotFoundException.class
     })
-    public ResponseEntity<InternalServerErrorResponseDTO> handleNotFoundException(InternalServerErrorResponseDTO e) {
+    public ResponseEntity<InternalServerErrorResponseDTO> handleNotFoundException(InternalServerErrorException e) {
         InternalServerErrorResponseDTO responseDTO = InternalServerErrorResponseDTO.builder()
                 .message(e.getMessage())
                 .build();
@@ -40,7 +41,7 @@ public class GlobalExceptionHandler {
             InvalidPasswordException.class,
             UnauthorizedUserRoleException.class
     })
-    public ResponseEntity<InternalServerErrorResponseDTO> handleUForbiddenException(InternalServerErrorResponseDTO e) {
+    public ResponseEntity<InternalServerErrorResponseDTO> handleUForbiddenException(InternalServerErrorException e) {
         InternalServerErrorResponseDTO responseDTO = InternalServerErrorResponseDTO.builder()
                 .message(e.getMessage())
                 .build();
