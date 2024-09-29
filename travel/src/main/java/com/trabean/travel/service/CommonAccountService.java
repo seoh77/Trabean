@@ -1,6 +1,7 @@
 package com.trabean.travel.service;
 
 import com.trabean.travel.callApi.client.AccountClient;
+import com.trabean.travel.callApi.client.DemandDepositClient;
 import com.trabean.travel.callApi.client.ForeignCurrencyClient;
 import com.trabean.travel.callApi.dto.request.AccountBalanceApiRequestDto;
 import com.trabean.travel.callApi.dto.request.AccountNumberApiRequestDto;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 public class CommonAccountService {
 
     private final AccountClient accountClient;
+    private final DemandDepositClient demandDepositClient;
     private final ForeignCurrencyClient foreignCurrencyClient;
 
     private String userKey = "9e10349e-91e9-474d-afb4-564b24178d9f";
@@ -34,6 +36,26 @@ public class CommonAccountService {
         AccountNumberApiResponseDto accountNumberApiResponseDto = accountClient.getAccount(
                 new AccountNumberApiRequestDto(accountId));
         return accountNumberApiResponseDto.getAccountNo();
+    }
+
+    /**
+     * 원화 계좌 잔액 조회
+     */
+    public Double getKrwAccountBalance(Long accountId, String accountNo) {
+        String adminUserKey = getUserKey(accountId);
+
+        AccountBalanceApiRequestDto getAccountBalanceRequestDto
+                = new AccountBalanceApiRequestDto(
+                RequestHeader.builder()
+                        .apiName("inquireDemandDepositAccountBalance")
+                        .userKey(adminUserKey)
+                        .build(),
+                accountNo);
+
+        AccountBalanceApiResponseDto accountBalanceApiResponseDto = demandDepositClient.getKrwAccountBalance(
+                getAccountBalanceRequestDto);
+
+        return (double) accountBalanceApiResponseDto.getRec().getAccountBalance();
     }
 
     /**

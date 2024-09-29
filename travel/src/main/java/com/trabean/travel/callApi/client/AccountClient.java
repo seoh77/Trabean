@@ -6,13 +6,17 @@ import com.trabean.travel.callApi.dto.request.MemberJoinApiRequestDto;
 import com.trabean.travel.callApi.dto.request.MemberRoleUpdateApiRequestDto;
 import com.trabean.travel.callApi.dto.response.AccountNumberApiResponseDto;
 import com.trabean.travel.callApi.dto.response.AdminUserKeyApiResponseDto;
+import com.trabean.travel.callApi.dto.response.MemberInfoApiResponseDto;
 import com.trabean.travel.callApi.dto.response.MemberJoinApiResponseDto;
 import com.trabean.travel.callApi.dto.response.MemberRoleUpdateApiResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.FeignClientsConfiguration;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 @FeignClient(name = "account", path = "/api/accounts", configuration = FeignClientsConfiguration.class)
 public interface AccountClient {
@@ -41,4 +45,12 @@ public interface AccountClient {
     @PutMapping("/internal/update-userRole")
     MemberRoleUpdateApiResponseDto updateUserRole(
             @RequestBody MemberRoleUpdateApiRequestDto memberRoleUpdateApiRequestDto);
+
+    /**
+     * Account API : 멤버 목록 조회
+     */
+    @GetMapping("/travel/domestic/{accountId}/members")
+    MemberInfoApiResponseDto getMemberInfo(
+            @PathVariable("accountId") Long accountId,
+            @RequestHeader("userId") Long userId);
 }

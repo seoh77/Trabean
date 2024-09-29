@@ -16,6 +16,7 @@ import com.trabean.travel.dto.response.ExchangeEstimateResponseDto;
 import com.trabean.travel.dto.response.ExchangeRateResponseDto;
 import com.trabean.travel.dto.response.ExchangeResponseDto;
 import com.trabean.travel.dto.response.ForeignAccountHistoryResponseDto;
+import com.trabean.travel.dto.response.TargetAmountListResponseDto;
 import com.trabean.travel.dto.response.TravelAccountIdResponseDto;
 import com.trabean.travel.dto.response.TravelListAccountResponseDto;
 import com.trabean.travel.service.ExchangeService;
@@ -170,5 +171,10 @@ public class TravelAccountController {
         }
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    @GetMapping("/targetAmount/{accountId}")
+    public ResponseEntity<TargetAmountListResponseDto> getTargetAmountList(@PathVariable Long accountId) {
+        return ResponseEntity.ok(targetAmountService.getTargetAmountList(accountId));
     }
 }
