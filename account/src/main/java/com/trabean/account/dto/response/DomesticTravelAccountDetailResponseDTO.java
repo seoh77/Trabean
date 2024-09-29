@@ -44,5 +44,6 @@ public class DomesticTravelAccountDetailResponseDTO {
         private String transactionTime;
         private Long transactionBalance;
         private Long transactionAfterBalance;
+        private Long transactionMemo;
     }
 }
