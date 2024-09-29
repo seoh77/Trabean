@@ -41,6 +41,6 @@ public class PersonalAccountDetailResponseDTO {
         private String transactionTime;
         private Long transactionBalance;
         private Long transactionAfterBalance;
-        private Long transactionMemo;
+        private String transactionMemo;
     }
 }

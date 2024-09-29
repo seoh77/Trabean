@@ -289,7 +289,7 @@ public class AccountService {
                         .transactionTime(transaction.getTransactionTime())
                         .transactionBalance(transaction.getTransactionBalance())
                         .transactionAfterBalance(transaction.getTransactionAfterBalance())
-                        .transactionMemo(Long.valueOf(transaction.getTransactionMemo()))
+                        .transactionMemo(transaction.getTransactionMemo())
                         .build())
                 .collect(Collectors.toList());
     }
@@ -463,7 +463,7 @@ public class AccountService {
                         .transactionTime(transaction.getTransactionTime())
                         .transactionBalance(transaction.getTransactionBalance())
                         .transactionAfterBalance(transaction.getTransactionAfterBalance())
-                        .transactionMemo(Long.valueOf(transaction.getTransactionMemo()))
+                        .transactionMemo(transaction.getTransactionMemo())
                         .build())
                 .collect(Collectors.toList());
     }
