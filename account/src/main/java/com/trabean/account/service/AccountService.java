@@ -27,6 +27,9 @@ import com.trabean.external.ssafy.domestic.dto.responseDTO.*;
 import com.trabean.external.ssafy.foriegn.client.ForeignClient;
 import com.trabean.external.ssafy.foriegn.dto.requestDTO.CreateForeignCurrencyDemandDepositAccountRequestDTO;
 import com.trabean.external.ssafy.foriegn.dto.responseDTO.CreateForeignCurrencyDemandDepositAccountResponseDTO;
+import com.trabean.external.ssafy.memo.client.MemoClient;
+import com.trabean.external.ssafy.memo.dto.request.TransactionMemoRequestDTO;
+import com.trabean.external.ssafy.memo.dto.response.TransactionMemoResponseDTO;
 import com.trabean.interceptor.UserHeaderInterceptor;
 import com.trabean.util.RequestHeader;
 import com.trabean.util.ValidateInputDTO;
@@ -51,6 +54,7 @@ public class AccountService {
 
     private final DomesticClient domesticClient;
     private final ForeignClient foreignClient;
+    private final MemoClient memoClient;
 
     private final UserClient userClient;
     private final TravelClient travelClient;
@@ -315,6 +319,18 @@ public class AccountService {
                 .build();
         UpdateDemandDepositAccountTransferResponseDTO updateDemandDepositAccountTransferResponseDTO = domesticClient.updateDemandDepositAccountTransfer(updateDemandDepositAccountTransferRequestDTO);
 
+        // SSAFY 금융 API 거래내역 메모 요청
+        TransactionMemoRequestDTO transactionMemoRequestDTO = TransactionMemoRequestDTO.builder()
+                .header(RequestHeader.builder()
+                        .apiName("transactionMemo")
+                        .userKey(UserHeaderInterceptor.userKey.get())
+                        .build())
+                .accountNo(requestDTO.getWithdrawalAccountNo())
+                .transactionUniqueNo(updateDemandDepositAccountTransferResponseDTO.getRec().get(0).getTransactionUniqueNo())
+                .transactionMemo(String.valueOf(UserHeaderInterceptor.userId.get()))
+                .build();
+        memoClient.transactionMeno(transactionMemoRequestDTO);
+
         return SsafySuccessResponseDTO.builder()
                 .responseCode(updateDemandDepositAccountTransferResponseDTO.getHeader().getResponseCode())
                 .responseMessage(updateDemandDepositAccountTransferResponseDTO.getHeader().getResponseMessage())
@@ -474,6 +490,18 @@ public class AccountService {
                 .withdrawalTransactionSummary(requestDTO.getWithdrawalTransactionSummary())
                 .build();
         UpdateDemandDepositAccountTransferResponseDTO updateDemandDepositAccountTransferResponseDTO = domesticClient.updateDemandDepositAccountTransfer(updateDemandDepositAccountTransferRequestDTO);
+
+        // SSAFY 금융 API 거래내역 메모 요청
+        TransactionMemoRequestDTO transactionMemoRequestDTO = TransactionMemoRequestDTO.builder()
+                .header(RequestHeader.builder()
+                        .apiName("transactionMemo")
+                        .userKey(UserHeaderInterceptor.userKey.get())
+                        .build())
+                .accountNo(requestDTO.getWithdrawalAccountNo())
+                .transactionUniqueNo(updateDemandDepositAccountTransferResponseDTO.getRec().get(0).getTransactionUniqueNo())
+                .transactionMemo(String.valueOf(UserHeaderInterceptor.userId.get()))
+                .build();
+        memoClient.transactionMeno(transactionMemoRequestDTO);
 
         return SsafySuccessResponseDTO.builder()
                 .responseCode(updateDemandDepositAccountTransferResponseDTO.getHeader().getResponseCode())
