@@ -20,7 +20,7 @@ public class VerificationService {
     private final VerificationClient verificationClient;
 
     // 1원 인증(1원 송금) 서비스 로직
-    public SsafySuccessResponseDTO getAccountVerification(String userKey, AccountVerificationRequestDTO requestDTO) {
+    public SsafySuccessResponseDTO getAccountVerification(AccountVerificationRequestDTO requestDTO) {
 
         // SSAFY 금융 API 1원 송금 요청
         OpenAccountAuthRequestDTO openAccountAuthRequestDTO = OpenAccountAuthRequestDTO.builder()
@@ -39,7 +39,7 @@ public class VerificationService {
     }
 
     // 1원 인증(인증번호검증) 서비스 로직
-    public SsafySuccessResponseDTO getOneWonVerification(String userKey, OneWonVerificationRequestDTO requestDTO) {
+    public SsafySuccessResponseDTO getOneWonVerification(OneWonVerificationRequestDTO requestDTO) {
 
         // SSAFY 금융 API 1원 송금 검증 요청
         CheckAuthCodeRequestDTO checkAuthCodeRequestDTO = CheckAuthCodeRequestDTO.builder()

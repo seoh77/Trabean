@@ -19,17 +19,15 @@ public class VerificationController {
 
     // 1원 인증(1원 송금) API
     @PostMapping("/account")
-    public ResponseEntity<SsafySuccessResponseDTO> getAccountVerification(@RequestHeader String userKey,
-                                                                          @RequestBody AccountVerificationRequestDTO requestDTO) {
-        SsafySuccessResponseDTO responseDTO = verificationService.getAccountVerification(userKey, requestDTO);
+    public ResponseEntity<SsafySuccessResponseDTO> getAccountVerification(@RequestBody AccountVerificationRequestDTO requestDTO) {
+        SsafySuccessResponseDTO responseDTO = verificationService.getAccountVerification(requestDTO);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
     // 1원 인증(인증번호검증) API
     @PostMapping("/onewon")
-    public ResponseEntity<SsafySuccessResponseDTO> getOneWonVerification(@RequestHeader String userKey,
-                                                                         @RequestBody OneWonVerificationRequestDTO requestDTO) {
-        SsafySuccessResponseDTO responseDTO = verificationService.getOneWonVerification(userKey, requestDTO);
+    public ResponseEntity<SsafySuccessResponseDTO> getOneWonVerification(@RequestBody OneWonVerificationRequestDTO requestDTO) {
+        SsafySuccessResponseDTO responseDTO = verificationService.getOneWonVerification(requestDTO);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 }
