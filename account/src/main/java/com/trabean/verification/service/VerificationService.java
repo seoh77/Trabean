@@ -2,10 +2,10 @@ package com.trabean.verification.service;
 
 import com.trabean.common.SsafySuccessResponseDTO;
 import com.trabean.external.ssafy.verification.client.VerificationClient;
-import com.trabean.external.ssafy.verification.dto.requestDTO.CheckAuthCodeRequestDTO;
-import com.trabean.external.ssafy.verification.dto.requestDTO.OpenAccountAuthRequestDTO;
-import com.trabean.external.ssafy.verification.dto.responseDTO.CheckAuthCodeResponseDTO;
-import com.trabean.external.ssafy.verification.dto.responseDTO.OpenAccountAuthResponseDTO;
+import com.trabean.external.ssafy.verification.dto.request.CheckAuthCodeRequestDTO;
+import com.trabean.external.ssafy.verification.dto.request.OpenAccountAuthRequestDTO;
+import com.trabean.external.ssafy.verification.dto.response.CheckAuthCodeResponseDTO;
+import com.trabean.external.ssafy.verification.dto.response.OpenAccountAuthResponseDTO;
 import com.trabean.interceptor.UserHeaderInterceptor;
 import com.trabean.util.RequestHeader;
 import com.trabean.verification.dto.request.AccountVerificationRequestDTO;

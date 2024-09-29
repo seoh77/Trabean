@@ -1,10 +1,10 @@
 package com.trabean.external.ssafy.verification.client;
 
 import com.trabean.config.FeignClientConfig;
-import com.trabean.external.ssafy.verification.dto.requestDTO.CheckAuthCodeRequestDTO;
-import com.trabean.external.ssafy.verification.dto.requestDTO.OpenAccountAuthRequestDTO;
-import com.trabean.external.ssafy.verification.dto.responseDTO.CheckAuthCodeResponseDTO;
-import com.trabean.external.ssafy.verification.dto.responseDTO.OpenAccountAuthResponseDTO;
+import com.trabean.external.ssafy.verification.dto.request.CheckAuthCodeRequestDTO;
+import com.trabean.external.ssafy.verification.dto.request.OpenAccountAuthRequestDTO;
+import com.trabean.external.ssafy.verification.dto.response.CheckAuthCodeResponseDTO;
+import com.trabean.external.ssafy.verification.dto.response.OpenAccountAuthResponseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

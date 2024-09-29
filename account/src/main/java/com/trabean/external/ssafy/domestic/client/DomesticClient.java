@@ -1,8 +1,8 @@
 package com.trabean.external.ssafy.domestic.client;
 
 import com.trabean.config.FeignClientConfig;
-import com.trabean.external.ssafy.domestic.dto.requestDTO.*;
-import com.trabean.external.ssafy.domestic.dto.responseDTO.*;
+import com.trabean.external.ssafy.domestic.dto.request.*;
+import com.trabean.external.ssafy.domestic.dto.response.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

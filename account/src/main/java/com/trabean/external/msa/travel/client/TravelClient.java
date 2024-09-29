@@ -1,9 +1,9 @@
 package com.trabean.external.msa.travel.client;
 
 import com.trabean.config.FeignClientConfig;
-import com.trabean.external.msa.travel.dto.requestDTO.SaveDomesticTravelAccountRequestDTO;
-import com.trabean.external.msa.travel.dto.requestDTO.SaveForeignTravelAccountRequestDTO;
-import com.trabean.external.msa.travel.dto.responseDTO.DomesticTravelAccountInfoResponseDTO;
+import com.trabean.external.msa.travel.dto.request.SaveDomesticTravelAccountRequestDTO;
+import com.trabean.external.msa.travel.dto.request.SaveForeignTravelAccountRequestDTO;
+import com.trabean.external.msa.travel.dto.response.DomesticTravelAccountInfoResponseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

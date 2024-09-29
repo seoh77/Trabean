@@ -2,8 +2,8 @@ package com.trabean.test.service;
 
 import com.trabean.common.SsafySuccessResponseDTO;
 import com.trabean.external.ssafy.domestic.client.DomesticClient;
-import com.trabean.external.ssafy.domestic.dto.requestDTO.UpdateDemandDepositAccountDepositRequestDTO;
-import com.trabean.external.ssafy.domestic.dto.responseDTO.UpdateDemandDepositAccountDepositResponseDTO;
+import com.trabean.external.ssafy.domestic.dto.request.UpdateDemandDepositAccountDepositRequestDTO;
+import com.trabean.external.ssafy.domestic.dto.response.UpdateDemandDepositAccountDepositResponseDTO;
 import com.trabean.interceptor.UserHeaderInterceptor;
 import com.trabean.test.dto.request.DepositRequestDTO;
 import com.trabean.util.RequestHeader;
