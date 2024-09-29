@@ -27,6 +27,7 @@ import com.trabean.external.ssafy.domestic.dto.responseDTO.*;
 import com.trabean.external.ssafy.foriegn.client.ForeignClient;
 import com.trabean.external.ssafy.foriegn.dto.requestDTO.CreateForeignCurrencyDemandDepositAccountRequestDTO;
 import com.trabean.external.ssafy.foriegn.dto.responseDTO.CreateForeignCurrencyDemandDepositAccountResponseDTO;
+import com.trabean.interceptor.UserHeaderInterceptor;
 import com.trabean.util.RequestHeader;
 import com.trabean.util.ValidateInputDTO;
 import com.trabean.util.ValidationUtil;
@@ -57,27 +58,27 @@ public class AccountService {
     private final PasswordEncoder passwordEncoder;
 
     // 통장 목록 조회 서비스 로직
-    public AccountListResponseDTO getAccountList(Long userId, String userKey) {
+    public AccountListResponseDTO getAccountList() {
 
         // SSAFY 금융 API 계좌 목록 조회 요청
         InquireDemandDepositAccountListRequestDTO inquireDemandDepositAccountListRequestDTO = InquireDemandDepositAccountListRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName("inquireDemandDepositAccountList")
-                        .userKey(userKey)
+                        .userKey(UserHeaderInterceptor.userKey.get())
                         .build())
                 .build();
         InquireDemandDepositAccountListResponseDTO inquireDemandDepositAccountListResponseDTO = domesticClient.inquireDemandDepositAccountList(inquireDemandDepositAccountListRequestDTO);
 
-        return getAccountList(userId, inquireDemandDepositAccountListResponseDTO);
+        return getAccountList(inquireDemandDepositAccountListResponseDTO);
     }
 
     // SSAFY 금융 API 게좌 목록 responseDTO -> 통장 목록 조회 responseDTO
-    private AccountListResponseDTO getAccountList(Long userId, InquireDemandDepositAccountListResponseDTO inquireDemandDepositAccountListResponseDTO) {
+    private AccountListResponseDTO getAccountList(InquireDemandDepositAccountListResponseDTO inquireDemandDepositAccountListResponseDTO) {
         AccountListResponseDTO.Account mainAccount = null;
         List<AccountListResponseDTO.Account> accountList = new ArrayList<>();
 
         // User 서버에 userId로 mainAccountId 반환 요청
-        Long mainAccountId = userClient.getMainAccountId(userId).getMainAccountId();
+        Long mainAccountId = userClient.getMainAccountId(UserHeaderInterceptor.userId.get()).getMainAccountId();
 
         // Travel 서버에 한화 여행통장이름 이름 반환 요청
         for (InquireDemandDepositAccountListResponseDTO.REC account : inquireDemandDepositAccountListResponseDTO.getRec()) {
@@ -108,11 +109,11 @@ public class AccountService {
     }
 
     // 최근 이체 목록 조회 서비스 로직
-    public LastTransactionListResponseDTO getLastTransactionList(Long userId, String userKey, Long accountId, String startDate, String endDate) {
+    public LastTransactionListResponseDTO getLastTransactionList(Long accountId, String startDate, String endDate) {
 
         String accountNo = ValidationUtil.validateInput(ValidateInputDTO.builder()
                     .account(accountRepository.findById(accountId))
-                    .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(userId, accountId))
+                    .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(UserHeaderInterceptor.userId.get(), accountId))
                     .isPayable(true)
                 .build()).getAccountNo();
 
@@ -120,7 +121,7 @@ public class AccountService {
         InquireTransactionHistoryListRequestDTO inquireTransactionHistoryListRequestDTO = InquireTransactionHistoryListRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName("inquireTransactionHistoryList")
-                        .userKey(userKey)
+                        .userKey(UserHeaderInterceptor.userKey.get())
                         .build())
                 .accountNo(accountNo)
                 .startDate(startDate)
@@ -184,13 +185,13 @@ public class AccountService {
     }
 
     // 개인 통장 생성 서비스 로직
-    public SsafySuccessResponseDTO createPersonalAccount(Long userId, String userKey, CreatePersonalAccountRequestDTO requestDTO) {
+    public SsafySuccessResponseDTO createPersonalAccount(CreatePersonalAccountRequestDTO requestDTO) {
 
         // SSAFY 금융 API 계좌 생성 요청
         CreateDemandDepositAccountRequestDTO createDemandDepositAccountRequestDTO = CreateDemandDepositAccountRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName("createDemandDepositAccount")
-                        .userKey(userKey)
+                        .userKey(UserHeaderInterceptor.userKey.get())
                         .build())
                 .accountTypeUniqueNo(PERSONAL_ACCOUNT_TYPE_UNIQUE_NO)
                 .build();
@@ -209,16 +210,16 @@ public class AccountService {
 
         // UserAccountRelation 테이블에 저장
         UserAccountRelation userAccountRelation = UserAccountRelation.builder()
-                .userId(userId)
+                .userId(UserHeaderInterceptor.userId.get())
                 .account(savedAccount)
                 .userRole(UserRole.ADMIN)
                 .build();
         userAccountRelationRepository.save(userAccountRelation);
 
         // User 서버에 mainAccountId가 존재하는지 조회해서 존재 안하면 mainAccount로 저장
-        if(userClient.getMainAccountId(userId).getMainAccountId() == null) {
+        if(userClient.getMainAccountId(UserHeaderInterceptor.userId.get()).getMainAccountId() == null) {
             MainAccountIdRequestDTO mainAccountIdRequestDTO = MainAccountIdRequestDTO.builder()
-                    .userId(userId)
+                    .userId(UserHeaderInterceptor.userId.get())
                     .mainAccountId(savedAccount.getAccountId())
                     .build();
             userClient.updateMainAccountId(mainAccountIdRequestDTO);
@@ -231,11 +232,11 @@ public class AccountService {
     }
 
     // 개인 통장 상세 조회 서비스 로직
-    public PersonalAccountDetailResponseDTO getPersonalAccountDetail(Long userId, String userKey, Long accountId, String startDate, String endDate, String transactionType) {
+    public PersonalAccountDetailResponseDTO getPersonalAccountDetail(Long accountId, String startDate, String endDate, String transactionType) {
 
         String accountNo = ValidationUtil.validateInput(ValidateInputDTO.builder()
                     .account(accountRepository.findById(accountId))
-                    .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(userId, accountId))
+                    .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(UserHeaderInterceptor.userId.get(), accountId))
                     .accountType(AccountType.PERSONAL)
                     .userRole(UserRole.ADMIN)
                     .build())
@@ -245,7 +246,7 @@ public class AccountService {
         InquireDemandDepositAccountRequestDTO inquireDemandDepositAccountRequestDTO = InquireDemandDepositAccountRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName("inquireDemandDepositAccount")
-                        .userKey(userKey)
+                        .userKey(UserHeaderInterceptor.userKey.get())
                         .build())
                 .accountNo(accountNo)
                 .build();
@@ -255,7 +256,7 @@ public class AccountService {
         InquireTransactionHistoryListRequestDTO inquireTransactionHistoryListRequestDTO = InquireTransactionHistoryListRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName("inquireTransactionHistoryList")
-                        .userKey(userKey)
+                        .userKey(UserHeaderInterceptor.userKey.get())
                         .build())
                 .accountNo(accountNo)
                 .startDate(startDate)
@@ -290,11 +291,11 @@ public class AccountService {
     }
 
     // 개인 통장 계좌 이체 서비스 로직
-    public SsafySuccessResponseDTO transferPersonalAccount(Long userId, String userKey, Long accountId, TransferPersonalAccountRequestDTO requestDTO) {
+    public SsafySuccessResponseDTO transferPersonalAccount(Long accountId, TransferPersonalAccountRequestDTO requestDTO) {
 
         ValidationUtil.validateInput(ValidateInputDTO.builder()
                 .account(accountRepository.findById(accountId))
-                .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(userId, accountId))
+                .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(UserHeaderInterceptor.userId.get(), accountId))
                 .accountType(AccountType.PERSONAL)
                 .userRole(UserRole.ADMIN)
                 .isPayable(true)
@@ -304,7 +305,7 @@ public class AccountService {
         UpdateDemandDepositAccountTransferRequestDTO updateDemandDepositAccountTransferRequestDTO = UpdateDemandDepositAccountTransferRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName("updateDemandDepositAccountTransfer")
-                        .userKey(userKey)
+                        .userKey(UserHeaderInterceptor.userKey.get())
                         .build())
                 .depositAccountNo(requestDTO.getDepositAccountNo())
                 .depositTransactionSummary(requestDTO.getDepositTransactionSummary())
@@ -321,11 +322,11 @@ public class AccountService {
     }
 
     // 개인 통장 계좌 이체 비밀번호 검증 API
-    public InternalServerSuccessResponseDTO verifyPersonalAccountPassword(Long userId, Long accountId, VerifyAccountPasswordRequestDTO requestDTO) {
+    public InternalServerSuccessResponseDTO verifyPersonalAccountPassword(Long accountId, VerifyAccountPasswordRequestDTO requestDTO) {
 
         String savedPassword = ValidationUtil.validateInput(ValidateInputDTO.builder()
-                        .account(accountRepository.findById(accountId))
-                        .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(userId, accountId))
+                        .account(accountRepository.findById(UserHeaderInterceptor.userId.get()))
+                        .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(UserHeaderInterceptor.userId.get(), accountId))
                         .accountType(AccountType.PERSONAL)
                         .userRole(UserRole.ADMIN)
                         .isPayable(true)
@@ -343,13 +344,13 @@ public class AccountService {
     }
 
     // 한화 여행통장 생성 서비스 로직
-    public SsafySuccessResponseDTO createDomesticTravelAccount(Long userId, String userKey, CreateDomesticTravelAccountRequestDTO requestDTO) {
+    public SsafySuccessResponseDTO createDomesticTravelAccount(CreateDomesticTravelAccountRequestDTO requestDTO) {
 
         // SSAFY 금융 API 계좌 생성 요청
         CreateDemandDepositAccountRequestDTO createDemandDepositAccountRequestDTO = CreateDemandDepositAccountRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName("createDemandDepositAccount")
-                        .userKey(userKey)
+                        .userKey(UserHeaderInterceptor.userKey.get())
                         .build())
                 .accountTypeUniqueNo(DOMESTIC_TRAVEL_ACCOUNT_TYPE_UNIQUE_NO)
                 .build();
@@ -368,7 +369,7 @@ public class AccountService {
 
         // UserAccountRelation 테이블에 저장
         UserAccountRelation userAccountRelation = UserAccountRelation.builder()
-                .userId(userId)
+                .userId(UserHeaderInterceptor.userId.get())
                 .account(savedAccount)
                 .userRole(UserRole.ADMIN)
                 .build();
@@ -389,11 +390,11 @@ public class AccountService {
     }
 
     // 한화 여행통장 상세 조회 서비스 로직
-    public DomesticTravelAccountDetailResponseDTO getDomesticTravelAccountDetail(Long userId, String userKey, Long accountId, String startDate, String endDate, String transactionType) {
+    public DomesticTravelAccountDetailResponseDTO getDomesticTravelAccountDetail(Long accountId, String startDate, String endDate, String transactionType) {
 
         String accountNo = ValidationUtil.validateInput(ValidateInputDTO.builder()
                         .account(accountRepository.findById(accountId))
-                        .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(userId, accountId))
+                        .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(UserHeaderInterceptor.userId.get(), accountId))
                         .accountType(AccountType.DOMESTIC)
                         .build())
                 .getAccountNo();
@@ -405,7 +406,7 @@ public class AccountService {
         InquireDemandDepositAccountRequestDTO inquireDemandDepositAccountRequestDTO = InquireDemandDepositAccountRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName("inquireDemandDepositAccount")
-                        .userKey(userKey)
+                        .userKey(UserHeaderInterceptor.userKey.get())
                         .build())
                 .accountNo(accountNo)
                 .build();
@@ -415,7 +416,7 @@ public class AccountService {
         InquireTransactionHistoryListRequestDTO inquireTransactionHistoryListRequestDTO = InquireTransactionHistoryListRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName("inquireTransactionHistoryList")
-                        .userKey(userKey)
+                        .userKey(UserHeaderInterceptor.userKey.get())
                         .build())
                 .accountNo(accountNo)
                 .startDate(startDate)
@@ -451,11 +452,11 @@ public class AccountService {
     }
 
     // 한화 여행통장 계좌 이체 서비스 로직
-    public SsafySuccessResponseDTO transferDomesticTravelAccount(Long userId, String userKey, Long accountId, TransferDomesticTravelAccountRequestDTO requestDTO) {
+    public SsafySuccessResponseDTO transferDomesticTravelAccount(Long accountId, TransferDomesticTravelAccountRequestDTO requestDTO) {
 
         ValidationUtil.validateInput(ValidateInputDTO.builder()
                 .account(accountRepository.findById(accountId))
-                .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(userId, accountId))
+                .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(UserHeaderInterceptor.userId.get(), accountId))
                 .accountType(AccountType.DOMESTIC)
                 .isPayable(true)
                 .build());
@@ -464,7 +465,7 @@ public class AccountService {
         UpdateDemandDepositAccountTransferRequestDTO updateDemandDepositAccountTransferRequestDTO = UpdateDemandDepositAccountTransferRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName("updateDemandDepositAccountTransfer")
-                        .userKey(userKey)
+                        .userKey(UserHeaderInterceptor.userKey.get())
                         .build())
                 .depositAccountNo(requestDTO.getDepositAccountNo())
                 .depositTransactionSummary(requestDTO.getDepositTransactionSummary())
@@ -481,11 +482,11 @@ public class AccountService {
     }
 
     // 한화 여행통장 계좌 이체 비밀번호 검증 API
-    public InternalServerSuccessResponseDTO verifyDomesticTravelAccountPassword(Long userId, Long accountId, VerifyAccountPasswordRequestDTO requestDTO) {
+    public InternalServerSuccessResponseDTO verifyDomesticTravelAccountPassword(Long accountId, VerifyAccountPasswordRequestDTO requestDTO) {
 
         String savedPassword = ValidationUtil.validateInput(ValidateInputDTO.builder()
                         .account(accountRepository.findById(accountId))
-                        .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(userId, accountId))
+                        .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(UserHeaderInterceptor.userId.get(), accountId))
                         .accountType(AccountType.DOMESTIC)
                         .isPayable(true)
                         .build())
@@ -502,11 +503,11 @@ public class AccountService {
     }
 
     // 한화 여행통장 멤버 목록 조회 서비스 로직 (민채)
-    public DomesticTravelAccountMemberListResponseDTO getDomesticTravelAccountMemberList(Long userId, Long accountId) {
+    public DomesticTravelAccountMemberListResponseDTO getDomesticTravelAccountMemberList(Long accountId) {
 
         ValidationUtil.validateInput(ValidateInputDTO.builder()
                 .account(accountRepository.findById(accountId))
-                .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(userId, accountId))
+                .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(UserHeaderInterceptor.userId.get(), accountId))
                 .accountType(AccountType.DOMESTIC)
                 .build());
 
@@ -531,11 +532,11 @@ public class AccountService {
     }
 
     // 외화 여행통장 생성 서비스 로직
-    public SsafySuccessResponseDTO createForeignTravelAccount(Long userId, String userKey, CreateForeignTravelAccountRequestDTO requestDTO) {
+    public SsafySuccessResponseDTO createForeignTravelAccount(CreateForeignTravelAccountRequestDTO requestDTO) {
 
         String savedPassword = ValidationUtil.validateInput(ValidateInputDTO.builder()
                         .account(accountRepository.findById(requestDTO.getDomesticAccountId()))
-                        .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(userId, requestDTO.getDomesticAccountId()))
+                        .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(UserHeaderInterceptor.userId.get(), requestDTO.getDomesticAccountId()))
                         .accountType(AccountType.DOMESTIC)
                         .userRole(UserRole.ADMIN)
                         .build())
@@ -545,7 +546,7 @@ public class AccountService {
         CreateForeignCurrencyDemandDepositAccountRequestDTO createForeignCurrencyDemandDepositAccountRequestDTO = CreateForeignCurrencyDemandDepositAccountRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName("createForeignCurrencyDemandDepositAccount")
-                        .userKey(userKey)
+                        .userKey(UserHeaderInterceptor.userKey.get())
                         .build())
                 .accountTypeUniqueNo(FOREIGN_TRAVEL_ACCOUNT_TYPE_UNIQUE_NO)
                 .currency(requestDTO.getCurrency())
@@ -565,7 +566,7 @@ public class AccountService {
 
         // UserAccountRelation 테이블에 저장
         UserAccountRelation userAccountRelation = UserAccountRelation.builder()
-                .userId(userId)
+                .userId(UserHeaderInterceptor.userId.get())
                 .account(savedAccount)
                 .userRole(UserRole.ADMIN)
                 .build();
