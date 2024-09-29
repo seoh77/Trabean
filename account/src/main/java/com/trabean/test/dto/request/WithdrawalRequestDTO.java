@@ -6,6 +6,9 @@ import lombok.Getter;
 @Getter
 public class WithdrawalRequestDTO {
 
+    @JsonProperty("accountId")
+    private Long accountId;
+
     @JsonProperty("accountNo")
     private String accountNo;
 
