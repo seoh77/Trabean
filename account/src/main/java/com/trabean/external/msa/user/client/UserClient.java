@@ -2,6 +2,7 @@ package com.trabean.external.msa.user.client;
 
 import com.trabean.config.feign.FeignClientConfig;
 import com.trabean.external.msa.user.dto.request.UserKeyRequestDTO;
+import com.trabean.external.msa.user.dto.response.MainAccountIdResponseDTO;
 import com.trabean.external.msa.user.dto.response.UserKeyResponseDTO;
 import com.trabean.external.msa.user.dto.response.UserNameResponseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -24,4 +25,10 @@ public interface UserClient {
      */
     @GetMapping("/api/user/name/{userId}")
     UserNameResponseDTO getUserName(@PathVariable Long userId);
+
+    /**
+     * userId로 mainAccountId 조회
+     */
+    @GetMapping("/api/user/mainAccountId/{userId}")
+    MainAccountIdResponseDTO getMainAccountId(@PathVariable Long userId);
 }

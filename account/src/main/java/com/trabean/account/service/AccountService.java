@@ -58,7 +58,7 @@ public class AccountService {
     private final PasswordEncoder passwordEncoder;
 
     // 통장 목록 조회 서비스 로직
-    public AccountListResponseDTO getAccountList(String userKey) {
+    public AccountListResponseDTO getAccountList(Long userId, String userKey) {
 
         // SSAFY 금융 API 계좌 목록 조회 요청
         InquireDemandDepositAccountListRequestDTO inquireDemandDepositAccountListRequestDTO = InquireDemandDepositAccountListRequestDTO.builder()
@@ -69,30 +69,42 @@ public class AccountService {
                 .build();
         InquireDemandDepositAccountListResponseDTO inquireDemandDepositAccountListResponseDTO = domesticClient.inquireDemandDepositAccountList(inquireDemandDepositAccountListRequestDTO);
 
-        return AccountListResponseDTO.builder()
-                .mainAccount(null)
-                .accountList(getAccountList(inquireDemandDepositAccountListResponseDTO))
-                .build();
+        return getAccountList(userId, inquireDemandDepositAccountListResponseDTO);
     }
 
-    // SSAFY 금융 API 게좌 목록 responseDTO -> 계좌 목록 리스트
-    private List<AccountListResponseDTO.Account> getAccountList(InquireDemandDepositAccountListResponseDTO inquireDemandDepositAccountListResponseDTO) {
-        return inquireDemandDepositAccountListResponseDTO.getRec().stream()
-                .map(account -> {
-                    Account savedAccount = ValidationUtil.validateAccount(accountRepository.findByAccountNo(account.getAccountNo()));
-                    String savedAccountName = savedAccount.getAccountType() == AccountType.DOMESTIC
-                            ? travelClient.getDomesticTravelAccountInfo(savedAccount.getAccountId()).getAccountName()
-                            : "개인 입출금 통장";
+    // SSAFY 금융 API 게좌 목록 responseDTO -> 통장 목록 조회 responseDTO
+    private AccountListResponseDTO getAccountList(Long userId, InquireDemandDepositAccountListResponseDTO inquireDemandDepositAccountListResponseDTO) {
+        AccountListResponseDTO.Account mainAccount = null;
+        List<AccountListResponseDTO.Account> accountList = new ArrayList<>();
 
-                    return AccountListResponseDTO.Account.builder()
-                            .accountId(savedAccount.getAccountId())
-                            .accountNo(account.getAccountNo())
-                            .accountName(savedAccountName)
-                            .bankName(account.getBankName())
-                            .accountBalance(account.getAccountBalance())
-                            .build();
-                })
-                .collect(Collectors.toList());
+        // User 서버에 userId로 mainAccountId 반환 요청
+        Long mainAccountId = userClient.getMainAccountId(userId).getMainAccountId();
+
+        for (InquireDemandDepositAccountListResponseDTO.REC account : inquireDemandDepositAccountListResponseDTO.getRec()) {
+            Account savedAccount = ValidationUtil.validateAccount(accountRepository.findByAccountNo(account.getAccountNo()));
+            String savedAccountName = savedAccount.getAccountType() == AccountType.DOMESTIC
+                    ? travelClient.getDomesticTravelAccountInfo(savedAccount.getAccountId()).getAccountName()
+                    : "개인 입출금 통장";
+
+            AccountListResponseDTO.Account dtoAccount = AccountListResponseDTO.Account.builder()
+                    .accountId(savedAccount.getAccountId())
+                    .accountNo(account.getAccountNo())
+                    .accountName(savedAccountName)
+                    .bankName(account.getBankName())
+                    .accountBalance(account.getAccountBalance())
+                    .build();
+
+            if (savedAccount.getAccountId().equals(mainAccountId)) {
+                mainAccount = dtoAccount;
+            } else {
+                accountList.add(dtoAccount);
+            }
+        }
+
+        return AccountListResponseDTO.builder()
+                .mainAccount(mainAccount)
+                .accountList(accountList)
+                .build();
     }
 
     // 개인 통장 생성 서비스 로직

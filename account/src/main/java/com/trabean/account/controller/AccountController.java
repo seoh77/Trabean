@@ -23,8 +23,9 @@ public class AccountController {
 
     // 통장 목록 조회 APi
     @GetMapping
-    public ResponseEntity<AccountListResponseDTO> getAccountList(@RequestHeader String userKey) {
-        AccountListResponseDTO responseDTO = accountService.getAccountList(userKey);
+    public ResponseEntity<AccountListResponseDTO> getAccountList(@RequestHeader Long userId,
+                                                                 @RequestHeader String userKey) {
+        AccountListResponseDTO responseDTO = accountService.getAccountList(userId, userKey);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
