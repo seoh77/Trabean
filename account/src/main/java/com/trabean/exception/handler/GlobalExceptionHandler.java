@@ -26,7 +26,7 @@ public class GlobalExceptionHandler {
             AccountNotFoundException.class,
             UserAccountRelationNotFoundException.class
     })
-    public ResponseEntity<InternalServerErrorResponseDTO> handleNotFoundException(InternalServerErrorException e) {
+    public ResponseEntity<InternalServerErrorResponseDTO> handleNotFoundException(RuntimeException e) {
         InternalServerErrorResponseDTO responseDTO = InternalServerErrorResponseDTO.builder()
                 .message(e.getMessage())
                 .build();
@@ -41,7 +41,7 @@ public class GlobalExceptionHandler {
             InvalidPasswordException.class,
             UnauthorizedUserRoleException.class
     })
-    public ResponseEntity<InternalServerErrorResponseDTO> handleUForbiddenException(InternalServerErrorException e) {
+    public ResponseEntity<InternalServerErrorResponseDTO> handleUForbiddenException(RuntimeException e) {
         InternalServerErrorResponseDTO responseDTO = InternalServerErrorResponseDTO.builder()
                 .message(e.getMessage())
                 .build();
