@@ -8,7 +8,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @Component
 public class UserHeaderInterceptor implements HandlerInterceptor {
 
-    public static ThreadLocal<String> userId = new ThreadLocal<>();
+    public static ThreadLocal<Long> userId = new ThreadLocal<>();
     public static ThreadLocal<String> userKey = new ThreadLocal<>();
 
     @Override
@@ -19,7 +19,11 @@ public class UserHeaderInterceptor implements HandlerInterceptor {
             String userKeyHeader = request.getHeader("userKey");
 
             if (userIdHeader != null) {
-                userId.set(userIdHeader);
+                try {
+                    userId.set(Long.parseLong(userIdHeader));
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException();
+                }
             }
 
             if (userKeyHeader != null) {
