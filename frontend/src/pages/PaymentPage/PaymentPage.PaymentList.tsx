@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from "react";
+import { PieChart, Pie, Cell, Tooltip } from "recharts";
 import client from "../../client";
 import { formatNumberWithCommas } from "../../utils/formatNumber";
+
+interface Category {
+  categoryName: string;
+  amount: number;
+  percent: number;
+}
 
 const PaymentList: React.FC = () => {
   const [token] = useState("");
@@ -8,7 +15,10 @@ const PaymentList: React.FC = () => {
   const [endDate, setEndDate] = useState("");
   const [showDate, setShowDate] = useState(false);
   const [isTextInput, setIsTextInput] = useState(true);
-  const [totalAmount, setTotalAmount] = useState(null || String);
+  const [totalAmount, setTotalAmount] = useState<string | null>(null);
+  const [chartInfo, setCartInfo] = useState<Category[] | null>(null);
+
+  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
   // 날짜 선택
   const handleDateChange = (
@@ -75,21 +85,10 @@ const PaymentList: React.FC = () => {
     return formattedDate;
   };
 
-  useEffect(() => {
-    const fetchChart = async () => {
-      const response = await client(token).get(`/api/payments/1/chart`);
-      const price = response.data.totalAmount;
-      const formattedPrice = formatNumberWithCommas(price);
-      setTotalAmount(formattedPrice);
-    };
-    fetchChart();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]);
-
   const handleFetchChart = async () => {
     const params = {
-      startDate: formatDate(startDate),
-      endDate: formatDate(endDate),
+      startdate: startDate ? formatDate(startDate) : null,
+      enddate: endDate ? formatDate(endDate) : null,
     };
     const response = await client(token).get(`/api/payments/1/chart`, {
       params,
@@ -98,7 +97,14 @@ const PaymentList: React.FC = () => {
     const price = response.data.totalAmount;
     const formattedPrice = formatNumberWithCommas(price);
     setTotalAmount(formattedPrice);
+    setCartInfo(response.data.category);
+    console.log(chartInfo);
   };
+
+  useEffect(() => {
+    handleFetchChart();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
 
   return (
     <div className="w-full bg-[#F4F4F5] h-full pt-[4.375rem] flex flex-col items-center">
@@ -176,12 +182,37 @@ const PaymentList: React.FC = () => {
           </p>
         </div>
 
-        <div
-          id="chart"
-          className="bg-white rounded-[15px] py-[0.875rem] px-[1rem]"
-        >
-          <p>차트영역</p>
-        </div>
+        {chartInfo && chartInfo.length > 0 && (
+          <div
+            id="chart"
+            className="bg-white rounded-[15px] py-[0.875rem] px-[1rem]"
+          >
+            <PieChart width={400} height={400}>
+              <Pie
+                data={chartInfo.map((item) => ({
+                  name: item.categoryName,
+                  value: item.percent,
+                }))}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                label={({ name }) => name}
+                outerRadius={150}
+                fill="#8884d8"
+                dataKey="value"
+              >
+                {chartInfo.map((entry, index) => (
+                  <Cell
+                    // eslint-disable-next-line react/no-array-index-key
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </div>
+        )}
       </div>
     </div>
   );
