@@ -120,3 +120,13 @@
   font-family: "Pretendard";
   color: #333333;
 }
+
+body {
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+}
+
+.App {
+  width: 360px;
+}
