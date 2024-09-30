@@ -1,14 +1,24 @@
 package com.trabean.payment.exception;
 
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+@Getter
 public class PaymentsException extends RuntimeException {
 
     private final HttpStatus status;  // HTTP 상태 코드
+    private Long krwPrice;
 
     // 메시지와 상태 코드를 받는 생성자
     public PaymentsException(String message, HttpStatus status) {
         super(message);  // 예외 메시지를 부모 클래스에 전달
+        this.status = status;  // 상태 코드 설정
+    }
+
+    // 메시지와 상태 코드와 한국 결제 금액 받는 생성자
+    public PaymentsException(String message, Long krwPrice, HttpStatus status) {
+        super(message);  // 예외 메시지를 부모 클래스에 전달
+        this.krwPrice = krwPrice;  // 한국 결제 금액 설정
         this.status = status;  // 상태 코드 설정
     }
 
@@ -17,8 +27,4 @@ public class PaymentsException extends RuntimeException {
         this.status = status;  // 상태 코드 설정
     }
 
-    // 상태 코드를 반환하는 메서드
-    public HttpStatus getStatus() {
-        return status;
-    }
 }

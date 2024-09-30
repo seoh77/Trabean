@@ -3,10 +3,8 @@ package com.trabean.payment.dto.response;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
 public class BalanceResponse {
     @JsonProperty("Header")
@@ -16,7 +14,6 @@ public class BalanceResponse {
     private BalanceResponse.REC rec;
 
     @Getter
-    @NoArgsConstructor
     @AllArgsConstructor
     public static class REC {
         private String bankCode;

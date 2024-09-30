@@ -42,22 +42,29 @@ public class PaymentsValidateService {
         }
     }
 
-    // 데이터 무결성 확인
-    public void validatePaymentData(Long payId, Long merchantId, Double foreignAmount) {
+    // 데이터 무결성 검사
+    public void validatePaymentData(Long payId, Long merchantId, Double foreignAmount, Long krwAmount) {
         Payments payment = paymentsRepository.findById(payId)
                 .orElseThrow(() -> new PaymentsException("결제 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
+
         if (payment.getMerchant() == null) {
             throw new NullPointerException("Merchant 정보가 null 입니다.");
         }
         if (!Objects.equals(payment.getMerchant().getMerchantId(), merchantId)) {
             throw new PaymentsException("가맹점 정보가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
         }
-        if (payment.getForeignAmount() == null) {
-            throw new NullPointerException("가격 정보가 null 입니다.");
-        }
-        if (!Objects.equals(payment.getForeignAmount(), foreignAmount)) {
-            throw new PaymentsException("가격 정보가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
+
+        // foreignAmount 또는 krwAmount 중 하나를 선택하여 검증
+        if (foreignAmount != null && payment.getForeignAmount() != null) {
+            if (!Objects.equals(payment.getForeignAmount(), foreignAmount)) {
+                throw new PaymentsException("외화 가격 정보가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
+            }
+        } else if (krwAmount != null && payment.getKrwAmount() != null) {
+            if (!Objects.equals(payment.getKrwAmount(), krwAmount)) {
+                throw new PaymentsException("KRW 가격 정보가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
+            }
+        } else {
+            throw new PaymentsException("가격 정보가 부족합니다.", HttpStatus.BAD_REQUEST);
         }
     }
-
 }

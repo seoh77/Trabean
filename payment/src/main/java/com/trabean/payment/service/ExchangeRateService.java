@@ -48,9 +48,13 @@ public class ExchangeRateService {
                 logger.warn("Failed to retrieve exchange rate information");
             }
 
-            // 계산 후 리턴
-            return (Long) (long) (Double.parseDouble(Objects.requireNonNull(response).getRec().getExchangeRate())
-                    * foreignAmount);
+            // Response 에서 환율 정보를 가져옴
+            String exchangeRateString = Objects.requireNonNull(response).getRec().getExchangeRate().replace(",", "");
+            // 문자열을 double 로 변환
+            double exchangeRate = Double.parseDouble(exchangeRateString);
+            logger.info(exchangeRateString + " 환율로 계산 -> " + Math.round(exchangeRate * foreignAmount));
+            // 계산 결과 리턴
+            return Math.round(exchangeRate * foreignAmount);
 
         } catch (RestClientException e) {
             logger.error("환율 조회 API 호출 중 오류 발생: {}", e.getMessage());

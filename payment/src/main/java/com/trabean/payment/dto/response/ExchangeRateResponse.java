@@ -3,10 +3,8 @@ package com.trabean.payment.dto.response;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
 public class ExchangeRateResponse {
 
@@ -17,7 +15,6 @@ public class ExchangeRateResponse {
     private REC rec;
 
     @Getter
-    @NoArgsConstructor
     @AllArgsConstructor
     public static class Header {
         private String responseCode;
@@ -32,7 +29,6 @@ public class ExchangeRateResponse {
     }
 
     @Getter
-    @NoArgsConstructor
     @AllArgsConstructor
     public static class REC {
         private Long id;

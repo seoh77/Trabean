@@ -30,26 +30,27 @@ public class PaymentsUpdateInfoService {
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1); // 스케줄러 초기화
 
     // 결제 정보 업데이트
-    public PaymentUpdateResponse updatePayment(UpdatePaymentInfoRequest updatePaymentInfoRequest) {
+    public PaymentUpdateResponse updatePayment(UpdatePaymentInfoRequest request) {
 
         // Merchant 정보 조회
-        Merchants merchant = merchantsRepository.findById(updatePaymentInfoRequest.getMerchantId())
+        Merchants merchant = merchantsRepository.findById(request.getMerchantId())
                 .orElseThrow(() -> new PaymentsException("잘못된 merchantId값 입니다.", HttpStatus.NOT_FOUND));
 
         // 업데이트
-        Payments payment = Payments.createInitialPayment(updatePaymentInfoRequest.getUserId(),
-                updatePaymentInfoRequest.getAccountId(), merchant,
-                // 한국돈으로 계산해서 저장
-                exchangeRateService.calculateKrw(merchant.getExchangeCurrency(),
-                        updatePaymentInfoRequest.getForeignAmount()),
-                updatePaymentInfoRequest.getForeignAmount());
+        Payments payment = Payments.createInitialPayment(request.getUserId(),
+                request.getAccountId(), merchant,
+                // 한화
+                request.getKrwAmount() == null ? exchangeRateService.calculateKrw(merchant.getExchangeCurrency(),
+                        request.getForeignAmount()) : request.getKrwAmount(),
+                // 외화
+                request.getForeignAmount() == null ? null : request.getForeignAmount());
         paymentsRepository.save(payment);
 
         // 유효기간: 5분
-        schedulePendingToCancelPayment(payment, 5); // 5분 동안 결제 진행 안 할 경우 취소
+        schedulePendingToCancelPayment(payment, 10); // 10분 동안 결제 진행 안 할 경우 취소
 
         PaymentData data = new PaymentData(payment.getPayId(), payment.getAccountId(), payment.getForeignAmount(),
-                payment.getKrwAmount(), payment.getMerchant().getName(), payment.getTransactionId());
+                payment.getKrwAmount(), payment.getMerchant().getName());
         return new PaymentUpdateResponse("SUCCESS", "결제 정보 업데이트에 성공하셨습니다.", data);
     }
 
@@ -75,5 +76,18 @@ public class PaymentsUpdateInfoService {
 
         // 변경된 정보 저장
         paymentsRepository.save(payment);
+    }
+
+    // 결제 성공 시 정보 업데이트
+    public void updateSuccess(Long payId) {
+        updatePaymentStatus(payId, PaymentStatus.SUCCESS);
+        Payments payment = paymentsRepository.findById(payId)
+                .orElseThrow(() -> new PaymentsException("결제 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
+        if (payment.getKrwAmount() == null) {
+            Merchants merchant = payment.getMerchant();
+            Long krwAmount = exchangeRateService.calculateKrw(merchant.getExchangeCurrency(),
+                    payment.getForeignAmount());
+            payment.updateKrwAmount(krwAmount);
+        }
     }
 }

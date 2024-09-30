@@ -5,11 +5,13 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
-public class GlobalExceptionHandler {
-
+public class ErrorHandler {
     @ExceptionHandler(PaymentsException.class)
     public ResponseEntity<ErrorResponse> handlePaymentsException(PaymentsException ex) {
-        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), ex.getStatus());
-        return new ResponseEntity<>(errorResponse, ex.getStatus());
+
+        // 사용자에게 보여줄 커스텀 응답 객체
+        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), ex.getStatus().value(), ex.getKrwPrice());
+
+        return ResponseEntity.status(ex.getStatus()).body(errorResponse);
     }
 }
