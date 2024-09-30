@@ -10,6 +10,7 @@ import com.trabean.payment.exception.PaymentsException;
 import com.trabean.payment.repository.CategorySummary;
 import com.trabean.payment.repository.PaymentsRepository;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -40,9 +41,13 @@ public class PaymentsHistoryService {
             enddate = LocalDate.now();
         }
 
+        // LocalDate를 LocalDateTime으로 변환
+        LocalDateTime startDateTime = startdate.atStartOfDay(); // 00:00:00
+        LocalDateTime endDateTime = enddate.atTime(23, 59, 59); // 23:59:59
+
         Pageable pageable = PageRequest.of(page, 20);  // 20개씩 페이지 처리
         Page<Payments> paymentsPage = paymentsRepository.findAllByAccountIdDateRange(
-                travelAccountId, startdate, enddate, pageable);
+                travelAccountId, startDateTime, endDateTime, pageable);
 
         // 페이지 정보 가져오기
         List<PaymentsHistoryResponse.Data> payments = paymentsPage.getContent().stream()
@@ -88,9 +93,13 @@ public class PaymentsHistoryService {
             enddate = LocalDate.now();
         }
 
+        // LocalDate를 LocalDateTime으로 변환
+        LocalDateTime startDateTime = startdate.atStartOfDay(); // 00:00:00
+        LocalDateTime endDateTime = enddate.atTime(23, 59, 59); // 23:59:59
+
         // 카테고리별 총 결제 금액 조회
         List<CategorySummary> categorySummaries = paymentsRepository.findCategorySummaryByAccountIdAndDateRange(
-                travelAccountId, startdate, enddate);
+                travelAccountId, startDateTime, endDateTime);
 
         // 전체 결제 금액 계산
         long totalAmount = categorySummaries.stream().mapToLong(CategorySummary::getTotalAmount).sum();
@@ -123,6 +132,10 @@ public class PaymentsHistoryService {
             endDate = LocalDate.now();
         }
 
+        // LocalDate를 LocalDateTime으로 변환
+        LocalDateTime startDateTime = startDate.atStartOfDay(); // 00:00:00
+        LocalDateTime endDateTime = endDate.atTime(23, 59, 59); // 23:59:59
+
         MerchantCategory categoryEnum;
         try {
             categoryEnum = MerchantCategory.valueOf(categoryName);
@@ -133,7 +146,7 @@ public class PaymentsHistoryService {
         // 페이지 처리
         Pageable pageable = PageRequest.of(page, 20);  // 한 페이지에 20개의 결과 반환
         Page<com.trabean.payment.entity.Payments> paymentsPage = paymentsRepository.findAllByCategoryAndDateRange(
-                accountId, startDate, endDate,
+                accountId, startDateTime, endDateTime,
                 categoryEnum, pageable);
 
         // 전체 결제 금액 계산
