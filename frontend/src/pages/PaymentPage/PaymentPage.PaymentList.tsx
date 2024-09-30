@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import client from "../../client";
+import { formatNumberWithCommas } from "../../utils/formatNumber";
 
 const PaymentList: React.FC = () => {
+  const [token] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [showDate, setShowDate] = useState(false);
   const [isTextInput, setIsTextInput] = useState(true);
-  // const [dateAlert, setDateAlert] = useState("");
+  const [totalAmount, setTotalAmount] = useState(null || String);
 
   // 날짜 선택
   const handleDateChange = (
@@ -31,7 +34,7 @@ const PaymentList: React.FC = () => {
         const day = today.getDate().toString().padStart(2, "0"); // 날짜를 2자리로 맞춤
         const formattedDate = `${year}-${month}-${day}`; // 'YYYY-MM-DD' 형식으로 변환
 
-        setEndDate(formattedDate);
+        setStartDate(formattedDate);
         return;
       }
       setStartDate(newValue);
@@ -52,6 +55,7 @@ const PaymentList: React.FC = () => {
     }
   };
 
+  // 날짜 선택 토글
   const toggleDate = () => {
     if (showDate) {
       setStartDate("");
@@ -61,6 +65,39 @@ const PaymentList: React.FC = () => {
     } else if (!showDate) {
       setShowDate(true);
     }
+  };
+
+  const formatDate = (date: string) => {
+    const year = new Date(date).getFullYear().toString().slice(2);
+    const month = (new Date(date).getMonth() + 1).toString().padStart(2, "0");
+    const day = new Date(date).getDate().toString().padStart(2, "0");
+    const formattedDate = year + month + day;
+    return formattedDate;
+  };
+
+  useEffect(() => {
+    const fetchChart = async () => {
+      const response = await client(token).get(`/api/payments/1/chart`);
+      const price = response.data.totalAmount;
+      const formattedPrice = formatNumberWithCommas(price);
+      setTotalAmount(formattedPrice);
+    };
+    fetchChart();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
+
+  const handleFetchChart = async () => {
+    const params = {
+      startDate: formatDate(startDate),
+      endDate: formatDate(endDate),
+    };
+    const response = await client(token).get(`/api/payments/1/chart`, {
+      params,
+    });
+    console.log(response.data);
+    const price = response.data.totalAmount;
+    const formattedPrice = formatNumberWithCommas(price);
+    setTotalAmount(formattedPrice);
   };
 
   return (
@@ -119,7 +156,8 @@ const PaymentList: React.FC = () => {
             </div>
             <button
               type="button"
-              className="mt-2 btn-light-md w-[90%] focus:cursor-pointer hover:btn-md"
+              className="my-2 btn-light-md w-[90%] focus:cursor-pointer hover:btn-md"
+              onClick={() => handleFetchChart()}
             >
               조회
             </button>
@@ -134,7 +172,7 @@ const PaymentList: React.FC = () => {
         <div className="w-full bg-white rounded-[0.625rem] px-[1rem] my-[1.25rem]">
           <p className="font-semibold text-gray-700 text-sm h-[2.5rem] flex items-center">
             <span className="w-[60%]">총 지출액</span>{" "}
-            <span className="w-[60%]">42,000</span>
+            <span className="w-[60%]">{totalAmount} ₩</span>
           </p>
         </div>
 
