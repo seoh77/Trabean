@@ -110,6 +110,16 @@ public class UserService {
         return new UserNameResponse(null);
     }
 
+    public String getMainAccountIdByEmail(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+        return user.map(User::getMain_account_id).orElse(null);
+    }
+
+
+    public String getMainAccountIdByUserId(Long userId) {
+        Optional<User> user = userRepository.findById(userId);
+        return user.map(User::getMain_account_id).orElse(null);
+    }
     public boolean checkEmailDuplication(String email) {
         return userRepository.existsByEmail(email);
     }

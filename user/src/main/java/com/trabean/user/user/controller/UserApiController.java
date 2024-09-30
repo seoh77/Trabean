@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.trabean.user.user.dto.UserMainAccountIdResponse;
+
 
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
@@ -105,5 +107,13 @@ public class UserApiController {
 	@GetMapping("/email/{email}")
 	public ResponseEntity<Boolean> checkEmailDuplication(@PathVariable String email) {
 		return ResponseEntity.ok(userService.checkEmailDuplication(email));
+	}
+
+	@GetMapping("/mainAccountId/{userId}")
+	public ResponseEntity<UserMainAccountIdResponse> getMainAccountIdByUserId(@PathVariable Long userId) {
+		String mainAccountId = userService.getMainAccountIdByUserId(userId);
+		UserMainAccountIdResponse response = new UserMainAccountIdResponse(mainAccountId);
+		return ResponseEntity.ok(response);
+
 	}
 }
