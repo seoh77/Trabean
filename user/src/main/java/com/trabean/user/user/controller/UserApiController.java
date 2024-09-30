@@ -104,6 +104,16 @@ public class UserApiController {
 		return ResponseEntity.ok(response);
 	}
 
+	@PostMapping("/mainAccountId")
+	public ResponseEntity<String> updateMainAccountId(@RequestBody MainAccountIdRequest request) {
+		boolean isUpdated = userService.updateMainAccountId(request.getUserId(), request.getMainAccountId());
+		if (isUpdated) {
+			return ResponseEntity.ok("저장성공");
+		} else {
+			return ResponseEntity.status(400).body("저장 실패");
+		}
+	}
+
 	@GetMapping("/email/{email}")
 	public ResponseEntity<Boolean> checkEmailDuplication(@PathVariable String email) {
 		return ResponseEntity.ok(userService.checkEmailDuplication(email));

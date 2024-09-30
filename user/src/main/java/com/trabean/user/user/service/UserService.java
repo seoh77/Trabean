@@ -110,6 +110,16 @@ public class UserService {
         return new UserNameResponse(null);
     }
 
+    public boolean updateMainAccountId(Long userId, String mainAccountId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.updateMainAccountId(mainAccountId);
+            userRepository.save(user);
+            return true;
+           }
+        return false;
+    }
     public String getMainAccountIdByEmail(String email) {
         Optional<User> user = userRepository.findByEmail(email);
         return user.map(User::getMain_account_id).orElse(null);
