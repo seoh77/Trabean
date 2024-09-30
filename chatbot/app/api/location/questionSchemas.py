@@ -12,4 +12,4 @@ class LocationRequest(BaseModel):
     city: str #여행 도시
     days : int #여행 기간
     trans : str #이동 수단
-    travelStyle: Optional[str] = None  # 선택적으로 여행 스타일 포함 가능
+    travelStyle: Optional[List[str]] = None  # 선택적으로 여행 스타일 포함 가능

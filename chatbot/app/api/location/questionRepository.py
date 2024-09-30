@@ -35,10 +35,10 @@ class QuestionOption:
     # 여행 관광지 반환
     async def getAttractionOptions(self, requestBody) -> List[Dict[str, str]]:
         attractionOptions = await self.placeFetcher.getAttraction(requestBody)
-        
-        # `displayName`의 `text`만을 추출하여 단순화된 딕셔너리 형태로 반환
+
         if attractionOptions:
-            return [{"id": option["id"], "name": option["displayName"]["text"]} for option in attractionOptions]
+            newAttractionOptions = [{"id": option["id"], "name": option["displayName"]["text"]} for option in attractionOptions]
+            return newAttractionOptions
         return []
 
 
@@ -60,7 +60,7 @@ class PlaceFetcher:
     # 도시에 대한 위도와 경도를 반환하는 함수
     # Args : country(str) : 국가 , city(str) : 도시
     # return : {"lat" : float, "lon" : float}
-    async def getCityLocation(self, country: str, city: str) -> dict:
+    def getCityLocation(self, country: str, city: str) -> dict:
         # 국가가 locationData에 있는지 확인
         if country in self.locationData:
             # 도시가 존재하는지 확인
@@ -71,25 +71,21 @@ class PlaceFetcher:
                 }
         return None  # 국가나 도시가 없으면 None 반환
 
-    
+
     # city에 대한 주요 K개의 관광지 반환
     # Args : country(str) : 국가 , city(str) : 도시
     # return : [ {"id": str, "name" : str}]
     async def getAttraction(self, requestBody) -> List[Dict[str, str]]:
-        country = requestBody["country"]
-        city = requestBody["city"]
-        trans = requestBody["trans"]
-        travelStyles = requestBody["travelStyle"]
-        location = await self.getCityLocation(country, city)
-        K = 9
+        country = requestBody.country
+        city = requestBody.city
+        trans = requestBody.trans
+        location = self.getCityLocation(country, city)
         radius = 0
         
         if trans == "기타" :
             radius = random.randint(1000, 30000)
         else :
             radius = radiusList[trans]
-
-        print(f'{trans} : {radius}')
 
         url = "https://places.googleapis.com/v1/places:searchNearby"
         headers = {
@@ -98,42 +94,54 @@ class PlaceFetcher:
             "X-Goog-FieldMask": "places.id,places.displayName.text",
         }
 
-        # 요청 본문 (바디)
-        data = {
-            "includedTypes": ["tourist_attraction"],
-            "languageCode": "ko",
-            "maxResultCount": K,
-            "locationRestriction": {
-                "circle": {
-                    "center": {
-                        "latitude": location["lat"],
-                        "longitude": location["lon"],
-                    },
-                    "radius": radius,
-                }
-            },
-        }
+        attractionData = [] #최종 반환값 : 관심도에 알맞은 장소 목록
+        num = len(requestBody.travelStyle)
+        K = 8 - num
+        if K <= 1 : K = 2
 
-        async with httpx.AsyncClient() as client:
-            response = await client.post(url, headers=headers, json=data)
+        for style in requestBody.travelStyle:
+            travelStyles = categories[style]
 
-        if response.status_code == 200:
-            response_data = response.json()
-            if response_data:  # 제대로 된 관광지를 찾음
-                return response_data["places"]
+            # 요청 본문 (바디)
+            data = {
+                "includedTypes": travelStyles,
+                "languageCode": "ko",
+                "maxResultCount": K,
+                "locationRestriction": {
+                    "circle": {
+                        "center": {
+                            "latitude": location["lat"],
+                            "longitude": location["lon"],
+                        },
+                        "radius": radius,
+                    }
+                },
+            }
+
+            async with httpx.AsyncClient() as client:
+                response = await client.post(url, headers=headers, json=data)
+
+            if response.status_code == 200:
+                responseData = response.json()
+                if responseData:  # 제대로 된 관광지를 찾음
+                    attractionData += responseData["places"]
+                else:
+                    print(f"No results found for radius {radius}. Increasing radius.")
+
             else:
-                print(f"No results found for radius {radius}. Increasing radius.")
+                print("Error:", response.status_code, response.text)
+                return
+            
+        return attractionData
+    
 
-        else:
-            print("Error:", response.status_code, response.text)
-            return
-
+# 이동 수단에 따른 반경 목록
 # 이동 수단에 따른 반경 목록
 radiusList = {
   "도보": 1000,
-  "자전거": 5000,
-  "자동차": 20000,
-  "대중교통": 30000,
+  "자전거": 3000,
+  "자동차": 10000,
+  "대중교통": 20000,
   "휠체어": 800
 }
 
@@ -269,3 +277,31 @@ travelStyleOptions = [
 # 여행 우선순위에 대한 답변 목록
 priorityOptions = ["높은 평점", "많은 리뷰", "짧은 이동거리", "여행 테마"]
 
+
+# 관광지에 대한 답변 목록
+categories = {
+    "체험/액티비티": [
+        "amusement_park", "aquarium", "bowling_alley", "zoo", "museum"
+    ],
+    "관람": [
+        "art_gallery", "church", "hindu_temple", "synagogue", "performing_arts_theater"
+    ],
+    "쇼핑": [
+        "book_store", "clothing_store", 
+        "department_store", "electronics_store", "florist", "furniture_store", 
+        "hardware_store", "home_goods_store", "jewelry_store", "liquor_store", 
+        "shoe_store", "shopping_mall", "supermarket", "store"
+    ],
+    "먹방": [
+        "bakery", "bar", "cafe", "restaurant"
+    ],
+    "유명 관광지": [
+        "tourist_attraction", "historical_landmark"
+    ],
+    "자연 속 힐링": [
+        "park", "campground", "rv_park"
+    ],
+    "기타": [
+        "book_store", "athletic_field", "stadium", "library"
+    ]
+}

@@ -10,8 +10,9 @@ class ChatBotAnswer:
 
     # DP 알고리즘을 사용하여 주어진 일수(days)에 맞는 최적의 여행 경로를 생성.
     async def getTravelRoutes(self, request: TravelRequest) -> TravelResponse:
-        placesData = await self.placeFetcher.getPlaces() #여행 장소 목록
+        placesData = await self.placeFetcher.getPlaces(request) #days일 간의 여행 장소 목록 받아오기
         
+        return placesData
         # 장소 목록을 가공하여 계산을 위한 데이터 얻기
         # "위도, 경로, 이름"
         

@@ -40,24 +40,23 @@ class ChatBotQuestion:
         return city_options
 
     # 비동기적으로 getQuestion 메서드를 정의
-    async def getQuestion(self, question_index: int, country: str, requestBody: LocationRequest) -> dict:
+    async def getQuestion(self, questionIndex: int, country: str = None, requestBody: LocationRequest = None) -> dict:
         # 유효한 질문 인덱스인지 확인
-        if question_index < 0 or question_index >= len(self.questions):
+        if questionIndex < 0 or questionIndex >= len(self.questions):
             return {"error": "Invalid question number"}
         
-        question = self.questions
+        question = self.questions[questionIndex] #question에 해당하는 question만 가져옴
 
-        if question_index == 1:
+        if questionIndex == 1:
             if not country:
                 return "error : Country parameter is missing or empty"
             # 비동기적으로 county에 맞게 초기화된 질문 목록 설정
-            question[1].options = await self.initializeQuestions(country)
+            question.options = await self.initializeQuestions(country)
 
-        elif question_index == 5:
+        elif questionIndex == 5:
             # days를 이용해 질문을 설정 (예: 최대 선택 가능 개수)
-            question[4].questionText = f"방문하고 싶은 관광명소를 선택해주세요. (최대 {requestBody.days}개)"
-            
+            question.questionText = f"방문하고 싶은 관광명소를 선택해주세요. (최대 {requestBody.days}개)"
             # 비동기적으로 관광명소 옵션을 가져옴
-            question[4].options = await self.questionOption.getAttractionOptions(country, requestBody)
+            question.options = await self.questionOption.getAttractionOptions(requestBody)
 
-        return question[question_index].to_dict()
+        return question.to_dict()
