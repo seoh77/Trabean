@@ -86,7 +86,7 @@ public class User implements UserDetails {
 		return true; // 계정이 만료되지 않았음을 반환
 	}
 
-	public void updateMainAccountId(String main_account_id) {
+	public void setMainAccountId(String main_account_id) {
 		this.main_account_id = main_account_id;
 	}
 

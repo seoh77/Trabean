@@ -114,7 +114,7 @@ public class UserService {
         Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            user.updateMainAccountId(mainAccountId);
+            user.setMainAccountId(mainAccountId);
             userRepository.save(user);
             return true;
            }

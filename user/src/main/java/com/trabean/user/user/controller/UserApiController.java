@@ -110,7 +110,8 @@ public class UserApiController {
 		if (isUpdated) {
 			return ResponseEntity.ok("저장성공");
 		} else {
-			return ResponseEntity.status(400).body("저장 실패");
+			return ResponseEntity.status(400).body("저장실패");
+
 		}
 	}
 
