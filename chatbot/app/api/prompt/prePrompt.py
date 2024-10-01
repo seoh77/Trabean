@@ -16,14 +16,8 @@ import os
 # .env 파일에서 환경 변수를 로드
 load_dotenv()
 
-# PINECONE API 키 설정
-if not os.getenv("PINECONE_API_KEY"):
-    os.environ["PINECONE_API_KEY"] = getpass.getpass("Enter your Pinecone API key: ")
+# API 키 설정
 pinecone_api_key = os.environ.get("PINECONE_API_KEY")
-
-# LangSmith API 키 설정
-if not os.getenv("LANGSMITH_API_KEY"):
-    os.environ["LANGSMITH_API_KEY"] = getpass.getpass("Enter your LangSmith API key: ")
 langsmith_api_key = os.environ.get("LANGSMITH_API_KEY")
 
 
