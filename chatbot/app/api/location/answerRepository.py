@@ -3,7 +3,6 @@ from typing import List, Dict
 from dotenv import load_dotenv
 import os
 import json
-from .answerSchemas import Place, TravelRequest, TravelResponse, Address
 from .googleRepository import GoogleAPI
 
 
@@ -38,6 +37,15 @@ class PlaceFetcher:
         with open(file_path, "r", encoding="utf-8") as file:
             return json.load(file)
         
+    def getCityLocation(self, country: str, city: str) -> dict:
+        locationData = self.readJson("locationList")
+    
+        if country in locationData:
+            # 도시가 존재하는지 확인
+            if city in locationData[country]:
+                return locationData[country][city]
+        return None  # 국가나 도시가 없으면 None 반환
+        
     
     # 여행 반경 반환
     def getRadius(self, trans: str):
@@ -47,40 +55,30 @@ class PlaceFetcher:
         
     # id 기반으로 정보 받아서 넘겨주기
     async def getPlaceInfo(self, placeId):
-        fields = "displayName,googleMapsUri,location,rating,userRatingCount,primaryType,goodForChildren,paymentOptions,formattedAddress,editorialSummary"
-        info = self.googleAPI.searchDetail(placeId, fields)
+        fields = "id,displayName,googleMapsUri,location,rating,userRatingCount,primaryType,goodForChildren,paymentOptions,formattedAddress,editorialSummary"
+        info = await self.googleAPI.searchDetail(placeId, fields)
         return info
-
     
-    async def getLogingLists(self, lat, lon, radius):
-        hotelLists = await self.googleAPI.searchNearby(lat, lon, radius, 20, ["hotel"])
-        return hotelLists
-
 
     def getLogingTypes(self, preferLoging):
         logingTypes = self.readJson("logingList")[preferLoging]
         return logingTypes
-
-
-    #  사용자 관심사에 맞는 장소 리스트를 가져오기
-    def fetchRecommendedPlaces(self, requestBody, hotel) -> List[Place]:
-        self.recommandPlaces["location"] = requestBody.location
-        self.recommandPlaces["accomodation"] = hotel
-        self.recommandPlaces["places"]["attraction"] = self.attractionData #사용자 관심사에 맞는 장소 목록 2*(days-1)개 이상, 10개 이하. day = 1이라면, >= 1
-        self.recommandPlaces["places"]["restaurant"] = [] #사용자 관심사에 맞는 식당 목록 2*(days-1)개 이상, 10개 이하. day = 1이라면 >= 1개
-        
-        #관심사에 따라 place search
-
-        return self.recommandPlaces
-          
     
-    async def getPlaces(self, requestBody: TravelRequest) -> TravelResponse:
-        self.attractionData = await self.getAttractions( requestBody.attractions) #관광지 id기반으로 정보 받아옴
-        midLocation = self.getLocation(self.attractionData) #관광지들의 중심 좌표 받아옴
-        print(midLocation)
-        hotel = await self.getHotelLocation(midLocation["midLat"], midLocation["midLon"], requestBody.transportation, requestBody.preferences.priority) # 관광지 근처 호텔 정보 받아옴
-        return self.fetchRecommendedPlaces(requestBody, hotel)
-
+    
+    # 여행 테마에 대한 카테고리 반환
+    def getCategories(self, theme):
+        categoryLists = self.readJson("categoryLists")
+        categories = categoryLists[theme]
+        return categories
+    
+    
+    # 카테고리 기반으로 places검색하기
+    async def getPlaces(self, lat, lon, num, radius, types):
+        fields = "places.id,places.displayName,places.googleMapsUri,places.location,places.rating,places.userRatingCount,places.primaryType,places.goodForChildren,places.paymentOptions,places.formattedAddress,places.editorialSummary,places.priceLevel"
+        places = await self.googleAPI.searchNearby(lat, lon, radius, num, fields, types)
+        return places
+        
+    
 
 # 이동 수단에 따른 반경 목록
 radiusList = {

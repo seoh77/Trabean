@@ -22,7 +22,7 @@ class ChatBotQuestion:
         self.travelDurationOptions = self.questionOption.getTravelDurationOptions()
         self.transportationsOptions = self.questionOption.getTransportationsOptions()
         self.logingOptions = self.questionOption.getLodgingOptions()
-        self.travelStyleOptions = self.questionOption.getTravelStyleOptions()
+        self.travelThemeOptions = self.questionOption.getTravelThemeOptions()
         self.priorityOptions = self.questionOption.getPriorityOptions()
         self.questions = [
             Question("어느 국가를 여행하시나요?", self.countryMap),  # 국가 목록을 미리 설정
@@ -30,9 +30,9 @@ class ChatBotQuestion:
             Question("여행 기간은 총 몇 일인가요?", self.travelDurationOptions),
             Question("주로 어떤 이동 수단을 이용하시나요?", self.transportationsOptions),
             Question("선호하는 숙박 시설이 있나요?", self.logingOptions),
-            Question("선호하는 여행 테마는 무엇인가요? (중복 선택 가능)", self.travelStyleOptions),
-            Question("방문하고 싶은 관광명소를 선택해주세요.", []),
-            Question("여행 시 중요하게 생각하는 우선순위를 차례로 선택해주세요.", self.priorityOptions)
+            Question("여행 테마는 무엇인가요? (중복 선택 가능)", self.travelThemeOptions),
+            Question("여행 시 중요하게 생각하는 우선순위를 차례로 선택해주세요.", self.priorityOptions),
+            Question("방문하고 싶은 관광 명소를 선택해주세요.", [])
         ]
 
     # 비동기 함수로 변경하여 country에 대한 주요 city 반환
@@ -43,6 +43,8 @@ class ChatBotQuestion:
 
     # 비동기적으로 getQuestion 메서드를 정의
     async def getQuestion(self, questionIndex: int, country: str = None, requestBody: LocationRequest = None) -> dict:
+        
+        questionNum = len(self.questions) - 1
         
         # 유효한 질문 인덱스인지 확인
         if questionIndex < 0 or questionIndex >= len(self.questions):
@@ -56,19 +58,11 @@ class ChatBotQuestion:
             # 비동기적으로 county에 맞게 초기화된 질문 목록 설정
             question.options = await self.initializeQuestions(country)
 
-        elif questionIndex == 6:
+        elif questionIndex == questionNum:
             # days를 이용해 질문을 설정 (예: 최대 선택 가능 개수)
-            question.questionText = f"방문하고 싶은 관광명소를 선택해주세요. (최대 {requestBody.days}개)"
+            question.questionText = f"방문하고 싶은 관광 명소를 선택해주세요. (최대 {requestBody.days*2}개)"
             location = self.questionOption.getCityLocation(requestBody.country, requestBody.city)
             radius = self.questionOption.getRadius(requestBody.trans)
-            
-            # 비동기적으로 관광명소 옵션을 가져옴
-            travelStyles = requestBody.travelStyle
-            num = len(travelStyles)
-            K = 8 - num
-            if K <= 1 : K = 2
-            
-            for style in travelStyles:
-                question.options += await self.questionOption.getAttractionOptions(location["lat"], location["lon"], radius, K, style)
+            question.options = await self.questionOption.getAttractionOptions(location["lat"], location["lon"], radius)
             
         return question.to_dict()

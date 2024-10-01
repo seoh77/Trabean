@@ -13,12 +13,15 @@ class GoogleAPI:
     # 위/경도 기준으로 radius안의 types에 해당하는 목록 num개 반환
     # Args : country(str) : 국가 , city(str) : 도시
     # 장소 목록 
-    async def searchNearby(self, lat, lon, radius, num, types, excludeTypes = None) -> List[Dict[str, str]]:
+    async def searchNearby(self, lat, lon, radius, num, field = None, types = [], excludeTypes = None) -> List[Dict[str, str]]:
         url = "https://places.googleapis.com/v1/places:searchNearby"
+        
+        if not field : "places.id,places.displayName.text"
+            
         headers = {
             "Content-Type": "application/json",  # JSON 형식으로 데이터 전송
             "X-Goog-Api-Key": GOOGLE_API_KEY,  # API KEY
-            "X-Goog-FieldMask": "places.id,places.displayName.text",
+            "X-Goog-FieldMask": field,
         }
 
         # 요청 본문 (바디)
@@ -49,6 +52,7 @@ class GoogleAPI:
                 return responseData
             else:
                 print(f"No results found for radius {radius}. Increasing radius.")
+                return None
 
         else:
             print("Error:", response.status_code, response.text)

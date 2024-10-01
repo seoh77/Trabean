@@ -1,6 +1,5 @@
 from pydantic import BaseModel
-from typing import List, Dict
-
+from typing import List, Dict, Optional
 
 # 요청 바디에 대한 데이터 모델 정의
 class Location(BaseModel):
@@ -23,31 +22,55 @@ class TravelRequest(BaseModel):
 
 
 # 응답 바디에 대한 데이터 모델 정의
-class Address(BaseModel):
-    address: str  # 주소
-    lat: float  # 위도
-    lon: float  # 경도
+class Location(BaseModel):
+    latitude: float
+    longitude: float
 
 
-class Review(BaseModel):
-    rating: float  # 평점
-    count: int  # 리뷰 수
+class DisplayName(BaseModel):
+    text: str
+    languageCode: Optional[str] = None
 
 
-class Info(BaseModel):
-    placeId: str  # google place id
-    imageId: str  # google image id
-    mapUri: str  # google MAP URI
+class PaymentOptions(BaseModel):
+    acceptsCreditCards: Optional[bool] = None
+    acceptsCashOnly: Optional[bool] = None
+    acceptsDebitCards: Optional[bool] = None
 
 
-class Place(BaseModel):  # 하나의 일정
-    name: str  # 방문 장소명
-    category: str  # 카테고리
-    address: Address  # 위치 정보
-    review: Review  # 리뷰 정보
-    info: Info  # google API 접근을 위한 정보
+class Place(BaseModel):
+    id: str
+    formattedAddress: str
+    location: Location
+    rating: float
+    googleMapsUri: str
+    userRatingCount: int
+    displayName: DisplayName
+    primaryType: str
+    editorialSummary: Optional[DisplayName] = None
+    goodForChildren: Optional[bool] = None
+    paymentOptions: Optional[PaymentOptions] = None
+
+
+class Route(BaseModel):
+    tourism: List[Place]
+    restaurant: List[Place]
+
+
+class Hotel(BaseModel):
+    id: str
+    formattedAddress: str
+    location: Location
+    rating: float
+    googleMapsUri: str
+    userRatingCount: int
+    displayName: DisplayName
+    primaryType: str
+    editorialSummary: Optional[DisplayName] = None
+    goodForChildren: Optional[bool] = None
+    paymentOptions: Optional[PaymentOptions] = None
 
 
 class TravelResponse(BaseModel):
-    location: Location  # 여행지 기본 정보
-    route: Dict[int, List[Place]]  # 일자, 하루 일정 목록
+    hotel: Hotel
+    routes: Dict[int, Route]
