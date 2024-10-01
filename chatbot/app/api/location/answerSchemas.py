@@ -11,6 +11,7 @@ class Location(BaseModel):
 class Preferences(BaseModel):
     interest: List[str]  # 여행 스타일
     priority: List[int]  # 우선순위
+    preferLoging : str
 
 
 class TravelRequest(BaseModel):
@@ -18,7 +19,7 @@ class TravelRequest(BaseModel):
     days: int  # 여행 기간
     transportation: str  # 이동수단
     preferences: Preferences  # 여행 선호 정보
-    attractions : List[str] # 선호하는 관광지 목록
+    attractions : List[str] # 선호하는 관광지 id 목록
 
 
 # 응답 바디에 대한 데이터 모델 정의

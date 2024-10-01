@@ -2,6 +2,7 @@
 # 환경 변수 로드
 from typing import List, Dict
 from dotenv import load_dotenv
+from .googleRepository import GoogleAPI
 import os
 import json
 import httpx 
@@ -13,7 +14,7 @@ project_root = os.path.abspath(os.path.join(current_directory, "../../../"))  # 
 # locatio Question 반환 class
 class QuestionOption:
     def __init__(self):
-        self.placeFetcher = PlaceFetcher()
+        self.googleAPI = GoogleAPI()
     
     def readJson(self, fileName):
         file_path = os.path.join(project_root, "data", f"{fileName}.json")
@@ -34,6 +35,10 @@ class QuestionOption:
     def getTransportationsOptions(self):
         transportationsOptions = ["도보", "자전거", "자동차", "대중교통", "휠체어", "기타"]
         return transportationsOptions
+    
+    def getLodgingOptions(self):
+        logingOptions = ["호텔", "글램핑/캠핑", "리조트", "공유숙박"]
+        return logingOptions
 
     # 여행 테마 옵션 반환
     def getTravelStyleOptions(self):
@@ -50,7 +55,7 @@ class QuestionOption:
 
     # 여행 우선순위 옵션 반환
     def getPriorityOptions(self):
-        priorityOptions = ["높은 평점", "많은 리뷰", "짧은 이동거리", "여행 테마"]
+        priorityOptions = ["높은 평점", "많은 리뷰", "짧은 이동거리", "저렴한 가격"]
         return priorityOptions
     
     
@@ -73,81 +78,25 @@ class QuestionOption:
         return None  # 국가나 도시가 없으면 None 반환
     
     
-    # 위,경도를 중심으로 radius 반경 안에 travelStyle에 맞는 관광지 목록을 google API를 통해 검색
-    # args : lat - 위도 , lon - 경도, raduis - 반경, travelStyle - 여행 스타일
-    # reutnrn  : 관광지 id, name 목록
-    async def getAttractionOptions(self, lat, lon, radius, travelStyle) -> List[Dict[str, str]]:
-        attractionOptions = await self.placeFetcher.getAttraction(lat, lon, radius, travelStyle)
-        if attractionOptions:
-            newAttractionOptions = [{"id": option["id"], "name": option["displayName"]["text"]} for option in attractionOptions]
-            return newAttractionOptions
-        return []
-
-
-load_dotenv()
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-
-# 도시 근처 관광 명소 목록을 찾아와 주는 class
-class PlaceFetcher: 
-    def __init__(self):
-        pass
-        
     def readJson(self, fileName):
         file_path = os.path.join(project_root, "data", f"{fileName}.json")
         with open(file_path, "r", encoding="utf-8") as file:
             return json.load(file)
-    
-
-    # country, city에 대한 주요 K개의 관광지 반환
-    # Args : country(str) : 국가 , city(str) : 도시
-    # return : [ {"id": str, "name" : str}]
-    async def getAttraction(self, lat, lon, radius, travelStyle) -> List[Dict[str, str]]:
-
-        url = "https://places.googleapis.com/v1/places:searchNearby"
-        headers = {
-            "Content-Type": "application/json",  # JSON 형식으로 데이터 전송
-            "X-Goog-Api-Key": GOOGLE_API_KEY,  # API KEY
-            "X-Goog-FieldMask": "places.id,places.displayName.text",
-        }
-
-        attractionData = [] #최종 반환값 : 관심도에 알맞은 장소 목록
-        num = len(travelStyle)
-        K = 8 - num
-        if K <= 1 : K = 2
-
+        
+        
+    async def getAttractions(self, lat, lon, radius, num, style) -> List[Dict[str, str]]:
         categories = self.readJson("categories")
-
-        for style in travelStyle:
-            travelStyles = categories[style]
-
-            # 요청 본문 (바디)
-            data = {
-                "includedTypes": travelStyles,
-                "languageCode": "ko",
-                "maxResultCount": K,
-                "locationRestriction": {
-                    "circle": {
-                        "center": {
-                            "latitude": lat,
-                            "longitude": lon,
-                        },
-                        "radius": radius,
-                    }
-                },
-            }
-
-            async with httpx.AsyncClient() as client:
-                response = await client.post(url, headers=headers, json=data)
-
-            if response.status_code == 200:
-                responseData = response.json()
-                if responseData:  # 제대로 된 관광지를 찾음
-                    attractionData += responseData["places"]
-                else:
-                    print(f"No results found for radius {radius}. Increasing radius.")
-
-            else:
-                print("Error:", response.status_code, response.text)
-                return
-            
-        return attractionData
+        includeType = categories[style]
+        attraction = await self.googleAPI.searchNearby(lat, lon, radius, num, includeType, ["restaurant"])
+        return attraction["places"]
+        
+    
+    # 위,경도를 중심으로 radius 반경 안에 travelStyle에 맞는 관광지 목록을 google API를 통해 검색
+    # args : lat - 위도 , lon - 경도, raduis - 반경, travelStyle - 여행 스타일
+    # reutnrn  : 관광지 id, name 목록
+    async def getAttractionOptions(self, lat, lon, radius, num, style) -> List[Dict[str, str]]:
+        attractionOptions = await self.getAttractions(lat, lon, radius, num, style)
+        if attractionOptions:
+            newAttractionOptions = [{"id": option["id"], "name": option["displayName"]["text"]} for option in attractionOptions]
+            return newAttractionOptions
+        return []

@@ -21,7 +21,7 @@
     "liquor_store",
     "shopping_mall"
   ],
-  "먹방": ["bakery", "bar", "cafe", "restaurant"],
+  "먹방": ["bakery", "bar", "cafe", "ice_cream_shop"],
   "유명 관광지": ["tourist_attraction", "historical_landmark"],
   "자연 속 힐링": ["park", "campground", "rv_park"],
   "기타": ["book_store", "athletic_field", "stadium", "library"]
