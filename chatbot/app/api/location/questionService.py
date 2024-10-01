@@ -41,6 +41,7 @@ class ChatBotQuestion:
 
     # 비동기적으로 getQuestion 메서드를 정의
     async def getQuestion(self, questionIndex: int, country: str = None, requestBody: LocationRequest = None) -> dict:
+        
         # 유효한 질문 인덱스인지 확인
         if questionIndex < 0 or questionIndex >= len(self.questions):
             return {"error": "Invalid question number"}
@@ -56,7 +57,10 @@ class ChatBotQuestion:
         elif questionIndex == 5:
             # days를 이용해 질문을 설정 (예: 최대 선택 가능 개수)
             question.questionText = f"방문하고 싶은 관광명소를 선택해주세요. (최대 {requestBody.days}개)"
+            location = self.questionOption.getCityLocation(requestBody.country, requestBody.city)
+            radius = self.questionOption.getRadius(requestBody.trans)
+            travelStyles = requestBody.travelStyle
             # 비동기적으로 관광명소 옵션을 가져옴
-            question.options = await self.questionOption.getAttractionOptions(requestBody)
-
+            question.options = await self.questionOption.getAttractionOptions(location["lat"], location["lon"], radius, travelStyles)
+            
         return question.to_dict()

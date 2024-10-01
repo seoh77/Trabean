@@ -5,49 +5,84 @@ from dotenv import load_dotenv
 import os
 import json
 import httpx 
-import random
+
+# json 읽어오기
+current_directory = os.path.dirname(os.path.abspath(__file__))  # 현재 파일 위치
+project_root = os.path.abspath(os.path.join(current_directory, "../../../"))  # 최상위 디렉토리로 이동
 
 # locatio Question 반환 class
 class QuestionOption:
     def __init__(self):
         self.placeFetcher = PlaceFetcher()
+    
+    def readJson(self, fileName):
+        file_path = os.path.join(project_root, "data", f"{fileName}.json")
+        with open(file_path, "r", encoding="utf-8") as file:
+            return json.load(file)
 
     # 국가 및 도시 목록 반환
     def getCountryCityMap(self):
+        countryCityMap = self.readJson("countryCityMap")
         return countryCityMap
 
     # 여행 기간 옵션 반환
     def getTravelDurationOptions(self):
+        travelDurationOptions = 5
         return travelDurationOptions
 
     # 이동 수단 옵션 반환
     def getTransportationsOptions(self):
+        transportationsOptions = ["도보", "자전거", "자동차", "대중교통", "휠체어", "기타"]
         return transportationsOptions
 
     # 여행 테마 옵션 반환
     def getTravelStyleOptions(self):
+        travelStyleOptions = [
+            "체험/액티비티",
+            "관람",
+            "쇼핑",
+            "먹방",
+            "유명 관광지",
+            "자연 속 힐링",
+            "기타",
+        ]
         return travelStyleOptions
 
     # 여행 우선순위 옵션 반환
     def getPriorityOptions(self):
+        priorityOptions = ["높은 평점", "많은 리뷰", "짧은 이동거리", "여행 테마"]
         return priorityOptions
     
-    # 여행 관광지 반환
-    async def getAttractionOptions(self, requestBody) -> List[Dict[str, str]]:
-        attractionOptions = await self.placeFetcher.getAttraction(requestBody)
+    
+    # 여행 반경 반환
+    def getRadius(self, trans: str):
+        radius = self.readJson("transRadiusList")[trans]
+        return radius
 
+    
+    # 도시에 대한 위도와 경도를 반환하는 함수
+    # Args : country(str) : 국가 , city(str) : 도시
+    # return : {"lat" : float, "lon" : float}
+    def getCityLocation(self, country: str, city: str) -> dict:
+        locationData = self.readJson("locationList")
+    
+        if country in locationData:
+            # 도시가 존재하는지 확인
+            if city in locationData[country]:
+                return locationData[country][city]
+        return None  # 국가나 도시가 없으면 None 반환
+    
+    
+    # 위,경도를 중심으로 radius 반경 안에 travelStyle에 맞는 관광지 목록을 google API를 통해 검색
+    # args : lat - 위도 , lon - 경도, raduis - 반경, travelStyle - 여행 스타일
+    # reutnrn  : 관광지 id, name 목록
+    async def getAttractionOptions(self, lat, lon, radius, travelStyle) -> List[Dict[str, str]]:
+        attractionOptions = await self.placeFetcher.getAttraction(lat, lon, radius, travelStyle)
         if attractionOptions:
             newAttractionOptions = [{"id": option["id"], "name": option["displayName"]["text"]} for option in attractionOptions]
             return newAttractionOptions
         return []
 
-
-# 국가별 위/경도 목록
-load_dotenv()
-base_dir = os.path.dirname(os.path.abspath(__file__))
-file_path = os.path.join(base_dir, "locationList.json")
-with open(file_path, "r", encoding="utf-8") as file:
-    locationData = json.load(file)
 
 load_dotenv()
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
@@ -55,37 +90,18 @@ GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 # 도시 근처 관광 명소 목록을 찾아와 주는 class
 class PlaceFetcher: 
     def __init__(self):
-        self.locationData = locationData  # locationData를 클래스 속성으로 저장
+        pass
+        
+    def readJson(self, fileName):
+        file_path = os.path.join(project_root, "data", f"{fileName}.json")
+        with open(file_path, "r", encoding="utf-8") as file:
+            return json.load(file)
+    
 
-    # 도시에 대한 위도와 경도를 반환하는 함수
-    # Args : country(str) : 국가 , city(str) : 도시
-    # return : {"lat" : float, "lon" : float}
-    def getCityLocation(self, country: str, city: str) -> dict:
-        # 국가가 locationData에 있는지 확인
-        if country in self.locationData:
-            # 도시가 존재하는지 확인
-            if city in self.locationData[country]:
-                return {
-                    "lat": self.locationData[country][city]["lat"],
-                    "lon": self.locationData[country][city]["lon"],
-                }
-        return None  # 국가나 도시가 없으면 None 반환
-
-
-    # city에 대한 주요 K개의 관광지 반환
+    # country, city에 대한 주요 K개의 관광지 반환
     # Args : country(str) : 국가 , city(str) : 도시
     # return : [ {"id": str, "name" : str}]
-    async def getAttraction(self, requestBody) -> List[Dict[str, str]]:
-        country = requestBody.country
-        city = requestBody.city
-        trans = requestBody.trans
-        location = self.getCityLocation(country, city)
-        radius = 0
-        
-        if trans == "기타" :
-            radius = random.randint(1000, 30000)
-        else :
-            radius = radiusList[trans]
+    async def getAttraction(self, lat, lon, radius, travelStyle) -> List[Dict[str, str]]:
 
         url = "https://places.googleapis.com/v1/places:searchNearby"
         headers = {
@@ -95,11 +111,13 @@ class PlaceFetcher:
         }
 
         attractionData = [] #최종 반환값 : 관심도에 알맞은 장소 목록
-        num = len(requestBody.travelStyle)
+        num = len(travelStyle)
         K = 8 - num
         if K <= 1 : K = 2
 
-        for style in requestBody.travelStyle:
+        categories = self.readJson("categories")
+
+        for style in travelStyle:
             travelStyles = categories[style]
 
             # 요청 본문 (바디)
@@ -110,8 +128,8 @@ class PlaceFetcher:
                 "locationRestriction": {
                     "circle": {
                         "center": {
-                            "latitude": location["lat"],
-                            "longitude": location["lon"],
+                            "latitude": lat,
+                            "longitude": lon,
                         },
                         "radius": radius,
                     }
@@ -133,175 +151,3 @@ class PlaceFetcher:
                 return
             
         return attractionData
-    
-
-# 이동 수단에 따른 반경 목록
-# 이동 수단에 따른 반경 목록
-radiusList = {
-  "도보": 1000,
-  "자전거": 3000,
-  "자동차": 10000,
-  "대중교통": 20000,
-  "휠체어": 800
-}
-
-# 국가 및 도시에 대한 답변 목록
-countryCityMap = {
-    "한국": [
-        "서울",
-        "부산",
-        "인천",
-        "제주",
-        "경주",
-        "대구",
-        "광주",
-        "속초",
-        "대전",
-        "수원",
-    ],
-    "미국": [
-        "뉴욕",
-        "로스앤젤레스",
-        "샌프란시스코",
-        "라스베이거스",
-        "시카고",
-        "워싱턴 D.C.",
-        "마이애미",
-        "보스턴",
-        "올랜도",
-        "뉴올리언스",
-    ],
-    "독일": [
-        "베를린",
-        "뮌헨",
-        "프랑크푸르트",
-        "쾰른",
-        "함부르크",
-        "하이델베르크",
-        "슈투트가르트",
-        "드레스덴",
-        "뒤셀도르프",
-        "라이프치히",
-    ],
-    "프랑스": [
-        "파리",
-        "니스",
-        "마르세유",
-        "리옹",
-        "보르도",
-        "툴루즈",
-        "낭트",
-        "릴",
-        "엑상프로방스",
-        "칸",
-    ],
-    "일본": [
-        "도쿄",
-        "오사카",
-        "교토",
-        "삿포로",
-        "후쿠오카",
-        "나고야",
-        "히로시마",
-        "오키나와",
-        "가마쿠라",
-        "나라",
-    ],
-    "중국": [
-        "베이징",
-        "상하이",
-        "광저우",
-        "시안",
-        "청두",
-        "선전",
-        "항저우",
-        "쿤밍",
-        "난징",
-        "하얼빈",
-    ],
-    "영국": [
-        "런던",
-        "에든버러",
-        "맨체스터",
-        "리버풀",
-        "글래스고",
-        "브리스틀",
-        "옥스퍼드",
-        "케임브리지",
-        "카디프",
-        "요크",
-    ],
-    "스위스": [
-        "취리히",
-        "제네바",
-        "루체른",
-        "인터라켄",
-        "바젤",
-        "베른",
-        "로잔",
-        "체르마트",
-        "루가노",
-        "그린델발트",
-    ],
-    "캐나다": [
-        "토론토",
-        "밴쿠버",
-        "몬트리올",
-        "퀘벡시티",
-        "오타와",
-        "캘거리",
-        "에드먼턴",
-        "빅토리아",
-        "위니펙",
-        "해밀턴",
-    ],
-}
-
-# 여행 기간에 대한 답변 목록
-travelDurationOptions = 5
-
-# 이동 수단에 대한 답변 목록
-transportationsOptions = ["도보", "자전거", "자동차", "대중교통", "휠체어", "기타"]
-
-# 여행 테마에 대한 답변 목록
-travelStyleOptions = [
-    "체험/액티비티",
-    "관람",
-    "쇼핑",
-    "먹방",
-    "유명 관광지",
-    "자연 속 힐링",
-    "기타",
-]
-
-# 여행 우선순위에 대한 답변 목록
-priorityOptions = ["높은 평점", "많은 리뷰", "짧은 이동거리", "여행 테마"]
-
-
-# 관광지에 대한 답변 목록
-categories = {
-    "체험/액티비티": [
-        "amusement_park", "aquarium", "bowling_alley", "zoo", "museum"
-    ],
-    "관람": [
-        "art_gallery", "church", "hindu_temple", "synagogue", "performing_arts_theater"
-    ],
-    "쇼핑": [
-        "book_store", "clothing_store", 
-        "department_store", "electronics_store", "florist", "furniture_store", 
-        "hardware_store", "home_goods_store", "jewelry_store", "liquor_store", 
-        "shoe_store", "shopping_mall", "supermarket", "store"
-    ],
-    "먹방": [
-        "bakery", "bar", "cafe", "restaurant"
-    ],
-    "유명 관광지": [
-        "tourist_attraction", "historical_landmark"
-    ],
-    "자연 속 힐링": [
-        "park", "campground", "rv_park"
-    ],
-    "기타": [
-        "book_store", "athletic_field", "stadium", "library"
-    ]
-}

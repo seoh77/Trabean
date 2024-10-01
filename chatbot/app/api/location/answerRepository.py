@@ -9,10 +9,9 @@ from .answerSchemas import Place, TravelRequest, TravelResponse, Address
 load_dotenv()
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
-base_dir = os.path.dirname(os.path.abspath(__file__))
-file_path = os.path.join(base_dir, "locationList.json")
-with open(file_path, "r", encoding="utf-8") as file:
-    locationData = json.load(file)
+# json 읽어오기
+current_directory = os.path.dirname(os.path.abspath(__file__))  # 현재 파일 위치
+project_root = os.path.abspath(os.path.join(current_directory, "../../../"))  # 최상위 디렉토리로 이동
 
 # radiusList = {
 #   "한국": 5000,
@@ -30,7 +29,7 @@ with open(file_path, "r", encoding="utf-8") as file:
 # 적당한 2N개의 관광, 식당 목록 반환
 class PlaceFetcher:
     def __init__(self):
-        self.locationData = locationData
+        self.locationData = []
         self.attractionData = []
         self.recommandPlaces = {}
         

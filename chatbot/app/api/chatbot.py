@@ -3,7 +3,6 @@ from pydantic import BaseModel
 from fastapi.responses import JSONResponse
 
 # 라우터 객체 생성
-router = APIRouter()
 router = APIRouter(
     default_response_class=JSONResponse  # 여기에 기본 응답 클래스를 지정
 )
@@ -14,7 +13,6 @@ class ChatbotRequest(BaseModel):
 
 # 응답을 위한 옵션 데이터
 options = [
-    {"id": "budget", "description": "여행 경비 추천"},
     {"id": "location", "description": "여행 장소 추천"},
     {"id": "exchange", "description": "실시간 환율 조회"},
     {"id": "product", "description": "상품 추천"},
