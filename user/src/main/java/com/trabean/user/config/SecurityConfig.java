@@ -43,6 +43,7 @@ public class SecurityConfig {
 				.csrf(AbstractHttpConfigurer::disable) // CSRF 보호 비활성화 (API 사용 시 필요에 따라 활성화)
 				.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers(
+								"*",
 								"/api/user/signup", // 회원가입 URL 허용
 								"/api/user/login", // 로그인 URL 허용
 								"/api/user/**", // 로그인 URL 허용
