@@ -81,18 +81,18 @@ spring:
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
 
-      globalcors:
-        cors-configurations:
-          '[/**]':  # 모든 경로에 대한 CORS 설정
-            allowedOrigins: '*'  # 허용하는 출처
-            allow-credentials: true  # 인증 정보 허용
-            allowedHeaders: '*'  # 허용하는 헤더
-            allowedMethods:  # 허용하는 HTTP 메서드
-              - PUT
-              - GET
-              - POST
-              - DELETE
-              - OPTIONS
+#      globalcors:
+#        cors-configurations:
+#          '[/**]':  # 모든 경로에 대한 CORS 설정
+#            allowedOrigins: '*'  # 허용하는 출처
+#            allow-credentials: true  # 인증 정보 허용
+#            allowedHeaders: '*'  # 허용하는 헤더
+#            allowedMethods:  # 허용하는 HTTP 메서드
+#              - PUT
+#              - GET
+#              - POST
+#              - DELETE
+#              - OPTIONS
 
 
 
