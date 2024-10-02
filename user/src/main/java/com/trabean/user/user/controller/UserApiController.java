@@ -17,6 +17,7 @@ import com.trabean.user.user.dto.UserMainAccountIdResponse;
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
 @RestController
+@CrossOrigin
 public class UserApiController {
 
 	private static final Logger logger = LoggerFactory.getLogger(UserApiController.class); // 로그를 위한 Logger 추가
