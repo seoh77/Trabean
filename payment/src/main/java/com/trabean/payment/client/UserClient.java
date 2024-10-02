@@ -12,4 +12,7 @@ public interface UserClient {
 
     @GetMapping(value = "api/user/paymentaccount/{userId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     Map<String, Long> getPaymentAccount(@PathVariable("userId") Long userId);
+
+    @GetMapping(value = "api/user/name/{userId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    Map<String, String> getUserName(@PathVariable("userId") Long userId);
 }

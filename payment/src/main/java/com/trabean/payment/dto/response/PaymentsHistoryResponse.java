@@ -9,7 +9,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class PaymentsHistoryResponse {
     private Long paymentAccountId;
-    private Long totalAmount;
     private List<Data> payments;
     private Pagination pagination;
 
@@ -22,7 +21,7 @@ public class PaymentsHistoryResponse {
         private String paymentDate;
         private Long krwAmount;
         private Double foreignAmount;
-        private Long userId;
+        private String userName;
         private MerchantCategory category;
     }
 

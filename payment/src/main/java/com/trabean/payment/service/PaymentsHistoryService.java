@@ -3,7 +3,6 @@ package com.trabean.payment.service;
 import com.trabean.payment.dto.response.ChartResponse;
 import com.trabean.payment.dto.response.PaymentsHistoryCategoryResponse;
 import com.trabean.payment.dto.response.PaymentsHistoryResponse;
-import com.trabean.payment.dto.response.PaymentsHistoryResponse.Data;
 import com.trabean.payment.entity.Payments;
 import com.trabean.payment.enums.MerchantCategory;
 import com.trabean.payment.exception.PaymentsException;
@@ -27,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class PaymentsHistoryService {
 
     private final PaymentsRepository paymentsRepository;
+    private final PaymentsUserService paymentsUserService;
 
     public PaymentsHistoryResponse getPaymentHistory(Long travelAccountId, LocalDate startdate, LocalDate enddate,
                                                      int page) {
@@ -57,7 +57,6 @@ public class PaymentsHistoryService {
         // 응답 생성
         return new PaymentsHistoryResponse(
                 travelAccountId,
-                payments.stream().mapToLong(Data::getKrwAmount).sum(), // 총 금액 계산
                 payments,
                 new PaymentsHistoryResponse.Pagination(
                         (long) paymentsPage.getNumber() + 1,
@@ -77,7 +76,7 @@ public class PaymentsHistoryService {
                 payment.getPaymentDate().toString(),
                 payment.getKrwAmount(),
                 payment.getForeignAmount(),
-                payment.getUserId(), // userName 대신 userId 사용
+                paymentsUserService.getUserName(payment.getUserId()),
                 payment.getMerchant().getCategory() // 카테고리 필드 예시
         );
     }
