@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
 import client from "../../client";
-import { formatNumberWithCommas } from "../../utils/formatNumber";
+import {
+  formatNumberWithCommas,
+  extractDate,
+  extractTime,
+} from "../../utils/formatNumber";
 
 interface ListProps {
   token: string | null;
@@ -12,6 +16,7 @@ interface ListProps {
 interface PaymentItem {
   payId: number;
   merchantName: string;
+  currency: string;
   paymentDate: string;
   krwAmount: number | null;
   foreignAmount: number | null;
@@ -29,6 +34,17 @@ const List: React.FC<ListProps> = ({
   const [page, setPage] = useState<number>(1);
   const [totalPage, setTotalPage] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  // 화폐 이름 매핑
+  const currencyNameMap: { [key: string]: string } = {
+    CAD: " $ (CAD)",
+    CHF: " ₣ (CHF)",
+    CNY: " ¥ (CNY)",
+    EUR: " € (EUR)",
+    GBP: " £ (GBP)",
+    JPY: " ¥ (JPY)",
+    USD: " $ (USD)",
+  };
 
   const fetchPaymentList = useCallback(
     async (reset = false) => {
@@ -94,14 +110,18 @@ const List: React.FC<ListProps> = ({
         payments.map((payment) => (
           <div key={payment.payId} className="w-full flex flex-col px-[20px]">
             <p>
-              {payment.foreignAmount && (
-                <span>{formatNumberWithCommas(payment.foreignAmount)} </span>
-              )}
               {payment.krwAmount && (
                 <span>{formatNumberWithCommas(payment.krwAmount)} ₩</span>
               )}
+              {payment.foreignAmount && (
+                <span>
+                  {formatNumberWithCommas(payment.foreignAmount)}
+                  {currencyNameMap[payment.currency]}
+                </span>
+              )}
             </p>
-            <p>Date: {payment.paymentDate}</p>
+            <p>날짜: {extractDate(payment.paymentDate)}</p>
+            <p>시간: {extractTime(payment.paymentDate)}</p>
             <p>결제한 사람: {payment.userName}</p>
           </div>
         ))}
