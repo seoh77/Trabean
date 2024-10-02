@@ -5,9 +5,14 @@ import client from "../../client";
 function JoinPage() {
   const token = "";
 
-  const [email, setEmail] = useState<string | null>();
+  const [email, setEmail] = useState<string | null>(null);
   const [inputEmail, setInputEmail] = useState<string>();
   const [selectPath, setSelectPath] = useState<string>();
+
+  const [password, setPassword] = useState<string | null>(null);
+  const [inputPassword, setInputPassword] = useState<string>();
+  const [checkPassword, setCheckPassword] = useState<boolean>();
+  const [confirmPWStatus, setConfirmPWStatus] = useState<boolean>(true);
 
   const onChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputEmail(e.target.value);
@@ -18,8 +23,6 @@ function JoinPage() {
   };
 
   const checkEmail = async () => {
-    console.log(`${inputEmail}@${selectPath}`);
-
     if (!inputEmail || !selectPath) return;
 
     const response = await client(token).get(
@@ -28,12 +31,34 @@ function JoinPage() {
 
     if (response.data) {
       alert("이미 사용된 이메일입니다.");
-      setEmail("");
+      setEmail(null);
     } else {
       setEmail(inputEmail);
     }
+  };
 
-    console.log(email);
+  const onChangePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const pw = e.target.value;
+
+    // 비밀번호 규칙: 8자 이상, !@*~$% 중 하나 이상의 특수문자 포함
+    const passwordRegex = /^(?=.*[!@*~$%]).{8,}$/;
+    if (!passwordRegex.test(pw)) {
+      setCheckPassword(false);
+      setPassword(null);
+    } else {
+      setCheckPassword(true);
+      setInputPassword(pw);
+    }
+  };
+
+  const confirmPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value === inputPassword) {
+      setConfirmPWStatus(true);
+      setPassword(inputPassword);
+    } else {
+      setConfirmPWStatus(false);
+      setPassword(null);
+    }
   };
 
   return (
@@ -72,20 +97,36 @@ function JoinPage() {
             id="password"
             className="border-b-2 border-primary text-base pl-2 w-full focus:outline-none"
             placeholder="비밀번호"
+            onChange={onChangePassword}
           />
-          <span className="text-sm text-gray-300 font-semibold">
-            * 비밀번호 (특수문자 포함 8글자 이상)
-          </span>
+          {!checkPassword && (
+            <span className="text-sm text-gray-300 font-semibold">
+              * 비밀번호 (특수문자 포함 8글자 이상)
+            </span>
+          )}
         </div>
-        <input
-          type="password"
-          name="password"
-          id="password"
-          className="border-b-2 border-primary text-base pl-2 w-full focus:outline-none"
-          placeholder="비밀번호 확인"
-        />
+        <div>
+          <input
+            type="password"
+            name="password"
+            id="password"
+            className="border-b-2 border-primary text-base pl-2 w-full focus:outline-none"
+            placeholder="비밀번호 확인"
+            onChange={confirmPassword}
+          />
+          {!confirmPWStatus && (
+            <span className="text-sm text-gray-300 font-semibold">
+              비밀번호가 일치하지 않습니다.
+            </span>
+          )}
+        </div>
       </div>
-      <button type="button" className="btn-lg w-full absolute bottom-10">
+      <button
+        type="button"
+        className={`w-full absolute bottom-10 ${
+          email && password ? "btn-lg" : "btn-gray-lg"
+        }`}
+      >
         다음 단계
       </button>
     </div>
