@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Search from "./PaymentPage.PaymentHistory.Search";
 import Chart from "./PaymentPage.PaymentHistory.Chart";
+import List from "./PaymentPage.PaymentHistory.List";
 
 const PaymentHistory: React.FC = () => {
   const [token] = useState<string | null>(null);
@@ -81,6 +82,12 @@ const PaymentHistory: React.FC = () => {
           endDate={endDate}
           formatDate={formatDate}
           signalFetchChart={signalFetchChart}
+        />
+        <List
+          startDate={startDate}
+          endDate={endDate}
+          token={token}
+          formatDate={formatDate}
         />
       </div>
     </div>
