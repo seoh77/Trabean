@@ -40,7 +40,7 @@ const Chart: React.FC<ChartProps> = ({
     OTHER: "기타",
   };
 
-  const handleFetchChart = async () => {
+  const fetchChart = async () => {
     const params = {
       startdate: startDate ? formatDate(startDate) : null,
       enddate: endDate ? formatDate(endDate) : null,
@@ -57,7 +57,7 @@ const Chart: React.FC<ChartProps> = ({
   };
 
   useEffect(() => {
-    handleFetchChart();
+    fetchChart();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, signalFetchChart]);
 
