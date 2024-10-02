@@ -1,6 +1,41 @@
+import { useState } from "react";
 import prevIcon from "../../assets/icon/prevIcon.png";
+import client from "../../client";
 
 function JoinPage() {
+  const token = "";
+
+  const [email, setEmail] = useState<string | null>();
+  const [inputEmail, setInputEmail] = useState<string>();
+  const [selectPath, setSelectPath] = useState<string>();
+
+  const onChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputEmail(e.target.value);
+  };
+
+  const onSelectEmailPath = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectPath(e.target.value);
+  };
+
+  const checkEmail = async () => {
+    console.log(`${inputEmail}@${selectPath}`);
+
+    if (!inputEmail || !selectPath) return;
+
+    const response = await client(token).get(
+      `/api/user/email/${inputEmail}@${selectPath}`,
+    );
+
+    if (response.data) {
+      alert("이미 사용된 이메일입니다.");
+      setEmail("");
+    } else {
+      setEmail(inputEmail);
+    }
+
+    console.log(email);
+  };
+
   return (
     <div className="h-[100vh] relative mt-5">
       <div className="flex">
@@ -15,17 +50,18 @@ function JoinPage() {
             id="email"
             placeholder="아이디"
             className="w-[130px] border-b-2 border-primary text-base pl-2"
+            onChange={onChangeEmail}
           />
           <div>@</div>
-          <select className="w-[100px]">
-            <option value="" disabled>
+          <select className="w-[100px]" onChange={onSelectEmailPath}>
+            <option value="" disabled selected>
               선택
             </option>
-            <option value="gmail">gmail.com</option>
-            <option value="naver">naver.com</option>
-            <option value="daum">daum.net</option>
+            <option value="gmail.com">gmail.com</option>
+            <option value="naver.com">naver.com</option>
+            <option value="daum.net">daum.net</option>
           </select>
-          <button type="button" className="btn-light-md">
+          <button type="button" className="btn-light-md" onClick={checkEmail}>
             중복확인
           </button>
         </div>
@@ -50,7 +86,7 @@ function JoinPage() {
         />
       </div>
       <button type="button" className="btn-lg w-full absolute bottom-10">
-        회원가입
+        다음 단계
       </button>
     </div>
   );
