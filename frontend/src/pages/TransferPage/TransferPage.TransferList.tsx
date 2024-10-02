@@ -1,7 +1,15 @@
-import React from "react";
-import smileImage from "../../assets/bean_profile.png";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import beanProfile from "../../assets/bean_profile.png";
 
-const transfers = [
+interface Transfer {
+  id: number;
+  name: string;
+  bank: string;
+  account: string;
+}
+
+const transfers: Transfer[] = [
   {
     id: 1,
     name: "김민채",
@@ -40,27 +48,70 @@ const transfers = [
   },
 ];
 
-const App = () => (
-  <div className="App">
+const TransferListPage: React.FC = () => {
+  const [selectedAccount, setSelectedAccount] = useState<string>("");
+  const [manualInput, setManualInput] = useState<string>("");
+  const navigate = useNavigate();
+
+  const handleAccountSelect = (account: string) => {
+    setSelectedAccount(account);
+    setManualInput(""); // 수동 입력 초기화
+  };
+
+  const handleManualInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setManualInput(e.target.value);
+    setSelectedAccount(""); // 선택된 계좌 초기화
+  };
+
+  const handleConfirm = () => {
+    const accountToSend = selectedAccount || manualInput;
+    if (accountToSend) {
+      navigate(`/transfer/${accountToSend}`);
+    } else {
+      alert("계좌 번호를 선택하거나 입력해 주세요.");
+    }
+  };
+
+  return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">이체</h1>
+      <h1 className="text-2xl font-bold mb-6">계좌 선택</h1>
+      {/* 직접 입력 */}
       <input
         type="text"
-        placeholder="계좌번호 직접 입력"
+        placeholder="계좌 번호 직접 입력"
+        value={manualInput}
+        onChange={handleManualInput}
         className="w-full px-3 py-2 border rounded-lg mb-4"
       />
-      <h2 className="text-xl font-semibold mb-2">최근 이체</h2>
-      <ul className="space-y-3">
+
+      {/* 확인 버튼 */}
+      <button
+        type="button"
+        onClick={handleConfirm}
+        className="mb-6 w-full bg-green-500 text-white py-3 rounded-lg text-lg font-semibold"
+      >
+        확인
+      </button>
+      {/* 계좌 목록 */}
+      <ul className="space-y-3 mb-4">
         {transfers.map((transfer) => (
           <li
             key={transfer.id}
-            className="flex items-center bg-gray-50 p-3 rounded-lg shadow-sm"
+            className={`flex items-center p-3 rounded-lg shadow-sm cursor-pointer ${
+              selectedAccount === transfer.account
+                ? "bg-green-100"
+                : "bg-gray-50"
+            }`}
+            role="presentation"
+            onClick={() => handleAccountSelect(transfer.account)}
           >
-            <img
-              src={smileImage}
-              alt="Smile"
-              className="w-10 h-10 rounded-full"
-            />
+            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+              <img
+                src={beanProfile}
+                alt="profile"
+                className="w-full h-full object-cover rounded-full"
+              />
+            </div>
             <div className="ml-3">
               <div className="font-semibold text-gray-800">{transfer.name}</div>
               <div className="text-gray-600">
@@ -71,7 +122,7 @@ const App = () => (
         ))}
       </ul>
     </div>
-  </div>
-);
+  );
+};
 
-export default App;
+export default TransferListPage;
