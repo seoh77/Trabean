@@ -20,7 +20,6 @@ function App() {
         />
         <Route path="/payment/qr" element={<PaymentPage />} />
         <Route path="/payment/list" element={<PaymentHistory />} />
-        <Route path="/payment/list" element={<PaymentList />} />
         <Route path="/transfer/list" element={<TransferLists />} />
         <Route path="/transfer/list/:account" element={<TransferList />} />
       </Routes>
