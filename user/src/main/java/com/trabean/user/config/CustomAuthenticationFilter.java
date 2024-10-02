@@ -56,7 +56,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         String userKey = loggedInUser.getUser_key();
 
         // Refresh Token을 DB에 저장
-        refreshTokenService.saveRefreshToken(loggedInUser.getEmail(), refreshToken);
+        refreshTokenService.saveRefreshToken(loggedInUser.getUser_id(),loggedInUser.getEmail(), refreshToken);
 
         // accessToken을 HTTPOnly 쿠키에 저장
         Cookie accessTokenCookie = new Cookie("accessToken", accessToken);

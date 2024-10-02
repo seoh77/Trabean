@@ -19,5 +19,5 @@ public class WebConfig implements WebMvcConfigurer {
 			.allowedMethods("GET", "POST","PUT", "DELETE", "OPTIONS")
 				.allowedHeaders("*")
 			.allowCredentials(true); //쿠키 인증 요청 허용
-	}
+		}
 }

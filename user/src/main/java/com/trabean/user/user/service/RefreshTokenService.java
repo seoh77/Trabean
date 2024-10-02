@@ -16,7 +16,7 @@ public class RefreshTokenService {
 	private final RefreshTokenRepository refreshTokenRepository;
 
 	// refresh token 저장
-	public void saveRefreshToken(String email, String refreshToken) {
+	public void saveRefreshToken(Long userId,String email, String refreshToken) {
 		Optional<RefreshToken> existingToken = refreshTokenRepository.findByEmail(email);
 		if (existingToken.isPresent()) {
 			//기존에 토큰 있음 업데이트!
@@ -25,6 +25,7 @@ public class RefreshTokenService {
 		} else {
 			// 새토큰 저장
 			RefreshToken newToken = RefreshToken.builder()
+					.user_id(userId)
 					.email(email)
 					.refreshToken(refreshToken)
 					.build();

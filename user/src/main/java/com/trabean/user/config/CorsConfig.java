@@ -20,6 +20,8 @@ public class CorsConfig {
         config.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control","Content-Type"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         source.registerCorsConfiguration("/**", config);
+		System.err.println("ss");
+
         return new CorsFilter(source);
     }
 }

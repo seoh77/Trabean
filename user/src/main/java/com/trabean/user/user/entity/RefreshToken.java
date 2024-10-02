@@ -25,6 +25,8 @@ public class RefreshToken {
 	@Column(name = "refresh_token", nullable = false, length = 255)
 	private String refreshToken;  // SQL 테이블의 refresh_token과 매핑됨
 
+	@Column(name="user_id",nullable = false)
+	private Long user_id;
 	public RefreshToken updateValue(String token) {
 		this.refreshToken = token;
 		return this;
