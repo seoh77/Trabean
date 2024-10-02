@@ -2,6 +2,7 @@ package com.trabean.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,10 +29,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors().and()  // CORS 설정 적용
-                .csrf().disable()  // CSRF 보호 비활성화 (필요 시)
+                .cors().and()  // CORS 활성화
+                .csrf().disable()  // CSRF 비활성화 (필요 시)
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll()  // 모든 요청을 인증 없이 허용
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()  // OPTIONS 요청 허용
+                        .anyRequest().permitAll()  // 다른 모든 요청 허용
                 );
         return http.build();
     }
