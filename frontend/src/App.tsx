@@ -6,6 +6,7 @@ import TravelAccountPage from "./pages/TravelAccount/TravelAccountPage";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import MainPage from "./pages/MainPage/MainPage";
 import JoinPage from "./pages/JoinPage/JoinPage";
+import MailInfo from "./pages/JoinPage/JoinPage.MailInfo";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/payment/qr" element={<PaymentPage />} />
         <Route path="/payment/list" element={<PaymentHistory />} />
         <Route path="/join" element={<JoinPage />} />
+        <Route path="/mailInfo" element={<MailInfo />} />
       </Routes>
     </div>
   );
