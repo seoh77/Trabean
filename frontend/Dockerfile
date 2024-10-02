@@ -9,6 +9,9 @@ COPY package*.json ./
 RUN yarn install
 # 모든 소스 파일을 현재 작업 디렉토리로 복사
 COPY . .
+# ARG 추가
+ARG REACT_APP_END_POINT
+ENV REACT_APP_END_POINT=$REACT_APP_END_POINT
 # 애플리케이션 빌드
 RUN yarn build
 
