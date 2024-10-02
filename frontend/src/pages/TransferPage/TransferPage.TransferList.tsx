@@ -1,128 +1,147 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import beanProfile from "../../assets/bean_profile.png";
+import trabeanLogo from "../../assets/logo.png";
 
-interface Transfer {
-  id: number;
-  name: string;
-  bank: string;
+interface TransferDetails {
+  id?: number;
+  name?: string;
+  bank?: string;
   account: string;
 }
 
-const transfers: Transfer[] = [
-  {
-    id: 1,
-    name: "김민채",
-    bank: "농협은행",
-    account: "356-0630-5770-33",
-  },
-  {
-    id: 2,
-    name: "서희",
-    bank: "국민은행",
-    account: "123-4567-8901-23",
-  },
-  {
-    id: 3,
-    name: "김인실",
-    bank: "신한은행",
-    account: "110-2345-6789-00",
-  },
-  {
-    id: 4,
-    name: "남윤희",
-    bank: "우리은행",
-    account: "1002-345-678901",
-  },
-  {
-    id: 5,
-    name: "육민우",
-    bank: "하나은행",
-    account: "620-1234-5678-90",
-  },
-  {
-    id: 6,
-    name: "박세건",
-    bank: "카카오뱅크",
-    account: "3333-09-1234567",
-  },
-];
+const TransferList: React.FC = () => {
+  const { account } = useParams<{ account: string }>(); // URL에서 계좌 번호 받기
+  const location = useLocation();
+  const transferDetails = location.state as TransferDetails; // 이전 페이지에서 전달된 state 받기
+  const [amount, setAmount] = useState<string>(""); // 송금 금액 관리
+  const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태 관리
 
-const TransferListPage: React.FC = () => {
-  const [selectedAccount, setSelectedAccount] = useState<string>("");
-  const [manualInput, setManualInput] = useState<string>("");
-  const navigate = useNavigate();
-
-  const handleAccountSelect = (account: string) => {
-    setSelectedAccount(account);
-    setManualInput(""); // 수동 입력 초기화
+  // 숫자 클릭 처리
+  const handleNumberClick = (value: string) => {
+    setAmount((prev) => prev + value);
   };
 
-  const handleManualInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setManualInput(e.target.value);
-    setSelectedAccount(""); // 선택된 계좌 초기화
+  // 금액 지우기 처리
+  const handleClear = () => {
+    setAmount("");
   };
 
-  const handleConfirm = () => {
-    const accountToSend = selectedAccount || manualInput;
-    if (accountToSend) {
-      navigate(`/transfer/${accountToSend}`);
-    } else {
-      alert("계좌 번호를 선택하거나 입력해 주세요.");
-    }
+  // 모달 열기
+  const handleSend = () => {
+    setIsModalOpen(true);
+  };
+
+  // 모달 닫기
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-6">계좌 선택</h1>
-      {/* 직접 입력 */}
-      <input
-        type="text"
-        placeholder="계좌 번호 직접 입력"
-        value={manualInput}
-        onChange={handleManualInput}
-        className="w-full px-3 py-2 border rounded-lg mb-4"
+    <div className="relative p-4 flex flex-col items-center justify-center min-h-screen bg-gray-50">
+      <img
+        src={trabeanLogo}
+        alt="로고"
+        className="max-w-xs max-h-xs object-cover"
       />
 
-      {/* 확인 버튼 */}
+      {/* <h1 className="text-xl font-bold mb-4"></h1> */}
+
+      {/* 프로필 및 계좌 정보 */}
+      <div className="flex items-center mb-6">
+        <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
+          <img
+            src={beanProfile}
+            alt="profile"
+            className="w-full h-full object-cover rounded-full"
+          />
+        </div>
+        <div className="ml-4">
+          <p className="text-lg font-semibold">
+            {transferDetails?.name || "직접 입력된 계좌"}
+          </p>
+          <p className="text-sm text-gray-600">
+            {transferDetails?.bank || "정보 없음"}
+          </p>
+          <p className="text-sm text-gray-600">계좌 번호: {account}</p>
+        </div>
+      </div>
+
+      {/* 금액 입력 */}
+      <div className="w-full flex justify-center items-center mb-6">
+        <span className="text-2xl font-bold">{amount || "0"} 원</span>
+        <button type="button" onClick={handleClear} className="ml-2">
+          <img src="/assets/clear-icon.png" alt="clear" className="w-6 h-6" />
+        </button>
+      </div>
+
+      {/* 입력 밑줄 */}
+      <div className="border-b-2 border-gray-300 w-full mb-6"> </div>
+
+      {/* 숫자 패드 */}
+      <div className="w-full max-w-md">
+        <div className="grid grid-cols-3 gap-4">
+          {["1", "2", "3", "4", "5", "6", "7", "8", "9", "00", "0", "⌫"].map(
+            (number) => (
+              <button
+                key={number}
+                type="button"
+                className="py-4 text-xl font-semibold bg-gray-200 rounded-lg"
+                onClick={() =>
+                  number === "⌫"
+                    ? setAmount(amount.slice(0, -1))
+                    : handleNumberClick(number)
+                }
+              >
+                {number}
+              </button>
+            ),
+          )}
+        </div>
+      </div>
+
+      {/* 송금 버튼 */}
       <button
         type="button"
-        onClick={handleConfirm}
-        className="mb-6 w-full bg-green-500 text-white py-3 rounded-lg text-lg font-semibold"
+        className="w-full max-w-md bg-green-500 text-white py-3 mt-4 rounded-lg text-lg font-semibold"
+        onClick={handleSend}
       >
-        확인
+        송금
       </button>
-      {/* 계좌 목록 */}
-      <ul className="space-y-3 mb-4">
-        {transfers.map((transfer) => (
-          <li
-            key={transfer.id}
-            className={`flex items-center p-3 rounded-lg shadow-sm cursor-pointer ${
-              selectedAccount === transfer.account
-                ? "bg-green-100"
-                : "bg-gray-50"
-            }`}
-            role="presentation"
-            onClick={() => handleAccountSelect(transfer.account)}
-          >
-            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-              <img
-                src={beanProfile}
-                alt="profile"
-                className="w-full h-full object-cover rounded-full"
-              />
-            </div>
-            <div className="ml-3">
-              <div className="font-semibold text-gray-800">{transfer.name}</div>
-              <div className="text-gray-600">
-                {transfer.bank} {transfer.account}
+
+      {/* 모달 */}
+      {isModalOpen && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-xs">
+            {/* 모달의 너비를 적절히 조정 */}
+            <div className="mb-4 text-center">
+              <div className="font-semibold text-lg">
+                {transferDetails?.name}
+                님께
               </div>
+              <div>송금하시겠습니까?</div>
             </div>
-          </li>
-        ))}
-      </ul>
+            <div className="flex justify-around space-x-4">
+              {/* 버튼 간의 간격 추가 */}
+              <button
+                type="button"
+                className="bg-gray-200 py-2 px-4 rounded-lg"
+                onClick={handleCloseModal}
+              >
+                취소
+              </button>
+              <button
+                type="button"
+                className="bg-green-500 text-white py-2 px-4 rounded-lg"
+              >
+                확인
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-export default TransferListPage;
+export default TransferList;
