@@ -10,7 +10,7 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Stri
 
 	Optional<RefreshToken> findByEmail(String email);
 	Optional<RefreshToken> findByRefreshToken(String refreshToken);
-	Optional<RefreshToken> findByUserId(Long userId);
+
 	//이메일 기준으로 RefreshToken 삭제
 	void deleteByEmail(String email);
 }
