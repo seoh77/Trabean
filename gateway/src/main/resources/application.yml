@@ -81,6 +81,6 @@ spring:
 
 logging:
   level:
-    root: INFO
-    com.trabean.gateway: DEBUG
+    root: DEBUG # 전체 로그 레벨을 DEBUG로 설정
+
 
