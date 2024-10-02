@@ -1,7 +1,6 @@
 package com.trabean.user.config;
 
 import com.trabean.user.config.jwt.TokenProvider;
-import com.trabean.user.config.CustomAuthenticationFilter;
 import com.trabean.user.user.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,10 +12,15 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.Collections;
 
 @Configuration
 @RequiredArgsConstructor
@@ -29,14 +33,15 @@ public class SecurityConfig {
 	private final RefreshTokenService refreshTokenService;
 	// 특정 HTTP 요청에 대한 웹 기반 보안 구성
 	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+	public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
 		// CustomAuthenticationFilter를 설정하고 필터 체인에 추가
-		CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager(http), tokenProvider, refreshTokenService);
+		CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager(httpSecurity), tokenProvider, refreshTokenService);
 		customAuthenticationFilter.setFilterProcessesUrl("/api/user/login"); // 로그인 처리 URL 설정
 
-		return http
+		return httpSecurity.httpBasic(HttpBasicConfigurer::disable)
+				.cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
 				.csrf(AbstractHttpConfigurer::disable) // CSRF 보호 비활성화 (API 사용 시 필요에 따라 활성화)
-				.authorizeHttpRequests(auth -> auth
+				.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers(
 								"/api/user/signup", // 회원가입 URL 허용
 								"/api/user/login", // 로그인 URL 허용
@@ -59,6 +64,17 @@ public class SecurityConfig {
 		return new ProviderManager(authProvider);
 	}
 
+	// ⭐️ CORS 설정
+	CorsConfigurationSource corsConfigurationSource() {
+		return request -> {
+			CorsConfiguration config = new CorsConfiguration();
+			config.setAllowedHeaders(Collections.singletonList("*"));
+			config.setAllowedMethods(Collections.singletonList("*"));
+			config.setAllowedOriginPatterns(Collections.singletonList("http://localhost:3000")); // ⭐️ 허용할 origin
+			config.setAllowCredentials(true);
+			return config;
+		};
+	}
 	// 패스워드 인코더로 사용할 빈 등록하기
 	@Bean
 	public BCryptPasswordEncoder bCryptPasswordEncoder() {
