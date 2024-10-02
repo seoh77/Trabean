@@ -28,27 +28,8 @@ public class SecurityConfig {
 	private final UserDetailsService userService;
 	private final RefreshTokenService refreshTokenService;
 	// 특정 HTTP 요청에 대한 웹 기반 보안 구성
-	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		// CustomAuthenticationFilter를 설정하고 필터 체인에 추가
-		CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager(http), tokenProvider, refreshTokenService);
-		customAuthenticationFilter.setFilterProcessesUrl("/api/user/login"); // 로그인 처리 URL 설정
+	
 
-		return http
-				.csrf(AbstractHttpConfigurer::disable) // CSRF 보호 비활성화 (API 사용 시 필요에 따라 활성화)
-				.authorizeHttpRequests(auth -> auth
-						.requestMatchers(
-								"/api/user/signup", // 회원가입 URL 허용
-								"/api/user/login", // 로그인 URL 허용
-								"/api/user/**", // 로그인 URL 허용
-								"/api/token",
-								"/api/user/email/send-verification-code",
-								"/api/user/email/verify-code").permitAll() // 토큰 발급 URL 허용
-						.anyRequest().authenticated()) // 나머지 모든 요청은 인증 필요
-				.addFilterBefore(new TokenAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class) // 기존 토큰 인증 필터 추가
-				.addFilter(customAuthenticationFilter) // 커스텀 인증 필터 추가
-				.build();
-	}
 
 	// 인증 관리자 관련 설정하기
 	@Bean
