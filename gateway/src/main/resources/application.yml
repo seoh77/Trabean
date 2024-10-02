@@ -61,42 +61,42 @@ spring:
             - Path=/api/user/**
 
 
-      globalcors:
-        cors-configurations:
-          "[/**]":
-            allow-credentials: true
-            allowed-origins:
-              - "*"
-            allowed-headers:
-              - Authorization
-              - Authorization-refresh
-            allowed-methods:
-              - PUT
-              - GET
-              - POST
-              - DELETE
-              - PATCH
-              - OPTIONS         # 없애고 확인해보기
-
-#      default-filters:
-#        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
 #      globalcors:
 #        cors-configurations:
-#          '[/**]':
-#            allowedOrigins: 'http://localhost:3000'
+#          "[/**]":
 #            allow-credentials: true
+#            allowed-origins:
+#              - "*"
 #            allowed-headers:
-#              - '*'
-##            ExposeHeader를 허가 해주지 않는다면 프론트 -> 백 으로 데이터는 받을 수 있으나
-#            #백에서 -> 프론트로 전달된 헤더 값들은 읽을 수가 없습니다.
-#            exposed-headers:
-#              - '*'
-#            allowedMethods:
+#              - Authorization
+#              - Authorization-refresh
+#            allowed-methods:
 #              - PUT
 #              - GET
 #              - POST
 #              - DELETE
-#              - OPTIONS
+#              - PATCH
+#              - OPTIONS         # 없애고 확인해보기
+
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: '*'
+            allow-credentials: true
+            allowed-headers:
+              - '*'
+#            ExposeHeader를 허가 해주지 않는다면 프론트 -> 백 으로 데이터는 받을 수 있으나
+            #백에서 -> 프론트로 전달된 헤더 값들은 읽을 수가 없습니다.
+            exposed-headers:
+              - '*'
+            allowedMethods:
+              - PUT
+              - GET
+              - POST
+              - DELETE
+              - OPTIONS
 
 
 
