@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 
-import PaymentList from "./pages/PaymentPage/PaymentPage.PaymentList";
+import PaymentHistory from "./pages/PaymentPage/PaymentPage.PaymentHistory";
 import PaymentPage from "./pages/PaymentPage/PaymentPage";
 import LoginPage from "./pages/LoginPage/LoginPage";
 
@@ -9,7 +9,7 @@ function App() {
     <div className="App">
       <Routes>
         <Route path="/payment/qr" element={<PaymentPage />} />
-        <Route path="/payment/list" element={<PaymentList />} />
+        <Route path="/payment/list" element={<PaymentHistory />} />
         <Route path="/login" element={<LoginPage />} />
       </Routes>
     </div>

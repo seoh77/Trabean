@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { PieChart, Pie, Cell, Tooltip } from "recharts";
+import { PieChart, Pie, Cell, Legend } from "recharts";
 import client from "../../client";
 import { formatNumberWithCommas } from "../../utils/formatNumber";
 
@@ -9,7 +9,7 @@ interface Category {
   percent: number;
 }
 
-const PaymentList: React.FC = () => {
+const PaymentHistory: React.FC = () => {
   const [token] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -18,7 +18,17 @@ const PaymentList: React.FC = () => {
   const [totalAmount, setTotalAmount] = useState<string | null>(null);
   const [chartInfo, setCartInfo] = useState<Category[] | null>(null);
 
-  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+  const COLORS = ["#15803D", "#22C55E", "#86EFAC", "#BBF7D0", "#F0FDF4"];
+
+  // 카테고리 이름 매핑 (영어 -> 한국어)
+  const categoryNameMap: { [key: string]: string } = {
+    FOOD: "음식",
+    TRANSPORTATION: "교통",
+    SHOPPING: "쇼핑",
+    ACTIVITY: "활동",
+    ACCOMMODATION: "숙박",
+    OTHER: "기타",
+  };
 
   // 날짜 선택
   const handleDateChange = (
@@ -106,6 +116,36 @@ const PaymentList: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
+  // 커스텀 레이블 렌더링 함수
+  const renderCustomizedLabel = ({
+    cx,
+    cy,
+    midAngle,
+    innerRadius,
+    outerRadius,
+    percent,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  }: any) => {
+    const RADIAN = Math.PI / 180;
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.35; // 값 조정: 0.5에서 0.35로 변경
+    const x = Number(cx) + radius * Math.cos(-midAngle * RADIAN);
+    const y = Number(cy) + radius * Math.sin(-midAngle * RADIAN);
+
+    return (
+      <text
+        x={x}
+        y={y}
+        fill="white"
+        textAnchor={x > cx ? "start" : "end"}
+        dominantBaseline="central"
+        fontSize="14px"
+        fontWeight="bold"
+      >
+        {`${(percent * 100).toFixed(0)}%`}
+      </text>
+    );
+  };
+
   return (
     <div className="w-full bg-[#F4F4F5] h-full pt-[4.375rem] flex flex-col items-center">
       <div className="w-[300px]">
@@ -185,9 +225,12 @@ const PaymentList: React.FC = () => {
         {chartInfo && chartInfo.length > 0 && (
           <div
             id="chart"
-            className="bg-white rounded-[15px] py-[0.875rem] px-[1rem]"
+            className="bg-white rounded-[15px] py-[0.875rem] px-[1rem] flex flex-col items-center"
           >
-            <PieChart width={400} height={400}>
+            <h2 className="text-center font-semibold text-lg my-2">
+              카테고리 별 지출
+            </h2>
+            <PieChart width={250} height={250}>
               <Pie
                 data={chartInfo.map((item) => ({
                   name: item.categoryName,
@@ -195,21 +238,33 @@ const PaymentList: React.FC = () => {
                 }))}
                 cx="50%"
                 cy="50%"
+                innerRadius={50} // 내부 반지름을 설정하여 도넛 모양으로 만듦
+                outerRadius={100} // 외부 반지름 설정
                 labelLine={false}
-                label={({ name }) => name}
-                outerRadius={150}
-                fill="#8884d8"
+                label={renderCustomizedLabel}
+                // label={({ value }) => `${value}%`}
                 dataKey="value"
               >
-                {chartInfo.map((entry, index) => (
+                {chartInfo.map((chart, index) => (
                   <Cell
                     // eslint-disable-next-line react/no-array-index-key
-                    key={`cell-${index}`}
+                    key={`cell-${chart.categoryName}`}
                     fill={COLORS[index % COLORS.length]}
                   />
                 ))}
               </Pie>
-              <Tooltip />
+              <Legend
+                verticalAlign="bottom"
+                align="center"
+                height={36}
+                formatter={(value) => categoryNameMap[value] || value}
+                wrapperStyle={{
+                  padding: "10px",
+                  width: "100%",
+                  fontSize: "14px",
+                  bottom: "0px",
+                }}
+              />
             </PieChart>
           </div>
         )}
@@ -218,4 +273,4 @@ const PaymentList: React.FC = () => {
   );
 };
 
-export default PaymentList;
+export default PaymentHistory;
