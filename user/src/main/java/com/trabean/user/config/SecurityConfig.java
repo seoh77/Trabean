@@ -29,11 +29,6 @@ import java.util.Collections;
 @Slf4j
 public class SecurityConfig {
 
-	/* 인증 성공/실패 핸들러 클래스 추가 */
-	private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
-	private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
-
-
 	private final TokenProvider tokenProvider;
 	private final UserDetailsService userService;
 	private final RefreshTokenService refreshTokenService;
@@ -43,9 +38,8 @@ public class SecurityConfig {
 		// CustomAuthenticationFilter를 설정하고 필터 체인에 추가
 		CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager(httpSecurity), tokenProvider, refreshTokenService);
 		customAuthenticationFilter.setFilterProcessesUrl("/api/user/login"); // 로그인 처리 URL 설정
-	httpSecurity.formLogin(form->form.loginPage("/login").loginProcessingUrl("/api/user/login").successHandler(customAuthenticationSuccessHandler));
 
-		return httpSecurity.httpBasic(HttpBasicConfigurer::disable)
+	httpSecurity.httpBasic(HttpBasicConfigurer::disable)
 				.cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
 				.csrf(AbstractHttpConfigurer::disable) // CSRF 보호 비활성화 (API 사용 시 필요에 따라 활성화)
 				.authorizeHttpRequests(authorize -> authorize
@@ -57,10 +51,9 @@ public class SecurityConfig {
 								"/api/token",
 								"/api/user/email/send-verification-code",
 								"/api/user/email/verify-code").permitAll() // 토큰 발급 URL 허용
-						.anyRequest().authenticated()) // 나머지 모든 요청은 인증 필요
-				.addFilterBefore(new TokenAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class) // 기존 토큰 인증 필터 추가
-				.addFilter(customAuthenticationFilter) // 커스텀 인증 필터 추가
-				.build();
+				);
+
+		return httpSecurity.build();
 	}
 
 	// 인증 관리자 관련 설정하기
@@ -73,19 +66,19 @@ public class SecurityConfig {
 	}
 
 	/* CORS 설정을 위한 새로운 메서드 작성  */
-	@Bean
-	public CorsConfigurationSource corsConfigurationSource() {
-		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.addAllowedOrigin("http://localhost:3000"); // 허용할 origin 설정
-		configuration.addAllowedOrigin("*");
-		configuration.addAllowedMethod("*"); // 모든 HTTP 메소드 허용
-		configuration.addAllowedHeader("*"); // 모든 헤더 허용
-		configuration.setAllowCredentials(true); // 쿠키 허용
 
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", configuration); // 모든 경로에 대해 위 설정 적용
-		return source;
+	// ⭐️ CORS 설정
+	CorsConfigurationSource corsConfigurationSource() {
+		return request -> {
+			CorsConfiguration config = new CorsConfiguration();
+			config.setAllowedHeaders(Collections.singletonList("*"));
+			config.setAllowedMethods(Collections.singletonList("*"));
+			config.setAllowedOriginPatterns(Collections.singletonList("http://localhost:3000")); // ⭐️ 허용할 origin
+			config.setAllowCredentials(true);
+			return config;
+		};
 	}
+
 
 	// 패스워드 인코더로 사용할 빈 등록하기
 	@Bean
