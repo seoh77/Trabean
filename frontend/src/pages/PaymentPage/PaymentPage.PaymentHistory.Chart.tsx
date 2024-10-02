@@ -35,7 +35,7 @@ const Chart: React.FC<ChartProps> = ({
     FOOD: "음식",
     TRANSPORTATION: "교통",
     SHOPPING: "쇼핑",
-    ACTIVITY: "활동",
+    ACTIVITY: "여가",
     ACCOMMODATION: "숙박",
     OTHER: "기타",
   };
@@ -95,10 +95,7 @@ const Chart: React.FC<ChartProps> = ({
   return (
     <div>
       {chartInfo && chartInfo.length > 0 && (
-        <div
-          id="chart"
-          className="bg-white rounded-[15px] py-[0.875rem] px-[1rem] flex flex-col items-center"
-        >
+        <div id="chart" className="">
           <h2 className="text-center font-semibold text-lg my-2">
             카테고리 별 지출
           </h2>

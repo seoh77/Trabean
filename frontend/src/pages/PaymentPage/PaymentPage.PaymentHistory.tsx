@@ -47,7 +47,7 @@ const PaymentHistory: React.FC = () => {
   };
 
   return (
-    <div className="w-full bg-[#F4F4F5] h-full pt-[4.375rem] flex flex-col items-center">
+    <div className="w-full bg-[#F4F4F5] h-vdh pt-[4.375rem] flex flex-col items-center">
       <div className="w-[300px]">
         <h1 className="text-base text-gray-900 font-semibold flex justify-between">
           지출 내역
@@ -75,20 +75,22 @@ const PaymentHistory: React.FC = () => {
             <span className="w-[60%]">{totalAmount} ₩</span>
           </p>
         </div>
-        <Chart
-          handleTotalAmount={handleTotalAmount}
-          token={token}
-          startDate={startDate}
-          endDate={endDate}
-          formatDate={formatDate}
-          signalFetchChart={signalFetchChart}
-        />
-        <List
-          startDate={startDate}
-          endDate={endDate}
-          token={token}
-          formatDate={formatDate}
-        />
+        <div className="bg-white rounded-[15px] py-[0.875rem] px-[1rem] flex flex-col items-center h-full">
+          <Chart
+            handleTotalAmount={handleTotalAmount}
+            token={token}
+            startDate={startDate}
+            endDate={endDate}
+            formatDate={formatDate}
+            signalFetchChart={signalFetchChart}
+          />
+          <List
+            startDate={startDate}
+            endDate={endDate}
+            token={token}
+            formatDate={formatDate}
+          />
+        </div>
       </div>
     </div>
   );
