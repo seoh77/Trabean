@@ -12,7 +12,7 @@ function App() {
         <Route path="/payment/qr" element={<PaymentPage />} />
         <Route path="/payment/list" element={<PaymentList />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/main" element={<MainPage />} />
+        <Route path="/" element={<MainPage />} />
       </Routes>
     </div>
   );
