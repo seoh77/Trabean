@@ -57,6 +57,7 @@ public class UserApiController {
 	}
 
 	// 로그인 요청 처리
+	@CrossOrigin(origins = "http://localhost:3000")
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
 		try {

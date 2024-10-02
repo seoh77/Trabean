@@ -29,6 +29,15 @@ spring:
             enable: true
           ssl:
             trust: smtp.gmail.com
+  mvc:
+    cors:
+      mappings:
+        # 모든 엔드포인트에 대해 CORS 설정
+        "/**":
+          allowed-origins: "http://localhost:3000"
+          allowed-methods: "GET,POST,PUT,DELETE"
+          allowed-headers: "*"
+          allow-credentials: true
 
 # JWT 설정
 jwt:
@@ -36,6 +45,7 @@ jwt:
   header: Authorization
   secretKey: NiOeyFbN1Gqo10bPgUyTFsRMkJpGLXSvGP04eFqj5B30r5TcrtlSXfQ7TndvYjNvfkEKLqILn0j1SmKODO1Yw3JpBBgI3nVPEahqxeY8qbPSFGyzyEVxnl4AQcrnVneI
   access-token-validity-in-seconds: 360000
+
 
 # API 설정
 # 이메일 인증 코드 만료 시간 설정 (분 단위)
