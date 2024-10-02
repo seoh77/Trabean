@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = "*", allowCredentials = "true")
 @RequiredArgsConstructor
 @RequestMapping("/api/accounts/internal")
 public class InternalController {
