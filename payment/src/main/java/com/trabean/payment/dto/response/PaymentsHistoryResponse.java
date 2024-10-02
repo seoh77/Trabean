@@ -16,7 +16,7 @@ public class PaymentsHistoryResponse {
     @AllArgsConstructor
     public static class Data {
         private Long payId;
-        private Long merchantId;
+        private String currency;
         private String merchantName;
         private String paymentDate;
         private Long krwAmount;

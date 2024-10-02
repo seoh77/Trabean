@@ -71,7 +71,7 @@ public class PaymentsHistoryService {
 
         return new PaymentsHistoryResponse.Data(
                 payment.getPayId(),
-                payment.getMerchant().getMerchantId(),
+                payment.getMerchant().getExchangeCurrency(),
                 payment.getMerchant().getName(),
                 payment.getPaymentDate().toString(),
                 payment.getKrwAmount(),
