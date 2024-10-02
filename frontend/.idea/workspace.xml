@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b3d9fcae-7d7f-4e5c-9ea6-0a4d03bce3db" name="Changes" comment="docs : nginx 설정에 CORS 설정 추가">
+    <list default="true" id="b3d9fcae-7d7f-4e5c-9ea6-0a4d03bce3db" name="Changes" comment="test : 프로젝트 빌드시 정상적인 환경변수 설정되는지 테스트">
       <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -83,7 +83,7 @@
       <workItem from="1727137160395" duration="26185000" />
       <workItem from="1727421272305" duration="6371000" />
       <workItem from="1727669247849" duration="2371000" />
-      <workItem from="1727828045300" duration="6751000" />
+      <workItem from="1727828045300" duration="6894000" />
     </task>
     <task id="LOCAL-00001" summary="docs : nginx 설정을 위한 추가 파일">
       <option name="closed" value="true" />
@@ -205,7 +205,15 @@
       <option name="project" value="LOCAL" />
       <updated>1727843743553</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="test : 프로젝트 빌드시 정상적인 환경변수 설정되는지 테스트">
+      <option name="closed" value="true" />
+      <created>1727843976084</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1727843976084</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -234,7 +242,8 @@
     <MESSAGE value="fix : react프로젝트 배포방식 수정으로인한 코드 수정" />
     <MESSAGE value="docs : Dockerfile에 프론트 ENDPOINT 환경변수 설정 추가" />
     <MESSAGE value="docs : nginx 설정에 CORS 설정 추가" />
-    <option name="LAST_COMMIT_MESSAGE" value="docs : nginx 설정에 CORS 설정 추가" />
+    <MESSAGE value="test : 프로젝트 빌드시 정상적인 환경변수 설정되는지 테스트" />
+    <option name="LAST_COMMIT_MESSAGE" value="test : 프로젝트 빌드시 정상적인 환경변수 설정되는지 테스트" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

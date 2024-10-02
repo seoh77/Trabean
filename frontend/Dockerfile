@@ -13,8 +13,8 @@ COPY . .
 ARG REACT_APP_END_POINT
 ENV REACT_APP_END_POINT=$REACT_APP_END_POINT
 # 애플리케이션 빌드
-#RUN yarn build
-RUN echo "REACT_APP_END_POINT: $REACT_APP_END_POINT" && yarn build
+RUN yarn build
+#RUN echo "REACT_APP_END_POINT: $REACT_APP_END_POINT" && yarn build
 
 # 프로덕션 단계 설정
 FROM nginx:stable-alpine AS production-stage
