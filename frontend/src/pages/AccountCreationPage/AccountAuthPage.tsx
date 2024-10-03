@@ -1,25 +1,34 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import NavBar from "./NavBar";
 import NextStepButton from "./NextStepButton";
 import Modal from "./Modal";
 
+interface SubMessage {
+  key: string | number;
+  text: string;
+  className?: string;
+}
+
 const AccountVerificationPage: React.FC = () => {
   const query = new URLSearchParams(useLocation().search);
-  const bankName = query.get("bank") || "은행"; // 쿼리 파라미터에서 은행 이름 가져오기
+  const bankName = query.get("bank") || "은행";
   const [accountNumber, setAccountNumber] = useState<string>("");
   const [verificationCode, setVerificationCode] = useState<string>("");
   const [step, setStep] = useState<number>(1); // 현재 단계 관리
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalMessage, setModalMessage] = useState<string>("");
-  const [subMessage, setSubMessage] = useState<string>("");
+  const [subMessage, setSubMessage] = useState<SubMessage[]>([]); // 배열 형태로 수정
+  const [attemptCount, setAttemptCount] = useState(0); // 현재 시도 횟수 상태
+  const maxAttempts = 5; // 최대 시도 횟수
+  const navigate = useNavigate(); // 화면 이동을 위한 네비게이션 hook
 
   useEffect(() => {
     const verifyAccount = async () => {
       if (step === 2) {
         try {
           // const response = await fetch(
-          //   "http://j11a604.p.ssafy.io/api/accounts/verification/account",
+          //   "https://j11a604.p.ssafy.io/api/accounts/verification/account",
           //   {
           //     method: "POST",
           //     headers: {
@@ -44,34 +53,7 @@ const AccountVerificationPage: React.FC = () => {
           //   setIsModalOpen(true);
           // }
 
-          const response = await fetch(
-            "https://j11a604.p.ssafy.io/api/user/login",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                userId: "12345", // 유저 식별자
-                userKey: "sampleUserKey", // 유저 Key
-              },
-              body: JSON.stringify({
-                email: "abcd@naver.com",
-                password: "aaaa",
-              }),
-            },
-          );
-
-          if (response.ok) {
-            setStep(3);
-            setTimeout(() => {
-              setStep(4);
-            }, 6000); // 1초 후 인증번호 입력 화면으로 이동
-          } else {
-            setModalMessage("계좌 인증에 실패했습니다.");
-            setSubMessage("다시 시도해주세요.");
-            setIsModalOpen(true);
-          }
-
-          // const response = { ok: true };
+          const response = { ok: true };
 
           setTimeout(() => {
             if (response.ok) {
@@ -81,13 +63,25 @@ const AccountVerificationPage: React.FC = () => {
               }, 1000); // 1초 후 인증번호 입력 화면으로 이동
             } else {
               setModalMessage("계좌 인증에 실패했습니다.");
-              setSubMessage("다시 시도해주세요.");
+              setSubMessage([
+                {
+                  key: 1,
+                  text: "잠시 후 다시 시도해주세요.",
+                  className: "text-xs text-gray-500",
+                },
+              ]);
               setIsModalOpen(true);
             }
           }, 2000);
         } catch (error) {
           setModalMessage("서버에 문제가 발생했습니다.");
-          setSubMessage("잠시 후 다시 시도해주세요.");
+          setSubMessage([
+            {
+              key: 1,
+              text: "잠시 후 다시 시도해주세요.",
+              className: "text-xs text-gray-500",
+            },
+          ]);
           setIsModalOpen(true);
         }
       }
@@ -95,6 +89,25 @@ const AccountVerificationPage: React.FC = () => {
 
     verifyAccount();
   }, [step, accountNumber]);
+
+  useEffect(() => {
+    if (attemptCount >= maxAttempts) {
+      setModalMessage("인증 요청 제한시간을 초과하였습니다.");
+      setSubMessage([
+        {
+          key: 1,
+          text: "잠시 후 다시 시도해주세요.",
+          className: "text-xs text-red-500",
+        },
+      ]);
+      setIsModalOpen(true);
+
+      // 3초 후에 다른 페이지로 이동
+      setTimeout(() => {
+        navigate("/"); // 이동할 페이지 경로 설정
+      }, 3000);
+    }
+  }, [attemptCount, maxAttempts, navigate]);
 
   // 계좌번호 입력 핸들러
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,13 +125,48 @@ const AccountVerificationPage: React.FC = () => {
     return regex.test(number);
   };
 
+  const isVerificationCodeValid = async () => {
+    // API 요청에 사용할 header 및 body 데이터를 설정합니다.
+    const headers = {
+      userId: "12345", // 유저 식별자 (실제 값을 대체)
+      userKey: "sampleUserKey", // 유저 Key (실제 값을 대체)
+    };
+
+    const body = JSON.stringify({
+      accountNo: accountNumber, // 사용자가 입력한 계좌번호
+      otp: verificationCode, // 사용자가 입력한 4자리 인증번호
+    });
+
+    try {
+      const response = await fetch(
+        "https://j11a604.p.ssafy.io/api/accounts/verification/otp", // API 엔드포인트 URL
+        {
+          method: "POST",
+          headers,
+          body,
+        },
+      );
+
+      return response.ok; // 응답이 성공적인 경우 true 반환
+    } catch (error) {
+      console.error("인증번호 검증 요청 실패:", error);
+      return false; // 요청 실패 시 false 반환
+    }
+  };
+
   // 단계별 다음 버튼 핸들러
   const handleNextStep = async () => {
     switch (step) {
       case 1:
         if (!validateAccountNumber(accountNumber)) {
           setModalMessage("유효하지 않은 계좌번호입니다.");
-          setSubMessage("계좌번호를 확인해주세요");
+          setSubMessage([
+            {
+              key: 1,
+              text: "계좌번호를 다시 확인해주세요.",
+              className: "text-xs text-gray-500",
+            },
+          ]);
           setIsModalOpen(true);
         } else {
           setStep(2);
@@ -132,11 +180,29 @@ const AccountVerificationPage: React.FC = () => {
         break;
       case 4:
         if (verificationCode.length === 4) {
-          alert("인증이 완료되었습니다!");
-        } else {
-          setModalMessage("유효하지 않은 인증번호입니다.");
-          setSubMessage("4자리 인증번호를 확인해주세요");
-          setIsModalOpen(true);
+          const isValid = await isVerificationCodeValid();
+          if (isValid) {
+            alert("인증이 완료되었습니다!");
+          } else {
+            // 시도 횟수 증가 및 상태 업데이트
+            setAttemptCount((prev) => prev + 1);
+            if (attemptCount + 1 < maxAttempts) {
+              setModalMessage("올바르지 않은 인증번호입니다.");
+              setSubMessage([
+                {
+                  key: 1,
+                  text: "입금 내역을 다시 확인해주세요.",
+                  className: "text-xs text-gray-500",
+                },
+                {
+                  key: 2,
+                  text: `남은 시도 횟수 (${attemptCount + 1}/${maxAttempts})`,
+                  className: "text-xs text-red-500",
+                },
+              ]);
+            }
+            setIsModalOpen(true);
+          }
         }
         break;
       default:
@@ -192,7 +258,7 @@ const AccountVerificationPage: React.FC = () => {
               <span className="font-bold">{bankName}은행</span> {accountNumber}
             </p>
             <div className="flex justify-center">
-              <div className="check-icon my-10 bg-primary"> </div>
+              <div className="check-icon my-14 bg-primary"> </div>
             </div>
           </div>
         );

@@ -8,7 +8,7 @@ import MainPage from "./pages/MainPage/MainPage";
 import TransferList from "./pages/TransferPage/TransferPage.TransferList";
 import TransferLists from "./pages/TransferPage/TransferPage.TransferLists";
 import CreationTravelPage from "./pages/AccountCreationPage/BankSelectionPage";
-import AccountAuthPage from "./pages/AccountCreationPage/AccountAuthPage"; // 새 페이지 import
+import AccountAuthPage from "./pages/AccountCreationPage/AccountAuthPage";
 
 function App() {
   return (
