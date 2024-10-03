@@ -82,6 +82,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         // 응답 상태 설정 (OK 또는 로그인 성공)
         response.setStatus(HttpServletResponse.SC_OK);
+        response.getWriter().write(new ObjectMapper().writeValueAsString(Map.of("success","login")));
     }
 
 
