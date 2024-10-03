@@ -28,7 +28,14 @@ const Chart: React.FC<ChartProps> = ({
 }) => {
   const [chartInfo, setCartInfo] = useState<Category[] | null>(null);
 
-  const COLORS = ["#15803D", "#22C55E", "#86EFAC", "#BBF7D0", "#F0FDF4"];
+  const COLORS = [
+    "#15803D",
+    "#60A57A",
+    "#22C55E",
+    "#93BEA3",
+    "#86EFAC",
+    "#96AB9D",
+  ];
 
   // 카테고리 이름 매핑 (영어 -> 한국어)
   const categoryNameMap: { [key: string]: string } = {
@@ -95,7 +102,7 @@ const Chart: React.FC<ChartProps> = ({
   return (
     <div>
       {chartInfo && chartInfo.length > 0 && (
-        <div id="chart" className="">
+        <div id="chart" className="flex flex-col">
           <h2 className="text-center font-semibold text-lg my-2">
             카테고리 별 지출
           </h2>
@@ -123,7 +130,7 @@ const Chart: React.FC<ChartProps> = ({
               ))}
             </Pie>
             <Legend
-              verticalAlign="bottom"
+              verticalAlign="top"
               align="center"
               height={36}
               formatter={(value) => categoryNameMap[value] || value}
@@ -131,7 +138,7 @@ const Chart: React.FC<ChartProps> = ({
                 padding: "10px",
                 width: "100%",
                 fontSize: "14px",
-                bottom: "0px",
+                top: "-8px",
               }}
             />
           </PieChart>

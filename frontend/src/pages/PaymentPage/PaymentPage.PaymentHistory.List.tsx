@@ -5,6 +5,12 @@ import {
   extractDate,
   extractTime,
 } from "../../utils/formatNumber";
+import accommodation from "../../assets/paymentListIcon/ACCOMMODATION.png";
+import activity from "../../assets/paymentListIcon/ACTIVITY.png";
+import food from "../../assets/paymentListIcon/FOOD.png";
+import other from "../../assets/paymentListIcon/OTHER.png";
+import shopping from "../../assets/paymentListIcon/SHOPPING.png";
+import transportation from "../../assets/paymentListIcon/TRANSPORTATION.png";
 
 interface ListProps {
   token: string | null;
@@ -44,6 +50,16 @@ const List: React.FC<ListProps> = ({
     GBP: " £ (GBP)",
     JPY: " ¥ (JPY)",
     USD: " $ (USD)",
+  };
+
+  // 카테고리 아이콘 매핑
+  const categoryIconMap: { [key: string]: string } = {
+    ACCOMMODATION: accommodation,
+    ACTIVITY: activity,
+    FOOD: food,
+    OTHER: other,
+    SHOPPING: shopping,
+    TRANSPORTATION: transportation,
   };
 
   const fetchPaymentList = useCallback(
@@ -103,31 +119,93 @@ const List: React.FC<ListProps> = ({
     return () => window.removeEventListener("scroll", handleScroll);
   }, [fetchPaymentList]);
 
+  // 그룹화 (YYYY.MM.DD)
+  const groupPaymentsByDate = (paymentList: PaymentItem[]) =>
+    paymentList.reduce((groups: { [key: string]: PaymentItem[] }, payment) => {
+      const date = extractDate(payment.paymentDate);
+      if (!groups[date]) {
+        // eslint-disable-next-line no-param-reassign
+        groups[date] = [];
+      }
+      groups[date].push(payment);
+      return groups;
+    }, {});
+
+  // 그룹화된 결제 내역
+  const groupedPayments = groupPaymentsByDate(payments);
+
+  // 가게명 7글자 초과 X
+  const maxLength = 7;
+
   return (
     <div className="w-full bg-white">
-      {payments &&
-        payments.length > 0 &&
-        payments.map((payment) => (
-          <div key={payment.payId} className="w-full flex flex-col px-[20px]">
-            <p>
-              {payment.krwAmount && (
-                <span>{formatNumberWithCommas(payment.krwAmount)} ₩</span>
-              )}
-              {payment.foreignAmount && (
-                <span>
-                  {formatNumberWithCommas(payment.foreignAmount)}
-                  {currencyNameMap[payment.currency]}
-                </span>
-              )}
-            </p>
-            <p>날짜: {extractDate(payment.paymentDate)}</p>
-            <p>시간: {extractTime(payment.paymentDate)}</p>
-            <p>결제한 사람: {payment.userName}</p>
-          </div>
-        ))}
+      {payments && Object.keys(groupedPayments).length > 0
+        ? Object.entries(groupedPayments).map(([date, paymentsOnDate]) => (
+            <div key={date} className="w-full px-[20px] mb-4">
+              {/* 날짜 */}
+              <div className="border-b border-gray-300 pb-2 my-4 mt-6">
+                <h5 className="text-base font-semibold">{date}</h5>
+              </div>
+
+              {/* 결제 내역 */}
+              {paymentsOnDate.map((payment) => (
+                <div
+                  key={payment.payId}
+                  className="w-full flex mb-4 items-center"
+                >
+                  <img
+                    src={categoryIconMap[payment.category] || other}
+                    alt={payment.category}
+                    className="w-8 h-8 mr-2"
+                  />
+                  <div className="w-full">
+                    <p className="text-xs text-gray-500 w-full flex justify-between">
+                      <span>{extractTime(payment.paymentDate)}</span>
+                      {payment.foreignAmount && (
+                        <span className="text-green-700 font-semibold">
+                          {formatNumberWithCommas(payment.foreignAmount)}
+                          {currencyNameMap[payment.currency]}
+                        </span>
+                      )}
+                    </p>
+                    <p className="font-semibold flex justify-between w-full items-center">
+                      <span className="">
+                        {payment.merchantName.length > maxLength
+                          ? `${payment.merchantName.substring(0, maxLength)}...`
+                          : payment.merchantName}
+                      </span>
+                      <span className=" text-sm text-gray-900">
+                        {formatNumberWithCommas(payment.krwAmount || 0)} ₩
+                      </span>
+                    </p>
+                  </div>
+                  {/* <p>
+                    {payment.krwAmount && (
+                      <span>{formatNumberWithCommas(payment.krwAmount)} ₩</span>
+                    )}
+                    {payment.foreignAmount && (
+                      <span>
+                        {formatNumberWithCommas(payment.foreignAmount)}
+                        {currencyNameMap[payment.currency]}
+                      </span>
+                    )}
+                  </p>
+                  <img src="{}" alt="" />
+                  <p>날짜: {extractDate(payment.paymentDate)}</p>
+                  
+                  <p>결제한 사람: {payment.userName}</p> */}
+                </div>
+              ))}
+            </div>
+          ))
+        : null}
+
+      {/* Empty state */}
       {payments && payments.length === 0 && !isLoading ? (
         <p className="text-center my-5 text-gray-500">결제 내역이 없습니다.</p>
       ) : null}
+
+      {/* Loading state */}
       {isLoading && <div className="text-center">Loading...</div>}
     </div>
   );

@@ -144,3 +144,7 @@ body {
 .recharts-pie:focus {
   outline: none;
 }
+
+.recharts-legend-wrapper {
+  position: static;
+}
