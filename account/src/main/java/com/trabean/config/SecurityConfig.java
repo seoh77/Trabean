@@ -15,9 +15,11 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable()  // CSRF 비활성화
+        http
+                .cors().and()
+                .csrf().disable()
                 .authorizeRequests()
-                .anyRequest().permitAll();  // 모든 요청 허용
+                .anyRequest().permitAll();
 
         return http.build();
     }
@@ -26,8 +28,9 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // 프론트엔드 도메인 허용 (axios 요청)
-        configuration.addAllowedOrigin("http://localhost:3000");
+        // 프론트엔드 도메인 허용
+        configuration.addAllowedOrigin("http://localhost:3000");  // 로컬 프론트엔드
+        configuration.addAllowedOrigin("http://j11a604.p.ssafy.io");  // 배포된 서버
 
         // 모든 HTTP 메서드 허용
         configuration.addAllowedMethod("*");
@@ -35,11 +38,8 @@ public class SecurityConfig {
         // 모든 헤더 허용
         configuration.addAllowedHeader("*");
 
-        // 자격 증명 허용
+        // 자격 증명 허용 (예: 쿠키, Authorization 헤더 등)
         configuration.setAllowCredentials(true);
-
-        // 서버 간 통신 허용
-        configuration.addAllowedOriginPattern("*");
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
