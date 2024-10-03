@@ -71,8 +71,8 @@ public class SecurityConfig {
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(Arrays.asList("/api/user/**", "http://**", "https://**")); // 허용할 origin 설정
-		configuration.addAllowedOrigin("*");
+		configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000","http://localhost:8080/api/user/login","https://j11a604.p.ssafy.io/login","http://j11a604.p.ssafy.io:8888/login")); // 허용할 origin 설정
+		configuration.addAllowedOrigin("http://localhost:3000");
 		configuration.addAllowedMethod("*"); // 모든 HTTP 메소드 허용
 		configuration.addAllowedHeader("*"); // 모든 헤더 허용
 		configuration.setAllowCredentials(true); // 쿠키 허용
