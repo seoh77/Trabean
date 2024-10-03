@@ -15,12 +15,11 @@ const AccountVerificationPage: React.FC = () => {
   const [subMessage, setSubMessage] = useState<string>("");
 
   useEffect(() => {
-    console.log("현재 step: ", step); // 상태가 변경될 때마다 콘솔에 출력
     const verifyAccount = async () => {
       if (step === 2) {
         try {
           // const response = await fetch(
-          //   "http://j11a604.p.ssafy.io:8081/api/accounts/verification/account",
+          //   "http://j11a604.p.ssafy.io/api/accounts/verification/account",
           //   {
           //     method: "POST",
           //     headers: {
@@ -44,7 +43,35 @@ const AccountVerificationPage: React.FC = () => {
           //   setSubMessage("다시 시도해주세요.");
           //   setIsModalOpen(true);
           // }
-          const response = { ok: true };
+
+          const response = await fetch(
+            "https://j11a604.p.ssafy.io/api/user/login",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                userId: "12345", // 유저 식별자
+                userKey: "sampleUserKey", // 유저 Key
+              },
+              body: JSON.stringify({
+                email: "abcd@naver.com",
+                password: "aaaa",
+              }),
+            },
+          );
+
+          if (response.ok) {
+            setStep(3);
+            setTimeout(() => {
+              setStep(4);
+            }, 6000); // 1초 후 인증번호 입력 화면으로 이동
+          } else {
+            setModalMessage("계좌 인증에 실패했습니다.");
+            setSubMessage("다시 시도해주세요.");
+            setIsModalOpen(true);
+          }
+
+          // const response = { ok: true };
 
           setTimeout(() => {
             if (response.ok) {
@@ -99,7 +126,6 @@ const AccountVerificationPage: React.FC = () => {
         break;
       case 2:
         setStep(3);
-        break;
         break;
       case 3:
         setStep(4); // 인증 완료 후 인증번호 입력 화면으로 이동
