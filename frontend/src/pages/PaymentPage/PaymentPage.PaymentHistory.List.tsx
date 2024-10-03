@@ -179,33 +179,18 @@ const List: React.FC<ListProps> = ({
                       </span>
                     </p>
                   </div>
-                  {/* <p>
-                    {payment.krwAmount && (
-                      <span>{formatNumberWithCommas(payment.krwAmount)} ₩</span>
-                    )}
-                    {payment.foreignAmount && (
-                      <span>
-                        {formatNumberWithCommas(payment.foreignAmount)}
-                        {currencyNameMap[payment.currency]}
-                      </span>
-                    )}
-                  </p>
-                  <img src="{}" alt="" />
-                  <p>날짜: {extractDate(payment.paymentDate)}</p>
-                  
-                  <p>결제한 사람: {payment.userName}</p> */}
                 </div>
               ))}
             </div>
           ))
         : null}
 
-      {/* Empty state */}
+      {/* 결제내역 없을 때 */}
       {payments && payments.length === 0 && !isLoading ? (
         <p className="text-center my-5 text-gray-500">결제 내역이 없습니다.</p>
       ) : null}
 
-      {/* Loading state */}
+      {/* 로딩중일 때 */}
       {isLoading && <div className="text-center">Loading...</div>}
     </div>
   );
