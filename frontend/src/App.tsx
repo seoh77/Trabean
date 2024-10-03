@@ -11,6 +11,7 @@ import BankSelectionPage from "./pages/AccountCreationPage/BankSelectionPage";
 // import CreationTravelPage from "./pages/AccountCreationPage/BankSelectionPage";
 import AccountAuthPage from "./pages/AccountCreationPage/AccountAuthPage";
 import IdentityAuthPage from "./pages/AccountCreationPage/IdentityAuthPage";
+import TravleSetupPage from "./pages/AccountCreationPage/TravelAccountSetup";
 
 function App() {
   return (
@@ -26,18 +27,13 @@ function App() {
         <Route path="/payment/list" element={<PaymentHistory />} />
         <Route path="/transfer/list" element={<TransferLists />} />
         <Route path="/transfer/list/:account" element={<TransferList />} />
+        <Route path="/creation/travel/bank" element={<BankSelectionPage />} />
+        <Route path="/creation/travel/account" element={<AccountAuthPage />} />
         <Route
-          path="/creation/travel/bank-selection"
-          element={<BankSelectionPage />}
-        />
-        <Route
-          path="/creation/travel/account-auth"
-          element={<AccountAuthPage />}
-        />
-        <Route
-          path="/creation/travel/identity-auth"
+          path="/creation/travel/identity"
           element={<IdentityAuthPage />}
         />
+        <Route path="/creation/travel/setup" element={<TravleSetupPage />} />
       </Routes>
     </div>
   );

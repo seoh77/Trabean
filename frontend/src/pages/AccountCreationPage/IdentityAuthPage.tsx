@@ -15,6 +15,15 @@ const IdentityAuthPage: React.FC = () => {
 
   const navigate = useNavigate();
 
+  // 인증 상태 확인
+  useEffect(() => {
+    const storedIsVerified = sessionStorage.getItem("isVerified");
+    if (!storedIsVerified || storedIsVerified !== "true") {
+      // 인증되지 않았으면 접근을 차단하고 리다이렉트
+      navigate("/creation/travel");
+    }
+  }, [navigate]);
+
   // 생년월일 입력 핸들러
   const handleBirthdateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
@@ -29,15 +38,6 @@ const IdentityAuthPage: React.FC = () => {
       }
     }
   };
-
-  // 인증 상태 확인
-  useEffect(() => {
-    const storedIsVerified = sessionStorage.getItem("isVerified"); // sessionStorage로 변경
-    if (!storedIsVerified || storedIsVerified !== "true") {
-      // 인증되지 않았으면 접근을 차단하고 리다이렉트
-      navigate("/creation/travel");
-    }
-  }, [navigate]);
 
   // 입력 필드가 모두 채워졌는지 확인
   const isFormComplete = () =>
@@ -73,6 +73,11 @@ const IdentityAuthPage: React.FC = () => {
     const target = e.target as HTMLInputElement; // HTMLInputElement로 단언
     const formattedPhoneNumber = oninputPhone(target.value); // 입력값 포맷팅
     setPhoneNumber(formattedPhoneNumber); // 상태 업데이트
+  };
+
+  const handleIdentityAuth = () => {
+    sessionStorage.setItem("isIdentityAuth", "true");
+    navigate(`/creation/travel/setup`);
   };
 
   return (
@@ -222,7 +227,7 @@ const IdentityAuthPage: React.FC = () => {
         <div className="flex justify-center">
           <NextStepButton
             isEnabled={isNextButtonEnabled()}
-            onClick={() => navigate("/creation/travel/account-verification")} // 다음 단계 페이지로 이동
+            onClick={handleIdentityAuth}
             text="다음 단계"
           />
         </div>

@@ -18,7 +18,7 @@ const NavBar: React.FC<NavBarProps> = ({ text }) => {
         >
           ←
         </button>
-        <div className="flex-grow text-center">{text}</div>
+        <div className="flex-grow text-center text-sm">{text}</div>
       </div>
     </div>
   );

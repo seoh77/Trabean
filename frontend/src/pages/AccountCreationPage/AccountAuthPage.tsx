@@ -18,7 +18,7 @@ const AccountVerificationPage: React.FC = () => {
   const [step, setStep] = useState<number>(1); // 현재 단계 관리
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalMessage, setModalMessage] = useState<string>("");
-  const [subMessage, setSubMessage] = useState<SubMessage[]>([]); // 배열 형태로 수정
+  const [subMessage, setSubMessage] = useState<SubMessage[]>([]);
   const [attemptCount, setAttemptCount] = useState(0); // 현재 시도 횟수 상태
   const maxAttempts = 5; // 최대 시도 횟수
   const navigate = useNavigate(); // 화면 이동을 위한 네비게이션 hook
@@ -110,7 +110,7 @@ const AccountVerificationPage: React.FC = () => {
   }, [attemptCount, maxAttempts, navigate]);
 
   useEffect(() => {
-    const storedIsVerified = sessionStorage.getItem("isSelectedBank"); // sessionStorage로 변경
+    const storedIsVerified = sessionStorage.getItem("isSelectedBank");
     if (!storedIsVerified || storedIsVerified !== "true") {
       // 은행이 선택되지 않았으면 접근을 차단하고 리다이렉트
       navigate("/creation/travel");
@@ -192,7 +192,7 @@ const AccountVerificationPage: React.FC = () => {
           const isValid = await isVerificationCodeValid();
           if (isValid) {
             sessionStorage.setItem("isVerified", "true");
-            navigate("/creation/travel/identity-auth");
+            navigate("/creation/travel/identity");
           } else {
             // 시도 횟수 증가 및 상태 업데이트
             setAttemptCount((prev) => prev + 1);
