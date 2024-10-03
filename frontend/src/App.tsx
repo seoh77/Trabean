@@ -7,6 +7,8 @@ import LoginPage from "./pages/LoginPage/LoginPage";
 import MainPage from "./pages/MainPage/MainPage";
 import TransferList from "./pages/TransferPage/TransferPage.TransferList";
 import TransferLists from "./pages/TransferPage/TransferPage.TransferLists";
+import CreationTravelPage from "./pages/AccountCreationPage/BankSelectionPage";
+import AccountAuthPage from "./pages/AccountCreationPage/AccountAuthPage"; // 새 페이지 import
 
 function App() {
   return (
@@ -22,6 +24,11 @@ function App() {
         <Route path="/payment/list" element={<PaymentHistory />} />
         <Route path="/transfer/list" element={<TransferLists />} />
         <Route path="/transfer/list/:account" element={<TransferList />} />
+        <Route path="/creation/travel" element={<CreationTravelPage />} />
+        <Route
+          path="/creation/travel/account-Auth"
+          element={<AccountAuthPage />}
+        />
       </Routes>
     </div>
   );
