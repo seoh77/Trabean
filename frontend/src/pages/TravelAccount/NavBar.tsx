@@ -1,19 +1,46 @@
 import React from "react";
 
+import { useNavigate } from "react-router-dom";
+
+import logo from "../../assets/logo.png";
+
 interface NavBarProps {
-  text: string;
+  text?: string;
 }
 
 const NavBar: React.FC<NavBarProps> = ({ text }) => {
-  console.log("네비게이션 바");
+  const nav = useNavigate();
+
+  // 로고 클릭 시 메인 페이지로 이동
+  const handleLogoClick = () => {
+    window.location.href = "http://localhost:3000/";
+  };
+
   return (
-    <div>
-      <div className="flex pb-8 bg-red-500">
-        <div>←</div>
-        <div className="flex-grow text-center">{text}</div>
+    <div className="flex py-4">
+      {/* 뒤로가기 */}
+      <div>
+        <button type="button" onClick={() => nav(-1)}>
+          ←
+        </button>
+      </div>
+
+      {/* 제목 or 로고 */}
+      <div className="flex-grow text-center">
+        {text ? (
+          <div>{text}</div>
+        ) : (
+          <button type="button" onClick={handleLogoClick}>
+            <img src={logo} alt="logo" className="h-5 mb-3" />
+          </button>
+        )}
       </div>
     </div>
   );
+};
+
+NavBar.defaultProps = {
+  text: "",
 };
 
 export default NavBar;
