@@ -55,26 +55,8 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         User loggedInUser = (User) authResult.getPrincipal();
         String userKey = loggedInUser.getUser_key();
 
-        try {
-            // Refresh Token을 DB에 저장
-            refreshTokenService.saveRefreshToken(loggedInUser.getUser_id(),loggedInUser.getEmail(), refreshToken);
-        } catch (Exception e) {
-
-            // 응답 데이터를 JSON 형식으로 생성
-            Map<String, Object> responseBody = new HashMap<>();
-            responseBody.put("access_token", accessToken);
-            responseBody.put("refresh_token", refreshToken);
-            responseBody.put("refresh_token_length", refreshToken.length());
-
-            // 응답 헤더 설정 (JSON 형식)
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-
-            // 응답 바디에 JSON 데이터를 기록 (저장 전에 토큰 길이와 내용을 확인)
-            new ObjectMapper().writeValue(response.getWriter(), responseBody);
-
-        }
-
+        // Refresh Token을 DB에 저장
+        refreshTokenService.saveRefreshToken(loggedInUser.getUser_id(),loggedInUser.getEmail(), refreshToken);
 
         // accessToken을 HTTPOnly 쿠키에 저장
         Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
@@ -94,9 +76,9 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         // 응답 바디에는 사용자 정보만 포함 (토큰은 제외)
         Map<String, String> responseBody = new HashMap<>();
-        responseBody.put("userKey", userKey);
-        responseBody.put("refreshToken", refreshToken);
-        responseBody.put("accessToken", accessToken);
+//        responseBody.put("userKey", userKey);
+//        responseBody.put("refreshToken", refreshToken);
+//        responseBody.put("accessToken", accessToken);
 
         // 응답 상태 설정 (OK 또는 로그인 성공)
         response.setStatus(HttpServletResponse.SC_OK);
