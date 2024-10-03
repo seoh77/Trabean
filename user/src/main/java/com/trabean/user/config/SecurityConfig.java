@@ -21,6 +21,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 @Configuration
@@ -44,6 +45,7 @@ public class SecurityConfig {
 				.csrf(AbstractHttpConfigurer::disable) // CSRF 보호 비활성화 (API 사용 시 필요에 따라 활성화)
 				.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers(
+								"*",
 								"/api/user/signup", // 회원가입 URL 허용
 								"/api/user/login", // 로그인 URL 허용
 								"/api/user/**", // 로그인 URL 허용
@@ -69,7 +71,7 @@ public class SecurityConfig {
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(Collections.singletonList("")); // 허용할 origin 설정
+		configuration.setAllowedOrigins(Arrays.asList("/api/user/**", "http://**", "https://**")); // 허용할 origin 설정
 		configuration.addAllowedOrigin("*");
 		configuration.addAllowedMethod("*"); // 모든 HTTP 메소드 허용
 		configuration.addAllowedHeader("*"); // 모든 헤더 허용
