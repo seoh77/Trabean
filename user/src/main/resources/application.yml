@@ -84,3 +84,4 @@ logging:
     org.springframework: DEBUG
     org.springframework.mail: DEBUG
     org.springframework.security: DEBUG
+    root: DEUBUG
