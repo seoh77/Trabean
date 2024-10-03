@@ -43,6 +43,7 @@ const BankSelection: React.FC = () => {
   const handleNextStep = () => {
     if (selectedBank) {
       // 선택한 은행 정보와 함께 새 페이지로 이동
+      sessionStorage.setItem("isSelectedBank", "true");
       navigate(`/creation/travel/account-auth?bank=${selectedBank}`);
     }
   };

@@ -7,8 +7,10 @@ import LoginPage from "./pages/LoginPage/LoginPage";
 import MainPage from "./pages/MainPage/MainPage";
 import TransferList from "./pages/TransferPage/TransferPage.TransferList";
 import TransferLists from "./pages/TransferPage/TransferPage.TransferLists";
-import CreationTravelPage from "./pages/AccountCreationPage/BankSelectionPage";
+import BankSelectionPage from "./pages/AccountCreationPage/BankSelectionPage";
+// import CreationTravelPage from "./pages/AccountCreationPage/BankSelectionPage";
 import AccountAuthPage from "./pages/AccountCreationPage/AccountAuthPage";
+import IdentityAuthPage from "./pages/AccountCreationPage/IdentityAuthPage";
 
 function App() {
   return (
@@ -24,10 +26,17 @@ function App() {
         <Route path="/payment/list" element={<PaymentHistory />} />
         <Route path="/transfer/list" element={<TransferLists />} />
         <Route path="/transfer/list/:account" element={<TransferList />} />
-        <Route path="/creation/travel" element={<CreationTravelPage />} />
         <Route
-          path="/creation/travel/account-Auth"
+          path="/creation/travel/bank-selection"
+          element={<BankSelectionPage />}
+        />
+        <Route
+          path="/creation/travel/account-auth"
           element={<AccountAuthPage />}
+        />
+        <Route
+          path="/creation/travel/identity-auth"
+          element={<IdentityAuthPage />}
         />
       </Routes>
     </div>

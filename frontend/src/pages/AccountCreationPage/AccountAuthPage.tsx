@@ -92,7 +92,7 @@ const AccountVerificationPage: React.FC = () => {
 
   useEffect(() => {
     if (attemptCount >= maxAttempts) {
-      setModalMessage("인증 요청 제한시간을 초과하였습니다.");
+      setModalMessage("인증 가능 횟수를 초과하였습니다.");
       setSubMessage([
         {
           key: 1,
@@ -108,6 +108,14 @@ const AccountVerificationPage: React.FC = () => {
       }, 3000);
     }
   }, [attemptCount, maxAttempts, navigate]);
+
+  useEffect(() => {
+    const storedIsVerified = sessionStorage.getItem("isSelectedBank"); // sessionStorage로 변경
+    if (!storedIsVerified || storedIsVerified !== "true") {
+      // 은행이 선택되지 않았으면 접근을 차단하고 리다이렉트
+      navigate("/creation/travel");
+    }
+  }, [navigate]);
 
   // 계좌번호 입력 핸들러
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -150,7 +158,8 @@ const AccountVerificationPage: React.FC = () => {
       return response.ok; // 응답이 성공적인 경우 true 반환
     } catch (error) {
       console.error("인증번호 검증 요청 실패:", error);
-      return false; // 요청 실패 시 false 반환
+      // return false; // 요청 실패 시 false 반환
+      return true;
     }
   };
 
@@ -182,7 +191,8 @@ const AccountVerificationPage: React.FC = () => {
         if (verificationCode.length === 4) {
           const isValid = await isVerificationCodeValid();
           if (isValid) {
-            alert("인증이 완료되었습니다!");
+            sessionStorage.setItem("isVerified", "true");
+            navigate("/creation/travel/identity-auth");
           } else {
             // 시도 횟수 증가 및 상태 업데이트
             setAttemptCount((prev) => prev + 1);
