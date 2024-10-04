@@ -7,6 +7,7 @@ import LoginPage from "./pages/LoginPage/LoginPage";
 import MainPage from "./pages/MainPage/MainPage";
 import TransferList from "./pages/TransferPage/TransferPage.TransferList";
 import TransferLists from "./pages/TransferPage/TransferPage.TransferLists";
+import ExchangeRates from "./pages/Exchange/ExchangePage";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/payment/list" element={<PaymentHistory />} />
         <Route path="/transfer/list" element={<TransferLists />} />
         <Route path="/transfer/list/:account" element={<TransferList />} />
+        <Route path="/exchange" element={<ExchangeRates />} />
       </Routes>
     </div>
   );
