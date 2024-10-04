@@ -17,7 +17,14 @@ public class CorsConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOriginPattern(Arrays.asList("*").toString());
+        config.addAllowedOriginPattern("http://localhost:3000");
+        config.addAllowedOriginPattern("*/login");
+        config.addAllowedOriginPattern("http://localhost:8080/api/user/login");
+        config.addAllowedOriginPattern("https://j11a604.p.ssafy.io/api/user/login");
+        config.addAllowedOriginPattern("https://j11a604.p.ssafy.io/login");
+        config.addAllowedOriginPattern("http://j11a604.p.ssafy.io/login");
+        config.addAllowedOriginPattern("http://j11a604.p.ssafy.io:8888/login");
+        config.addAllowedOriginPattern("https://j11a604.p.ssafy.io:8888/login");
         config.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control","Content-Type"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.addExposedHeader("Authorization");
