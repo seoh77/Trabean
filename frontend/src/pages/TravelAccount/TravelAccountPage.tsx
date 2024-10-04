@@ -94,10 +94,10 @@ const TravelAccountPage: React.FC = () => {
       });
   }, []);
 
-  useEffect(() => {
-    const response = client("").get("/api/accounts/internal/get-accountNo");
-    console.log(response);
-  }, []);
+  // useEffect(() => {
+  //   const response = client("").get("/api/accounts/internal/get-accountNo");
+  //   console.log(response);
+  // }, []);
 
   if (loading1) {
     <Loading />;
