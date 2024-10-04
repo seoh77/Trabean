@@ -1,5 +1,4 @@
 import { Routes, Route } from "react-router-dom";
-
 import PaymentHistory from "./pages/PaymentPage/PaymentPage.PaymentHistory";
 import PaymentPage from "./pages/PaymentPage/PaymentPage";
 import PaymentPassword from "./pages/PaymentPage/PaymentPage.Password";
@@ -15,6 +14,7 @@ import CreationMainPage from "./pages/AccountCreationPage/CreationMainPage";
 import AccountAuthPage from "./pages/AccountCreationPage/AccountAuthPage";
 import IdentityAuthPage from "./pages/AccountCreationPage/IdentityAuthPage";
 import TravleSetupPage from "./pages/AccountCreationPage/TravelAccountSetup";
+import CurrencyAddPage from "./pages/AccountCreationPage/CurrencyAddPage";
 
 function App() {
   return (
@@ -44,6 +44,7 @@ function App() {
           element={<IdentityAuthPage />}
         />
         <Route path="/creation/travel/setup" element={<TravleSetupPage />} />
+        <Route path="/creation/travel/currency" element={<CurrencyAddPage />} />
       </Routes>
     </div>
   );
