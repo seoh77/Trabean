@@ -94,7 +94,7 @@ const IdentityAuthPage: React.FC = () => {
           {isVerified ? "생년월일을 입력해주세요" : null}
         </p>
         <p className="text-xs text-gray-500 mb-12">
-          통신사에 등록된 이름과 같은지 확인해주세요. <br />
+          통신사에 등록된 정보와 같은지 확인해주세요. <br />
           띄어쓰기 없이 입력해야 해요.
         </p>
       </div>
@@ -123,7 +123,7 @@ const IdentityAuthPage: React.FC = () => {
             {/* 성별 버튼 상단 마진으로 이름 라벨과 정렬 */}
             <button
               type="button"
-              className={`px-4 py-2 h-9 rounded-3xl h-10 ${
+              className={`px-4 py-2 rounded-3xl h-10 ${
                 gender === "남성" ? "bg-primary text-white" : "bg-gray-200"
               }`}
               onClick={() => setGender("남성")}
@@ -133,7 +133,7 @@ const IdentityAuthPage: React.FC = () => {
             </button>
             <button
               type="button"
-              className={`px-4 py-2 h-9 rounded-3xl h-10 ${
+              className={`px-4 py-2 rounded-3xl h-10 ${
                 gender === "여성" ? "bg-primary text-white" : "bg-gray-200"
               }`}
               onClick={() => setGender("여성")}

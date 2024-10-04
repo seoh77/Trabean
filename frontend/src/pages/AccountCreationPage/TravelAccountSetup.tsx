@@ -204,7 +204,7 @@ const PasswordInputPage: React.FC = () => {
               value={accountName}
               onChange={handleAccountNameChange}
               placeholder="최대 15글자까지 입력 가능합니다."
-              className="border rounded-md p-2 mt-4 w-4/5 mb-2"
+              className="border rounded-md p-2 mt-4 w-4/5 mb-10"
             />
           </div>
           <div className="flex justify-center px-6 mt-6">
@@ -232,7 +232,7 @@ const PasswordInputPage: React.FC = () => {
               value={targetAmount}
               onChange={handleTargetAmountChange}
               placeholder="0"
-              className="border rounded-md p-2 mt-4 w-4/5 mb-2"
+              className="border rounded-md p-2 mt-4 w-4/5 mb-10"
             />
           </div>
 
@@ -248,7 +248,7 @@ const PasswordInputPage: React.FC = () => {
 
       {step === 3 && (
         <>
-          <h1 className="text-lg font-bold mb-1">마지막 단계에요!</h1>
+          <h1 className="text-lg font-semibold mb-1">마지막 단계에요!</h1>
           <p className="text-md mb-8 text-gray-500">
             사용하실 통장 비밀번호를 입력해주세요
           </p>
@@ -265,7 +265,7 @@ const PasswordInputPage: React.FC = () => {
 
       {step === 4 && (
         <>
-          <h1 className="text-lg font-bold mb-1">마지막 단계에요!</h1>
+          <h1 className="text-lg font-semibold mb-1">마지막 단계에요!</h1>
           <p className="text-md mb-8 text-gray-500">
             통장 비밀번호를 다시 한 번 입력해주세요
           </p>

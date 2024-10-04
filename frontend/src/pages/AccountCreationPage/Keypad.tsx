@@ -29,7 +29,7 @@ const CustomKeypad: React.FC<KeypadProps> = ({
   return (
     <div className="flex flex-col items-center">
       {/* 비밀번호 입력 상태 이미지 */}
-      <div className="flex mb-20">
+      <div className="flex mb-16">
         {Array.from({ length: 6 }, (_, index) => (
           <img
             key={index}
@@ -51,13 +51,13 @@ const CustomKeypad: React.FC<KeypadProps> = ({
       </button>
 
       {/* 숫자 키패드 그리드 */}
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-3 gap-4">
         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
           <button
             type="button"
             key={num}
             onClick={() => handleNumberClick(num.toString())}
-            className="w-20 h-16 text-lg"
+            className="w-24 h-16 text-md"
           >
             {num}
           </button>
@@ -66,21 +66,21 @@ const CustomKeypad: React.FC<KeypadProps> = ({
         <button
           type="button"
           onClick={() => handleNumberClick("00")}
-          className="w-20 h-16 text-lg rounded-full"
+          className="w-24 h-16 text-md rounded-full"
         >
           00
         </button>
         <button
           type="button"
           onClick={() => handleNumberClick("0")}
-          className="w-20 h-16 text-lg rounded-full"
+          className="w-24 h-16 text-md rounded-full"
         >
           0
         </button>
         <button
           type="button"
           onClick={handleDelete}
-          className="w-20 h-16 text-lg rounded-full"
+          className="w-24 h-16 text-md rounded-full"
         >
           ⌫
         </button>
