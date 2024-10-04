@@ -1,9 +1,6 @@
 package com.trabean.gateway.filter;
 
-import com.trabean.gateway.client.dto.request.UserIdReq;
-import com.trabean.gateway.client.dto.response.UserKeyRes;
 import com.trabean.gateway.client.feign.UserFeign;
-import com.trabean.gateway.util.Encryption;
 import com.trabean.gateway.util.JwtManger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 /**
@@ -71,7 +66,7 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
 //                String encryptedUserId = Encryption.encrypt(String.valueOf(userId));
 //                String encryptedUserKey = Encryption.encrypt(userKey);
 
-                // 헤더에 암호화된 userId와 userKey 추가
+            // 헤더에 암호화된 userId와 userKey 추가
 //                exchange.getRequest().mutate()
 //                        .header("userId", encryptedUserId)
 //                        .header("userKey", encryptedUserKey)
@@ -83,24 +78,21 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
 //                }
 
             logger.info(exchange.getRequest().getURI().toString());
-           if( exchange.getRequest().getHeaders().get("Origin")==null){
-               logger.info("Origin header is 널이다!~!!!!!!!!!!!!!!!!!!!!");
-           }else{
+            if (exchange.getRequest().getHeaders().get("Origin") == null) {
+                logger.info("Origin header is 널이다!~!!!!!!!!!!!!!!!!!!!!");
+            } else {
 //               exchange.getRequest().getHeaders().set("Origin","http://j11a604.p.ssafy.io");
-               logger.info("@@@@@@@@@@@@@@@@@@@@@@@@"+exchange.getRequest().getHeaders().get("Origin").toString());
-           }
+                logger.info("@@@@@@@@@@@@@@@@@@@@@@@@" + exchange.getRequest().getHeaders().get("Origin").toString());
+            }
 
 
             /*
              *   account id=59를 갖고있는 유저 아이디=15 로 테스트
              * */
             exchange.getRequest().mutate()
-                        .header("userId", "15")
-                        .header("userKey", "98afe3e2-2123-44dd-b7ef-d51e9ab5c37a")
-                        .build();
-
-
-
+                    .header("userId", "3")
+                    .header("userKey", "831d1624-df37-44de-97ee-f62b5a1449aa\n")
+                    .build();
 
 
             return chain.filter(exchange); // 다음 필터로 요청을 전달
