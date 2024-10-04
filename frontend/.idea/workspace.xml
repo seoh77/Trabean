@@ -4,8 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b3d9fcae-7d7f-4e5c-9ea6-0a4d03bce3db" name="Changes" comment="fix : api 요청 에러 수정">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="b3d9fcae-7d7f-4e5c-9ea6-0a4d03bce3db" name="Changes" comment="refactor : tailwind.config.js 파일의 content속성의 html 주소값 수정">
+      <change beforePath="$PROJECT_DIR$/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tailwind.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/tailwind.config.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -85,7 +85,7 @@
       <workItem from="1727137160395" duration="26185000" />
       <workItem from="1727421272305" duration="6371000" />
       <workItem from="1727669247849" duration="2371000" />
-      <workItem from="1727828045300" duration="16227000" />
+      <workItem from="1727828045300" duration="17610000" />
     </task>
     <task id="LOCAL-00001" summary="docs : nginx 설정을 위한 추가 파일">
       <option name="closed" value="true" />
@@ -239,7 +239,15 @@
       <option name="project" value="LOCAL" />
       <updated>1728004015360</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="refactor : tailwind.config.js 파일의 content속성의 html 주소값 수정">
+      <option name="closed" value="true" />
+      <created>1728022390519</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1728022390519</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -272,7 +280,8 @@
     <MESSAGE value="test : 프로젝트 빌드시 정상적인 환경변수 설정되는지 테스트(원위치)" />
     <MESSAGE value="feat : CORS 설정 추가" />
     <MESSAGE value="fix : api 요청 에러 수정" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix : api 요청 에러 수정" />
+    <MESSAGE value="refactor : tailwind.config.js 파일의 content속성의 html 주소값 수정" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor : tailwind.config.js 파일의 content속성의 html 주소값 수정" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
