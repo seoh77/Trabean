@@ -7,6 +7,7 @@ import com.trabean.travel.callApi.dto.request.AccountBalanceApiRequestDto;
 import com.trabean.travel.callApi.dto.request.AccountNumberApiRequestDto;
 import com.trabean.travel.callApi.dto.request.AdminUserKeyApiRequestDto;
 import com.trabean.travel.callApi.dto.response.AccountBalanceApiResponseDto;
+import com.trabean.travel.callApi.dto.response.AccountBalanceApiResponseDto.REC;
 import com.trabean.travel.callApi.dto.response.AccountNumberApiResponseDto;
 import com.trabean.util.RequestHeader;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +42,7 @@ public class CommonAccountService {
     /**
      * 원화 계좌 잔액 조회
      */
-    public Double getKrwAccountBalance(Long accountId, String accountNo) {
+    public REC getKrwAccountBalance(Long accountId, String accountNo) {
         String adminUserKey = getUserKey(accountId);
 
         AccountBalanceApiRequestDto getAccountBalanceRequestDto
@@ -55,7 +56,7 @@ public class CommonAccountService {
         AccountBalanceApiResponseDto accountBalanceApiResponseDto = demandDepositClient.getKrwAccountBalance(
                 getAccountBalanceRequestDto);
 
-        return (double) accountBalanceApiResponseDto.getRec().getAccountBalance();
+        return accountBalanceApiResponseDto.getRec();
     }
 
     /**

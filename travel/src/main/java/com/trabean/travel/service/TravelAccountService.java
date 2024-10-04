@@ -2,7 +2,10 @@ package com.trabean.travel.service;
 
 import static com.trabean.util.CurrencyUtils.changeCurrency;
 
-import com.trabean.travel.callApi.client.DemandDepositClient;
+import com.trabean.travel.callApi.client.BankClient;
+import com.trabean.travel.callApi.dto.request.BankCodeApiRequestDto;
+import com.trabean.travel.callApi.dto.response.AccountBalanceApiResponseDto.REC;
+import com.trabean.travel.callApi.dto.response.BankCodeApiResponseDto.BankInfo;
 import com.trabean.travel.dto.response.AccountInfoResponseDto;
 import com.trabean.travel.dto.response.TravelAccountIdResponseDto;
 import com.trabean.travel.dto.response.TravelAccountResponseDto;
@@ -10,6 +13,7 @@ import com.trabean.travel.dto.response.TravelListAccountResponseDto;
 import com.trabean.travel.entity.ForeignTravelAccount;
 import com.trabean.travel.entity.KrwTravelAccount;
 import com.trabean.travel.repository.KrwTravelAccountRepository;
+import com.trabean.util.RequestHeader;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +26,7 @@ public class TravelAccountService {
 
     private final KrwTravelAccountRepository krwTravelAccountRepository;
 
-    private final DemandDepositClient demandDepositClient;
+    private final BankClient bankClient;
 
     private final CommonAccountService commonAccountService;
 
@@ -45,7 +49,31 @@ public class TravelAccountService {
         List<TravelAccountResponseDto> list = new ArrayList<>();
 
         String accountKRWNo = commonAccountService.getAccountNo(parentId);
-        Double accountKRWBalance = commonAccountService.getKrwAccountBalance(parentId, accountKRWNo);
+
+        REC getKrwAccountApi= commonAccountService.getKrwAccountBalance(parentId, accountKRWNo);
+        Double accountKRWBalance = (double) getKrwAccountApi.getAccountBalance();
+
+        BankCodeApiRequestDto bankCodeApiRequestDto = new BankCodeApiRequestDto(
+                RequestHeader.builder()
+                        .apiName("inquireBankCodes")
+                        .userKey("")
+                        .build()
+        );
+
+        String bankCode = getKrwAccountApi.getBankCode();
+        String bankName = "트래빈뱅크";
+        List<BankInfo> bankInfos = bankClient.getBankCode(bankCodeApiRequestDto).getRec();
+
+        for(BankInfo bankInfo : bankInfos) {
+            if(bankCode.equals(bankInfo.getBankCode())) {
+                if(bankCode.equals("999")) {
+                    bankName = "트래빈뱅크";
+                } else {
+                    bankName = bankInfo.getBankName();
+                }
+                break;
+            }
+        }
 
         list.add(new TravelAccountResponseDto(krwTravelAccount.getAccountId(), "한국", "KRW", accountKRWBalance));
 
@@ -68,7 +96,13 @@ public class TravelAccountService {
             }
         }
 
-        return new TravelListAccountResponseDto(krwTravelAccount.getAccountName(), list);
+        return TravelListAccountResponseDto.builder()
+                .accountId(parentId)
+                .accountNo(accountKRWNo)
+                .accountName(krwTravelAccount.getAccountName())
+                .bankName(bankName)
+                .account(list)
+                .build();
     }
 
     public TravelAccountIdResponseDto findAccountIdByCurrency(Long parentId, String currency) {

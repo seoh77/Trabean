@@ -49,7 +49,7 @@ public class TargetAmountService {
         Long targetAmount = account.getTargetAmount();
 
         // 잔액 조회
-        Double balance = commonAccountService.getKrwAccountBalance(accountId, accountNo);
+        Double balance = (double) commonAccountService.getKrwAccountBalance(accountId, accountNo).getAccountBalance();
 
         // 입금 내역 조회
         String adminUserKey = commonAccountService.getUserKey(accountId);
