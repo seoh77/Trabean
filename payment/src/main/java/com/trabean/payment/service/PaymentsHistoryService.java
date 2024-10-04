@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,16 +24,19 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class PaymentsHistoryService {
 
     private final PaymentsRepository paymentsRepository;
     private final PaymentsUserService paymentsUserService;
     private final PaymentsAccountService paymentsAccountService;
 
+    // 전체 결제내역조회
     public PaymentsHistoryResponse getPaymentHistory(Long travelAccountId, LocalDate startdate, LocalDate enddate,
                                                      int page) {
         // 통장 멤버인지 확인
         paymentsAccountService.validateTravelAccountMembers(travelAccountId);
+        log.info("통장멤버@@@@@@@@@@@@@@@@@@@@@@@@@@");
 
         // startdate가 null이면 과거 무한대값으로 설정
         if (startdate == null) {
@@ -129,7 +133,7 @@ public class PaymentsHistoryService {
                                                                      LocalDate startDate, LocalDate endDate, int page) {
         // 통장 멤버인지 확인
         paymentsAccountService.validateTravelAccountMembers(accountId);
-        
+
         // startDate 가 null 이면 과거 무한대값으로 설정
         if (startDate == null) {
             startDate = LocalDate.of(1970, 1, 1);

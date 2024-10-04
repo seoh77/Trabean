@@ -9,6 +9,7 @@ import com.trabean.payment.dto.request.Header;
 import com.trabean.payment.dto.request.RequestPaymentRequest;
 import com.trabean.payment.dto.response.AccountNoResponse;
 import com.trabean.payment.dto.response.BalanceResponse;
+import com.trabean.payment.dto.response.TravelAccountMemberListResponse;
 import com.trabean.payment.entity.Merchants;
 import com.trabean.payment.entity.Payments;
 import com.trabean.payment.exception.PaymentsException;
@@ -19,6 +20,7 @@ import com.trabean.payment.util.ApiName;
 import feign.FeignException;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -27,6 +29,7 @@ import org.springframework.web.client.RestClientException;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PaymentsAccountService {
 
     private final AccountClient accountClient;
@@ -172,7 +175,7 @@ public class PaymentsAccountService {
         return response.getOrDefault("paymentAccountId", null);
     }
 
-    public String getAccountAdmin(Long accountId) throws PaymentsException {
+    public String getAccountAdmin(Long accountId) {
         String requestBody = String.format("{\"accountId\":\"%d\"}", accountId);
         Map<String, String> response = accountClient.getAdminUser(requestBody);
         if (response.get("userKey") == null) {
@@ -181,13 +184,15 @@ public class PaymentsAccountService {
         return response.get("userKey");
     }
 
-    public void validateTravelAccountMembers(Long accountId) throws PaymentsException {
+    public void validateTravelAccountMembers(Long accountId) {
         try {
-            accountClient.getTravelAccountMembers(accountId);
+            TravelAccountMemberListResponse response = accountClient.getTravelAccountMembers(accountId);
+            log.info(response.toString() + "민우 API 호출한거 (여행통장 멤버인지 조회)");
         } catch (FeignException error) {
-            if (error.status() == 401) {
+            if (error.status() == 404) {
                 throw new PaymentsException("권한이 거부되었습니다.", HttpStatus.UNAUTHORIZED);
             }
+            throw new PaymentsException("API 호출 에러", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
