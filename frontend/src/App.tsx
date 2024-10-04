@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 
 import PaymentHistory from "./pages/PaymentPage/PaymentPage.PaymentHistory";
 import PaymentPage from "./pages/PaymentPage/PaymentPage";
+import PaymentPassword from "./pages/PaymentPage/PaymentPage.Password";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import MainPage from "./pages/MainPage/MainPage";
 import JoinPage from "./pages/JoinPage/JoinPage";
@@ -37,6 +38,10 @@ function App() {
         />
 
         <Route path="/payment/qr" element={<PaymentPage />} />
+        <Route
+          path="/payment/qr/:payId/:merchantName/:currency/:amount"
+          element={<PaymentPassword />}
+        />
         <Route path="/payment/list" element={<PaymentHistory />} />
         <Route path="/join" element={<JoinPage />} />
         <Route path="/mailInfo" element={<MailInfo />} />
