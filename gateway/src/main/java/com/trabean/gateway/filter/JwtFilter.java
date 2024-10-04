@@ -86,6 +86,7 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
            if( exchange.getRequest().getHeaders().get("Origin")==null){
                logger.info("Origin header is 널이다!~!!!!!!!!!!!!!!!!!!!!");
            }else{
+               exchange.getRequest().getHeaders().set("Origin","http://j11a604.p.ssafy.io");
                logger.info("@@@@@@@@@@@@@@@@@@@@@@@@"+exchange.getRequest().getHeaders().get("Origin").toString());
            }
 
