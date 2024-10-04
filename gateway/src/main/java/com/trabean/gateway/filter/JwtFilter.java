@@ -91,7 +91,7 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
              * */
             exchange.getRequest().mutate()
                     .header("userId", "3")
-                    .header("userKey", "831d1624-df37-44de-97ee-f62b5a1449aa\n")
+                    .header("userKey", "831d1624-df37-44de-97ee-f62b5a1449aa")
                     .build();
 
 
