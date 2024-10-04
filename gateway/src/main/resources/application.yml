@@ -28,6 +28,20 @@ spring:
       #            baseMessage: Spring Cloud Gateway Global Filter
       #            preLogger: true
       #            postLogger: true
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+
+      globalcors:
+        cors-configurations:
+          '[/**]':  # 모든 경로에 대한 CORS 설정
+            allowedOrigins: '*'  # 허용하는 출처
+            allow-credentials: true  # 인증 정보 허용
+            allowedHeaders: '*'  # 허용하는 헤더
+            allowedMethods:  # 허용하는 HTTP 메서드
+              - PUT
+              - GET
+              - POST
+              - DELETE
+              - OPTIONS
       routes: # ??? ?? ??아
         - id: accountRoute  # ??? ID
           uri: lb://ACCOUNT # ??? ??? URI (??? ?? URI? ???? ?)
@@ -78,21 +92,7 @@ spring:
 #              - PATCH
 #              - OPTIONS         # 없애고 확인해보기
 
-#      default-filters:
-#        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
 
-#      globalcors:
-#        cors-configurations:
-#          '[/**]':  # 모든 경로에 대한 CORS 설정
-#            allowedOrigins: '*'  # 허용하는 출처
-#            allow-credentials: true  # 인증 정보 허용
-#            allowedHeaders: '*'  # 허용하는 헤더
-#            allowedMethods:  # 허용하는 HTTP 메서드
-#              - PUT
-#              - GET
-#              - POST
-#              - DELETE
-#              - OPTIONS
 
 
 
