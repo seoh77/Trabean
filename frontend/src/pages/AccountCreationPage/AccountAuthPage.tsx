@@ -129,7 +129,7 @@ const AccountVerificationPage: React.FC = () => {
 
   // 계좌번호 유효성 검사
   const validateAccountNumber = (number: string) => {
-    const regex = /^\d{8,10}$/; // 8자리 또는 10자리 숫자
+    const regex = /^\d{10,16}$/; // 10자리 이상 16자리 이하의 숫자
     return regex.test(number);
   };
 

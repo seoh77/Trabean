@@ -3,8 +3,6 @@ import prevIcon from "../../assets/icon/prevIcon.png";
 import client from "../../client";
 
 function JoinPage() {
-  const token = "";
-
   const [email, setEmail] = useState<string | null>(null);
   const [inputEmail, setInputEmail] = useState<string>();
   const [selectPath, setSelectPath] = useState<string>();
@@ -25,7 +23,7 @@ function JoinPage() {
   const checkEmail = async () => {
     if (!inputEmail || !selectPath) return;
 
-    const response = await client(token).get(
+    const response = await client().get(
       `/api/user/email/${inputEmail}@${selectPath}`,
     );
 
