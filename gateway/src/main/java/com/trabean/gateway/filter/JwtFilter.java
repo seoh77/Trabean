@@ -90,8 +90,8 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
              *   account id=59를 갖고있는 유저 아이디=15 로 테스트
              * */
             exchange.getRequest().mutate()
-                    .header("userId", "3")
-                    .header("userKey", "831d1624-df37-44de-97ee-f62b5a1449aa")
+                    .header("userId", "25")
+                    .header("userKey", "808a2968-9e30-43a3-b6dd-beff84d006e2")
                     .build();
 
 
