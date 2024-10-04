@@ -9,10 +9,11 @@ const NavBar: React.FC = () => {
 
   // 현재 경로로부터 페이지 이름 추출 (단순히 경로명을 표시할 수 있음)
   const currentPageName = location.pathname.split("/").pop() || "";
-  console.log(currentPageName);
+
   // 경로와 페이지 명 매핑
   // 1. 네비게이션 바 넣을 때 본인이 알아서 매핑 해주세요
   // 2. 배경색 흰색 아닐경우 밑에 리스트에도 추가해주세요
+  // 3. 로고가 들어가는 페이지일경우 로고 리스트에 추가해주세요
   const pageNames: { [key: string]: string } = {
     "": "홈화면",
     qr: "QR 결제",
