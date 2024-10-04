@@ -1,14 +1,14 @@
+/* eslint-disable react/require-default-props */
+
 import React from "react";
-
 import { useNavigate } from "react-router-dom";
-
-import logo from "../../assets/logo.png";
+import logo from "../../../assets/logo.png";
 
 interface NavBarProps {
   text?: string;
 }
 
-const NavBar: React.FC<NavBarProps> = ({ text }) => {
+const NavBar: React.FC<NavBarProps> = ({ text = "" }) => {
   const nav = useNavigate();
 
   // 로고 클릭 시 메인 페이지로 이동
@@ -37,10 +37,6 @@ const NavBar: React.FC<NavBarProps> = ({ text }) => {
       </div>
     </div>
   );
-};
-
-NavBar.defaultProps = {
-  text: "",
 };
 
 export default NavBar;

@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 
 import { useParams } from "react-router-dom";
 
-import bean from "../../assets/bean.png";
+import bean from "../../../assets/bean.png";
 
-import NavBar from "./NavBar";
-import tmpMemberData from "./constants/MemberDto";
-import tmpAccountData from "./constants/AccountDto";
-import ChangeUserRoleModal from "./ChangeUserRoleModal";
+import NavBar from "../component/NavBar";
+import tmpMemberData from "../dummy/TravelAccountMemberDataDummy";
+import tmpAccountData from "../dummy/TravelAccountDataDummy";
+import ChangeUserRoleModal from "../ChangeUserRoleModal";
 
 interface Account {
   accountId: number;
@@ -35,7 +35,7 @@ interface MemberData {
   members: Member[];
 }
 
-const MemberManageMentPage: React.FC = () => {
+const MemberManagementPage: React.FC = () => {
   const { accountId } = useParams<{ accountId: string }>();
 
   const [accountData, setAccountData] = useState<AccountData>();
@@ -150,4 +150,4 @@ const MemberManageMentPage: React.FC = () => {
   );
 };
 
-export default MemberManageMentPage;
+export default MemberManagementPage;

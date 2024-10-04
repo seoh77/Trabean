@@ -1,6 +1,5 @@
 import React from "react";
-
-import bean from "../../assets/bean.png";
+import bean from "../../../assets/bean.png";
 
 const ChatBot: React.FC = () => {
   // 챗봇 클릭 시 챗봇 페이지로 이동

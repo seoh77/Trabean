@@ -1,21 +1,8 @@
-interface Account {
-  accountId: number;
-  country: string;
-  accountBalance: number;
-  exchangeCurrency: string;
-}
-
-interface AccountData {
-  accountId: number;
-  accountNo: string;
-  accountName: string;
-  bankName: string;
-  account: Account[];
-}
-
 // 한화 여행통장(accountId = 58)을 조회해서 해당 한화 여행통장과 연결된 외화 여행통장들을 받는 상황의 더미 데이터
 
-const tmpAccountData: AccountData = {
+import { TravelAccountData } from "../type/type";
+
+const TravelAccountDataDummy: TravelAccountData = {
   accountId: 57,
   accountNo: "1000-1234-1245",
   accountName: "카리나와 도쿄 대모험",
@@ -42,4 +29,4 @@ const tmpAccountData: AccountData = {
   ],
 };
 
-export default tmpAccountData;
+export default TravelAccountDataDummy;

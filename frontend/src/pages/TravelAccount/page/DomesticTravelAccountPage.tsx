@@ -1,68 +1,25 @@
 import React, { useEffect, useState } from "react";
-
 import { useNavigate } from "react-router-dom";
+import bean from "../../../assets/bean.png";
+import ChatBot from "../component/ChatBot";
+import ChangeTargetAmountModal from "../ChangeTargetAmountModal";
+import { TravelAccountData, TravelAccountMemberData } from "../type/type";
+import TravelAccountMemberDataDummy from "../dummy/TravelAccountMemberDataDummy";
+import TravelAccountDataDummy from "../dummy/TravelAccountDataDummy";
+import NavBar from "../component/NavBar";
+import Alarm from "../component/Alarm";
+import getCurrencySymbol from "../util/util";
+import TargetAmountProgressBar from "../component/TargetAmountProgressBar";
 
-import bean from "../../assets/bean.png";
-
-import NavBar from "./NavBar";
-import Alarm from "./Alarm";
-import TargetAmountProgressBar from "./TargetAmountProgressBar";
-import ChatBot from "./ChatBot";
-import ChangeTargetAmountModal from "./ChangeTargetAmountModal";
-
-import tmpAccountData from "./constants/AccountDto";
-import tmpMemberData from "./constants/MemberDto";
-
-interface Account {
-  accountId: number;
-  country: string;
-  accountBalance: number;
-  exchangeCurrency: string;
-}
-
-interface AccountData {
-  accountId: number;
-  accountNo: string;
-  accountName: string;
-  bankName: string;
-  account: Account[];
-}
-
-interface Member {
-  userId: number;
-  userName: string;
-  role: string;
-}
-
-interface MemberData {
-  memberCount: number;
-  members: Member[];
-}
-
-const TravelAccountPage: React.FC = () => {
-  const [accountData, setAccountData] = useState<AccountData>();
-  const [memberData, setMemberData] = useState<MemberData>();
-
-  // 통화 기호 매핑
-  const currencySymbols: { [key: string]: string } = {
-    KRW: "₩", // 한국 원화
-    USD: "$", // 미국 달러
-    EUR: "€", // 유로
-    JPY: "¥", // 일본 엔화
-    CNY: "¥", // 중국 위안화
-    GBP: "£", // 영국 파운드
-    CHF: "₣", // 스위스 프랑
-    CAD: "C$", // 캐나다 달러
-  };
-
-  const getCurrencySymbol = (currencyCode: string): string =>
-    currencySymbols[currencyCode] || currencyCode;
+const DomesticTravelAccountPage: React.FC = () => {
+  const [travelAccountData, setTravelAccountData] =
+    useState<TravelAccountData>();
+  const [travelAccountMemberData, setTravelAccountMemberData] =
+    useState<TravelAccountMemberData>();
 
   // 목표 금액과 현재 모인 금액 상태
   const [targetAmount, setargetAmount] = useState(0);
   const [collectedAmount, setCollectedAmount] = useState(0);
-
-  const nav = useNavigate();
 
   // 목표 관리 모달
   const [isChangeTargetAmountModalOpen, setIsChangeTargetAmountModalOpen] =
@@ -72,6 +29,8 @@ const TravelAccountPage: React.FC = () => {
     setIsChangeTargetAmountModalOpen(true);
   const closeChangeTargetAmountModal = () =>
     setIsChangeTargetAmountModalOpen(false);
+
+  const nav = useNavigate();
 
   const handleUpdateTravelAccountInfo = () => {
     console.log("여행통장 정보 수정 누름");
@@ -95,14 +54,14 @@ const TravelAccountPage: React.FC = () => {
 
   // 여행통장 계좌 정보를 받는 fetch 요청
   useEffect(() => {
-    setAccountData(tmpAccountData);
+    setTravelAccountData(TravelAccountDataDummy);
     setargetAmount(1000000);
     setCollectedAmount(700000);
   }, []);
 
   // 여행통장 멤버 정보를 받는 fetch 요청
   useEffect(() => {
-    setMemberData(tmpMemberData);
+    setTravelAccountMemberData(TravelAccountMemberDataDummy);
   }, []);
 
   return (
@@ -122,7 +81,9 @@ const TravelAccountPage: React.FC = () => {
         <div className="rounded-2xl p-4 bg-white">
           {/* 여행통장 목록 상단 */}
           <div className="flex justify-between p-2">
-            <div className="text-lg font-bold">{accountData?.accountName}</div>
+            <div className="text-lg font-bold">
+              {travelAccountData?.accountName}
+            </div>
             <div>
               <button type="button" onClick={handleUpdateTravelAccountInfo}>
                 🍳
@@ -132,7 +93,7 @@ const TravelAccountPage: React.FC = () => {
 
           {/* 여행통장 목록 중단 */}
           <div className="py-4">
-            {accountData?.account.map((account) => (
+            {travelAccountData?.account.map((account) => (
               <div
                 key={account.accountId}
                 className="flex justify-between items-center p-2"
@@ -191,7 +152,7 @@ const TravelAccountPage: React.FC = () => {
             </div>
           </div>
           <div className="flex flex-wrap justify-center">
-            {memberData?.members.map((member) => (
+            {travelAccountMemberData?.members.map((member) => (
               <div
                 key={member.userId}
                 className="flex flex-col items-center p-2"
@@ -267,4 +228,4 @@ const TravelAccountPage: React.FC = () => {
   );
 };
 
-export default TravelAccountPage;
+export default DomesticTravelAccountPage;
