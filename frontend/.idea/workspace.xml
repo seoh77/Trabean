@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b3d9fcae-7d7f-4e5c-9ea6-0a4d03bce3db" name="Changes" comment="test : tailwind.config.js 수정 테스트">
+    <list default="true" id="b3d9fcae-7d7f-4e5c-9ea6-0a4d03bce3db" name="Changes" comment="test : tailwind.config.js 수정 테스트2">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tailwind.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/tailwind.config.js" afterDir="false" />
@@ -47,26 +47,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;frontend&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/ssafy/2학기 특화플젝/gateway/S11P21A604/gateway&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.stylelint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.stylelint&quot;: &quot;&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;actions.on.save&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;C:\\ssafy\\2학기 특화플젝\\frontend\\S11P21A604\\frontend\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "frontend",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/ssafy/2학기 특화플젝/gateway/S11P21A604/gateway",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.stylelint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.stylelint": "",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "actions.on.save",
+    "ts.external.directory.path": "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2024.1.4\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\ssafy\2학기 특화플젝\frontend\S11P21A604\frontend\public" />
@@ -102,7 +102,7 @@
       <workItem from="1727669247849" duration="2371000" />
       <workItem from="1727828045300" duration="18081000" />
       <workItem from="1728024285216" duration="8635000" />
-      <workItem from="1728033646395" duration="5130000" />
+      <workItem from="1728033646395" duration="5521000" />
     </task>
     <task id="LOCAL-00001" summary="docs : nginx 설정을 위한 추가 파일">
       <option name="closed" value="true" />
@@ -320,7 +320,15 @@
       <option name="project" value="LOCAL" />
       <updated>1728038325491</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="test : tailwind.config.js 수정 테스트2">
+      <option name="closed" value="true" />
+      <created>1728039028875</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1728039028875</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -362,7 +370,8 @@
     <MESSAGE value="refactor : nginx.conf 파일에서 static 파일 경로 수정" />
     <MESSAGE value="fix : tailwind 적용 수정" />
     <MESSAGE value="test : tailwind.config.js 수정 테스트" />
-    <option name="LAST_COMMIT_MESSAGE" value="test : tailwind.config.js 수정 테스트" />
+    <MESSAGE value="test : tailwind.config.js 수정 테스트2" />
+    <option name="LAST_COMMIT_MESSAGE" value="test : tailwind.config.js 수정 테스트2" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
