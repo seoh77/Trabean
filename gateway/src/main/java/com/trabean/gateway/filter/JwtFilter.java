@@ -83,6 +83,13 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
 //                }
 
 
+           if( exchange.getRequest().getHeaders().get("Origin")==null){
+               logger.info("Origin header is 널이다!~!!!!!!!!!!!!!!!!!!!!");
+           }else{
+               logger.info("@@@@@@@@@@@@@@@@@@@@@@@@"+exchange.getRequest().getHeaders().get("Origin").toString());
+           }
+
+
             /*
              *   account id=59를 갖고있는 유저 아이디=15 로 테스트
              * */
