@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(name = "NOTIFICATION", path = "/api/user") // 서비스 이름 설정
 public interface UserFeign {
 
-    @PostMapping("/${user에서 작성한 url}")
+    @PostMapping("/getuserkey")
     UserKeyRes getUserKey(@RequestBody UserIdReq userIdReq);
 }

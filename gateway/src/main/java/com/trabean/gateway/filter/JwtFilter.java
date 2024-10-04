@@ -72,9 +72,17 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
                 String encryptedUserKey = Encryption.encrypt(userKey);
 
                 // 헤더에 암호화된 userId와 userKey 추가
+//                exchange.getRequest().mutate()
+//                        .header("userId", encryptedUserId)
+//                        .header("userKey", encryptedUserKey)
+//                        .build();
+                
+                /*
+                *   account id=59를 갖고있는 유저 아이디=15 로 테스트
+                * */
                 exchange.getRequest().mutate()
-                        .header("userId", encryptedUserId)
-                        .header("userKey", encryptedUserKey)
+                        .header("userId", "15")
+                        .header("userKey", "98afe3e2-2123-44dd-b7ef-d51e9ab5c37a")
                         .build();
 
             } catch (Exception e) {
