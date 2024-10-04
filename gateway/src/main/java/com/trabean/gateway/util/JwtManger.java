@@ -17,7 +17,7 @@ public class JwtManger {
      * JWT 토큰을 생성하는 과정에서 알고리즘(예: HMAC SHA256)과 key가 결합되어 Signature가 생성됩니다.
      * 때문에 서명 생성 및 검증 과정에서 동일한 key를 사용해야 JWT가 올바르게 처리될 수 있습니다.
      */
-    private final String key = "여기에들어오는값은토큰을생성했던값과일치해야한다"; // JWT 서명을 위한 비밀 키
+    private final String key = "NiOeyFbN1Gqo10bPgUyTFsRMkJpGLXSvGP04eFqj5B30r5TcrtlSXfQ7TndvYjNvfkEKLqILn0j1SmKODO1Yw3JpBBgI3nVPEahqxeY8qbPSFGyzyEVxnl4AQcrnVneI"; // JWT 서명을 위한 비밀 키
 
     // 변조 검사 및 유효성 검사를 수행하는 메서드
     public boolean checkTokenValidation(String accessToken) {
