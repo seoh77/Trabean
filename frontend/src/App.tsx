@@ -15,6 +15,7 @@ import CreationMainPage from "./pages/AccountCreationPage/CreationMainPage";
 import AccountAuthPage from "./pages/AccountCreationPage/AccountAuthPage";
 import IdentityAuthPage from "./pages/AccountCreationPage/IdentityAuthPage";
 import TravleSetupPage from "./pages/AccountCreationPage/TravelAccountSetup";
+import CurrencyAddPage from "./pages/AccountCreationPage/CurrencyAddPage";
 import ExchangeRates from "./pages/Exchange/ExchangePage";
 
 function App() {
@@ -37,6 +38,15 @@ function App() {
         <Route path="/mailInfo" element={<MailInfo />} />
         <Route path="/transfer/list" element={<TransferLists />} />
         <Route path="/transfer/list/:account" element={<TransferList />} />
+        <Route path="/creation/travel" element={<CreationMainPage />} />
+        <Route path="/creation/travel/bank" element={<BankSelectionPage />} />
+        <Route path="/creation/travel/account" element={<AccountAuthPage />} />
+        <Route
+          path="/creation/travel/identity"
+          element={<IdentityAuthPage />}
+        />
+        <Route path="/creation/travel/setup" element={<TravleSetupPage />} />
+        <Route path="/creation/travel/currency" element={<CurrencyAddPage />} />
         <Route path="/exchange" element={<ExchangeRates />} />
       </Routes>
     </div>
