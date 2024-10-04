@@ -7,6 +7,7 @@ import com.trabean.user.user.dto.UserNameResponse;
 import com.trabean.user.user.dto.UserPaymentAccountIdResponse;
 import com.trabean.user.user.entity.RefreshToken;
 import com.trabean.user.user.repository.RefreshTokenRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import java.time.Duration;
 import java.util.Optional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class UserService {
@@ -59,6 +61,7 @@ public class UserService {
 
     // 로그인 처리 로직
     public String login(LoginRequest loginRequest) {
+        log.info("로그인 정보"  + loginRequest.toString());
         // 사용자 이메일로 데이터베이스에서 사용자 찾기
         User user = userRepository.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
@@ -68,13 +71,23 @@ public class UserService {
             throw new RuntimeException("비밀번호가 일치하지 않습니다.");
         }
 
+        log.info("액세스 토큰 전"  + loginRequest.toString());
+
+
         // Access Token 발급
         String accessToken = tokenProvider.generateToken(user, Duration.ofMinutes(30));
 
+
+        log.info("액세스 토큰 후"  + loginRequest.toString());
+
         // Refresh Token 발급 및 저장
         String refreshToken = tokenProvider.generateToken(user, Duration.ofDays(7));
+
+        log.info("리프레수ㅣ"  + refreshToken.length());
+
         refreshTokenRepository.save(
                 RefreshToken.builder()
+                        .user_id(user.getUser_id())
                         .email(user.getEmail())
                         .refreshToken(refreshToken)
                         .build()

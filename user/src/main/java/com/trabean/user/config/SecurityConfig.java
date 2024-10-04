@@ -53,7 +53,7 @@ public class SecurityConfig {
 								"/signup",
 								"/api/user/email/send-verification-code",
 								"/api/user/email/verify-code").permitAll() // 토큰 발급 URL 허용
-						.anyRequest().authenticated()) // 나머지 모든 요청은 인증 필요
+						.anyRequest().permitAll()) // 나머지 모든 요청은 인증 필요
 				.addFilterBefore(new TokenAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class) // 기존 토큰 인증 필터 추가
 				.addFilter(customAuthenticationFilter) // 커스텀 인증 필터 추가
 				.build();

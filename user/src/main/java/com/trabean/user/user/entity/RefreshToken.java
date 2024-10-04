@@ -22,7 +22,7 @@ public class RefreshToken {
 	@Column(nullable = false, length = 100)
 	private String email;  // SQL 테이블의 email과 매핑됨
 
-	@Column(name = "refresh_token", nullable = false, length = 255)
+	@Column(name = "refresh_token", nullable = false, length = 512)
 	private String refreshToken;  // SQL 테이블의 refresh_token과 매핑됨
 
 	@Column(name="user_id",nullable = false)
