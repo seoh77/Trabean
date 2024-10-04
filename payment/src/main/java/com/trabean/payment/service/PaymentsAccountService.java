@@ -12,6 +12,7 @@ import com.trabean.payment.dto.response.BalanceResponse;
 import com.trabean.payment.entity.Merchants;
 import com.trabean.payment.entity.Payments;
 import com.trabean.payment.exception.PaymentsException;
+import com.trabean.payment.interceptor.UserHeaderInterceptor;
 import com.trabean.payment.repository.MerchantsRepository;
 import com.trabean.payment.repository.PaymentsRepository;
 import com.trabean.payment.util.ApiName;
@@ -20,7 +21,6 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
@@ -107,7 +107,7 @@ public class PaymentsAccountService {
     // 외화 계좌 잔액 조회 후 검증
     public void validateForeignAmount(Long foreignAccountId, RequestPaymentRequest requestPaymentRequest) {
         // 메인 통장 주인 userKey 받아오기
-        Long krwAccountId = getMainAccount(requestPaymentRequest.getUserId());
+        Long krwAccountId = getMainAccount(UserHeaderInterceptor.userId.get());
         String userKey = getAccountAdmin(krwAccountId);
 
         String accountNo = getAccountNumber(foreignAccountId);
@@ -131,7 +131,7 @@ public class PaymentsAccountService {
 
                     // 한국 계좌 잔액도 검증해봄
                     validateKrwAmount(krwAccountId, requestPaymentRequest);
-    
+
                     Payments payment = paymentsRepository.findById(requestPaymentRequest.getPayId()).orElseThrow(() ->
                             new PaymentsException("결제 정보를 확인할 수 없습니다.", HttpStatus.NOT_FOUND));
 
@@ -174,10 +174,20 @@ public class PaymentsAccountService {
 
     public String getAccountAdmin(Long accountId) throws PaymentsException {
         String requestBody = String.format("{\"accountId\":\"%d\"}", accountId);
-        Map<String, String > response = accountClient.getAdminUser(requestBody);
+        Map<String, String> response = accountClient.getAdminUser(requestBody);
         if (response.get("userKey") == null) {
             throw new PaymentsException("여행 통장 userKey 를 받아오는 데 실패했습니다: null", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return response.get("userKey");
+    }
+
+    public void validateTravelAccountMembers(Long accountId) throws PaymentsException {
+        try {
+            accountClient.getTravelAccountMembers(accountId);
+        } catch (FeignException error) {
+            if (error.status() == 401) {
+                throw new PaymentsException("권한이 거부되었습니다.", HttpStatus.UNAUTHORIZED);
+            }
+        }
     }
 }

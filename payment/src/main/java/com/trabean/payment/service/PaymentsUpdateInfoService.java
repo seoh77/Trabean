@@ -7,6 +7,7 @@ import com.trabean.payment.entity.Merchants;
 import com.trabean.payment.entity.Payments;
 import com.trabean.payment.enums.PaymentStatus;
 import com.trabean.payment.exception.PaymentsException;
+import com.trabean.payment.interceptor.UserHeaderInterceptor;
 import com.trabean.payment.repository.MerchantsRepository;
 import com.trabean.payment.repository.PaymentsRepository;
 import jakarta.transaction.Transactional;
@@ -14,6 +15,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @EnableScheduling
 @Transactional
+@Slf4j
 public class PaymentsUpdateInfoService {
 
     private final PaymentsRepository paymentsRepository;
@@ -36,8 +39,9 @@ public class PaymentsUpdateInfoService {
         Merchants merchant = merchantsRepository.findById(request.getMerchantId())
                 .orElseThrow(() -> new PaymentsException("잘못된 merchantId값 입니다.", HttpStatus.NOT_FOUND));
 
+        log.info("유저 아이디 가져오기" + UserHeaderInterceptor.userId.get());
         // 업데이트
-        Payments payment = Payments.createInitialPayment(request.getUserId(),
+        Payments payment = Payments.createInitialPayment(UserHeaderInterceptor.userId.get(),
                 request.getAccountId(), merchant,
                 // 한화
                 request.getKrwAmount() == null ? exchangeRateService.calculateKrw(merchant.getExchangeCurrency(),

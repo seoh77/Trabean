@@ -27,9 +27,12 @@ public class PaymentsHistoryService {
 
     private final PaymentsRepository paymentsRepository;
     private final PaymentsUserService paymentsUserService;
+    private final PaymentsAccountService paymentsAccountService;
 
     public PaymentsHistoryResponse getPaymentHistory(Long travelAccountId, LocalDate startdate, LocalDate enddate,
                                                      int page) {
+        // 통장 멤버인지 확인
+        paymentsAccountService.validateTravelAccountMembers(travelAccountId);
 
         // startdate가 null이면 과거 무한대값으로 설정
         if (startdate == null) {
@@ -82,6 +85,9 @@ public class PaymentsHistoryService {
     }
 
     public ChartResponse getChart(Long travelAccountId, LocalDate startdate, LocalDate enddate) {
+        // 통장 멤버인지 확인
+        paymentsAccountService.validateTravelAccountMembers(travelAccountId);
+
         // startdate가 null이면 과거 무한대값으로 설정
         if (startdate == null) {
             startdate = LocalDate.of(1970, 1, 1);
@@ -121,6 +127,9 @@ public class PaymentsHistoryService {
 
     public PaymentsHistoryCategoryResponse getPaymentsByCategoryName(Long accountId, String categoryName,
                                                                      LocalDate startDate, LocalDate endDate, int page) {
+        // 통장 멤버인지 확인
+        paymentsAccountService.validateTravelAccountMembers(accountId);
+        
         // startDate 가 null 이면 과거 무한대값으로 설정
         if (startDate == null) {
             startDate = LocalDate.of(1970, 1, 1);

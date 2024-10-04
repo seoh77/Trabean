@@ -3,6 +3,7 @@ package com.trabean.payment.service;
 import com.trabean.payment.entity.Payments;
 import com.trabean.payment.enums.PaymentStatus;
 import com.trabean.payment.exception.PaymentsException;
+import com.trabean.payment.interceptor.UserHeaderInterceptor;
 import com.trabean.payment.repository.PaymentsRepository;
 import jakarta.transaction.Transactional;
 import java.util.Objects;
@@ -65,6 +66,11 @@ public class PaymentsValidateService {
             }
         } else {
             throw new PaymentsException("가격 정보가 부족합니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        // 유저 정보 일치 확인
+        if (!payment.getUserId().equals(UserHeaderInterceptor.userId.get())) {
+            throw new PaymentsException("유저 정보가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
         }
     }
 }

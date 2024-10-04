@@ -7,7 +7,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class RequestPaymentRequest {
     private String transactionId;
-    private Long userId;
     private Long payId;
     private Long merchantId;
     private Long krwAmount;

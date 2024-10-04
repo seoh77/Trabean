@@ -7,7 +7,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class ValidatePasswordRequest {
     private Long payId;
-    private Long userId;
     private Long accountId;
     private String password;
 }

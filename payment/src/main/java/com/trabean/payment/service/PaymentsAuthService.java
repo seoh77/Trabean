@@ -6,16 +6,19 @@ import com.trabean.payment.dto.response.UserRoleResponse;
 import com.trabean.payment.entity.Payments;
 import com.trabean.payment.enums.UserRole;
 import com.trabean.payment.exception.PaymentsException;
+import com.trabean.payment.interceptor.UserHeaderInterceptor;
 import com.trabean.payment.repository.PaymentsRepository;
 import feign.FeignException;
 import feign.FeignException.NotFound;
 import feign.FeignException.Unauthorized;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PaymentsAuthService {
 
     private final AccountClient accountClient;
@@ -43,8 +46,9 @@ public class PaymentsAuthService {
     }
 
     public String checkAccountPassword(ValidatePasswordRequest request) {
+        log.info("유저 아이디 가져오기" + UserHeaderInterceptor.userId.get());
         String requestBody = String.format("{\"userId\":\"%d\", \"accountId\":%d, \"password\":%s}",
-                request.getUserId(), request.getAccountId(), request.getPassword());
+                UserHeaderInterceptor.userId.get(), request.getAccountId(), request.getPassword());
         try {
             accountClient.validateAccountPassword(requestBody);
             Payments payment = paymentsRepository.findById(request.getPayId())

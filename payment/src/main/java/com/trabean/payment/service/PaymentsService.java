@@ -4,16 +4,19 @@ import com.trabean.payment.dto.request.RequestPaymentRequest;
 import com.trabean.payment.dto.response.PaymentResponse;
 import com.trabean.payment.entity.Payments;
 import com.trabean.payment.exception.PaymentsException;
+import com.trabean.payment.interceptor.UserHeaderInterceptor;
 import com.trabean.payment.repository.PaymentsRepository;
 import com.trabean.payment.util.ApiName;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class PaymentsService {
 
     private final PaymentsAuthService paymentsAuthService;
@@ -26,8 +29,9 @@ public class PaymentsService {
     // 공통된 결제 요청 검증 메서드
     private void validateRequestPayment(Long accountId, RequestPaymentRequest request) {
         // 결제 권한 검증
-        paymentsAuthService.checkAuthPayment(request.getUserId(), accountId);
-        
+        log.info("유저 아이디 가져오기" + UserHeaderInterceptor.userId.get());
+        paymentsAuthService.checkAuthPayment(UserHeaderInterceptor.userId.get(), accountId);
+
         // transactionId 검증
         paymentsValidateService.validateTransactionId(request.getTransactionId(), request.getPayId());
 
