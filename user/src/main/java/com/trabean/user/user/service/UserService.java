@@ -12,10 +12,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.trabean.user.user.controller.UserApiController;
 import com.trabean.user.user.dto.AddUserRequest;
 import com.trabean.user.user.entity.User;
 import com.trabean.user.user.repository.UserRepository;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import lombok.RequiredArgsConstructor;
 
 import java.time.Duration;
@@ -29,6 +31,7 @@ public class UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ExternalApiService externalApiService; // 외부 API 호출을 위한 서비스 주입
     private final ObjectMapper objectMapper = new ObjectMapper(); // JSON 파싱을 위한 ObjectMapper
+	private static final Logger logger = LoggerFactory.getLogger(UserApiController.class); // 로그를 위한 Logger 추가
 
     private final RefreshTokenRepository refreshTokenRepository;
     private final TokenProvider tokenProvider;
@@ -73,6 +76,8 @@ public class UserService {
 
         // Refresh Token 발급 및 저장
         String refreshToken = tokenProvider.generateToken(user, Duration.ofDays(7));
+        logger.info("여기왔지롱");
+
         refreshTokenRepository.save(
                 RefreshToken.builder()
                         .email(user.getEmail())
