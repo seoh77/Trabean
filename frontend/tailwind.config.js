@@ -1,5 +1,5 @@
-/** @type {import('tailwindcss').Config} */
-export default {
+/** @type {import("tailwindcss").Config} */
+module.exports = {
   content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
@@ -11,9 +11,9 @@ export default {
         yellow: "#FEC72A",
       },
     },
-  },
-  fontFamily: {
-    Pretendard: ["Pretendard"],
+    fontFamily: {
+      Pretendard: ["Pretendard"],
+    },
   },
   plugins: [],
 };

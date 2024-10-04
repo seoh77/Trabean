@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import PaymentHistory from "./pages/PaymentPage/PaymentPage.PaymentHistory";
 import PaymentPage from "./pages/PaymentPage/PaymentPage";
 import PaymentPassword from "./pages/PaymentPage/PaymentPage.Password";
+import PaymentSuccessPage from "./pages/PaymentPage/PaymentPage.Payment.SuccessPage";
 import TravelAccountPage from "./pages/TravelAccount/TravelAccountPage";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import MainPage from "./pages/MainPage/MainPage";
@@ -15,6 +16,7 @@ import AccountAuthPage from "./pages/AccountCreationPage/AccountAuthPage";
 import IdentityAuthPage from "./pages/AccountCreationPage/IdentityAuthPage";
 import TravleSetupPage from "./pages/AccountCreationPage/TravelAccountSetup";
 import CurrencyAddPage from "./pages/AccountCreationPage/CurrencyAddPage";
+import ExchangeRates from "./pages/Exchange/ExchangePage";
 
 function App() {
   return (
@@ -28,8 +30,12 @@ function App() {
         />
         <Route path="/payment/qr" element={<PaymentPage />} />
         <Route
-          path="/payment/qr/:payId/:merchantName/:currency/:amount"
+          path="/payment/qr/:payId/:merchantName/:currency/:amount/:userId"
           element={<PaymentPassword />}
+        />
+        <Route
+          path="/payment/qr/success/:payId"
+          element={<PaymentSuccessPage />}
         />
         <Route path="/payment/list" element={<PaymentHistory />} />
         <Route path="/join" element={<JoinPage />} />
@@ -45,6 +51,7 @@ function App() {
         />
         <Route path="/creation/travel/setup" element={<TravleSetupPage />} />
         <Route path="/creation/travel/currency" element={<CurrencyAddPage />} />
+        <Route path="/exchange" element={<ExchangeRates />} />
       </Routes>
     </div>
   );
