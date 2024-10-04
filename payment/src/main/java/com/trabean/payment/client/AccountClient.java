@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 
 @FeignClient(name = "account", configuration = FeignClientConfiguration.class)
@@ -29,5 +30,7 @@ public interface AccountClient {
     Map<String, String> getAdminUser(@RequestBody String requestBody);
 
     @GetMapping(value = "/api/accounts/travel/domestic/{accountId}/members", consumes = MediaType.APPLICATION_JSON_VALUE)
-    TravelAccountMemberListResponse getTravelAccountMembers(@PathVariable("accountId") Long accountId);
+    TravelAccountMemberListResponse getTravelAccountMembers(@PathVariable("accountId") Long accountId,
+                                                            @RequestHeader("userId") Long userId,
+                                                            @RequestHeader("userKey") String userKey);
 }

@@ -186,7 +186,8 @@ public class PaymentsAccountService {
 
     public void validateTravelAccountMembers(Long accountId) {
         try {
-            TravelAccountMemberListResponse response = accountClient.getTravelAccountMembers(accountId);
+            TravelAccountMemberListResponse response = accountClient.getTravelAccountMembers(accountId,
+                    UserHeaderInterceptor.userId.get(), UserHeaderInterceptor.userKey.get());
             log.info(response.toString() + "민우 API 호출한거 (여행통장 멤버인지 조회)");
         } catch (FeignException error) {
             if (error.status() == 404) {
