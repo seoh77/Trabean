@@ -6,7 +6,8 @@ import NavBar from "./NavBar";
 import ChatBot from "./ChatBot";
 import ChangeTargetAmount from "./ChangeTargetAmount";
 import Loading from "./Loading";
-import client from "../../client";
+
+// import client from "../../client";
 
 interface Account {
   accountId: number;
