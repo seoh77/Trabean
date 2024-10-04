@@ -74,6 +74,7 @@ public class SecurityConfig {
 		CorsConfiguration configuration = new CorsConfiguration();
 		configuration.addAllowedOrigin("http://localhost:3000");
 		configuration.addAllowedOrigin("https://j11a604.p.ssafy.io");
+		configuration.addAllowedOrigin("http://j11a604.p.ssafy.io");
 		// configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000","http://localhost:8080/api/user/login","https://j11a604.p.ssafy.io/api/user/login","https://j11a604.p.ssafy.io/login","http://j11a604.p.ssafy.io/login","http://j11a604.p.ssafy.io:8888/login","https://j11a604.p.ssafy.io:8888/login")); // 허용할 origin 설정
 		configuration.addAllowedMethod("*"); // 모든 HTTP 메소드 허용
 		configuration.addAllowedHeader("*"); // 모든 헤더 허용
