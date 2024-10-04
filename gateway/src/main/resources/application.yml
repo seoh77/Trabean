@@ -98,6 +98,6 @@ spring:
 
 logging:
   level:
-    root: DEBUG # 전체 로그 레벨을 DEBUG로 설정
+    root: info # 전체 로그 레벨을 info 설정
 
 
