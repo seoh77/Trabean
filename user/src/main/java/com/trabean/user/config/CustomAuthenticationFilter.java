@@ -58,9 +58,9 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         // 응답 바디에는 사용자 정보만 포함 (토큰은 제외)
         Map<String, String> responseBody = new HashMap<>();
-//        responseBody.put("userKey", userKey);
-//        responseBody.put("refreshToken", refreshToken);
-//        responseBody.put("accessToken", accessToken);
+        responseBody.put("userKey", userKey);
+        responseBody.put("refreshToken", refreshToken);
+        responseBody.put("accessToken", accessToken);
 
         // 응답 상태 설정 (OK 또는 로그인 성공)
         response.setStatus(HttpServletResponse.SC_OK);
