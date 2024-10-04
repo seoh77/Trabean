@@ -4,8 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b3d9fcae-7d7f-4e5c-9ea6-0a4d03bce3db" name="Changes" comment="refactor : tailwind.config.js 파일의 content속성의 html 주소값 수정">
-      <change beforePath="$PROJECT_DIR$/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/index.html" afterDir="false" />
+    <list default="true" id="b3d9fcae-7d7f-4e5c-9ea6-0a4d03bce3db" name="Changes" comment="refactor : 정적파일 배포 주소 변경">
+      <change afterPath="$PROJECT_DIR$/path/to/output.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nginx.conf" beforeDir="false" afterPath="$PROJECT_DIR$/nginx.conf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tailwind.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/tailwind.config.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -39,17 +43,21 @@
   &quot;associatedIndex&quot;: 0
 }</component>
   <component name="ProjectId" id="2mS62gQ3CSlBfHhilYdNqQ9amwH" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "frontend",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/ssafy/2학기 특화플젝/gateway",
+    "last_opened_file_path": "C:/ssafy/2학기 특화플젝/frontend/S11P21A604/frontend/public",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.stylelint": "true",
     "node.js.detected.package.tslint": "true",
@@ -62,6 +70,11 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\ssafy\2학기 특화플젝\frontend\S11P21A604\frontend\public" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -85,7 +98,8 @@
       <workItem from="1727137160395" duration="26185000" />
       <workItem from="1727421272305" duration="6371000" />
       <workItem from="1727669247849" duration="2371000" />
-      <workItem from="1727828045300" duration="17610000" />
+      <workItem from="1727828045300" duration="18081000" />
+      <workItem from="1728024285216" duration="2822000" />
     </task>
     <task id="LOCAL-00001" summary="docs : nginx 설정을 위한 추가 파일">
       <option name="closed" value="true" />
@@ -247,7 +261,15 @@
       <option name="project" value="LOCAL" />
       <updated>1728022390519</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="refactor : tailwind.config.js 파일 속성 변경">
+      <option name="closed" value="true" />
+      <created>1728023854891</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1728023854891</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -265,6 +287,7 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="docs : nginx 설정을 위한 추가 파일" />
     <MESSAGE value="docs : Frontend 배포와 Nginx 실행을 위한 Dockerfile, nginx.conf 작성" />
     <MESSAGE value="docs : 빌드 디렉토리명 dist 에서 build로 수정" />
@@ -281,7 +304,10 @@
     <MESSAGE value="feat : CORS 설정 추가" />
     <MESSAGE value="fix : api 요청 에러 수정" />
     <MESSAGE value="refactor : tailwind.config.js 파일의 content속성의 html 주소값 수정" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor : tailwind.config.js 파일의 content속성의 html 주소값 수정" />
+    <MESSAGE value="refactor : tailwind.config.js 파일 속성 변경" />
+    <MESSAGE value="docs : tailwind.css 파일 생성" />
+    <MESSAGE value="refactor : 정적파일 배포 주소 변경" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor : 정적파일 배포 주소 변경" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
