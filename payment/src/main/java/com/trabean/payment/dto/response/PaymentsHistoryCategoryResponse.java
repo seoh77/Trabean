@@ -17,7 +17,7 @@ public class PaymentsHistoryCategoryResponse {
     @AllArgsConstructor
     public static class Payments {
         private Long payId;
-        private Long merchantId;
+        private String currency;
         private String merchantName;
         private String paymentDate;
         private Long krwAmount;

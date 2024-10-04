@@ -157,7 +157,7 @@ public class PaymentsHistoryService {
         List<PaymentsHistoryCategoryResponse.Payments> payments = paymentsPage.getContent().stream()
                 .map(payment -> new PaymentsHistoryCategoryResponse.Payments(
                         payment.getPayId(),
-                        payment.getMerchant().getMerchantId(),
+                        payment.getMerchant().getExchangeCurrency(),
                         payment.getMerchant().getName(),
                         payment.getPaymentDate().toString(),
                         payment.getKrwAmount(),
