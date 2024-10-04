@@ -18,13 +18,12 @@ import lombok.RequiredArgsConstructor;
 @RestController
 public class TokenApiController {
 	private final TokenService tokenService;
-	private static final Logger logger = LoggerFactory.getLogger(UserApiController.class); // 로그를 위한 Logger 추가
 
 
 	@PostMapping("/api/token")
 	public ResponseEntity<CreateAccessTokenResponse> createNewAccessToken(@RequestBody CreateAccessTokenRequest request) {
 		String newAccessToken = tokenService.createNewAccessToken(request.refreshToken());
-		logger.info("여기왔지롱");
+
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(new CreateAccessTokenResponse(newAccessToken));
 	}
