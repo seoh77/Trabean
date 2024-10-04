@@ -55,6 +55,16 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         User loggedInUser = (User) authResult.getPrincipal();
         String userKey = loggedInUser.getUser_key();
 
+
+        // 응답 바디에는 사용자 정보만 포함 (토큰은 제외)
+        Map<String, String> responseBody = new HashMap<>();
+//        responseBody.put("userKey", userKey);
+//        responseBody.put("refreshToken", refreshToken);
+//        responseBody.put("accessToken", accessToken);
+
+        // 응답 상태 설정 (OK 또는 로그인 성공)
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.getWriter().write(new ObjectMapper().writeValueAsString(responseBody));
         // Refresh Token을 DB에 저장
         refreshTokenService.saveRefreshToken(loggedInUser.getUser_id(),loggedInUser.getEmail(), refreshToken);
 
@@ -75,7 +85,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         response.addCookie(refreshTokenCookie);
 
         // 응답 바디에는 사용자 정보만 포함 (토큰은 제외)
-        Map<String, String> responseBody = new HashMap<>();
+//        Map<String, String> responseBody = new HashMap<>();
 //        responseBody.put("userKey", userKey);
 //        responseBody.put("refreshToken", refreshToken);
 //        responseBody.put("accessToken", accessToken);
