@@ -38,18 +38,19 @@ public class SecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
 		// CustomAuthenticationFilter를 설정하고 필터 체인에 추가
 		CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager(httpSecurity), tokenProvider, refreshTokenService);
-		customAuthenticationFilter.setFilterProcessesUrl("/api/user/login"); // 로그인 처리 URL 설정
+		customAuthenticationFilter.setFilterProcessesUrl("/login"); // 로그인 처리 URL 설정
 
 		return httpSecurity.httpBasic(HttpBasicConfigurer::disable)
 				.cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
 				.csrf(AbstractHttpConfigurer::disable) // CSRF 보호 비활성화 (API 사용 시 필요에 따라 활성화)
 				.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers(
-								"*",
 								"/api/user/signup", // 회원가입 URL 허용
 								"/api/user/login", // 로그인 URL 허용
 								"/api/user/**", // 로그인 URL 허용
 								"/api/token",
+								"/login",
+								"/signup",
 								"/api/user/email/send-verification-code",
 								"/api/user/email/verify-code").permitAll() // 토큰 발급 URL 허용
 						.anyRequest().authenticated()) // 나머지 모든 요청은 인증 필요
@@ -71,8 +72,8 @@ public class SecurityConfig {
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000","http://localhost:8080/api/user/login","https://j11a604.p.ssafy.io/api/user/login","https://j11a604.p.ssafy.io/login","http://j11a604.p.ssafy.io/login","http://j11a604.p.ssafy.io:8888/login","https://j11a604.p.ssafy.io:8888/login")); // 허용할 origin 설정
 		configuration.addAllowedOrigin("http://localhost:3000");
+		configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000","http://localhost:8080/api/user/login","https://j11a604.p.ssafy.io/api/user/login","https://j11a604.p.ssafy.io/login","http://j11a604.p.ssafy.io/login","http://j11a604.p.ssafy.io:8888/login","https://j11a604.p.ssafy.io:8888/login")); // 허용할 origin 설정
 		configuration.addAllowedMethod("*"); // 모든 HTTP 메소드 허용
 		configuration.addAllowedHeader("*"); // 모든 헤더 허용
 		configuration.setAllowCredentials(true); // 쿠키 허용
