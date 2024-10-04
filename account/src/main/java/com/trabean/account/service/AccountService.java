@@ -36,6 +36,8 @@ import com.trabean.util.RequestHeader;
 import com.trabean.util.ValidateInputDTO;
 import com.trabean.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -50,6 +52,7 @@ import static com.trabean.constant.Constant.*;
 @RequiredArgsConstructor
 public class AccountService {
 
+    private static final Logger log = LoggerFactory.getLogger(AccountService.class);
     private final AccountRepository accountRepository;
     private final UserAccountRelationRepository userAccountRelationRepository;
 
@@ -562,7 +565,7 @@ public class AccountService {
 
     // 한화 여행통장 멤버 목록 조회 서비스 로직 (민채)
     public DomesticTravelAccountMemberListResponseDTO getDomesticTravelAccountMemberList(Long accountId) {
-
+        log.info("숫자가 나와야함 {}", String.valueOf(UserHeaderInterceptor.userId.get()));
         ValidationUtil.validateInput(ValidateInputDTO.builder()
                 .account(accountRepository.findById(accountId))
                 .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(UserHeaderInterceptor.userId.get(), accountId))
