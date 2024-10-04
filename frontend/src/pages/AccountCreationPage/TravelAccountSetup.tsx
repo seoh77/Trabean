@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import CustomKeypad from "./Keypad";
+import Keypad from "./Keypad";
 import NavBar from "./NavBar";
 import Modal from "./Modal";
 import SuccessPage from "./SuccessPage";
@@ -255,7 +255,7 @@ const PasswordInputPage: React.FC = () => {
           <p className="text-gray-500 mb-5 text-sm text-center">
             “모두가 함께 공유하는 비밀번호에요”
           </p>
-          <CustomKeypad
+          <Keypad
             password={password}
             onChange={handlePasswordChange}
             onComplete={handleComplete}
@@ -272,7 +272,7 @@ const PasswordInputPage: React.FC = () => {
           <p className="text-gray-500 mb-5 text-sm text-center">
             “비밀번호를 다시 확인하고 있어요”
           </p>
-          <CustomKeypad
+          <Keypad
             password={confirmPassword}
             onChange={handlePasswordChange}
             onComplete={handleComplete}
