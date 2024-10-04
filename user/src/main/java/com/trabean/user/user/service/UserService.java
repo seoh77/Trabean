@@ -13,10 +13,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.trabean.user.user.controller.UserApiController;
 import com.trabean.user.user.dto.AddUserRequest;
 import com.trabean.user.user.entity.User;
 import com.trabean.user.user.repository.UserRepository;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import lombok.RequiredArgsConstructor;
 
 import java.time.Duration;
@@ -31,6 +33,7 @@ public class UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ExternalApiService externalApiService; // 외부 API 호출을 위한 서비스 주입
     private final ObjectMapper objectMapper = new ObjectMapper(); // JSON 파싱을 위한 ObjectMapper
+	private static final Logger logger = LoggerFactory.getLogger(UserApiController.class); // 로그를 위한 Logger 추가
 
     private final RefreshTokenRepository refreshTokenRepository;
     private final TokenProvider tokenProvider;
@@ -61,7 +64,6 @@ public class UserService {
 
     // 로그인 처리 로직
     public String login(LoginRequest loginRequest) {
-        log.info("로그인 정보"  + loginRequest.toString());
         // 사용자 이메일로 데이터베이스에서 사용자 찾기
         User user = userRepository.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
@@ -71,20 +73,11 @@ public class UserService {
             throw new RuntimeException("비밀번호가 일치하지 않습니다.");
         }
 
-        log.info("액세스 토큰 전"  + loginRequest.toString());
-
-
         // Access Token 발급
         String accessToken = tokenProvider.generateToken(user, Duration.ofMinutes(30));
 
-
-        log.info("액세스 토큰 후"  + loginRequest.toString());
-
         // Refresh Token 발급 및 저장
         String refreshToken = tokenProvider.generateToken(user, Duration.ofDays(7));
-
-        log.info("리프레수ㅣ"  + refreshToken.length());
-
         refreshTokenRepository.save(
                 RefreshToken.builder()
                         .user_id(user.getUser_id())
