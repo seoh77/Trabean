@@ -10,6 +10,7 @@ interface ChartProps {
   formatDate: (date: string) => string;
   handleTotalAmount: (amount: string) => void;
   signalFetchChart: boolean;
+  handleCategory: (category: string) => void;
 }
 
 interface Category {
@@ -25,6 +26,7 @@ const Chart: React.FC<ChartProps> = ({
   formatDate,
   handleTotalAmount,
   signalFetchChart,
+  handleCategory,
 }) => {
   const [chartInfo, setCartInfo] = useState<Category[] | null>(null);
 
@@ -39,12 +41,19 @@ const Chart: React.FC<ChartProps> = ({
 
   // 카테고리 이름 매핑 (영어 -> 한국어)
   const categoryNameMap: { [key: string]: string } = {
+    ALL: "전체 항목",
     FOOD: "음식",
     TRANSPORTATION: "교통",
     SHOPPING: "쇼핑",
     ACTIVITY: "여가",
     ACCOMMODATION: "숙박",
     OTHER: "기타",
+  };
+
+  const handleCategoryChange = (
+    event: React.ChangeEvent<HTMLSelectElement>,
+  ) => {
+    handleCategory(event.target.value);
   };
 
   const fetchChart = async () => {
@@ -102,9 +111,9 @@ const Chart: React.FC<ChartProps> = ({
   return (
     <div>
       {chartInfo && chartInfo.length > 0 && (
-        <div id="chart" className="flex flex-col">
+        <div id="chart" className="flex flex-col items-center">
           <h2 className="text-center font-semibold text-lg my-2">
-            카테고리 별 지출
+            항목별 결제 내역
           </h2>
           <PieChart width={250} height={250}>
             <Pie
@@ -138,10 +147,24 @@ const Chart: React.FC<ChartProps> = ({
                 padding: "10px",
                 width: "100%",
                 fontSize: "14px",
-                top: "-8px",
+                top: "-14px",
               }}
             />
           </PieChart>
+
+          {/* 카테고리 셀렉트 박스 */}
+          <div className="mt-4 btn-outline-md w-full flex justify-center">
+            <select
+              className="focus:outline-none bg-transparent w-full text-center"
+              onChange={handleCategoryChange}
+            >
+              {Object.entries(categoryNameMap).map(([key, value]) => (
+                <option key={key} value={key}>
+                  {value}{" "}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       )}
     </div>

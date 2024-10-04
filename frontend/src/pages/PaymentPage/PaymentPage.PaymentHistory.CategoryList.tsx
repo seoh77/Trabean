@@ -17,24 +17,29 @@ interface ListProps {
   startDate: string | null;
   endDate: string | null;
   formatDate: (date: string) => string;
+  travelAccountId: number;
+  categoryName: string;
+  handleTotalAmount: (amount: string) => void;
 }
 
 interface PaymentItem {
   payId: number;
-  merchantName: string;
   currency: string;
+  merchantName: string;
   paymentDate: string;
   krwAmount: number | null;
   foreignAmount: number | null;
-  userName: string | null;
   category: string;
 }
 
-const List: React.FC<ListProps> = ({
+const CategoryList: React.FC<ListProps> = ({
   startDate,
   endDate,
   token,
   formatDate,
+  travelAccountId,
+  categoryName,
+  handleTotalAmount,
 }) => {
   const [payments, setPayments] = useState<PaymentItem[]>([]);
   const [page, setPage] = useState<number>(1);
@@ -73,25 +78,42 @@ const List: React.FC<ListProps> = ({
           enddate: endDate ? formatDate(endDate) : null,
           page: reset ? 1 : page,
         };
-        const response = await client(token || "").get(`/api/payments/1`, {
-          params,
-        });
+        const response = await client(token || "").get(
+          `/api/payments/${travelAccountId}/${categoryName}`,
+          {
+            params,
+          },
+        );
 
         if (reset) {
           setPayments(response.data.payments);
         } else {
           setPayments((prev) => [...prev, ...response.data.payments]);
         }
-
-        setPage(response.data.pagination.currentPage + 1);
-        setTotalPage(response.data.pagination.totalPages);
+        console.log(page);
+        setPage(response.data.pagination[0].currentPage + 1);
+        setTotalPage(response.data.pagination[0].totalPages);
+        handleTotalAmount(
+          formatNumberWithCommas(response.data.categoryTotalAmount),
+        );
       } catch (error) {
-        console.error("Error fetching payment list:", error);
+        console.error("Error fetching payment category list:", error);
       } finally {
         setIsLoading(false);
       }
     },
-    [token, page, totalPage, startDate, endDate, formatDate, isLoading],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      token,
+      page,
+      totalPage,
+      startDate,
+      endDate,
+      formatDate,
+      isLoading,
+      travelAccountId,
+      categoryName,
+    ],
   );
 
   // 초기 렌더링 및 날짜 변경 시 데이터를 다시 불러오기 위한 useEffect 훅
@@ -101,7 +123,7 @@ const List: React.FC<ListProps> = ({
     setPayments([]);
     fetchPaymentList(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token, startDate, endDate]);
+  }, [token, startDate, endDate, travelAccountId, categoryName]);
 
   // 스크롤 이벤트를 감지하여 무한 스크롤 구현
   useEffect(() => {
@@ -173,7 +195,7 @@ const List: React.FC<ListProps> = ({
                           ? `${payment.merchantName.substring(0, maxLength)}...`
                           : payment.merchantName}
                       </span>
-                      <span className=" text-sm text-gray-900">
+                      <span className="text-sm text-gray-900">
                         {formatNumberWithCommas(payment.krwAmount || 0)} ₩
                       </span>
                     </p>
@@ -195,4 +217,4 @@ const List: React.FC<ListProps> = ({
   );
 };
 
-export default List;
+export default CategoryList;

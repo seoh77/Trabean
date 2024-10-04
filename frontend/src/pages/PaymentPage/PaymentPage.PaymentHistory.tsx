@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Search from "./PaymentPage.PaymentHistory.Search";
 import Chart from "./PaymentPage.PaymentHistory.Chart";
 import List from "./PaymentPage.PaymentHistory.List";
+import CategoryList from "./PaymentPage.PaymentHistory.CategoryList";
 
 const PaymentHistory: React.FC = () => {
   const [token] = useState<string | null>(null);
@@ -9,8 +10,10 @@ const PaymentHistory: React.FC = () => {
   const [endDate, setEndDate] = useState<string | null>(null);
   const [showDate, setShowDate] = useState<boolean>(false);
   const [signalFetchChart, setSignalFetchChart] = useState<boolean>(false);
-
   const [totalAmount, setTotalAmount] = useState<string | null>(null);
+
+  // 카테고리 선택
+  const [category, setCategory] = useState<string>("ALL");
 
   // 날짜 선택 토글
   const toggleDate = () => {
@@ -41,13 +44,16 @@ const PaymentHistory: React.FC = () => {
   const handleTotalAmount = (amount: string) => {
     setTotalAmount(amount);
   };
-
   const handleFetchChart = () => {
     setSignalFetchChart(() => !signalFetchChart);
   };
+  const handleCategory = (categoryName: string) => {
+    setCategory(categoryName);
+    console.log(category);
+  };
 
   return (
-    <div className="w-full bg-[#F4F4F5] h-vdh pt-[4.375rem] flex flex-col items-center">
+    <div className="w-full bg-[#F4F4F5] h-vdh py-[4.375rem] flex flex-col items-center">
       <div className="w-[300px]">
         <h1 className="text-base text-gray-900 font-semibold flex justify-between">
           지출 내역
@@ -83,13 +89,27 @@ const PaymentHistory: React.FC = () => {
             endDate={endDate}
             formatDate={formatDate}
             signalFetchChart={signalFetchChart}
+            handleCategory={handleCategory}
           />
-          <List
-            startDate={startDate}
-            endDate={endDate}
-            token={token}
-            formatDate={formatDate}
-          />
+          {category === "ALL" && (
+            <List
+              startDate={startDate}
+              endDate={endDate}
+              token={token}
+              formatDate={formatDate}
+            />
+          )}
+          {category !== "ALL" && (
+            <CategoryList
+              startDate={startDate}
+              endDate={endDate}
+              token={token}
+              formatDate={formatDate}
+              categoryName={category}
+              travelAccountId={1}
+              handleTotalAmount={handleTotalAmount}
+            />
+          )}
         </div>
       </div>
     </div>
