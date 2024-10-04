@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import QrScanner from "qr-scanner";
-import NavBar from "../../components/NavBar";
+import TopBar from "../../components/TopBar";
 
 const PaymentPage: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -38,7 +38,7 @@ const PaymentPage: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center h-dvh justify-center">
-      <NavBar />
+      <TopBar />
       <video
         ref={videoRef}
         style={{

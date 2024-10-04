@@ -3,7 +3,7 @@ import Search from "./PaymentPage.PaymentHistory.Search";
 import Chart from "./PaymentPage.PaymentHistory.Chart";
 import List from "./PaymentPage.PaymentHistory.List";
 import CategoryList from "./PaymentPage.PaymentHistory.CategoryList";
-import NavBar from "../../components/NavBar";
+import TopBar from "../../components/TopBar";
 
 const PaymentHistory: React.FC = () => {
   const [token] = useState<string | null>(null);
@@ -55,7 +55,7 @@ const PaymentHistory: React.FC = () => {
 
   return (
     <>
-      <NavBar />
+      <TopBar />
       <div className="w-full bg-[#F4F4F5] h-vdh py-[4.375rem] flex flex-col items-center pt-[90px]">
         <div className="w-[300px]">
           <h1 className="text-base text-gray-900 font-semibold flex justify-between">
