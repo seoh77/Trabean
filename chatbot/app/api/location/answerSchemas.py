@@ -46,7 +46,7 @@ class Place(BaseModel):
     googleMapsUri: str
     userRatingCount: int
     displayName: DisplayName
-    primaryType: str
+    primaryType: Optional[str] = None
     editorialSummary: Optional[DisplayName] = None
     goodForChildren: Optional[bool] = None
     paymentOptions: Optional[PaymentOptions] = None

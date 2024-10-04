@@ -1,5 +1,5 @@
 # .env 파일 무시
-chatbot/.env
+# chatbot/.env
 
 # Python 캐시 파일 무시
 **/__pycache__/

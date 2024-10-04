@@ -14,18 +14,6 @@ GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 current_directory = os.path.dirname(os.path.abspath(__file__))  # 현재 파일 위치
 project_root = os.path.abspath(os.path.join(current_directory, "../../../"))  # 최상위 디렉토리로 이동
 
-# radiusList = {
-#   "한국": 5000,
-#   "미국": 12000,
-#   "독일": 8000,
-#   "프랑스": 8500,
-#   "일본": 6000,
-#   "중국": 15000,
-#   "영국": 7000,
-#   "스위스": 4000,
-#   "캐나다": 10000
-# }
-
 
 # 적당한 2N개의 관광, 식당 목록 반환
 class PlaceFetcher:
