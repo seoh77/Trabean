@@ -76,18 +76,31 @@ public class UserService {
         // Access Token 발급
         String accessToken = tokenProvider.generateToken(user, Duration.ofMinutes(30));
 
-        // Refresh Token 발급 및 저장
+        // Refresh Token 발급
         String refreshToken = tokenProvider.generateToken(user, Duration.ofDays(7));
-        refreshTokenRepository.save(
-                RefreshToken.builder()
-                        .user_id(user.getUser_id())
-                        .email(user.getEmail())
-                        .refreshToken(refreshToken)
-                        .build()
-        );
+
+        // 기존 Refresh Token 확인
+        Optional<RefreshToken> existingToken = refreshTokenRepository.findByUserId(user.getUser_id());
+
+        if (existingToken.isPresent()) {
+            // 기존 토큰 업데이트
+            RefreshToken tokenToUpdate = existingToken.get();
+            tokenToUpdate.setRefreshToken(refreshToken);
+            refreshTokenRepository.save(tokenToUpdate);
+        } else {
+            // 새로운 Refresh Token 저장
+            refreshTokenRepository.save(
+                    RefreshToken.builder()
+                            .userId(user.getUser_id())
+                            .email(user.getEmail())
+                            .refreshToken(refreshToken)
+                            .build()
+            );
+        }
 
         return accessToken;
     }
+
 
     // userId로 사용자 조회 및 payment_account_id 반환
     public UserPaymentAccountIdResponse getUserPaymentAccount(Long userId) {

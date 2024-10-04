@@ -25,7 +25,7 @@ public class RefreshTokenService {
 		} else {
 			// 새토큰 저장
 			RefreshToken newToken = RefreshToken.builder()
-					.user_id(user_id)
+					.userId(user_id)
 					.email(email)
 					.refreshToken(refreshToken)
 					.build();
