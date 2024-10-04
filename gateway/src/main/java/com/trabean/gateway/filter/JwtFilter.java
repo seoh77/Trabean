@@ -90,7 +90,11 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
                         .header("userId", "15")
                         .header("userKey", "98afe3e2-2123-44dd-b7ef-d51e9ab5c37a")
                         .build();
-
+            /*
+            *   요청에서 Header 영역에서 Origin이 https로 되어서 CORS가 발생
+            *   Origin을 찾아서 http로 변경
+            * */
+            exchange.getRequest().getHeaders().set("Origin","http://j11a604.p.ssafy.io");
 
 
 
