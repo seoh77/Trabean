@@ -30,7 +30,7 @@ public class SecurityConfig {
 
         // 프론트엔드 도메인 허용
         configuration.addAllowedOrigin("http://localhost:3000");  // 로컬 프론트엔드
-        configuration.addAllowedOrigin("http://j11a604.p.ssafy.io");  // 배포된 서버
+        configuration.addAllowedOrigin("https://j11a604.p.ssafy.io");  // 배포된 서버
 
         // 모든 HTTP 메서드 허용
         configuration.addAllowedMethod("*");
