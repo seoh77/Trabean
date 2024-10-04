@@ -80,8 +80,8 @@ management:
 logging:
   level:
     org.springframework.cloud.gateway: DEBUG
-    org.hibernate: DEBUG
-    org.springframework: DEBUG
-    org.springframework.mail: DEBUG
+    # org.hibernate: DEBUG
+    # org.springframework: DEBUG
+    # org.springframework.mail: DEBUG
     org.springframework.security: DEBUG
-    root: DEBUG
+    root: info
