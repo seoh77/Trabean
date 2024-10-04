@@ -76,14 +76,14 @@ public class UserService {
 
         // Refresh Token 발급 및 저장
         String refreshToken = tokenProvider.generateToken(user, Duration.ofDays(7));
-        logger.info("여기왔지롱");
-
+        
         refreshTokenRepository.save(
-                RefreshToken.builder()
-                        .email(user.getEmail())
-                        .refreshToken(refreshToken)
-                        .build()
-        );
+            RefreshToken.builder()
+            .email(user.getEmail())
+            .refreshToken(refreshToken)
+            .build()
+            );
+            logger.info("여기왔지롱");
 
         return accessToken;
     }
