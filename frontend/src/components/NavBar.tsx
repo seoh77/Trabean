@@ -9,6 +9,7 @@ const NavBar: React.FC = () => {
   const currentPageName = location.pathname.split("/").pop() || "";
 
   // 경로와 페이지 명 매핑
+  // 네비게이션 바 넣을 때 본인이 알아서 매핑 해주세요
   const pageNames: { [key: string]: string } = {
     "": "Home",
     qr: "QR 결제",
