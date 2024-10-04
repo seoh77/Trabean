@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b3d9fcae-7d7f-4e5c-9ea6-0a4d03bce3db" name="Changes" comment="fix : nginx.conf 설정파일 수정">
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_2024-09-23__11_10__Changes_.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_2024-09-23_오전_11_10_[Changes]/shelved.patch" beforeDir="false" />
+    <list default="true" id="b3d9fcae-7d7f-4e5c-9ea6-0a4d03bce3db" name="Changes" comment="test : 프로젝트 빌드시 정상적인 환경변수 설정되는지 테스트(원위치)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nginx.conf" beforeDir="false" afterPath="$PROJECT_DIR$/nginx.conf" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,23 +43,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;frontend&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/ssafy/2학기 특화플젝/gateway/S11P21A604/gateway&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.stylelint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.stylelint&quot;: &quot;&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;actions.on.save&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "frontend",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/ssafy/2학기 특화플젝/gateway",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.stylelint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.stylelint": "",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "actions.on.save",
+    "ts.external.directory.path": "C:\\ssafy\\2학기 특화플젝\\frontend\\S11P21A604\\frontend\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -85,7 +84,7 @@
       <workItem from="1727137160395" duration="26185000" />
       <workItem from="1727421272305" duration="6371000" />
       <workItem from="1727669247849" duration="2371000" />
-      <workItem from="1727828045300" duration="802000" />
+      <workItem from="1727828045300" duration="12068000" />
     </task>
     <task id="LOCAL-00001" summary="docs : nginx 설정을 위한 추가 파일">
       <option name="closed" value="true" />
@@ -183,7 +182,47 @@
       <option name="project" value="LOCAL" />
       <updated>1727669188138</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="fix : react프로젝트 배포방식 수정으로인한 코드 수정">
+      <option name="closed" value="true" />
+      <created>1727829281208</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1727829281208</updated>
+    </task>
+    <task id="LOCAL-00014" summary="docs : Dockerfile에 프론트 ENDPOINT 환경변수 설정 추가">
+      <option name="closed" value="true" />
+      <created>1727843697817</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1727843697817</updated>
+    </task>
+    <task id="LOCAL-00015" summary="docs : nginx 설정에 CORS 설정 추가">
+      <option name="closed" value="true" />
+      <created>1727843743553</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1727843743553</updated>
+    </task>
+    <task id="LOCAL-00016" summary="test : 프로젝트 빌드시 정상적인 환경변수 설정되는지 테스트">
+      <option name="closed" value="true" />
+      <created>1727843976084</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1727843976084</updated>
+    </task>
+    <task id="LOCAL-00017" summary="test : 프로젝트 빌드시 정상적인 환경변수 설정되는지 테스트(원위치)">
+      <option name="closed" value="true" />
+      <created>1727844314516</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1727844314516</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -209,7 +248,12 @@
     <MESSAGE value="docs : SSL 인증서 파일 Pipeline에서 해결하는 방식으로 변경" />
     <MESSAGE value="docs : nginx.conf SSL 인증서 주소 변경" />
     <MESSAGE value="fix : nginx.conf 설정파일 수정" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix : nginx.conf 설정파일 수정" />
+    <MESSAGE value="fix : react프로젝트 배포방식 수정으로인한 코드 수정" />
+    <MESSAGE value="docs : Dockerfile에 프론트 ENDPOINT 환경변수 설정 추가" />
+    <MESSAGE value="docs : nginx 설정에 CORS 설정 추가" />
+    <MESSAGE value="test : 프로젝트 빌드시 정상적인 환경변수 설정되는지 테스트" />
+    <MESSAGE value="test : 프로젝트 빌드시 정상적인 환경변수 설정되는지 테스트(원위치)" />
+    <option name="LAST_COMMIT_MESSAGE" value="test : 프로젝트 빌드시 정상적인 환경변수 설정되는지 테스트(원위치)" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
