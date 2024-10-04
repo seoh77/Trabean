@@ -32,8 +32,6 @@ public class ForeignTravelAccountService {
 
     private final CommonAccountService commonAccountService;
 
-    private String userKey = "9e10349e-91e9-474d-afb4-564b24178d9f";
-
     @Transactional
     public void save(SaveForeignAccountRequestDto saveForeignAccountRequestDto) {
         Long parentAccountId = saveForeignAccountRequestDto.getParentAccountId();

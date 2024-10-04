@@ -22,8 +22,6 @@ public class KrwTravelAccountService {
     private final DemandDepositClient demandDepositClient;
     private final CommonAccountService commonAccountService;
 
-    private String userKey = "9e10349e-91e9-474d-afb4-564b24178d9f";
-
     @Transactional
     public void save(SaveKrwAccountRequestDto saveKrwAccountRequestDto) {
         KrwTravelAccount account = KrwTravelAccount.builder()

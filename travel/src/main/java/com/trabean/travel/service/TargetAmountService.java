@@ -1,9 +1,11 @@
 package com.trabean.travel.service;
 
+import com.trabean.interceptor.UserHeaderInterceptor;
 import com.trabean.travel.callApi.client.AccountClient;
 import com.trabean.travel.callApi.client.DemandDepositClient;
 import com.trabean.travel.callApi.dto.request.AccountHistoryApiRequestDto;
 import com.trabean.travel.callApi.dto.response.AccountHistoryApiResponseDto;
+import com.trabean.travel.callApi.dto.response.MemberInfoApiResponseDto;
 import com.trabean.travel.callApi.dto.response.MemberInfoApiResponseDto.MemberDetail;
 import com.trabean.travel.dto.response.AccountHistoryDetail;
 import com.trabean.travel.dto.response.TargetAmountListResponseDto;
@@ -72,14 +74,13 @@ public class TargetAmountService {
         List<AccountHistoryDetail> depositList = accountHistory.getRec().getList();
 
         HashMap<Long, Double> depositMap = new HashMap<>();
-        Long userId = 0L;
+        Long userId = UserHeaderInterceptor.userId.get();
 
         for (AccountHistoryDetail deposit : depositList) {
-            if (deposit.getTransactionMemo() == null) {
+            if (deposit.getTransactionMemo().equals("") || deposit.getTransactionMemo() == null) {
                 continue;
             }
 
-            userId = Long.parseLong(deposit.getTransactionMemo());
             Double amount = deposit.getTransactionBalance();
 
             if (depositMap.containsKey(userId)) {

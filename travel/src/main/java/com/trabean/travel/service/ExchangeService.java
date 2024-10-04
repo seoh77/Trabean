@@ -1,5 +1,6 @@
 package com.trabean.travel.service;
 
+import com.trabean.interceptor.UserHeaderInterceptor;
 import com.trabean.travel.callApi.client.ExchangeClient;
 import com.trabean.travel.callApi.client.ExchangeRateClient;
 import com.trabean.travel.callApi.client.ForeignCurrencyClient;
@@ -43,7 +44,7 @@ public class ExchangeService {
     @Value("${KOREAEXIM_AUTHKEY}")
     private String authKey;
 
-    private String userKey = "9e10349e-91e9-474d-afb4-564b24178d9f";
+    private String userKey = UserHeaderInterceptor.userKey.get();
 
     public ExchangeEstimateResponseDto exchangeEstimate(ExchangeEstimateRequestDto requestDto) {
         ExchangeEstimateApiRequestDto exchangeEstimateApiRequestDto

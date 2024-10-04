@@ -21,8 +21,6 @@ public class CommonAccountService {
     private final DemandDepositClient demandDepositClient;
     private final ForeignCurrencyClient foreignCurrencyClient;
 
-    private String userKey = "9e10349e-91e9-474d-afb4-564b24178d9f";
-
     /**
      * 통장 주인의 userKey 조회
      */
