@@ -1,10 +1,9 @@
 import React from "react";
 
-const Loading: React.FC = () => {
-  // 로딩 중이면 로딩 중인 상태 등 표시
-  console.log("로딩중......");
-
-  return <div>로딩중......</div>;
-};
+const Loading: React.FC = () => (
+  <div className="flex justify-center items-center h-full">
+    <div className="w-12 h-12 border-4 border-green-500 border-t-transparent border-solid rounded-full animate-spin" />
+  </div>
+);
 
 export default Loading;

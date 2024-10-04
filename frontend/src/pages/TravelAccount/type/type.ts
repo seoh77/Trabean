@@ -23,9 +23,18 @@ export interface TravelAccountMember {
   userId: number;
   userName: string;
   role: string;
-  amount: number;
+  amount?: number;
 }
 
+export interface TravelAccountMemberAmountData {
+  targetAmount: number;
+  amount: number;
+  memberList: TravelAccountMember[];
+}
+
+// Front -> Account
+// 한화 여행통장 상세 조회 API
+// /api/accounts/travel/domestic/{accountId}?startDate={startDate}&endDate={endDate}&transactionType={transactionType}
 export interface TravelAccountMemberData {
   memberCount: number;
   members: TravelAccountMember[];

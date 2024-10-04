@@ -1,25 +1,35 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import bean from "../../../assets/bean.png";
+import TopBar from "../../../components/TopBar";
+import Alarm from "../component/Alarm";
+import TargetAmountProgressBar from "../component/TargetAmountProgressBar";
 import ChatBot from "../component/ChatBot";
 import ChangeTargetAmountModal from "../ChangeTargetAmountModal";
-import { TravelAccountData, TravelAccountMemberData } from "../type/type";
-import TravelAccountMemberDataDummy from "../dummy/TravelAccountMemberDataDummy";
-import TravelAccountDataDummy from "../dummy/TravelAccountDataDummy";
-import NavBar from "../component/NavBar";
-import Alarm from "../component/Alarm";
 import getCurrencySymbol from "../util/util";
-import TargetAmountProgressBar from "../component/TargetAmountProgressBar";
+import { TravelAccountData, TravelAccountMemberAmountData } from "../type/type";
+import client from "../../../client";
+import Loading from "../component/Loading";
 
 const DomesticTravelAccountPage: React.FC = () => {
+  const { parentAccountId } = useParams();
+
+  const nav = useNavigate();
+
+  const [loading1, setLoading1] = useState(true);
+  const [loading2, setLoading2] = useState(true);
+
+  // 여행통장 상태관리
   const [travelAccountData, setTravelAccountData] =
     useState<TravelAccountData>();
-  const [travelAccountMemberData, setTravelAccountMemberData] =
-    useState<TravelAccountMemberData>();
 
-  // 목표 금액과 현재 모인 금액 상태
-  const [targetAmount, setargetAmount] = useState(0);
-  const [collectedAmount, setCollectedAmount] = useState(0);
+  // 여행통장 멤버 상태관리
+  const [travelAccountMemberAmountData, setTravelAccountMemberAmountData] =
+    useState<TravelAccountMemberAmountData>();
+
+  // 목표 금액과 현재 모인 금액 상태 상태관리
+  const [targetAmount, setargetAmount] = useState<number>(0);
+  const [collectedAmount, setCollectedAmount] = useState<number>(0);
 
   // 목표 관리 모달
   const [isChangeTargetAmountModalOpen, setIsChangeTargetAmountModalOpen] =
@@ -29,8 +39,6 @@ const DomesticTravelAccountPage: React.FC = () => {
     setIsChangeTargetAmountModalOpen(true);
   const closeChangeTargetAmountModal = () =>
     setIsChangeTargetAmountModalOpen(false);
-
-  const nav = useNavigate();
 
   const handleUpdateTravelAccountInfo = () => {
     console.log("여행통장 정보 수정 누름");
@@ -52,23 +60,50 @@ const DomesticTravelAccountPage: React.FC = () => {
     console.log("예산관리 가계부 누름");
   };
 
-  // 여행통장 계좌 정보를 받는 fetch 요청
+  // Account 서버 여행통장 조회 API fetch 요청
   useEffect(() => {
-    setTravelAccountData(TravelAccountDataDummy);
-    setargetAmount(1000000);
-    setCollectedAmount(700000);
-  }, []);
+    const token = "";
+    const getTravelAccountData = async () => {
+      const response = await client(token).get(
+        `/api/travel/${parentAccountId}`,
+      );
+      setTravelAccountData(response.data);
+      setLoading1(false);
+    };
 
-  // 여행통장 멤버 정보를 받는 fetch 요청
+    if (parentAccountId) {
+      getTravelAccountData();
+    }
+  }, [parentAccountId]);
+
+  // Trabean 서버 목표금액 전체 조회 (role 추가하기) API fetch 요청
   useEffect(() => {
-    setTravelAccountMemberData(TravelAccountMemberDataDummy);
-  }, []);
+    const token = "";
+    const getTravelAccountMemberAmountData = async () => {
+      const response = await client(token).get(
+        `/api/travel/targetAmount/${parentAccountId}`,
+      );
+      setTravelAccountMemberAmountData(response.data);
+      setargetAmount(response.data.targetAmount);
+      setCollectedAmount(response.data.amount);
+      setLoading2(false);
+    };
+
+    if (parentAccountId) {
+      getTravelAccountMemberAmountData();
+    }
+  }, [parentAccountId]);
+
+  // 로딩 중이면 로딩 스피너 표시
+  if (loading1 || loading2) {
+    return <Loading />;
+  }
 
   return (
     <div className="h-full relative bg-zinc-100">
       {/* 네비게이션 바 */}
-      <div className="px-4 py-2">
-        <NavBar />
+      <div className="pt-16">
+        <TopBar isWhite={false} isLogo />
       </div>
 
       {/* 알림 */}
@@ -147,18 +182,21 @@ const DomesticTravelAccountPage: React.FC = () => {
               collectedAmount={collectedAmount}
             />
             <div className="flex justify-between">
-              <div className="text-xs">{collectedAmount.toLocaleString()}</div>
-              <div className="text-xs">{targetAmount.toLocaleString()}</div>
+              <div className="text-xs">₩{collectedAmount.toLocaleString()}</div>
+              <div className="text-xs">₩{targetAmount.toLocaleString()}</div>
             </div>
           </div>
           <div className="flex flex-wrap justify-center">
-            {travelAccountMemberData?.members.map((member) => (
+            {travelAccountMemberAmountData?.memberList.map((member) => (
               <div
                 key={member.userId}
                 className="flex flex-col items-center p-2"
               >
                 <img src={bean} alt="bean" className="w-10 h-10" />
                 <div className="text-xs">{member.userName}</div>
+                <div className="text-xs">
+                  ₩{member.amount?.toLocaleString()}
+                </div>
               </div>
             ))}
           </div>

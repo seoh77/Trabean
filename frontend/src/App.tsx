@@ -25,11 +25,11 @@ function App() {
         <Route path="/" element={<MainPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route
-          path="/accounts/travel/domestic"
+          path="/accounts/travel/domestic/:parentAccountId"
           element={<DomesticTravelAccountPage />}
         />
         <Route
-          path="/accounts/travel/domestic/:accountId"
+          path="/accounts/travel/domestic/:accountId/detail"
           element={<DomesticTravelAccountDetailPage />}
         />
         <Route

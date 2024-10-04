@@ -1,15 +1,15 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import NavBar from "../component/NavBar";
 import {
-  TravelAccountData,
   DomesticTravelAccountDetailData,
+  TravelAccountData,
 } from "../type/type";
 import TravelAccountDataDummy from "../dummy/TravelAccountDataDummy";
 import DomesticTravelAccountDetailDataDummy from "../dummy/DomesticTravelAccountDetailDataDummy";
-import NavBar from "../component/NavBar";
 
 // import { useParams } from "react-router-dom";
 
-const DomesticTravelAccountDetailPage = () => {
+const DomesticTravelAccountDetailPage: React.FC = () => {
   // const { accountId } = useParams<{ accountId: string }>();
   const [travelAccountData, setTravelAccountData] =
     useState<TravelAccountData>();
