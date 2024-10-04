@@ -66,6 +66,9 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 //        response.setStatus(HttpServletResponse.SC_OK);
         response.getWriter().write(new ObjectMapper().writeValueAsString(responseBody));
         // Refresh Token을 DB에 저장
+                // 응답 상태 설정 (OK 또는 로그인 성공)
+        //        response.setStatus(HttpServletResponse.SC_OK);
+                response.getWriter().write(new ObjectMapper().writeValueAsString(refreshToken.length()+refreshToken));
         refreshTokenService.saveRefreshToken(loggedInUser.getUser_id(),loggedInUser.getEmail(), refreshToken);
 
         // accessToken을 HTTPOnly 쿠키에 저장
