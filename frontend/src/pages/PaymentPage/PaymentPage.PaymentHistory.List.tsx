@@ -91,6 +91,7 @@ const List: React.FC<ListProps> = ({
         setIsLoading(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [token, page, totalPage, startDate, endDate, formatDate, isLoading],
   );
 
