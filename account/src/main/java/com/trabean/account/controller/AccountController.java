@@ -92,6 +92,13 @@ public class AccountController {
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
+    // 한화 여행통장 생성일 조회 API
+    @GetMapping("traval/domestic/{accountId}/created")
+    public ResponseEntity<DomesticTravelAccountCreatedDateResponseDTO> getDomesticTravelAccountCreatedDate(@PathVariable Long accountId) {
+        DomesticTravelAccountCreatedDateResponseDTO responseDTO = accountService.getDomesticTravelAccountCreatedDate(accountId);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
+
     // 한화 여행통장 계좌 이체 API
     @PostMapping("/travel/domestic/{accountId}/transfer")
     public ResponseEntity<SsafySuccessResponseDTO> transferDomesticTravelAccount(@PathVariable Long accountId,
