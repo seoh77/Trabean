@@ -5,6 +5,7 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
+import location from "../../assets/location.png";
 
 // API 응답 포맷
 interface PlaceLocation {
@@ -209,6 +210,7 @@ const TravelMap: React.FC = () => {
     if (window.google && mapRef.current) {
       const initialMap = new window.google.maps.Map(mapRef.current, {
         zoom: 15,
+        disableDefaultUI: true,
         mapId: "225c22b94eba2c7f", // 생성된 Map ID 사용
       });
       setMap(initialMap);
@@ -263,14 +265,17 @@ const TravelMap: React.FC = () => {
           return null;
         }
 
+        console.log(color);
+        console.log(location);
+
         // 1. 마커 아이콘을 생성할 HTML 요소 생성
+        // const iconElement = document.createElement("img");
         const iconElement = document.createElement("div");
-        iconElement.style.width = "40px"; // 마커의 크기 설정
-        iconElement.style.height = "40px";
+        iconElement.style.width = "30px"; // 마커의 크기 설정
+        iconElement.style.height = "30px";
+        iconElement.style.position = "relative";
         iconElement.style.borderRadius = "50%"; // 동그란 마커
         iconElement.style.backgroundColor = color; // 아이콘의 색상 설정
-        iconElement.style.position = "relative";
-        iconElement.style.border = "2px solid black"; // 테두리 설정
 
         // 2. 라벨 요소 생성
         const labelElement = document.createElement("span");
@@ -279,7 +284,7 @@ const TravelMap: React.FC = () => {
         labelElement.style.left = "50%";
         labelElement.style.transform = "translate(-50%, -50%)"; // 중앙 정렬
         labelElement.style.color = "black";
-        labelElement.style.fontSize = "16px";
+        labelElement.style.fontSize = "12px";
         labelElement.style.fontWeight = "bold";
         labelElement.innerText = index; // 라벨의 텍스트 설정
         const pos = new google.maps.LatLng(coord.lat, coord.lng);
@@ -330,12 +335,11 @@ const TravelMap: React.FC = () => {
       );
 
       // 호텔 위치 마커 추가
-      let ind = 1;
-      await getMarkerData(hotelLocation, String(ind), pastel[0]).then(
+      let ind = 0;
+      await getMarkerData(hotelLocation, "❤️", pastel[0]).then(
         (startMarker) => {
           if (startMarker) {
             newMarkers.push(startMarker);
-            ind += 1;
           }
         },
       );
@@ -367,7 +371,7 @@ const TravelMap: React.FC = () => {
       const lineSymbol = {
         path: "M 0,-1 0,1",
         strokeOpacity: 1,
-        scale: 5,
+        scale: 4,
       };
 
       const newPathLine = new google.maps.Polyline({
@@ -413,14 +417,14 @@ const TravelMap: React.FC = () => {
             country: "한국",
             city: "서울",
           },
-          days: 4,
+          days: 7,
           transportation: "도보",
           preferences: {
             interest: ["아이와 함께", "자연 속 힐링"],
             priority: [1, 2, 4, 3],
             preferLoging: "호텔",
           },
-          attractions: ["ChIJq7TCXVyNaDURsEf5F93nr84"],
+          attractions: ["ChIJod7tSseifDUR9hXHLFNGMIs"],
         };
 
         try {
