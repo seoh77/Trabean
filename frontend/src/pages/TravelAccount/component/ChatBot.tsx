@@ -3,7 +3,7 @@ import bean from "../../../assets/bean.png";
 
 const ChatBot: React.FC = () => {
   const handleChatBotClick = () => {
-    console.log("챗봇 누름!!!!!!");
+    alert("챗봇 누름!!!!!!");
   };
 
   return (

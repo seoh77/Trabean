@@ -2,7 +2,7 @@ import React from "react";
 
 const Alarm: React.FC = () => {
   const handleAlarmClick = () => {
-    console.log("알림 누름!!!!!!");
+    alert("알림 누름!!!!!!");
   };
 
   return (

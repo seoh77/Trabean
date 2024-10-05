@@ -36,6 +36,7 @@ export interface TravelAccountMemberAmountData {
 // 한화 여행통장 상세 조회 API
 // /api/accounts/travel/domestic/{accountId}?startDate={startDate}&endDate={endDate}&transactionType={transactionType}
 export interface TravelAccountMemberData {
+  userId: number;
   memberCount: number;
   members: TravelAccountMember[];
 }

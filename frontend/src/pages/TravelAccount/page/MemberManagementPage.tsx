@@ -1,38 +1,51 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import account from "../../../assets/account.png";
-import TopBar from "../../../components/TopBar";
-import ChangeUserRoleModal from "../ChangeUserRoleModal";
-import InviteMemberModal from "../InviteMemberModal";
+import client from "../../../client";
 import {
   TravelAccountData,
   TravelAccountMember,
   TravelAccountMemberData,
 } from "../type/type";
-import Loading from "../component/Loading";
-import client from "../../../client";
 import { formatUserRole, getBeanImage } from "../util/util";
+import TopBar from "../../../components/TopBar";
+import Loading from "../component/Loading";
+import ChangeUserRoleModal from "../modal/ChangeUserRoleModal";
+import InviteMemberModal from "../modal/InviteMemberModal";
 
 const MemberManagementPage: React.FC = () => {
-  const { parentAccountId } = useParams();
+  const { parentAccountId } = useParams(); // Path Variable
 
-  const [loading1, setLoading1] = useState(true);
-  const [loading2, setLoading2] = useState(true);
+  const [loading1, setLoading1] = useState(true); // 서버에서 데이터 수신 여부 체크
+  const [loading2, setLoading2] = useState(true); // 서버에서 데이터 수신 여부 체크
 
-  // 여행통장 상태관리
   const [travelAccountData, setTravelAccountData] =
-    useState<TravelAccountData>();
+    useState<TravelAccountData>(); // 한화 여행통장 + 외화 여행통장 상태관리
 
-  // 여행통장 멤버 상태관리
   const [travelAccountMemberData, setTravelAccountMemberData] =
-    useState<TravelAccountMemberData>();
+    useState<TravelAccountMemberData>(); // 여행통장 멤버 상태관리
 
-  // 결제 권한 변경 모달
+  const [memberInfo, setMemberInfo] = useState<TravelAccountMember>(); // 선택한 멤버 상태관리
+
+  // 부모 컴포넌트에서 전체 member 리스트를 업데이트하도록 수정 (화면에 반영이 안되는 state는 리렌더링이 안되는 이슈)
+  const handleUpdateMemberInfo = (updatedMember: TravelAccountMember) => {
+    setTravelAccountMemberData((prevData) => {
+      if (prevData) {
+        const updatedMembers = prevData.members.map((member) =>
+          member.userId === updatedMember.userId ? updatedMember : member,
+        );
+        return {
+          ...prevData,
+          members: updatedMembers,
+        };
+      }
+      return prevData;
+    });
+  };
+
+  // 유저 권한 변경 모달
   const [isChangeUserRoleModalOpen, setIsChangeUserRoleModalOpen] =
     useState(false);
-
-  // 모달의 데이터
-  const [memberInfo, setMemberInfo] = useState<TravelAccountMember>();
 
   const openChangeUserRoleModal = (member: TravelAccountMember) => {
     setIsChangeUserRoleModalOpen(true);
@@ -43,53 +56,52 @@ const MemberManagementPage: React.FC = () => {
     setIsChangeUserRoleModalOpen(false);
   };
 
-  // 멤버 역할 업데이트 함수
-  const updateMemberRole = (updatedMember: TravelAccountMember) => {
-    if (travelAccountMemberData) {
-      const updatedMembers = travelAccountMemberData.members.map((member) =>
-        member.userId === updatedMember.userId ? updatedMember : member,
-      );
-      setTravelAccountMemberData({
-        ...travelAccountMemberData,
-        members: updatedMembers,
-      });
-    }
+  // 멤버 초대 모달
+  const [isChangeInviteModalOpen, setIsChangeInviteModalOpen] = useState(false);
+
+  const openChangeInviteModal = () => {
+    setIsChangeInviteModalOpen(true);
   };
 
-  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false); // 초대 모달 상태
-
-  const handleInviteMember = () => {
-    setIsInviteModalOpen(true); // 초대 모달 열기
-  };
-
-  const closeInviteModal = () => {
-    setIsInviteModalOpen(false); // 초대 모달 닫기
+  const closeChangeInviteModal = () => {
+    setIsChangeInviteModalOpen(false);
   };
 
   // Travel 서버 여행통장 조회 API fetch 요청
   useEffect(() => {
-    const getTravelAccountData = async () => {
-      const response = await client().get(`/api/travel/${parentAccountId}`);
-      setTravelAccountData(response.data);
-      setLoading1(false);
+    const fetchTravelAccountData = async () => {
+      try {
+        const response = await client().get(`/api/travel/${parentAccountId}`);
+        setTravelAccountData(response.data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading1(false);
+      }
     };
 
     if (parentAccountId) {
-      getTravelAccountData();
+      fetchTravelAccountData();
     }
   }, [parentAccountId]);
 
   // Account 서버 한화 여행통장 멤버 목록 조회 API fetch 요청
   useEffect(() => {
-    const getTravelAccountData = async () => {
-      const response = await client().get(
-        `/api/accounts/travel/domestic/${parentAccountId}/members`,
-      );
-      setTravelAccountMemberData(response.data);
-      setLoading2(false);
+    const fetchTravelAccountData = async () => {
+      try {
+        const response = await client().get(
+          `/api/accounts/travel/domestic/${parentAccountId}/members`,
+        );
+        setTravelAccountMemberData(response.data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading2(false);
+      }
     };
+
     if (parentAccountId) {
-      getTravelAccountData();
+      fetchTravelAccountData();
     }
   }, [parentAccountId]);
 
@@ -99,26 +111,23 @@ const MemberManagementPage: React.FC = () => {
   }
 
   return (
-    <div
-      className={`h-full relative ${isChangeUserRoleModalOpen ? "bg-gray-300" : ""}`}
-    >
+    <div className="h-full relative">
       {/* 네비게이션 바 */}
       <div className="pt-16">
         <TopBar page="멤버 관리" isWhite isLogo={false} />
       </div>
 
       {/* 통장 정보 */}
-      <div className="px-4 py-2">
+      <div className="px-4 py-2 mb-8 border-b border-gray-300">
         <div className="flex items-center mb-4">
-          <img src={account} alt="account" className="w-10 h-10 mr-2" />
+          <img src={account} alt="account" className="w-12 h-12 mr-2" />
           <div>
-            <div className="text-lg">{travelAccountData?.accountName}</div>
+            <div className="text-xl">{travelAccountData?.accountName}</div>
             <div className="text-sm">
               {travelAccountData?.bankName} {travelAccountData?.accountNo}
             </div>
           </div>
         </div>
-        <hr />
       </div>
 
       {/* 멤버 정보 */}
@@ -133,23 +142,29 @@ const MemberManagementPage: React.FC = () => {
           {travelAccountMemberData?.members.map((member) => {
             const roleText = formatUserRole(member.role);
             const isNonPayer = roleText === "결제불가";
+            const isLeader = roleText === "모임장";
+            const isCurrentUser =
+              member.userId === travelAccountMemberData?.userId;
+
             return (
               <button
                 type="button"
                 key={member.userId}
                 className="flex py-4"
-                onClick={() => openChangeUserRoleModal(member)}
+                onClick={() => !isLeader && openChangeUserRoleModal(member)}
+                disabled={isLeader}
               >
                 <img
                   src={getBeanImage(member.role)}
                   alt={member.role}
-                  className="w-10 h-10 mr-2"
+                  className="w-12 h-12 mr-4"
                 />
-                <div>
-                  <div>{member.userName}</div>
+                <div className="text-left">
+                  <div className="mb-1">{member.userName}</div>
                   <div
-                    className={`text-xs ${isNonPayer ? "text-red-500" : ""}`}
+                    className={`font-bold text-sm ${isNonPayer ? "text-red-500" : "text-green-500"}`}
                   >
+                    {isCurrentUser ? "나 / " : ""}
                     {roleText}
                   </div>
                 </div>
@@ -163,7 +178,7 @@ const MemberManagementPage: React.FC = () => {
       <div>
         <button
           type="button"
-          onClick={handleInviteMember}
+          onClick={openChangeInviteModal}
           className="btn-lg absolute bottom-10 left-0 right-0 w-[90%] mx-auto block"
         >
           초대하기
@@ -172,21 +187,24 @@ const MemberManagementPage: React.FC = () => {
 
       {/* 유저 권한 변경 모달 */}
       {isChangeUserRoleModalOpen && memberInfo ? (
-        <div className="absolute bottom-0 left-0 w-full">
-          <ChangeUserRoleModal
-            memberInfo={memberInfo}
-            onClose={closeChangeUserRoleModal}
-            onRoleChange={updateMemberRole}
-          />
+        <div className="absolute inset-0 flex items-end bg-gray-900 bg-opacity-50">
+          <div className="w-full">
+            <ChangeUserRoleModal
+              accountId={parentAccountId}
+              memberInfo={memberInfo}
+              onMemberInfoChange={handleUpdateMemberInfo}
+              onClose={closeChangeUserRoleModal}
+            />
+          </div>
         </div>
       ) : null}
 
-      {/* 초대하기 모달 */}
-      {isInviteModalOpen ? (
+      {/* 멤버 초대 모달 */}
+      {isChangeInviteModalOpen ? (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
           <InviteMemberModal
-            onClose={closeInviteModal}
             accountId={parentAccountId}
+            onClose={closeChangeInviteModal}
           />
         </div>
       ) : null}
