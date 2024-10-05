@@ -21,7 +21,6 @@ import busanIcon from "../../assets/bankIcon/busanIcon.png";
 const BankSelection: React.FC = () => {
   const [selectedBank, setSelectedBank] = useState<string | null>(null);
   const navigate = useNavigate(); // useNavigate 훅 사용
-  console.log("All Environment Variables:", process.env);
 
   const banks = [
     { name: "NH농협", logo: nhIcon },
