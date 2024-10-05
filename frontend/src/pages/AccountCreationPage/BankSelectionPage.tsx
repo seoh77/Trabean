@@ -31,7 +31,7 @@ const BankSelection: React.FC = () => {
     { name: "IBK기업", logo: ibkIcon },
     { name: "SC제일", logo: scIcon },
     { name: "씨티", logo: citiIcon },
-    { name: "카카오뱅크", logo: kakaoIcon },
+    { name: "카카오", logo: kakaoIcon },
     { name: "새마을", logo: saemaeulIcon },
     { name: "대구", logo: daeguIcon },
     { name: "광주", logo: gwangjuIcon },
