@@ -565,7 +565,6 @@ public class AccountService {
 
     // 한화 여행통장 멤버 목록 조회 서비스 로직 (민채)
     public DomesticTravelAccountMemberListResponseDTO getDomesticTravelAccountMemberList(Long accountId) {
-        log.info("숫자가 나와야함 {}", String.valueOf(UserHeaderInterceptor.userId.get()));
         ValidationUtil.validateInput(ValidateInputDTO.builder()
                 .account(accountRepository.findById(accountId))
                 .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(UserHeaderInterceptor.userId.get(), accountId))
@@ -576,7 +575,7 @@ public class AccountService {
 
         List<Member> members = new ArrayList<>();
 
-        // User 서버에 userId로 userName 조회하는 요청을 모든 멤베에 대해 보냄
+        // User 서버에 userId로 userName 조회하는 요청을 모든 멤버에 대해 보냄
         for (UserAccountRelation member : userAccountRelations) {
             UserNameResponseDTO userNameResponseDTO = userClient.getUserName(member.getUserId());
 
@@ -588,6 +587,7 @@ public class AccountService {
         }
 
         return DomesticTravelAccountMemberListResponseDTO.builder()
+                .userId(UserHeaderInterceptor.userId.get())
                 .memberCount((long) members.size())
                 .members(members).build();
     }

@@ -14,6 +14,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class DomesticTravelAccountMemberListResponseDTO {
 
+    @JsonProperty("userId")
+    private Long userId;
+
     @JsonProperty("memberCount")
     private Long memberCount;
 
