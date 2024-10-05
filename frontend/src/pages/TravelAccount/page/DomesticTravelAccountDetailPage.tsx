@@ -1,31 +1,53 @@
 import React, { useEffect, useState } from "react";
-import NavBar from "../component/NavBar";
+import { useParams } from "react-router-dom";
+import TopBar from "../../../components/TopBar";
 import {
   DomesticTravelAccountDetailData,
   TravelAccountData,
 } from "../type/type";
-import TravelAccountDataDummy from "../dummy/TravelAccountDataDummy";
-import DomesticTravelAccountDetailDataDummy from "../dummy/DomesticTravelAccountDetailDataDummy";
-
-// import { useParams } from "react-router-dom";
+import client from "../../../client";
+import Loading from "../component/Loading";
 
 const DomesticTravelAccountDetailPage: React.FC = () => {
-  // const { accountId } = useParams<{ accountId: string }>();
+  const { parentAccountId } = useParams();
+
+  const [loading1, setLoading1] = useState(true);
+  const [loading2, setLoading2] = useState(true);
+
+  // 여행통장 상태관리
   const [travelAccountData, setTravelAccountData] =
     useState<TravelAccountData>();
+
+  // 여행통장 멤버 상태관리
   const [domesticTravelAccountDetailData, setDomesticTravelAccountDetailData] =
     useState<DomesticTravelAccountDetailData>();
 
-  // 여행통장 계좌 정보를 받는 fetch 요청
+  // Travel 서버 여행통장 조회 API fetch 요청
   useEffect(() => {
-    setTravelAccountData(TravelAccountDataDummy);
-  }, []);
+    const getTravelAccountData = async () => {
+      const response = await client().get(`/api/travel/${parentAccountId}`);
+      setTravelAccountData(response.data);
+      setLoading1(false);
+    };
 
-  // 여행통장 거래 내역 정보를 받는 fetch 요청
+    if (parentAccountId) {
+      getTravelAccountData();
+    }
+  }, [parentAccountId]);
+
+  // Account 서버 한화 여행통장 멤버 목록 조회 API fetch 요청
   useEffect(() => {
-    setTravelAccountData(TravelAccountDataDummy);
-    setDomesticTravelAccountDetailData(DomesticTravelAccountDetailDataDummy);
-  }, []);
+    const getTravelAccountData = async () => {
+      const response = await client().get(
+        `/api/accounts/travel/domestic/${parentAccountId}/members`,
+      );
+      setDomesticTravelAccountDetailData(response.data);
+      setLoading2(false);
+    };
+    if (parentAccountId) {
+      getTravelAccountData();
+    }
+  }, [parentAccountId]);
 
   const getBalanceColor = (transactionType: string) => {
     if (transactionType === "1") {
@@ -37,11 +59,16 @@ const DomesticTravelAccountDetailPage: React.FC = () => {
     return "black";
   };
 
+  // 로딩 중이면 로딩 스피너 표시
+  if (loading1 || loading2) {
+    return <Loading />;
+  }
+
   return (
     <div>
       {/* 네비게이션 바 */}
       <div className="px-4 py-2">
-        <NavBar text="계좌 상세 조회" />
+        <TopBar page="계좌 상세 조회" isWhite isLogo={false} />
       </div>
 
       {/* 한화 여행통장 정보 */}

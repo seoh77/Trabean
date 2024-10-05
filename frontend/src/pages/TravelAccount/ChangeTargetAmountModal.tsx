@@ -1,18 +1,43 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import client from "../../client";
 
 interface ChangeTargetAmountModalProps {
+  accountId: string | undefined;
   onClose: () => void;
+  onTargetAmountChange: (newAmount: number) => void;
 }
 
 const ChangeTargetAmountModal: React.FC<ChangeTargetAmountModalProps> = ({
+  accountId,
   onClose,
+  onTargetAmountChange,
 }) => {
+  const [targetAmount, setTargetAmount] = useState("");
+
+  const nav = useNavigate();
+
   const hanbleCloseModal = () => {
     onClose();
   };
 
   const handleUpdateTargetAmount = () => {
-    console.log("확인 누름");
+    if (targetAmount === "" || Number.isNaN(Number(targetAmount))) {
+      alert("유효한 금액을 입력하세요.");
+      return;
+    }
+
+    const fetchChangeTargetAmount = async () => {
+      await client().put("/api/travel/change/targetAmount", {
+        accountId,
+        targetAmount,
+      });
+      onTargetAmountChange(Number(targetAmount));
+      nav(`/accounts/travel/domestic/${accountId}`);
+    };
+
+    fetchChangeTargetAmount();
+
     onClose();
   };
 
@@ -24,7 +49,10 @@ const ChangeTargetAmountModal: React.FC<ChangeTargetAmountModalProps> = ({
       </div>
       <div className="flex p-4">
         <input
-          type="text"
+          type="number"
+          value={targetAmount}
+          onChange={({ target: { value } }) => setTargetAmount(value)} // 구조 분해 할당 사용
+          min="0"
           className="flex-grow border-b-2 border-gray-200 outline-none"
         />
         <div className="ml-2">원</div>

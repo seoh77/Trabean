@@ -1,28 +1,46 @@
 import React from "react";
 
+import { useNavigate, useParams } from "react-router-dom";
 import bean from "../../assets/bean.png";
-
-interface Member {
-  userId: number;
-  userName: string;
-  role: string;
-}
+import { TravelAccountMember } from "./type/type";
+import client from "../../client";
 
 interface ChangeUserRoleModalProps {
-  memberInfo: Member;
+  memberInfo: TravelAccountMember;
   onClose: () => void;
+  onRoleChange: (updatedMember: TravelAccountMember) => void;
 }
 
 const ChangeUserRoleModal: React.FC<ChangeUserRoleModalProps> = ({
   memberInfo,
   onClose,
+  onRoleChange,
 }) => {
+  const { parentAccountId } = useParams();
+
+  const nav = useNavigate();
+
   const hanbleCloseModal = () => {
     onClose();
   };
 
   const handleUpdateUserRole = () => {
-    console.log("설정 완료 누름");
+    const newRole = memberInfo.role === "PAYER" ? "NONE_PAYER" : "PAYER";
+
+    const fetchUpdateUserRole = async () => {
+      await client().post("/api/travel/role", {
+        userId: memberInfo.userId,
+        accountId: parentAccountId,
+        role: newRole,
+      });
+
+      onRoleChange({ ...memberInfo, role: newRole });
+
+      nav(`/accounts/travel/domestic/${parentAccountId}/members`);
+    };
+
+    fetchUpdateUserRole();
+
     onClose();
   };
 

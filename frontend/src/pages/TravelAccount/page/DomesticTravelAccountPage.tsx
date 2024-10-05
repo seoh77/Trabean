@@ -1,15 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import bean from "../../../assets/bean.png";
+import dollarCoin from "../../../assets/Dollar Coin.png";
+import moneyBox from "../../../assets/Money Box.png";
+import eventNote from "../../../assets/Event note.png";
 import TopBar from "../../../components/TopBar";
 import Alarm from "../component/Alarm";
 import TargetAmountProgressBar from "../component/TargetAmountProgressBar";
 import ChatBot from "../component/ChatBot";
 import ChangeTargetAmountModal from "../ChangeTargetAmountModal";
-import getCurrencySymbol from "../util/util";
 import { TravelAccountData, TravelAccountMemberAmountData } from "../type/type";
 import client from "../../../client";
 import Loading from "../component/Loading";
+import {
+  getBeanImage,
+  getCurrencyImage,
+  getCurrencySymbol,
+} from "../util/util";
+import ChangeAccountNameModal from "../ChangeAccountName";
 
 const DomesticTravelAccountPage: React.FC = () => {
   const { parentAccountId } = useParams();
@@ -35,38 +42,44 @@ const DomesticTravelAccountPage: React.FC = () => {
   const [isChangeTargetAmountModalOpen, setIsChangeTargetAmountModalOpen] =
     useState(false);
 
+  // 여행통장 이름 변경 모달
+  const [isChangeAccountNameModalOpen, setIsChangeAccountNameModalOpen] =
+    useState(false);
+
   const openChangeTargetAmountModal = () =>
     setIsChangeTargetAmountModalOpen(true);
   const closeChangeTargetAmountModal = () =>
     setIsChangeTargetAmountModalOpen(false);
 
+  const openChangeAccountNameModal = () =>
+    setIsChangeAccountNameModalOpen(true);
+  const closeChangeAccountNameModal = () =>
+    setIsChangeAccountNameModalOpen(false);
+
   const handleUpdateTravelAccountInfo = () => {
-    console.log("여행통장 정보 수정 누름");
+    openChangeAccountNameModal();
   };
 
   const handleCreateForeignAccount = () => {
-    console.log("외화 추가하기 누름");
+    console.log("외화 추가하기 누름!!!!!!");
   };
 
   const handleNBbang = () => {
-    console.log("친구들과 N빵하기 누름");
+    console.log("친구들과 N빵하기 누름!!!!!!");
   };
 
   const handlePayment = () => {
-    console.log("다함께 결제해요 누름");
+    console.log("다함께 결제해요 누름!!!!!!");
   };
 
   const handleExpenseTracker = () => {
-    console.log("예산관리 가계부 누름");
+    console.log("예산관리 가계부 누름!!!!!!");
   };
 
-  // Account 서버 여행통장 조회 API fetch 요청
+  // Travel 서버 여행통장 조회 API fetch 요청
   useEffect(() => {
-    const token = "";
     const getTravelAccountData = async () => {
-      const response = await client(token).get(
-        `/api/travel/${parentAccountId}`,
-      );
+      const response = await client().get(`/api/travel/${parentAccountId}`);
       setTravelAccountData(response.data);
       setLoading1(false);
     };
@@ -76,11 +89,10 @@ const DomesticTravelAccountPage: React.FC = () => {
     }
   }, [parentAccountId]);
 
-  // Trabean 서버 목표금액 전체 조회 (role 추가하기) API fetch 요청
+  // Travel 서버 목표금액 전체 조회 (role 추가하기) API fetch 요청
   useEffect(() => {
-    const token = "";
     const getTravelAccountMemberAmountData = async () => {
-      const response = await client(token).get(
+      const response = await client().get(
         `/api/travel/targetAmount/${parentAccountId}`,
       );
       setTravelAccountMemberAmountData(response.data);
@@ -133,7 +145,12 @@ const DomesticTravelAccountPage: React.FC = () => {
                 key={account.accountId}
                 className="flex justify-between items-center p-2"
               >
-                <img src={bean} alt="bean" className="w-6 h-6" />
+                <img
+                  src={getCurrencyImage(account.exchangeCurrency)}
+                  alt={account.exchangeCurrency}
+                  className="w-6 h-6"
+                />
+
                 <div className="flex-grow font-bold ml-2">
                   {account.country}
                 </div>
@@ -170,7 +187,9 @@ const DomesticTravelAccountPage: React.FC = () => {
             <div className="text-right text-xs">
               <button
                 type="button"
-                onClick={() => nav("/accounts/travel/domestic/57/members")}
+                onClick={() =>
+                  nav(`/accounts/travel/domestic/${parentAccountId}/members`)
+                }
               >
                 멤버관리
               </button>
@@ -192,7 +211,11 @@ const DomesticTravelAccountPage: React.FC = () => {
                 key={member.userId}
                 className="flex flex-col items-center p-2"
               >
-                <img src={bean} alt="bean" className="w-10 h-10" />
+                <img
+                  src={getBeanImage(member.role)}
+                  alt={member.role}
+                  className="w-10 h-10"
+                />
                 <div className="text-xs">{member.userName}</div>
                 <div className="text-xs">
                   ₩{member.amount?.toLocaleString()}
@@ -214,7 +237,7 @@ const DomesticTravelAccountPage: React.FC = () => {
               className="flex flex-col items-center bg-white rounded-3xl px-6 py-2"
             >
               <div>
-                <img src={bean} alt="bean" className="w-10 h-10" />
+                <img src={dollarCoin} alt="dollarCoin" className="w-10 h-10" />
               </div>
               <div className="text-sm">친구들과</div>
               <div className="text-sm font-bold">N빵하기</div>
@@ -228,7 +251,7 @@ const DomesticTravelAccountPage: React.FC = () => {
               className="flex flex-col items-center bg-white rounded-3xl px-6 py-2"
             >
               <div>
-                <img src={bean} alt="bean" className="w-10 h-10" />
+                <img src={moneyBox} alt="moneyBox" className="w-10 h-10" />
               </div>
               <div className="text-sm">다함께</div>
               <div className="text-sm font-bold">결제해요</div>
@@ -242,7 +265,7 @@ const DomesticTravelAccountPage: React.FC = () => {
               className="flex flex-col items-center bg-white rounded-3xl px-6 py-2"
             >
               <div>
-                <img src={bean} alt="bean" className="w-10 h-10" />
+                <img src={eventNote} alt="eventNote" className="w-10 h-10" />
               </div>
               <div className="text-sm">예산관리</div>
               <div className="text-sm font-bold">가계부</div>
@@ -259,7 +282,34 @@ const DomesticTravelAccountPage: React.FC = () => {
       {/* 목표 관리 모달 */}
       {isChangeTargetAmountModalOpen ? (
         <div className="absolute bottom-0 left-0 w-full">
-          <ChangeTargetAmountModal onClose={closeChangeTargetAmountModal} />
+          <ChangeTargetAmountModal
+            accountId={parentAccountId}
+            onClose={closeChangeTargetAmountModal}
+            onTargetAmountChange={setargetAmount}
+          />
+        </div>
+      ) : null}
+
+      {/* 여행통장 이름 변경 모달 */}
+      {isChangeAccountNameModalOpen ? (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
+          <ChangeAccountNameModal
+            accountId={parentAccountId}
+            accountName={travelAccountData?.accountName} // 현재 여행통장 이름을 전달
+            onClose={closeChangeAccountNameModal}
+            onAccountNameChange={(updatedAccountName) => {
+              // 변경된 이름을 처리
+              setTravelAccountData((prev) => {
+                if (prev) {
+                  return {
+                    ...prev,
+                    accountName: updatedAccountName, // accountName을 변경
+                  };
+                }
+                return prev;
+              });
+            }}
+          />
         </div>
       ) : null}
     </div>

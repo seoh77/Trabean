@@ -3,7 +3,6 @@ import PaymentHistory from "./pages/PaymentPage/PaymentPage.PaymentHistory";
 import PaymentPage from "./pages/PaymentPage/PaymentPage";
 import PaymentPassword from "./pages/PaymentPage/PaymentPage.Password";
 import PaymentSuccessPage from "./pages/PaymentPage/PaymentPage.Payment.SuccessPage";
-import TravelAccountPage from "./pages/TravelAccount/TravelAccountPage";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import MainPage from "./pages/MainPage/MainPage";
 import JoinPage from "./pages/JoinPage/JoinPage";
@@ -17,6 +16,9 @@ import IdentityAuthPage from "./pages/AccountCreationPage/IdentityAuthPage";
 import TravleSetupPage from "./pages/AccountCreationPage/TravelAccountSetup";
 import CurrencyAddPage from "./pages/AccountCreationPage/CurrencyAddPage";
 import ExchangeRates from "./pages/Exchange/ExchangePage";
+import DomesticTravelAccountPage from "./pages/TravelAccount/page/DomesticTravelAccountPage";
+import DomesticTravelAccountDetailPage from "./pages/TravelAccount/page/DomesticTravelAccountDetailPage";
+import MemberManagementPage from "./pages/TravelAccount/page/MemberManagementPage";
 
 function App() {
   return (
@@ -29,11 +31,11 @@ function App() {
           element={<DomesticTravelAccountPage />}
         />
         <Route
-          path="/accounts/travel/domestic/:accountId/detail"
+          path="/accounts/travel/domestic/:parentAccountId/detail"
           element={<DomesticTravelAccountDetailPage />}
         />
         <Route
-          path="/accounts/travel/domestic/:accountId/members"
+          path="/accounts/travel/domestic/:parentAccountId/members"
           element={<MemberManagementPage />}
         />
 
