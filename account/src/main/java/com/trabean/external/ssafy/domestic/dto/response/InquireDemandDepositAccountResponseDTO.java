@@ -31,7 +31,7 @@ public class InquireDemandDepositAccountResponseDTO {
         private String accountName;
         private String accountTypeCode;
         private String accountTypeName;
-        private String accountCreateDate;
+        private String accountCreatedDate;
         private String accountExpiryDate;
         private Long dailyTransferLimit;
         private Long oneTimeTransferLimit;
