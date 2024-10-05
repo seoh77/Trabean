@@ -18,7 +18,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "types": ["node"]
+    "types": ["node", "@types/google.maps"]
   },
   "include": ["src", "src/custom.d.ts"],
   "exclude": ["node_modules/*"]
