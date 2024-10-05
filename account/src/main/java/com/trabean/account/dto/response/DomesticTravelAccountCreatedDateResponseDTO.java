@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class DomesticTravelAccountCreatedDateResponseDTO {
 
-    @JsonProperty("accountCreatedDate")
-    private String accountCreatedDate;
+    @JsonProperty("accountCreateDate")
+    private String accountCreateDate;
 }

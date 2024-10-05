@@ -522,7 +522,7 @@ public class AccountService {
         InquireDemandDepositAccountResponseDTO inquireDemandDepositAccountResponseDTO = domesticClient.inquireDemandDepositAccount(inquireDemandDepositAccountRequestDTO);
 
         return DomesticTravelAccountCreatedDateResponseDTO.builder()
-                .accountCreatedDate(inquireDemandDepositAccountResponseDTO.getRec().getAccountCreateDate())
+                .accountCreateDate(inquireDemandDepositAccountResponseDTO.getRec().getAccountCreateDate())
                 .build();
     }
 
