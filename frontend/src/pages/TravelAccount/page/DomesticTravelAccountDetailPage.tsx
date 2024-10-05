@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import TopBar from "../../../components/TopBar";
 import {
   DomesticTravelAccountDetailData,
-  TravelAccountData,
+  DomesticTravelAccountTransaction,
 } from "../type/type";
 import client from "../../../client";
 import Loading from "../component/Loading";
@@ -11,38 +11,25 @@ import Loading from "../component/Loading";
 const DomesticTravelAccountDetailPage: React.FC = () => {
   const { parentAccountId } = useParams();
 
-  const [loading1, setLoading1] = useState(true);
-  const [loading2, setLoading2] = useState(true);
+  const [loading, setLoading] = useState(true);
 
-  // 여행통장 상태관리
-  const [travelAccountData, setTravelAccountData] =
-    useState<TravelAccountData>();
-
-  // 여행통장 멤버 상태관리
+  // 여행통장 상세조회 상태관리
   const [domesticTravelAccountDetailData, setDomesticTravelAccountDetailData] =
     useState<DomesticTravelAccountDetailData>();
 
-  // Travel 서버 여행통장 조회 API fetch 요청
-  useEffect(() => {
-    const getTravelAccountData = async () => {
-      const response = await client().get(`/api/travel/${parentAccountId}`);
-      setTravelAccountData(response.data);
-      setLoading1(false);
-    };
+  const handleTransferBalance = () => {
+    console.log("이체 하기 누름!!!!!!");
+  };
 
-    if (parentAccountId) {
-      getTravelAccountData();
-    }
-  }, [parentAccountId]);
-
-  // Account 서버 한화 여행통장 멤버 목록 조회 API fetch 요청
+  // Account 서버 한화 여행통장 상세 조회 API fetch 요청
   useEffect(() => {
     const getTravelAccountData = async () => {
       const response = await client().get(
-        `/api/accounts/travel/domestic/${parentAccountId}/members`,
+        `/api/accounts/travel/domestic/${parentAccountId}`,
       );
       setDomesticTravelAccountDetailData(response.data);
-      setLoading2(false);
+      console.log(response.data);
+      setLoading(false);
     };
     if (parentAccountId) {
       getTravelAccountData();
@@ -51,7 +38,7 @@ const DomesticTravelAccountDetailPage: React.FC = () => {
 
   const getBalanceColor = (transactionType: string) => {
     if (transactionType === "1") {
-      return "blue";
+      return "green";
     }
     if (transactionType === "2") {
       return "red";
@@ -59,51 +46,118 @@ const DomesticTravelAccountDetailPage: React.FC = () => {
     return "black";
   };
 
+  // 날짜 형식을 변환하는 함수
+  const formatDate = (dateString: string): string => {
+    const year = dateString.substring(0, 4); // 연도 추출
+    const month = dateString.substring(4, 6); // 월 추출
+    const day = dateString.substring(6, 8); // 일 추출
+    return `${year}.${month}.${day}`; // 형식 변환
+  };
+
+  // 거래 내역을 날짜별로 그룹화하는 함수
+  const groupByDate = (
+    transactions: DomesticTravelAccountTransaction[],
+  ): { [date: string]: DomesticTravelAccountTransaction[] } =>
+    transactions.reduce(
+      (acc, transaction) => {
+        const date = transaction.transactionDate;
+        if (!acc[date]) {
+          acc[date] = [];
+        }
+        acc[date].push(transaction);
+        return acc;
+      },
+      {} as { [date: string]: DomesticTravelAccountTransaction[] },
+    );
+
   // 로딩 중이면 로딩 스피너 표시
-  if (loading1 || loading2) {
+  if (loading) {
     return <Loading />;
   }
 
+  // 날짜별로 그룹화된 거래 내역을 렌더링하는 함수
+  const renderGroupedTransactions = () => {
+    if (!domesticTravelAccountDetailData?.transactionList) return null;
+
+    const groupedTransactions = groupByDate(
+      domesticTravelAccountDetailData.transactionList,
+    );
+
+    return Object.keys(groupedTransactions).map((date) => (
+      <div key={date}>
+        {/* 날짜 헤더 (변환된 날짜 표시) */}
+        <div className="text-sm font-bold bg-zinc-100 my-2">
+          {formatDate(date)}
+        </div>
+        {groupedTransactions[date].map((transaction, index) => (
+          <div
+            // eslint-disable-next-line react/no-array-index-key
+            key={index}
+            className="flex justify-between py-4 border-b border-gray-300"
+          >
+            <div>
+              <div className="font-bold">{transaction.transactionSummary}</div>
+              {transaction.transactionType === "1" ? (
+                <div className="text-xs">입금</div>
+              ) : (
+                <div className="text-xs">출금</div>
+              )}
+            </div>
+            <div className="text-right">
+              <div
+                style={{
+                  color: getBalanceColor(transaction.transactionType),
+                  fontWeight: "bold",
+                }}
+              >
+                {transaction.transactionBalance > 0
+                  ? `+₩${transaction.transactionBalance.toLocaleString()}`
+                  : `-₩${Math.abs(transaction.transactionBalance).toLocaleString()}`}
+              </div>
+              <div className="text-xs">
+                ₩{transaction.transactionAfterBalance.toLocaleString()}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    ));
+  };
+
   return (
-    <div>
+    <div className="h-full relative">
       {/* 네비게이션 바 */}
-      <div className="px-4 py-2">
+      <div className="pt-16">
         <TopBar page="계좌 상세 조회" isWhite isLogo={false} />
       </div>
 
       {/* 한화 여행통장 정보 */}
-      <div>
-        <div>{travelAccountData?.accountName}</div>
-        <div>
-          ₩{travelAccountData?.account[0].accountBalance.toLocaleString()}
+      <div className="px-4 py-2">
+        <div className="text-center">
+          <div className="font-bold text-lg m-2">
+            {domesticTravelAccountDetailData?.accountName}
+          </div>
+          <div className="font-bold m-2">
+            ₩{domesticTravelAccountDetailData?.accountBalance.toLocaleString()}
+          </div>
         </div>
         <div>
-          <button type="button" className="btn-md">
+          <button
+            type="button"
+            onClick={handleTransferBalance}
+            className="btn-md w-1/2 mx-auto block"
+          >
             이체 하기
           </button>
         </div>
       </div>
 
-      {/* 거래 내역 */}
-      <div>
-        {domesticTravelAccountDetailData?.transactionList.map(
-          (transaction, index) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <div key={index}>
-              <div>{transaction.transactionSummary}</div>
-              <div>
-                {transaction.transactionDate}-{transaction.transactionTime}
-              </div>
-              <div
-                style={{ color: getBalanceColor(transaction.transactionType) }}
-              >
-                잔액: {transaction.transactionBalance}
-              </div>
-              <div>거래 후 잔액: {transaction.transactionAfterBalance}</div>
-            </div>
-          ),
-        )}
+      <div className="py-4">
+        <hr />
       </div>
+
+      {/* 거래 내역 */}
+      <div>{renderGroupedTransactions()}</div>
     </div>
   );
 };
