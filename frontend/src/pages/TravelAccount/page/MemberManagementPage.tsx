@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import account from "../../../assets/account.png";
 import client from "../../../client";
 import {
@@ -15,6 +15,8 @@ import InviteMemberModal from "../modal/InviteMemberModal";
 
 const MemberManagementPage: React.FC = () => {
   const { parentAccountId } = useParams(); // Path Variable
+
+  const nav = useNavigate();
 
   const [loading1, setLoading1] = useState(true); // 서버에서 데이터 수신 여부 체크
   const [loading2, setLoading2] = useState(true); // 서버에서 데이터 수신 여부 체크
@@ -119,15 +121,22 @@ const MemberManagementPage: React.FC = () => {
 
       {/* 통장 정보 */}
       <div className="px-4 py-2 mb-8 border-b border-gray-300">
-        <div className="flex items-center mb-4">
-          <img src={account} alt="account" className="w-12 h-12 mr-2" />
-          <div>
-            <div className="text-xl">{travelAccountData?.accountName}</div>
-            <div className="text-sm">
-              {travelAccountData?.bankName} {travelAccountData?.accountNo}
+        <button
+          type="button"
+          onClick={() =>
+            nav(`/accounts/travel/domestic/${parentAccountId}/detail`)
+          }
+        >
+          <div className="flex items-center mb-4">
+            <img src={account} alt="account" className="w-12 h-12 mr-2" />
+            <div>
+              <div className="text-xl">{travelAccountData?.accountName}</div>
+              <div className="text-sm">
+                {travelAccountData?.bankName} {travelAccountData?.accountNo}
+              </div>
             </div>
           </div>
-        </div>
+        </button>
       </div>
 
       {/* 멤버 정보 */}

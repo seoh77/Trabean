@@ -301,6 +301,7 @@ const DomesticTravelAccountPage: React.FC = () => {
           <div className="w-full">
             <ChangeTargetAmountModal
               accountId={parentAccountId}
+              targetAmount={targetAmount.toString()}
               onTargetAmountChange={setargetAmount}
               onClose={closeChangeTargetAmountModal}
             />
