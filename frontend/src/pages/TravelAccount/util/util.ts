@@ -70,3 +70,20 @@ export const getCurrencyImage = (exchangeCurrency: string) => {
       return chf;
   }
 };
+
+// 현재 날짜 구하는 함수
+export const getToday = () => {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+// 주어진 "YYYYMMDD" 형식의 문자열을 "YYYY-MM-DD"로 변환하는 함수
+export const formatDateString = (dateString: string): string => {
+  const year = dateString.substring(0, 4);
+  const month = dateString.substring(4, 6);
+  const day = dateString.substring(6, 8);
+  return `${year}-${month}-${day}`;
+};
