@@ -1,5 +1,6 @@
 package com.trabean.payment.controller;
 
+import com.trabean.payment.client.UserClient;
 import com.trabean.payment.dto.request.RequestPaymentRequest;
 import com.trabean.payment.dto.request.UpdatePaymentInfoRequest;
 import com.trabean.payment.dto.request.ValidatePasswordRequest;
@@ -12,6 +13,7 @@ import com.trabean.payment.service.PaymentsAuthService;
 import com.trabean.payment.service.PaymentsHistoryService;
 import com.trabean.payment.service.PaymentsService;
 import com.trabean.payment.service.PaymentsUpdateInfoService;
+import com.trabean.payment.service.PaymentsUserService;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -35,6 +37,8 @@ public class PaymentsController {
     private final PaymentsService paymentsService;
     private final PaymentsHistoryService paymentsHistoryService;
     private final PaymentsAuthService paymentsAuthService;
+    private final UserClient userClient;
+    private final PaymentsUserService paymentsUserService;
 
     // QR 인식 후 결제 정보 업데이트
     @PostMapping("/info")
@@ -105,10 +109,18 @@ public class PaymentsController {
         return ResponseEntity.ok(response);
     }
 
+    // 비밀번호 검증
     @PostMapping("/validate")
     public ResponseEntity<String> validatePayment(@RequestBody ValidatePasswordRequest request) {
         // 성공시 트랜잭션 id 발급
         String response = paymentsAuthService.checkAccountPassword(request);
+        return ResponseEntity.ok(response);
+    }
+
+    // 결제 메인 계좌 반환
+    @GetMapping("/main-account")
+    public ResponseEntity<Long> getPaymentsMainAccount() {
+        Long response = paymentsUserService.getPaymentMainAccount();
         return ResponseEntity.ok(response);
     }
 }
