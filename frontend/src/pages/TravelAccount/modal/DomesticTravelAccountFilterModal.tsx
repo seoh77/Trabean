@@ -62,7 +62,7 @@ const DomesticTravelAccountFilterModal: React.FC<
     const fetchTravelAccountData = async () => {
       try {
         const response = await client().get(
-          `/api/accounts/traval/domestic/${accountId}/created`,
+          `/api/accounts/travel/domestic/${accountId}/created`,
         );
         setStartDate(formatDateString(response.data.accountCreatedDate));
         setAccountCreationDate(

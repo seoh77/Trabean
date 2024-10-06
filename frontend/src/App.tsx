@@ -20,6 +20,8 @@ import DomesticTravelAccountPage from "./pages/TravelAccount/page/DomesticTravel
 import DomesticTravelAccountDetailPage from "./pages/TravelAccount/page/DomesticTravelAccountDetailPage";
 import MemberManagementPage from "./pages/TravelAccount/page/MemberManagementPage";
 import ForeignTravelAccountDetailPage from "./pages/TravelAccount/page/ForeignTravelAccountDetailPage";
+import CreateForeignTravelAccountPage from "./pages/TravelAccount/page/CreateForeignTravelAccountPage";
+import ChargeForeignTravelAccountPage from "./pages/TravelAccount/page/ChargeForeignTravelAccountPage";
 
 function App() {
   return (
@@ -42,6 +44,14 @@ function App() {
         <Route
           path="/accounts/travel/domestic/:accountId/members"
           element={<MemberManagementPage />}
+        />
+        <Route
+          path="/accounts/travel/foreign/:parentAccountId/create"
+          element={<CreateForeignTravelAccountPage />}
+        />
+        <Route
+          path="/accounts/travel/foreign/:parentAccountId/charge"
+          element={<ChargeForeignTravelAccountPage />}
         />
 
         <Route path="/payment/qr" element={<PaymentPage />} />

@@ -71,6 +71,18 @@ export const getCurrencyImage = (exchangeCurrency: string) => {
   }
 };
 
+// 가능한 통화 목록 정의
+export const allCurrencies = [
+  { country: "미국", exchangeCurrency: "USD" },
+  { country: "유럽", exchangeCurrency: "EUR" },
+  { country: "영국", exchangeCurrency: "GBP" },
+  { country: "일본", exchangeCurrency: "JPY" },
+  { country: "중국", exchangeCurrency: "CNY" },
+  { country: "한국", exchangeCurrency: "KRW" },
+  { country: "캐나다", exchangeCurrency: "CAD" },
+  { country: "스위스", exchangeCurrency: "CHF" },
+];
+
 // 현재 날짜 구하는 함수
 export const getToday = () => {
   const today = new Date();
@@ -86,4 +98,23 @@ export const formatDateString = (dateString: string): string => {
   const month = dateString.substring(4, 6);
   const day = dateString.substring(6, 8);
   return `${year}-${month}-${day}`;
+};
+
+// 통화에 따른 최소 금액 설정 함수
+export const getMinimumAmount = (exchangeCurrency: string) => {
+  switch (exchangeCurrency) {
+    case "USD":
+    case "EUR":
+    case "JPY":
+    case "CHF":
+      return 100;
+    case "CNY":
+      return 800;
+    case "GBP":
+      return 80;
+    case "CAD":
+      return 140;
+    default:
+      return 0;
+  }
 };

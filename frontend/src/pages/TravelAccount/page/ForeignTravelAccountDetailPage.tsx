@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import filter from "../../../assets/filter.png";
 import client from "../../../client";
 import {
@@ -18,8 +18,12 @@ const ForeignTravelAccountDetailPage: React.FC = () => {
   const endDate = queryParams.get("endDate");
   const { accountId } = useParams(); // Path Variable
 
-  const [loading, setLoading] = useState(true); // 서버에서 데이터 수신 여부 체크
+  const nav = useNavigate();
 
+  const [loading1, setLoading1] = useState(true); // 서버에서 데이터 수신 여부 체크
+  const [loading2, setLoading2] = useState(true); // 서버에서 데이터 수신 여부 체크
+
+  const [parentAccountId, setParentAccountId] = useState();
   const [foreignTravelAccountDetailData, setForeignTravelAccountDetailData] =
     useState<ForeignTravelAccountDetailData>(); // 한화 여행통장 상세조회 상태관리
 
@@ -29,9 +33,23 @@ const ForeignTravelAccountDetailPage: React.FC = () => {
   const openChangeFilterModal = () => setIsChangeFilterModalOpen(true);
   const closeChangeFilterModal = () => setIsChangeFilterModalOpen(false);
 
-  const handleTransferBalance = () => {
-    alert("충전하기!!!!!!");
-  };
+  // Travel 서버 외화 여행통장 ID로 한화 여행통장 ID 반환
+  useEffect(() => {
+    const getDomesticTravelAccountIdData = async () => {
+      try {
+        const response = await client().get(`/api/travel/parents/${accountId}`);
+        setParentAccountId(response.data.parentAccountId);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading1(false);
+      }
+    };
+
+    if (accountId) {
+      getDomesticTravelAccountIdData();
+    }
+  }, [accountId]);
 
   // Travel 서버 여행통장(외화) 상세 조회 API fetch 요청
   useEffect(() => {
@@ -45,7 +63,7 @@ const ForeignTravelAccountDetailPage: React.FC = () => {
       } catch (error) {
         console.error(error);
       } finally {
-        setLoading(false);
+        setLoading2(false);
       }
     };
 
@@ -135,7 +153,10 @@ const ForeignTravelAccountDetailPage: React.FC = () => {
                     ).toLocaleString()}`}
               </div>
               <div className="text-xs">
-                ₩{transaction.transactionAfterBalance.toLocaleString()}
+                {getCurrencySymbol(
+                  foreignTravelAccountDetailData.exchangeCurrency,
+                )}
+                {transaction.transactionAfterBalance.toLocaleString()}
               </div>
             </div>
           </div>
@@ -145,7 +166,7 @@ const ForeignTravelAccountDetailPage: React.FC = () => {
   };
 
   // 로딩 중이면 로딩 스피너 표시
-  if (loading) {
+  if (loading1 || loading2) {
     return <Loading />;
   }
 
@@ -182,7 +203,11 @@ const ForeignTravelAccountDetailPage: React.FC = () => {
         <div className="py-4">
           <button
             type="button"
-            onClick={handleTransferBalance}
+            onClick={() => {
+              nav(
+                `/accounts/travel/foreign/${parentAccountId}/charge?create=false&country=${foreignTravelAccountDetailData?.country}&exchangeCurrency=${foreignTravelAccountDetailData?.exchangeCurrency}&foreignAccountId=${accountId}`,
+              );
+            }}
             className="btn-md w-1/2 mx-auto block"
           >
             충전하기

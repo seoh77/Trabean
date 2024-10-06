@@ -56,10 +56,6 @@ const DomesticTravelAccountPage: React.FC = () => {
     setIsChangeTargetAmountModalOpen(false);
 
   // 함수 모음
-  const handleCreateForeignAccount = () => {
-    alert("외화 추가하기 누름!!!!!!");
-  };
-
   const handleNBbang = () => {
     alert("친구들과 N빵하기 누름!!!!!!");
   };
@@ -213,7 +209,9 @@ const DomesticTravelAccountPage: React.FC = () => {
           <div>
             <button
               type="button"
-              onClick={handleCreateForeignAccount}
+              onClick={() => {
+                nav(`/accounts/travel/foreign/${accountId}/create`);
+              }}
               className="btn-lg w-[90%] mx-auto block"
             >
               외화 추가하기

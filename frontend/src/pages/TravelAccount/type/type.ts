@@ -83,3 +83,17 @@ export interface ForeignTravelAccountDetailData {
   accountBalance: number;
   list: ForeignTravelAccountTransaction[];
 }
+
+// Front -> Travel
+// 환전 예상 금액 조회 API
+// /api/travel/exchange/estimate
+export interface CurrencyDetail {
+  amount: string;
+  country: string;
+  currency: string;
+}
+
+export interface ExchangeEstimateData {
+  currency: CurrencyDetail; // 보유 통화에 대한 정보 (예: KRW)
+  exchangeCurrency: CurrencyDetail; // 환전할 통화에 대한 정보 (예: USD)
+}
