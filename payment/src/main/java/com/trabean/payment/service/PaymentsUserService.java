@@ -26,20 +26,14 @@ public class PaymentsUserService {
     }
 
     public Long getPaymentMainAccount() {
-
         log.info("토큰 -> userID: " + UserHeaderInterceptor.userId.get());
-
         try {
-            
             Map<String, Long> response = userClient.getPaymentAccount(UserHeaderInterceptor.userId.get());
             return response.get("paymentAccountId");
-
         } catch (RuntimeException e) {
-
             if (UserHeaderInterceptor.userId.get() == null) {
                 throw new PaymentsException("토큰으로 유저 ID를 불러오는 데 실패했습니다.", HttpStatus.BAD_GATEWAY);
             }
-
             throw new PaymentsException("유저 메인 결제 계좌 불러올 때 에러 발생", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

@@ -56,6 +56,9 @@ public class PaymentsAuthService {
             // 트랜잭션 id 발급
             return payment.getTransactionId();
         } catch (Unauthorized e) {
+            if (UserHeaderInterceptor.userId.get() == null) {
+                throw new PaymentsException("유저 ID를 가져오는 데 실패했습니다.", HttpStatus.BAD_GATEWAY);
+            }
             Payments payment = paymentsRepository.findById(request.getPayId())
                     .orElseThrow(() -> new PaymentsException("결제 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
             payment.updateErrorCount();

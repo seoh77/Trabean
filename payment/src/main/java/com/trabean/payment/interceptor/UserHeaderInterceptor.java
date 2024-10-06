@@ -22,6 +22,8 @@ public class UserHeaderInterceptor implements HandlerInterceptor {
             } catch (RuntimeException e) {
                 throw new IllegalArgumentException();
             }
+        } else {
+            userId.set(3L); // userId가 null일 경우 3으로 설정
         }
 
         if (userKeyHeader != null) {
@@ -30,6 +32,7 @@ public class UserHeaderInterceptor implements HandlerInterceptor {
 
         return true;
     }
+
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler,
