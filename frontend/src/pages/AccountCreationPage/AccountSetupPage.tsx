@@ -192,8 +192,9 @@ const PasswordInputPage: React.FC = () => {
     setIsModalOpen(false);
   };
 
-  // 완료 버튼 핸들러
+  // 개설 완료 버튼 핸들러
   const handleNextStep = () => {
+    resetAccountType();
     navigate(`/`);
   };
 

@@ -39,7 +39,7 @@ const AccountVerificationPage: React.FC = () => {
 
       // 3초 후에 다른 페이지로 이동
       setTimeout(() => {
-        navigate("/"); // 이동할 페이지 경로 설정
+        navigate("/");
       }, 3000);
     }
   }, [attemptCount, maxAttempts, navigate]);

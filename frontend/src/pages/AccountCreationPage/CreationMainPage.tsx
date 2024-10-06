@@ -1,30 +1,50 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 import { useAccountType } from "./AccountTypeContext";
-import NextStepButton from "./NextStepButton";
 import CreationMain from "./CreationMain";
 import beans from "../../assets/beans.png";
 import bean from "../../assets/bean_personal.png";
 import logo from "../../assets/logo.png";
 
 const CreationMainPage: React.FC = () => {
-  const { accountType, resetAccountType } = useAccountType(); // Context 값 가져오기
-  const navigate = useNavigate();
+  const { accountType, setAccountType } = useAccountType();
+  const [isSelectedType, setIsSelectedType] = useState<boolean>(false);
 
-  const returnPage = () => {
-    resetAccountType(); // Context 상태 초기화
-    navigate(-1); // 이전 페이지로 이동
+  const selectedType = (selected: "travel" | "personal") => {
+    setAccountType(selected);
+    setIsSelectedType(true);
   };
 
-  if (!accountType) {
+  if (!isSelectedType) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="text-left">
-          <div className="font-bold text-lg">! 잘못된 접근 입니다.</div>
-          <div className="mb-10">통장 유형이 선택되지 않았습니다.</div>
-          <div className="flex justify-center">
-            <NextStepButton isEnabled onClick={returnPage} text="돌아가기" />
-          </div>
+      <div className="flex flex-col justify-center items-center h-screen space-y-6">
+        <div className="text-xl font-semibold">
+          개설할 통장의 유형을 선택해 주세요
+        </div>
+        <div className="flex flex-col space-y-8">
+          <button
+            type="button"
+            className="shadow-lg w-72 h-40 bg-primary-light p-2 rounded-2xl flex flex-col justify-center items-center"
+            onClick={() => selectedType("travel")}
+          >
+            <img
+              src={beans}
+              alt="여행 통장"
+              className="mx-auto max-h-32 max-w-64 mb-2"
+            />
+            <div className="font-semibold">다같이 함께하는 여행 통장</div>
+          </button>
+          <button
+            type="button"
+            className="shadow-lg w-72 h-40 bg-primary-light p-2 rounded-2xl flex flex-col justify-center items-center"
+            onClick={() => selectedType("personal")}
+          >
+            <img
+              src={bean}
+              alt="개인 통장"
+              className="mx-auto max-h-24 max-w-64 mb-2"
+            />
+            <div className="font-semibold">혼자서도 간편한 개인 통장</div>
+          </button>
         </div>
       </div>
     );
