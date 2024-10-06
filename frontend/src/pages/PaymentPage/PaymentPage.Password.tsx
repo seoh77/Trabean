@@ -14,6 +14,8 @@ const Password: React.FC = () => {
   const [krwAmount, setKrwAmount] = useState<number | null>(null);
   const [foreignAmount, setForeignAmount] = useState<number | null>(null);
   const [password, setPassword] = useState<string>("");
+  const [payId, setPayId] = useState<number | null>(null);
+  const [transactionId, setTransactionId] = useState<string | null>(null);
 
   const validateInfo = () => {
     if (amount === undefined) {
@@ -61,13 +63,15 @@ const Password: React.FC = () => {
       } else if (foreignAmount !== null) {
         requestBody.foreignAmount = foreignAmount;
       }
-      await client().post(`/api/payments/info`, requestBody);
+      const response = await client().post(`/api/payments/info`, requestBody);
       setIsFail(false);
       setErrorMessage(null);
+      setPayId(response.data.data.payId);
     } catch (error) {
       setIsFail(true);
       if (error instanceof Error) {
         setErrorMessage(error.message || "알 수 없는 에러가 발생했습니다.");
+        setIsFail(true);
       }
     }
   };
@@ -81,8 +85,39 @@ const Password: React.FC = () => {
     setPassword(newPassword);
   };
 
-  const submitPassword = () => {
-    console.log(password);
+  const submitPassword = async () => {
+    try {
+      // 필요한 데이터 가져오기
+      const accountId = useAuthStore.getState().paymentAccountId;
+
+      // 요청 바디 생성
+      const requestBody = {
+        payId,
+        accountId,
+        password,
+      };
+
+      // API 요청 전송
+      const response = await client().post(
+        `/api/payments/validate`,
+        requestBody,
+      );
+      console.log(response.data);
+      setTransactionId(response.data.transactionId);
+      console.log(transactionId);
+    } catch (error) {
+      if (payId == null) {
+        // payId가 null일 때
+        setErrorMessage("결제 ID를 가져오는 데 실패했습니다.");
+        setIsFail(true);
+        return;
+      }
+      if (error instanceof Error) {
+        // 에러 메시지 설정
+        setErrorMessage(error.message || "알 수 없는 에러가 발생했습니다.");
+        setIsFail(true);
+      }
+    }
   };
 
   console.log(
