@@ -130,12 +130,13 @@ public class ExchangeService {
         List<ExchangeRateOpenApiResponseDto> exchangeRateOpenApiResponseDto = null;
         int tryTime = 0;
 
-        while (exchangeRateOpenApiResponseDto == null && tryTime <= 10) {
+        while ((exchangeRateOpenApiResponseDto == null || exchangeRateOpenApiResponseDto.isEmpty()) && tryTime <= 10) {
             exchangeRateOpenApiResponseDto = koreaeximClient.getExchangeRateFromOpenApi(authKey, agoDate + "",
                     "AP01");
             agoDate--;
             tryTime++;
         }
+
 
         // 검색을 쉽게 하기 위해 currency(화폐단위)를 key 값으로 HashMap에 저장
         HashMap<String, String> agoExchangeRateMap = new HashMap<>();
