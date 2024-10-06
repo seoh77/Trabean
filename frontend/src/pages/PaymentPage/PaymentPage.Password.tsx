@@ -162,10 +162,6 @@ const Password: React.FC = () => {
     }
   };
 
-  console.log(
-    `merchantName: ${merchantName}, currency: ${currency}, amount: ${amount}`,
-  );
-
   // 화폐 이름 매핑
   const currencyNameMap: { [key: string]: string } = {
     CAD: "$ ",
