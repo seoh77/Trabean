@@ -33,7 +33,7 @@ export const useAccountType = () => {
 // Provider Component: 상태 관리 및 제공
 export const AccountTypeProvider = ({ children }: { children: ReactNode }) => {
   const [accountType, setAccountType] = useState<"personal" | "travel" | null>(
-    "personal",
+    "travel",
   );
 
   // useCallback으로 resetAccountType 함수 메모이제이션

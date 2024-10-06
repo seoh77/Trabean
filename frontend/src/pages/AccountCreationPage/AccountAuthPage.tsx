@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import NavBar from "./NavBar";
+// import NavBar from "./NavBar";
+import TopBar from "../../components/TopBar";
 import NextStepButton from "./NextStepButton";
 import Modal from "./Modal";
 
@@ -297,33 +298,34 @@ const AccountVerificationPage: React.FC = () => {
   };
 
   return (
-    <div className="px-6 py-8 bg-white">
-      <NavBar text="여행 통장 개설" />
-      {renderStepContent()}
+    <div>
+      <TopBar isLogo={false} page="통장 개설" isWhite />
+      <div className="px-6 py-16 bg-white">
+        {renderStepContent()}
 
-      <div className="flex justify-center mt-10">
-        {(step === 1 || step === 4) && (
-          <NextStepButton
-            isEnabled={
-              (step === 1 && accountNumber.length > 0) ||
-              (step === 4 && verificationCode.length === 4)
-            }
-            onClick={handleNextStep}
-            text="다음 단계"
+        <div className="flex justify-center mt-10">
+          {(step === 1 || step === 4) && (
+            <NextStepButton
+              isEnabled={
+                (step === 1 && accountNumber.length > 0) ||
+                (step === 4 && verificationCode.length === 4)
+              }
+              onClick={handleNextStep}
+              text="다음 단계"
+            />
+          )}
+        </div>
+
+        {isModalOpen && (
+          <Modal
+            message={modalMessage}
+            subMessage={subMessage}
+            onClose={closeModal}
           />
         )}
-      </div>
 
-      {isModalOpen && (
-        <Modal
-          message={modalMessage}
-          subMessage={subMessage}
-          onClose={closeModal}
-        />
-      )}
-
-      {/* 로딩 애니메이션 및 체크 아이콘을 위한 스타일 */}
-      <style>{`
+        {/* 로딩 애니메이션 및 체크 아이콘을 위한 스타일 */}
+        <style>{`
       .circle-loader {
           border: 20px solid #e5e7eb;
           border-radius: 50%;
@@ -358,6 +360,7 @@ const AccountVerificationPage: React.FC = () => {
           transform: translate(-50%, -60%) rotate(45deg); 
         }
       `}</style>
+      </div>
     </div>
   );
 };

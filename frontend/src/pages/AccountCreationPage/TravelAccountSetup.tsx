@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAccountType } from "./AccountTypeContext";
 import Keypad from "./Keypad";
-import NavBar from "./NavBar";
+// import NavBar from "./NavBar";
+import TopBar from "../../components/TopBar";
 import Modal from "./Modal";
 import SuccessPage from "./SuccessPage";
 import NextStepButton from "./NextStepButton";
@@ -21,6 +23,7 @@ const PasswordInputPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalMessage, setModalMessage] = useState(""); // 모달 메시지 상태
   const [subMessage, setSubMessage] = useState<SubMessage[]>([]);
+  const { accountType, resetAccountType } = useAccountType(); // Context 값 가져오기
   const navigate = useNavigate(); // 화면 이동을 위한 네비게이션 hook
 
   useEffect(() => {
@@ -30,6 +33,13 @@ const PasswordInputPage: React.FC = () => {
       navigate("/creation");
     }
   }, [navigate]);
+
+  // 통장 유형에 알맞는 step 설정
+  useEffect(() => {
+    if (accountType === "personal") {
+      setStep(3);
+    }
+  }, [accountType]);
 
   // 통장 이름 입력 핸들러
   const handleAccountNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,7 +63,7 @@ const PasswordInputPage: React.FC = () => {
   // 완료 버튼 핸들러
   const handleComplete = async () => {
     if (step === 3) {
-      setStep(4); // 비밀번호 입력 완료 -> 확인 단계로 이동
+      setStep(4); // 비밀번호 입력 완료 -> 재확인 단계로 이동
     } else if (step === 4 && confirmPassword === password) {
       try {
         // POST 요청을 보내기 위한 헤더 및 데이터 설정
@@ -185,121 +195,205 @@ const PasswordInputPage: React.FC = () => {
     navigate(`/`);
   };
 
-  return (
-    <div className="px-6 py-8 bg-white">
-      <NavBar text="여행 통장 개설" />
+  const returnPage = () => {
+    resetAccountType(); // Context 상태 초기화
+    navigate(`/`); // 이전 페이지로 이동
+  };
 
-      {step === 1 && (
-        <>
-          <div className="text-center">
-            <p className="text-md mb-8">
-              멤버들과 함께 사용할{" "}
-              <p>
-                여행 계좌의 <span className="font-bold">별명</span>을
-                지어주세요.
-              </p>
-            </p>
-            <input
-              type="text"
-              value={accountName}
-              onChange={handleAccountNameChange}
-              placeholder="최대 15글자까지 입력 가능합니다."
-              className="border rounded-md p-2 mt-4 w-4/5 mb-10"
-            />
+  if (!accountType) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="text-left">
+          <div className="font-bold text-lg">! 잘못된 접근 입니다.</div>
+          <div className="mb-10">통장 유형이 선택되지 않았습니다.</div>
+          <div className="flex justify-center">
+            <NextStepButton isEnabled onClick={returnPage} text="돌아가기" />
           </div>
-          <div className="flex justify-center px-6 mt-6">
-            <NextStepButton
-              isEnabled={accountName.length > 0}
-              onClick={goToNextStep}
-              text="다음"
-            />
-          </div>
-        </>
-      )}
-
-      {step === 2 && (
-        <>
-          <div className="text-center">
-            <p className="text-md mb-8">
-              목표 금액 설정
-              <p className="text-md mb-8 text-gray-500">
-                여행 계좌의 <span className="font-bold">목표 금액</span>을
-                설정해주세요.
-              </p>
-            </p>
-            <input
-              type="text"
-              value={targetAmount}
-              onChange={handleTargetAmountChange}
-              placeholder="0"
-              className="border rounded-md p-2 mt-4 w-4/5 mb-10"
-            />
-          </div>
-
-          <div className="flex justify-center px-6 mt-6">
-            <NextStepButton
-              isEnabled={targetAmount.length > 0}
-              onClick={goToNextStep}
-              text="다음"
-            />
-          </div>
-        </>
-      )}
-
-      {step === 3 && (
-        <>
-          <h1 className="text-lg font-semibold mb-1">마지막 단계에요!</h1>
-          <p className="text-md mb-8 text-gray-500">
-            사용하실 통장 비밀번호를 입력해주세요
-          </p>
-          <p className="text-gray-500 mb-5 text-sm text-center">
-            “모두가 함께 공유하는 비밀번호에요”
-          </p>
-          <Keypad
-            password={password}
-            onChange={handlePasswordChange}
-            onComplete={handleComplete}
-          />
-        </>
-      )}
-
-      {step === 4 && (
-        <>
-          <h1 className="text-lg font-semibold mb-1">마지막 단계에요!</h1>
-          <p className="text-md mb-8 text-gray-500">
-            통장 비밀번호를 다시 한 번 입력해주세요
-          </p>
-          <p className="text-gray-500 mb-5 text-sm text-center">
-            “비밀번호를 다시 확인하고 있어요”
-          </p>
-          <Keypad
-            password={confirmPassword}
-            onChange={handlePasswordChange}
-            onComplete={handleComplete}
-          />
-        </>
-      )}
-
-      {step === 5 && (
-        <SuccessPage
-          title="축하합니다!"
-          message="여행 통장 개설에 성공하셨습니다."
-        />
-      )}
-
-      {step === 5 && (
-        <div className="flex justify-center px-6">
-          <NextStepButton isEnabled onClick={handleNextStep} text="확인" />
         </div>
-      )}
+      </div>
+    );
+  }
 
-      {isModalOpen && (
-        <Modal
-          message={modalMessage}
-          subMessage={subMessage}
-          onClose={closeModal}
-        />
-      )}
+  if (accountType === "personal") {
+    return (
+      <div>
+        <TopBar isLogo={false} page="통장 개설" isWhite />
+        <div className="px-6 py-20 bg-white">
+          {step === 3 && (
+            <>
+              <h1 className="text-lg font-semibold mb-1">마지막 단계에요!</h1>
+              <p className="text-md mb-8 text-gray-500">
+                사용하실 통장 비밀번호를 입력해주세요
+              </p>
+              <p className="text-gray-500 mb-5 text-sm text-center">
+                “총 6자리의 숫자로 구성된 비밀번호를 입력해주세요.”
+              </p>
+              <Keypad
+                password={password}
+                onChange={handlePasswordChange}
+                onComplete={handleComplete}
+              />
+            </>
+          )}
+
+          {step === 4 && (
+            <>
+              <h1 className="text-lg font-semibold mb-1">마지막 단계에요!</h1>
+              <p className="text-md mb-8 text-gray-500">
+                통장 비밀번호를 다시 한 번 입력해주세요
+              </p>
+              <p className="text-gray-500 mb-5 text-sm text-center">
+                “비밀번호를 다시 확인하고 있어요”
+              </p>
+              <Keypad
+                password={confirmPassword}
+                onChange={handlePasswordChange}
+                onComplete={handleComplete}
+              />
+            </>
+          )}
+
+          {step === 5 && (
+            <SuccessPage
+              title="축하합니다!"
+              message="여행 통장 개설에 성공하셨습니다."
+            />
+          )}
+
+          {step === 5 && (
+            <div className="flex justify-center px-6">
+              <NextStepButton isEnabled onClick={handleNextStep} text="확인" />
+            </div>
+          )}
+
+          {isModalOpen && (
+            <Modal
+              message={modalMessage}
+              subMessage={subMessage}
+              onClose={closeModal}
+            />
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <TopBar isLogo={false} page="통장 개설" isWhite />
+      <div className="px-6 py-20 bg-white">
+        {step === 1 && (
+          <>
+            <div className="text-center">
+              <p className="text-md mb-8">
+                멤버들과 함께 사용할{" "}
+                <p>
+                  여행 계좌의 <span className="font-bold">별명</span>을
+                  지어주세요.
+                </p>
+              </p>
+              <input
+                type="text"
+                value={accountName}
+                onChange={handleAccountNameChange}
+                placeholder="최대 15글자까지 입력 가능합니다."
+                className="border rounded-md p-2 mt-4 w-4/5 mb-10"
+              />
+            </div>
+            <div className="flex justify-center px-6 mt-6">
+              <NextStepButton
+                isEnabled={accountName.length > 0}
+                onClick={goToNextStep}
+                text="다음"
+              />
+            </div>
+          </>
+        )}
+
+        {step === 2 && (
+          <>
+            <div className="text-center">
+              <p className="text-md mb-8">
+                목표 금액 설정
+                <p className="text-md mb-8 text-gray-500">
+                  여행 계좌의 <span className="font-bold">목표 금액</span>을
+                  설정해주세요.
+                </p>
+              </p>
+              <input
+                type="text"
+                value={targetAmount}
+                onChange={handleTargetAmountChange}
+                placeholder="0"
+                className="border rounded-md p-2 mt-4 w-4/5 mb-10"
+              />
+            </div>
+
+            <div className="flex justify-center px-6 mt-6">
+              <NextStepButton
+                isEnabled={targetAmount.length > 0}
+                onClick={goToNextStep}
+                text="다음"
+              />
+            </div>
+          </>
+        )}
+
+        {step === 3 && (
+          <>
+            <h1 className="text-lg font-semibold mb-1">마지막 단계에요!</h1>
+            <p className="text-md mb-8 text-gray-500">
+              사용하실 통장 비밀번호를 입력해주세요
+            </p>
+            <p className="text-gray-500 mb-5 text-sm text-center">
+              “모두가 함께 공유하는 비밀번호에요”
+            </p>
+            <Keypad
+              password={password}
+              onChange={handlePasswordChange}
+              onComplete={handleComplete}
+            />
+          </>
+        )}
+
+        {step === 4 && (
+          <>
+            <h1 className="text-lg font-semibold mb-1">마지막 단계에요!</h1>
+            <p className="text-md mb-8 text-gray-500">
+              통장 비밀번호를 다시 한 번 입력해주세요
+            </p>
+            <p className="text-gray-500 mb-5 text-sm text-center">
+              “비밀번호를 다시 확인하고 있어요”
+            </p>
+            <Keypad
+              password={confirmPassword}
+              onChange={handlePasswordChange}
+              onComplete={handleComplete}
+            />
+          </>
+        )}
+
+        {step === 5 && (
+          <SuccessPage
+            title="축하합니다!"
+            message="여행 통장 개설에 성공하셨습니다."
+          />
+        )}
+
+        {step === 5 && (
+          <div className="flex justify-center px-6">
+            <NextStepButton isEnabled onClick={handleNextStep} text="확인" />
+          </div>
+        )}
+
+        {isModalOpen && (
+          <Modal
+            message={modalMessage}
+            subMessage={subMessage}
+            onClose={closeModal}
+          />
+        )}
+      </div>
     </div>
   );
 };

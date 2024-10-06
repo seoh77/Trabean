@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import NavBar from "./NavBar";
+// import NavBar from "./NavBar";
 import NextStepButton from "./NextStepButton";
+import TopBar from "../../components/TopBar";
 import nhIcon from "../../assets/bankIcon/nhIcon.png";
 import kbIcon from "../../assets/bankIcon/kbIcon.png";
 import shinhanIcon from "../../assets/bankIcon/shIcon.png";
@@ -49,50 +50,51 @@ const BankSelection: React.FC = () => {
   };
 
   return (
-    <div className="px-6 py-8 bg-white">
-      <NavBar text="여행 통장 개설" />
+    <div>
+      <TopBar isLogo={false} page="통장 개설" isWhite />
+      <div className="px-6 py-20 bg-white">
+        <div className="text-left mb-5">
+          <p>
+            통장 개설을 위해 <strong>실명 인증</strong>이 필요합니다.
+          </p>
+          <p className="font-bold mt-3">
+            1원 인증을 통해 실명 인증을 진행합니다.
+          </p>
+          <p className="text-xs text-gray-500">
+            본인이 맞는지 확인해볼게요. <br />
+            주로 쓰는 은행 계좌를 선택해주세요.
+          </p>
+        </div>
 
-      <div className="text-left mb-5">
-        <p>
-          통장 개설을 위해 <strong>실명 인증</strong>이 필요합니다.
-        </p>
-        <p className="font-bold mt-3">
-          1원 인증을 통해 실명 인증을 진행합니다.
-        </p>
-        <p className="text-xs text-gray-500">
-          본인이 맞는지 확인해볼게요. <br />
-          주로 쓰는 은행 계좌를 선택해주세요.
-        </p>
-      </div>
+        <div className="grid grid-cols-3 gap-3 mb-5">
+          {banks.map((bank) => (
+            <button
+              key={bank.name}
+              type="button"
+              className={`py-2.5 rounded-lg cursor-pointer transition-colors duration-200 ${
+                selectedBank === bank.name ? "bg-primary-light" : "bg-zinc-100"
+              }`}
+              onClick={() => {
+                setSelectedBank(bank.name);
+              }}
+            >
+              <img
+                src={bank.logo}
+                alt={`${bank.name} 로고`}
+                className="w-6 h-6 mb-2 mx-auto object-contain"
+              />
+              <span>{bank.name}</span>
+            </button>
+          ))}
+        </div>
 
-      <div className="grid grid-cols-3 gap-3 mb-5">
-        {banks.map((bank) => (
-          <button
-            key={bank.name}
-            type="button"
-            className={`py-2.5 rounded-lg cursor-pointer transition-colors duration-200 ${
-              selectedBank === bank.name ? "bg-primary-light" : "bg-zinc-100"
-            }`}
-            onClick={() => {
-              setSelectedBank(bank.name);
-            }}
-          >
-            <img
-              src={bank.logo}
-              alt={`${bank.name} 로고`}
-              className="w-6 h-6 mb-2 mx-auto object-contain"
-            />
-            <span>{bank.name}</span>
-          </button>
-        ))}
-      </div>
-
-      <div className="flex justify-center">
-        <NextStepButton
-          isEnabled={!!selectedBank}
-          onClick={handleNextStep}
-          text="다음 단계"
-        />
+        <div className="flex justify-center">
+          <NextStepButton
+            isEnabled={!!selectedBank}
+            onClick={handleNextStep}
+            text="다음 단계"
+          />
+        </div>
       </div>
     </div>
   );

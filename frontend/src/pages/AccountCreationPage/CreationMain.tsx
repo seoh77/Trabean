@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import NavBar from "./NavBar";
 import NextStepButton from "./NextStepButton";
+import TopBar from "../../components/TopBar";
 
 interface ReusableMainPageProps {
   navText: string; // 네비게이션 바의 텍스트
@@ -27,34 +28,42 @@ const ReusableMainPage: React.FC<ReusableMainPageProps> = ({
   const navigate = useNavigate();
 
   return (
-    <div className="px-6 py-8 bg-white">
-      <NavBar text={navText} />
+    <div>
+      <TopBar isLogo={false} page="통장 개설" isWhite />
 
-      <div className="flex flex-col items-center justify-center bg-white px-6 mt-10">
-        {/* 서브 타이틀 */}
-        <p className="text-center text-gray-500 mb-2">{subtitle}</p>
+      <div className="px-6 py-8 bg-white">
+        <NavBar text={navText} />
 
-        {/* 메인 타이틀 */}
-        <h2 className="text-center text-2xl font-semibold">{title1}</h2>
-        <h2 className="text-center text-2xl font-semibold mb-10">{title2}</h2>
+        <div className="flex flex-col items-center justify-center bg-white px-6 mt-10">
+          {/* 서브 타이틀 */}
+          <p className="text-center text-gray-500 mb-2">{subtitle}</p>
 
-        {/* 이미지 영역 */}
-        <div className="mb-2">
-          <img src={imageSrc} alt="Main Visual" className="max-w-68 max-h-32" />
-        </div>
+          {/* 메인 타이틀 */}
+          <h2 className="text-center text-2xl font-semibold">{title1}</h2>
+          <h2 className="text-center text-2xl font-semibold mb-10">{title2}</h2>
 
-        {/* 브랜드 로고 */}
-        <div className="mb-10">
-          <img src={logoSrc} alt="Brand Logo" className="w-24 h-auto" />
-        </div>
+          {/* 이미지 영역 */}
+          <div className="mb-2">
+            <img
+              src={imageSrc}
+              alt="Main Visual"
+              className="max-w-68 max-h-32"
+            />
+          </div>
 
-        {/* 시작하기 버튼 */}
-        <div className="flex justify-center mt-10 w-full">
-          <NextStepButton
-            isEnabled
-            onClick={() => navigate(buttonPath)}
-            text={buttonText}
-          />
+          {/* 브랜드 로고 */}
+          <div className="mb-10">
+            <img src={logoSrc} alt="Brand Logo" className="w-24 h-auto" />
+          </div>
+
+          {/* 시작하기 버튼 */}
+          <div className="flex justify-center mt-10 w-full">
+            <NextStepButton
+              isEnabled
+              onClick={() => navigate(buttonPath)}
+              text={buttonText}
+            />
+          </div>
         </div>
       </div>
     </div>

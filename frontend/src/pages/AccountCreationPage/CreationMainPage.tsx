@@ -21,10 +21,7 @@ const CreationMainPage: React.FC = () => {
       <div className="flex justify-center items-center h-screen">
         <div className="text-left">
           <div className="font-bold text-lg">! 잘못된 접근 입니다.</div>
-          <div className="mb-10">
-            통장 유형이 선택되지 않았습니다. <br />
-            초기 페이지로 돌아가세요.
-          </div>
+          <div className="mb-10">통장 유형이 선택되지 않았습니다.</div>
           <div className="flex justify-center">
             <NextStepButton isEnabled onClick={returnPage} text="돌아가기" />
           </div>
