@@ -4,7 +4,6 @@ import PaymentHistory from "./pages/PaymentPage/PaymentPage.PaymentHistory";
 import PaymentPage from "./pages/PaymentPage/PaymentPage";
 import PaymentPassword from "./pages/PaymentPage/PaymentPage.Password";
 import PaymentSuccessPage from "./pages/PaymentPage/PaymentPage.Payment.SuccessPage";
-import TravelAccountPage from "./pages/TravelAccount/TravelAccountPage";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import MainPage from "./pages/MainPage/MainPage";
 import JoinPage from "./pages/JoinPage/JoinPage";
@@ -23,6 +22,13 @@ import ExchangeSplit from "./pages/SplitPage/SplitPage";
 import PasswordPage from "./pages/AccountCreationPage/PasswordPage";
 import SuccessPage from "./pages/TransferPage/TransferPage.successPage";
 import BottomBar from "./components/BottomBar";
+import Notification from "./pages/NotificationPage/NotificationPage";
+import DomesticTravelAccountPage from "./pages/TravelAccount/page/DomesticTravelAccountPage";
+import DomesticTravelAccountDetailPage from "./pages/TravelAccount/page/DomesticTravelAccountDetailPage";
+import ForeignTravelAccountDetailPage from "./pages/TravelAccount/page/ForeignTravelAccountDetailPage";
+import ChargeForeignTravelAccountPage from "./pages/TravelAccount/page/ChargeForeignTravelAccountPage";
+import CreateForeignTravelAccountPage from "./pages/TravelAccount/page/CreateForeignTravelAccountPage";
+import MemberManagementPage from "./pages/TravelAccount/page/MemberManagementPage";
 
 function App() {
   return (
@@ -31,9 +37,30 @@ function App() {
         <Route path="/" element={<MainPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route
-          path="/accounts/travel/domestic"
-          element={<TravelAccountPage />}
+          path="/accounts/travel/domestic/:accountId"
+          element={<DomesticTravelAccountPage />}
         />
+        <Route
+          path="/accounts/travel/domestic/:accountId/detail"
+          element={<DomesticTravelAccountDetailPage />}
+        />
+        <Route
+          path="/accounts/travel/foreign/:accountId/detail"
+          element={<ForeignTravelAccountDetailPage />}
+        />
+        <Route
+          path="/accounts/travel/domestic/:accountId/members"
+          element={<MemberManagementPage />}
+        />
+        <Route
+          path="/accounts/travel/foreign/:parentAccountId/create"
+          element={<CreateForeignTravelAccountPage />}
+        />
+        <Route
+          path="/accounts/travel/foreign/:parentAccountId/charge"
+          element={<ChargeForeignTravelAccountPage />}
+        />
+
         <Route path="/payment/qr" element={<PaymentPage />} />
         <Route
           path="/payment/qr/:merchantId/:merchantName/:currency/:amount"
@@ -69,6 +96,7 @@ function App() {
         <Route path="/transfer/list" element={<TransferList />} />
         <Route path="transfer/password" element={<PasswordPage />} />
         <Route path="transfer/success" element={<SuccessPage />} />
+        <Route path="/notification" element={<Notification />} />
       </Routes>
       <BottomBar />
     </div>
