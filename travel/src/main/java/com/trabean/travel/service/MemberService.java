@@ -1,5 +1,6 @@
 package com.trabean.travel.service;
 
+import com.trabean.interceptor.UserHeaderInterceptor;
 import com.trabean.travel.callApi.client.AccountClient;
 import com.trabean.travel.callApi.dto.request.MemberJoinApiRequestDto;
 import com.trabean.travel.callApi.dto.request.MemberRoleUpdateApiRequestDto;
@@ -73,7 +74,7 @@ public class MemberService {
     }
 
     public String join(MemberJoinRequestDto memberJoinRequestDto) {
-        Long userId = memberJoinRequestDto.getUserId();
+        Long userId = UserHeaderInterceptor.userId.get();
         Long krwAccountId = memberJoinRequestDto.getAccountId();
         List<Long> foreignAccountIdList = getChildAccounts(krwAccountId);
 

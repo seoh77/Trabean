@@ -7,7 +7,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class MemberJoinRequestDto {
 
-    private Long userId;
     private Long accountId;
 
 }
