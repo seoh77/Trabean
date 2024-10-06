@@ -1,44 +1,81 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import NavBar from "./NavBar";
-import NextStepButton from "./NextStepButton";
+import React, { useState } from "react";
+import { useAccountType } from "./AccountTypeContext";
+import CreationMain from "./CreationMain";
 import beans from "../../assets/beans.png";
+import bean from "../../assets/bean_personal.png";
 import logo from "../../assets/logo.png";
 
 const CreationMainPage: React.FC = () => {
-  const navigate = useNavigate(); // 페이지 이동을 위한 navigate 훅
+  const { accountType, setAccountType } = useAccountType();
+  const [isSelectedType, setIsSelectedType] = useState<boolean>(false);
 
-  return (
-    <div className="px-6 py-8 bg-white">
-      <NavBar text="여행 통장 개설" />
+  const selectedType = (selected: "travel" | "personal") => {
+    setAccountType(selected);
+    setIsSelectedType(true);
+  };
 
-      <div className="flex flex-col items-center justify-center bg-white px-6 mt-10">
-        <p className="text-center text-gray-500 mb-2">트래빈뱅크 여행통장</p>
-        <h2 className="text-center text-2xl font-semibold mb-10">
-          함께 하는 여행, <br />
-          함께 모아보세요
-        </h2>
-
-        {/* 이미지 영역 */}
-        <div className="mb-2">
-          <img src={beans} alt="Trabean Logo" className="w-68 h-auto" />
+  if (!isSelectedType) {
+    return (
+      <div className="flex flex-col justify-center items-center h-screen space-y-6">
+        <div className="text-xl font-semibold">
+          개설할 통장의 유형을 선택해 주세요
         </div>
-
-        {/* 브랜드 로고 */}
-        <div className="mb-10">
-          <img src={logo} alt="Trabean Text Logo" className="w-24 h-auto" />
-        </div>
-
-        {/* 시작하기 버튼 */}
-        <div className="flex justify-center mt-10 w-full">
-          <NextStepButton
-            isEnabled
-            onClick={() => navigate("/creation/travel/bank")}
-            text="시작하기"
-          />
+        <div className="flex flex-col space-y-8">
+          <button
+            type="button"
+            className="shadow-lg w-72 h-40 bg-primary-light p-2 rounded-2xl flex flex-col justify-center items-center"
+            onClick={() => selectedType("travel")}
+          >
+            <img
+              src={beans}
+              alt="여행 통장"
+              className="mx-auto max-h-32 max-w-64 mb-2"
+            />
+            <div className="font-semibold">다같이 함께하는 여행 통장</div>
+          </button>
+          <button
+            type="button"
+            className="shadow-lg w-72 h-40 bg-primary-light p-2 rounded-2xl flex flex-col justify-center items-center"
+            onClick={() => selectedType("personal")}
+          >
+            <img
+              src={bean}
+              alt="개인 통장"
+              className="mx-auto max-h-24 max-w-64 mb-2"
+            />
+            <div className="font-semibold">혼자서도 간편한 개인 통장</div>
+          </button>
         </div>
       </div>
-    </div>
+    );
+  }
+
+  if (accountType === "personal") {
+    return (
+      <CreationMain
+        navText="개인 통장 개설"
+        title1="간편한 입금 출금,"
+        title2="편하게 이용하세요 !"
+        subtitle="트래빈뱅크 입출금통장"
+        imageSrc={bean}
+        logoSrc={logo}
+        buttonText="시작하기"
+        buttonPath="/creation/bank"
+      />
+    );
+  }
+
+  return (
+    <CreationMain
+      navText="여행 통장 개설"
+      title1="함께 하는 여행,"
+      title2="함께 모아보세요"
+      subtitle="트래빈뱅크 여행통장"
+      imageSrc={beans}
+      logoSrc={logo}
+      buttonText="시작하기"
+      buttonPath="/creation/bank"
+    />
   );
 };
 

@@ -8,14 +8,14 @@ import React, {
 } from "react";
 
 // Context의 타입 정의
-interface AccountTypeContextProps {
+interface AccountTypeContext {
   accountType: "personal" | "travel" | null; // 개인/여행/초기 상태(null)
   setAccountType: (type: "personal" | "travel") => void; // 통장 유형 설정 함수
   resetAccountType: () => void; // 통장 유형 초기화 함수
 }
 
 // 초기값 설정
-const AccountTypeContext = createContext<AccountTypeContextProps | undefined>(
+const AccountTypeContext = createContext<AccountTypeContext | undefined>(
   undefined,
 );
 
@@ -24,7 +24,7 @@ export const useAccountType = () => {
   const context = useContext(AccountTypeContext);
   if (!context) {
     throw new Error(
-      "AccountTypeProvider로 감싼 컴포넌트에서만 useAccountType 호출이 가능합니다",
+      "AccountTypeProvider로 감싼 컴포넌트에서만 useAccountType 호출 가능",
     );
   }
   return context;

@@ -89,7 +89,7 @@ const CurrencyAddPage: React.FC = () => {
     const isValid = await isVerificationCodeValid();
     if (isValid) {
       sessionStorage.setItem("isVerified", "true");
-      navigate("/creation/travel");
+      navigate("/accounts/travel/domestic");
     } else {
       // 시도 횟수 증가 및 상태 업데이트
       setAttemptCount((prev) => prev + 1);
