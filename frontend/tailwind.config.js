@@ -1,10 +1,9 @@
 /** @type {import("tailwindcss").Config} */
-module.exports = {
-  content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}"],
+export default {
+  content: ["./src/**/*.{js,jsx,ts,tsx}"], // HTML 및 JS 파일 경로
   theme: {
     extend: {
       colors: {
-        "shadow-color": "rgba(0, 0, 0, 0.5)", // 사용자 정의 그림자 색상 추가
         primary: {
           DEFAULT: "#6FA760",
           light: "#C0DEB8",
