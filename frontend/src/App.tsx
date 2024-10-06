@@ -21,6 +21,7 @@ import ExchangeRates from "./pages/Exchange/ExchangePage";
 import ExchangeSplit from "./pages/SplitPage/SplitPage";
 import PasswordPage from "./pages/AccountCreationPage/PasswordPage";
 import SuccessPage from "./pages/TransferPage/TransferPage.successPage";
+import BottomBar from "./components/BottomBar";
 
 function App() {
   return (
@@ -62,6 +63,7 @@ function App() {
         <Route path="transfer/password" element={<PasswordPage />} />
         <Route path="transfer/success" element={<SuccessPage />} />
       </Routes>
+      <BottomBar />
     </div>
   );
 }
