@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 import TopBar from "../../components/TopBar";
 import FailModal from "./PaymentPage.Password.FailModal";
@@ -15,8 +15,8 @@ const Password: React.FC = () => {
   const [foreignAmount, setForeignAmount] = useState<number | null>(null);
   const [password, setPassword] = useState<string>("");
   const [payId, setPayId] = useState<number | null>(null);
-  const [transactionId, setTransactionId] = useState<string | null>(null);
 
+  const navigate = useNavigate();
   const validateInfo = () => {
     if (amount === undefined) {
       setErrorMessage("가격 정보를 불러오는 데 실패했습니다.");
@@ -45,6 +45,7 @@ const Password: React.FC = () => {
     setErrorMessage(null);
   };
 
+  // qr 읽어온 직후 정보 업데이트 api 호출
   const updatePaymentInfo = async () => {
     const accountId = useAuthStore.getState().paymentAccountId;
     try {
@@ -81,10 +82,50 @@ const Password: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // 결제 요청 api 호출
+  const requestPayment = async (
+    accountId: string | null,
+    transactionId: string,
+  ) => {
+    try {
+      // 요청 바디 생성
+      const requestBody = {
+        transactionId,
+        payId,
+        merchantId,
+        krwAmount: krwAmount ?? null,
+        foreignAmount: foreignAmount ?? null,
+      };
+      // API 요청 전송
+      const response = await client().post(
+        `/api/payments/${accountId}`,
+        requestBody,
+      );
+      console.log(response.data);
+      // 성공시 성공 url 로 이동
+      if (response.data.status === "SUCCESS") {
+        navigate(`/payment/qr/success/${payId}`);
+      }
+    } catch (error) {
+      if (payId == null) {
+        // payId가 null일 때
+        setErrorMessage("결제 ID를 가져오는 데 실패했습니다.");
+        setIsFail(true);
+        return;
+      }
+      if (error instanceof Error) {
+        // 에러 메시지 설정
+        setErrorMessage(error.message || "알 수 없는 에러 발생");
+        setIsFail(true);
+      }
+    }
+  };
+
   const changePasswordInput = (newPassword: string) => {
     setPassword(newPassword);
   };
 
+  // 비밀번호 입력 완료
   const submitPassword = async () => {
     try {
       // 필요한 데이터 가져오기
@@ -103,8 +144,9 @@ const Password: React.FC = () => {
         requestBody,
       );
       console.log(response.data);
-      setTransactionId(response.data.transactionId);
-      console.log(transactionId);
+
+      // 발급된 transactionId 로 결제요청
+      requestPayment(accountId, response.data.transactionId);
     } catch (error) {
       if (payId == null) {
         // payId가 null일 때
