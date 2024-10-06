@@ -680,7 +680,7 @@ public class AccountService {
         String accountNo = ValidationUtil.validateInput(ValidateInputDTO.builder()
                         .account(accountRepository.findById(accountId))
                         .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(UserHeaderInterceptor.userId.get(), accountId))
-                        .accountType(AccountType.DOMESTIC)
+                        .accountType(AccountType.FOREIGN)
                         .build())
                 .getAccountNo();
 
