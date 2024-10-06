@@ -131,8 +131,8 @@ public class AccountController {
 
     // 외화 여행통장 생성 API
     @PostMapping("/travel/foreign")
-    public ResponseEntity<SsafySuccessResponseDTO> createForeignTravelAccount(@RequestBody CreateForeignTravelAccountRequestDTO requestDTO) {
-        SsafySuccessResponseDTO responseDTO = accountService.createForeignTravelAccount(requestDTO);
+    public ResponseEntity<CreateForeignTravelAccountResponseDTO> createForeignTravelAccount(@RequestBody CreateForeignTravelAccountRequestDTO requestDTO) {
+        CreateForeignTravelAccountResponseDTO responseDTO = accountService.createForeignTravelAccount(requestDTO);
         return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
     }
 

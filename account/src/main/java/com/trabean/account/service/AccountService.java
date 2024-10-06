@@ -645,7 +645,7 @@ public class AccountService {
     }
 
     // 외화 여행통장 생성 서비스 로직
-    public SsafySuccessResponseDTO createForeignTravelAccount(CreateForeignTravelAccountRequestDTO requestDTO) {
+    public CreateForeignTravelAccountResponseDTO createForeignTravelAccount(CreateForeignTravelAccountRequestDTO requestDTO) {
 
         String savedPassword = ValidationUtil.validateInput(ValidateInputDTO.builder()
                         .account(accountRepository.findById(requestDTO.getDomesticAccountId()))
@@ -654,6 +654,9 @@ public class AccountService {
                         .userRole(UserRole.ADMIN)
                         .build())
                 .getPassword();
+
+        // 한화 여행통장 정보 반환용
+        Account domesticAccount = ValidationUtil.validateAccount(accountRepository.findById(requestDTO.getDomesticAccountId()));
 
         // SSAFY 금융 API 계좌 생성 요청
         CreateForeignCurrencyDemandDepositAccountRequestDTO createForeignCurrencyDemandDepositAccountRequestDTO = CreateForeignCurrencyDemandDepositAccountRequestDTO.builder()
@@ -693,9 +696,11 @@ public class AccountService {
                 .build();
         travelClient.saveForeignTravelAccount(saveForeignTravelAccountRequestDTO);
 
-        return SsafySuccessResponseDTO.builder()
-                .responseCode(createForeignCurrencyDemandDepositAccountResponseDTO.getHeader().getResponseCode())
-                .responseMessage(createForeignCurrencyDemandDepositAccountResponseDTO.getHeader().getResponseMessage())
+        return CreateForeignTravelAccountResponseDTO.builder()
+                .domesticAccountId(domesticAccount.getAccountId())
+                .domesticAccountNo(domesticAccount.getAccountNo())
+                .foreignAccountId(savedAccount.getAccountId())
+                .foreignAccountNo(savedAccount.getAccountNo())
                 .build();
     }
 
