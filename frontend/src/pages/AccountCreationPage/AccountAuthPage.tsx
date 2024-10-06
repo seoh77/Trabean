@@ -113,7 +113,7 @@ const AccountVerificationPage: React.FC = () => {
     const storedIsVerified = sessionStorage.getItem("isSelectedBank");
     if (!storedIsVerified || storedIsVerified !== "true") {
       // 은행이 선택되지 않았으면 접근을 차단하고 리다이렉트
-      navigate("/creation/travel");
+      navigate("/creation");
     }
   }, [navigate]);
 
@@ -192,7 +192,7 @@ const AccountVerificationPage: React.FC = () => {
           const isValid = await isVerificationCodeValid();
           if (isValid) {
             sessionStorage.setItem("isVerified", "true");
-            navigate("/creation/travel/identity");
+            navigate("/creation/identity");
           } else {
             // 시도 횟수 증가 및 상태 업데이트
             setAttemptCount((prev) => prev + 1);

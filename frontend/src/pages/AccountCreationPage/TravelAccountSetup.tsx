@@ -27,7 +27,7 @@ const PasswordInputPage: React.FC = () => {
     const storedIsVerified = sessionStorage.getItem("isIdentityAuth");
     if (!storedIsVerified || storedIsVerified !== "true") {
       // 인증되지 않았으면 접근을 차단하고 리다이렉트
-      navigate("/creation/travel");
+      navigate("/creation");
     }
   }, [navigate]);
 

@@ -20,7 +20,7 @@ const IdentityAuthPage: React.FC = () => {
     const storedIsVerified = sessionStorage.getItem("isVerified");
     if (!storedIsVerified || storedIsVerified !== "true") {
       // 인증되지 않았으면 접근을 차단하고 리다이렉트
-      navigate("/creation/travel");
+      navigate("/creation");
     }
   }, [navigate]);
 
@@ -77,7 +77,7 @@ const IdentityAuthPage: React.FC = () => {
 
   const handleIdentityAuth = () => {
     sessionStorage.setItem("isIdentityAuth", "true");
-    navigate(`/creation/travel/setup`);
+    navigate(`/creation/setup`);
   };
 
   return (

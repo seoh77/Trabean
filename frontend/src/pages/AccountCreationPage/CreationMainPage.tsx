@@ -1,44 +1,64 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import NavBar from "./NavBar";
+import { useAccountType } from "./AccountTypeContext";
 import NextStepButton from "./NextStepButton";
+import CreationMain from "./CreationMain";
 import beans from "../../assets/beans.png";
+import bean from "../../assets/bean_personal.png";
 import logo from "../../assets/logo.png";
 
 const CreationMainPage: React.FC = () => {
-  const navigate = useNavigate(); // 페이지 이동을 위한 navigate 훅
+  const { accountType, resetAccountType } = useAccountType(); // Context 값 가져오기
+  const navigate = useNavigate();
 
-  return (
-    <div className="px-6 py-8 bg-white">
-      <NavBar text="여행 통장 개설" />
+  const returnPage = () => {
+    resetAccountType(); // Context 상태 초기화
+    navigate(-1); // 이전 페이지로 이동
+  };
 
-      <div className="flex flex-col items-center justify-center bg-white px-6 mt-10">
-        <p className="text-center text-gray-500 mb-2">트래빈뱅크 여행통장</p>
-        <h2 className="text-center text-2xl font-semibold mb-10">
-          함께 하는 여행, <br />
-          함께 모아보세요
-        </h2>
-
-        {/* 이미지 영역 */}
-        <div className="mb-2">
-          <img src={beans} alt="Trabean Logo" className="w-68 h-auto" />
-        </div>
-
-        {/* 브랜드 로고 */}
-        <div className="mb-10">
-          <img src={logo} alt="Trabean Text Logo" className="w-24 h-auto" />
-        </div>
-
-        {/* 시작하기 버튼 */}
-        <div className="flex justify-center mt-10 w-full">
-          <NextStepButton
-            isEnabled
-            onClick={() => navigate("/creation/travel/bank")}
-            text="시작하기"
-          />
+  if (!accountType) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="text-left">
+          <div className="font-bold text-lg">! 잘못된 접근 입니다.</div>
+          <div className="mb-10">
+            통장 유형이 선택되지 않았습니다. <br />
+            초기 페이지로 돌아가세요.
+          </div>
+          <div className="flex justify-center">
+            <NextStepButton isEnabled onClick={returnPage} text="돌아가기" />
+          </div>
         </div>
       </div>
-    </div>
+    );
+  }
+
+  if (accountType === "personal") {
+    return (
+      <CreationMain
+        navText="개인 통장 개설"
+        title1="간편한 입금 출금,"
+        title2="편하게 이용하세요 !"
+        subtitle="트래빈뱅크 입출금통장"
+        imageSrc={bean}
+        logoSrc={logo}
+        buttonText="시작하기"
+        buttonPath="/creation/bank"
+      />
+    );
+  }
+
+  return (
+    <CreationMain
+      navText="여행 통장 개설"
+      title1="함께 하는 여행,"
+      title2="함께 모아보세요"
+      subtitle="트래빈뱅크 여행통장"
+      imageSrc={beans}
+      logoSrc={logo}
+      buttonText="시작하기"
+      buttonPath="/creation/bank"
+    />
   );
 };
 
