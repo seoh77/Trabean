@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateForeignTravelAccountResponseDTO {
+public class TravelAccountCoupleResponseDTO {
 
     @JsonProperty("domesticAccountId")
     private Long domesticAccountId;

@@ -729,4 +729,26 @@ public class AccountService {
                 .build();
     }
 
+    // 외화 여행통장 및 연결된 한화 여행통장 식별자와 계좌번호 조회 서비스 로직
+    public TravelAccountCoupleResponseDTO getTravelAccountCoupleResponseDTO(Long foreignAccountId) {
+
+        String foreignAccountNo = ValidationUtil.validateInput(ValidateInputDTO.builder()
+                    .account(accountRepository.findById(foreignAccountId))
+                    .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(UserHeaderInterceptor.userId.get(), foreignAccountId))
+                    .accountType(AccountType.FOREIGN)
+                    .build())
+                .getAccountNo();
+
+        // Travel 서버에 외화 여행통장 ID로 한화 여행통장 ID 반환 요청
+        Long domesticAccountId = travelClient.getParentAccountId(foreignAccountId).getAccountId();
+
+        String domesticAccountNo = ValidationUtil.validateAccount(accountRepository.findById(domesticAccountId)).getAccountNo();
+
+        return TravelAccountCoupleResponseDTO.builder()
+                .domesticAccountId(domesticAccountId)
+                .domesticAccountNo(domesticAccountNo)
+                .foreignAccountId(foreignAccountId)
+                .foreignAccountNo(foreignAccountNo)
+                .build();
+    }
 }

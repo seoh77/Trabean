@@ -4,6 +4,7 @@ import com.trabean.config.FeignClientConfig;
 import com.trabean.external.msa.travel.dto.request.SaveDomesticTravelAccountRequestDTO;
 import com.trabean.external.msa.travel.dto.request.SaveForeignTravelAccountRequestDTO;
 import com.trabean.external.msa.travel.dto.response.DomesticTravelAccountInfoResponseDTO;
+import com.trabean.external.msa.travel.dto.response.ParentAccountIdResponseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,4 +31,10 @@ public interface TravelClient {
      */
     @GetMapping("/api/travel/info/{accountId}")
     DomesticTravelAccountInfoResponseDTO getDomesticTravelAccountInfo(@PathVariable Long accountId);
+
+    /**
+     * 외화 여행통장 ID로 한화 여행통장 ID 반환 요청
+     */
+    @GetMapping("/api/travel/parents/{accountId}")
+    ParentAccountIdResponseDTO getParentAccountId(@PathVariable Long accountId);
 }
