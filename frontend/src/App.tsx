@@ -19,6 +19,8 @@ import CurrencyAddPage from "./pages/AccountCreationPage/CurrencyAddPage";
 import MapTestPage from "./pages/AccountCreationPage/MapTestPage";
 import ExchangeRates from "./pages/Exchange/ExchangePage";
 import ExchangeSplit from "./pages/SplitPage/SplitPage";
+import PasswordPage from "./pages/AccountCreationPage/PasswordPage";
+import SuccessPage from "./pages/TransferPage/TransferPage.successPage";
 
 function App() {
   return (
@@ -56,6 +58,9 @@ function App() {
         <Route path="/chatbot/map" element={<MapTestPage />} />
         <Route path="/exchange" element={<ExchangeRates />} />
         <Route path="/travel/split" element={<ExchangeSplit />} />
+        <Route path="/transfer/list" element={<TransferList />} />
+        <Route path="transfer/password" element={<PasswordPage />} />
+        <Route path="transfer/success" element={<SuccessPage />} />
       </Routes>
     </div>
   );
