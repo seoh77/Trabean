@@ -15,13 +15,19 @@ import AccountAuthPage from "./pages/AccountCreationPage/AccountAuthPage";
 import IdentityAuthPage from "./pages/AccountCreationPage/IdentityAuthPage";
 import TravleSetupPage from "./pages/AccountCreationPage/TravelAccountSetup";
 import CurrencyAddPage from "./pages/AccountCreationPage/CurrencyAddPage";
+import MapTestPage from "./pages/AccountCreationPage/MapTestPage";
 import ExchangeRates from "./pages/Exchange/ExchangePage";
+import ExchangeSplit from "./pages/SplitPage/SplitPage";
+import PasswordPage from "./pages/AccountCreationPage/PasswordPage";
+import SuccessPage from "./pages/TransferPage/TransferPage.successPage";
+import BottomBar from "./components/BottomBar";
+import Notification from "./pages/NotificationPage/NotificationPage";
 import DomesticTravelAccountPage from "./pages/TravelAccount/page/DomesticTravelAccountPage";
 import DomesticTravelAccountDetailPage from "./pages/TravelAccount/page/DomesticTravelAccountDetailPage";
-import MemberManagementPage from "./pages/TravelAccount/page/MemberManagementPage";
 import ForeignTravelAccountDetailPage from "./pages/TravelAccount/page/ForeignTravelAccountDetailPage";
-import CreateForeignTravelAccountPage from "./pages/TravelAccount/page/CreateForeignTravelAccountPage";
 import ChargeForeignTravelAccountPage from "./pages/TravelAccount/page/ChargeForeignTravelAccountPage";
+import CreateForeignTravelAccountPage from "./pages/TravelAccount/page/CreateForeignTravelAccountPage";
+import MemberManagementPage from "./pages/TravelAccount/page/MemberManagementPage";
 
 function App() {
   return (
@@ -56,7 +62,7 @@ function App() {
 
         <Route path="/payment/qr" element={<PaymentPage />} />
         <Route
-          path="/payment/qr/:payId/:merchantName/:currency/:amount/:userId"
+          path="/payment/qr/:merchantId/:merchantName/:currency/:amount"
           element={<PaymentPassword />}
         />
         <Route
@@ -77,8 +83,15 @@ function App() {
         />
         <Route path="/creation/travel/setup" element={<TravleSetupPage />} />
         <Route path="/creation/travel/currency" element={<CurrencyAddPage />} />
+        <Route path="/chatbot/map" element={<MapTestPage />} />
         <Route path="/exchange" element={<ExchangeRates />} />
+        <Route path="/travel/split" element={<ExchangeSplit />} />
+        <Route path="/transfer/list" element={<TransferList />} />
+        <Route path="transfer/password" element={<PasswordPage />} />
+        <Route path="transfer/success" element={<SuccessPage />} />
+        <Route path="/notification" element={<Notification />} />
       </Routes>
+      <BottomBar />
     </div>
   );
 }

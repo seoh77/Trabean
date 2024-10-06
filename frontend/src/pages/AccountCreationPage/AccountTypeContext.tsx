@@ -2,32 +2,51 @@ import React, {
   createContext,
   useContext,
   useState,
-  ReactNode,
   useMemo,
+  useCallback,
+  ReactNode,
 } from "react";
 
-// 계좌 유형 타입 정의
-type AccountType = "personal" | "group" | null;
+// Context의 타입 정의
+interface AccountTypeContextProps {
+  accountType: "personal" | "travel" | null; // 개인/여행/초기 상태(null)
+  setAccountType: (type: "personal" | "travel") => void; // 통장 유형 설정 함수
+  resetAccountType: () => void; // 통장 유형 초기화 함수
+}
 
-// 컨텍스트 생성
-const AccountTypeContext = createContext<{
-  accountType: AccountType;
-  setAccountType: React.Dispatch<React.SetStateAction<AccountType>> | undefined;
-}>({
-  accountType: null, // 기본값 설정
-  setAccountType: undefined, // 빈 함수 대신 undefined로 설정
-});
+// 초기값 설정
+const AccountTypeContext = createContext<AccountTypeContextProps | undefined>(
+  undefined,
+);
 
-// 컨텍스트 프로바이더 정의
-export const AccountTypeProvider: React.FC<{ children: ReactNode }> = ({
-  children,
-}) => {
-  const [accountType, setAccountType] = useState<AccountType>(null);
+// Context에 대한 쉬운 접근을 위한 Hook
+export const useAccountType = () => {
+  const context = useContext(AccountTypeContext);
+  if (!context) {
+    throw new Error(
+      "AccountTypeProvider로 감싼 컴포넌트에서만 useAccountType 호출이 가능합니다",
+    );
+  }
+  return context;
+};
 
-  // value 객체를 useMemo로 메모이제이션
+// Provider Component: 상태 관리 및 제공
+export const AccountTypeProvider = ({ children }: { children: ReactNode }) => {
+  const [accountType, setAccountType] = useState<"personal" | "travel" | null>(
+    null,
+  );
+
+  // useCallback으로 resetAccountType 함수 메모이제이션
+  // =>
+  const resetAccountType = useCallback(() => {
+    setAccountType(null);
+  }, []);
+
+  // useMemo로 value 객체 메모이제이션
+  // => 특정 값이 바뀔 때만 재계산하여 객체를 재생성하여 불필요한 리렌더링 방지
   const value = useMemo(
-    () => ({ accountType, setAccountType }),
-    [accountType, setAccountType],
+    () => ({ accountType, setAccountType, resetAccountType }),
+    [accountType, setAccountType, resetAccountType],
   );
 
   return (
@@ -35,15 +54,4 @@ export const AccountTypeProvider: React.FC<{ children: ReactNode }> = ({
       {children}
     </AccountTypeContext.Provider>
   );
-};
-
-// 커스텀 훅 정의
-export const useAccountType = () => {
-  const context = useContext(AccountTypeContext);
-  if (!context) {
-    throw new Error(
-      "useAccountType must be used within an AccountTypeProvider",
-    );
-  }
-  return context;
 };
