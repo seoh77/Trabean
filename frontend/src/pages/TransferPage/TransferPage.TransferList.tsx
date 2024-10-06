@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom"; // useNavigate 추가
 import beanProfile from "../../assets/bean_profile.png";
 import trabeanLogo from "../../assets/logo.png";
 
@@ -13,6 +13,7 @@ interface TransferDetails {
 const TransferList: React.FC = () => {
   const { account } = useParams<{ account: string }>(); // URL에서 계좌 번호 받기
   const location = useLocation();
+  const navigate = useNavigate(); // useNavigate 훅
   const transferDetails = location.state as TransferDetails; // 이전 페이지에서 전달된 state 받기
   const [amount, setAmount] = useState<string>(""); // 송금 금액 관리
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태 관리
@@ -37,6 +38,11 @@ const TransferList: React.FC = () => {
     setIsModalOpen(false);
   };
 
+  // 비밀번호 입력 페이지로 이동
+  const handleConfirm = () => {
+    navigate("/transfer/password"); // 비밀번호 입력 페이지로 이동
+  };
+
   return (
     <div className="relative p-4 flex flex-col items-center justify-center min-h-screen bg-gray-50">
       <img
@@ -44,8 +50,6 @@ const TransferList: React.FC = () => {
         alt="로고"
         className="max-w-xs max-h-xs object-cover"
       />
-
-      {/* <h1 className="text-xl font-bold mb-4"></h1> */}
 
       {/* 프로필 및 계좌 정보 */}
       <div className="flex items-center mb-6">
@@ -133,6 +137,7 @@ const TransferList: React.FC = () => {
               <button
                 type="button"
                 className="bg-green-500 text-white py-2 px-4 rounded-lg"
+                onClick={handleConfirm} // 확인 버튼 클릭 시 비밀번호 입력 페이지로 이동
               >
                 확인
               </button>
