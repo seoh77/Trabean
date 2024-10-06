@@ -47,11 +47,12 @@ const Password: React.FC = () => {
 
   // qr 읽어온 직후 정보 업데이트 api 호출
   const updatePaymentInfo = async () => {
-    const accountId = useAuthStore.getState().paymentAccountId;
+    const { paymentAccountId } = useAuthStore.getState();
+    const accountId = paymentAccountId ? parseInt(paymentAccountId, 10) : 1;
     try {
       validateInfo();
       const requestBody: {
-        accountId: string | null;
+        accountId: number | null;
         merchantId?: string;
         krwAmount?: number;
         foreignAmount?: number;
@@ -78,13 +79,19 @@ const Password: React.FC = () => {
   };
 
   useEffect(() => {
-    updatePaymentInfo();
+    if (
+      (merchantId === null || merchantId === undefined) &&
+      currency &&
+      (krwAmount || foreignAmount)
+    ) {
+      updatePaymentInfo();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [merchantId, currency, krwAmount, foreignAmount]);
 
   // 결제 요청 api 호출
   const requestPayment = async (
-    accountId: string | null,
+    accountId: number | null,
     transactionId: string,
   ) => {
     try {
@@ -113,6 +120,7 @@ const Password: React.FC = () => {
         setIsFail(true);
         return;
       }
+
       if (error instanceof Error) {
         // 에러 메시지 설정
         setErrorMessage(error.message || "알 수 없는 에러 발생");
@@ -128,8 +136,8 @@ const Password: React.FC = () => {
   // 비밀번호 입력 완료
   const submitPassword = async () => {
     try {
-      // 필요한 데이터 가져오기
-      const accountId = useAuthStore.getState().paymentAccountId;
+      const { paymentAccountId } = useAuthStore.getState();
+      const accountId = paymentAccountId ? parseInt(paymentAccountId, 10) : 1;
 
       // 요청 바디 생성
       const requestBody = {
