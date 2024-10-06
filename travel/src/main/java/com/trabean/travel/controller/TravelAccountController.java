@@ -185,4 +185,9 @@ public class TravelAccountController {
     public ResponseEntity<ParentsAccountIdResponseDto> getParentAccountId(@PathVariable Long accoutId) {
         return ResponseEntity.ok(travelAccountService.getParentsAccountId(accoutId));
     }
+
+    @GetMapping("/account-name/{accountId}")
+    public ResponseEntity<String> getAccountName(@PathVariable Long accountId) {
+        return ResponseEntity.ok(travelAccountService.getAccountName(accountId));
+    }
 }

@@ -146,4 +146,21 @@ public class TravelAccountService {
         KrwTravelAccount parentsAccount = foreignTravelAccountRepository.findByAccountId(accountId).getParentAccount();
         return new ParentsAccountIdResponseDto(parentsAccount.getAccountId());
     }
+
+    @Transactional
+    public String getAccountName(Long accountId) {
+        KrwTravelAccount krwTravelAccount = krwTravelAccountRepository.findByAccountId(accountId);
+
+        if(krwTravelAccount != null) {
+            return krwTravelAccount.getAccountName();
+        }
+
+        ForeignTravelAccount foreignTravelAccount = foreignTravelAccountRepository.findByAccountId(accountId);
+
+        if(foreignTravelAccount != null) {
+            return foreignTravelAccount.getParentAccount().getAccountName();
+        }
+
+        return "개인";
+    }
 }
