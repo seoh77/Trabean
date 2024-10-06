@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAccountType } from "./AccountTypeContext";
 import Keypad from "./Keypad";
+import client from "../../client";
 // import NavBar from "./NavBar";
 import TopBar from "../../components/TopBar";
 import Modal from "./Modal";
@@ -18,6 +19,7 @@ const PasswordInputPage: React.FC = () => {
   const [step, setStep] = useState(1); // 현재 단계 (1: 통장 이름, 2: 목표 금액, 3: 비밀번호 입력, 4: 비밀번호 확인, 5: 성공 화면)
   const [accountName, setAccountName] = useState(""); // 통장 이름 상태
   const [targetAmount, setTargetAmount] = useState(""); // 목표 금액 상태
+  const [formattedAmount, setFormattedAmount] = useState("");
   const [password, setPassword] = useState(""); // 비밀번호 상태
   const [confirmPassword, setConfirmPassword] = useState(""); // 비밀번호 확인 상태
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -48,7 +50,11 @@ const PasswordInputPage: React.FC = () => {
 
   // 목표 금액 입력 핸들러
   const handleTargetAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTargetAmount(e.target.value);
+    const input = e.target.value;
+    const numericValue = input.replace(/[^0-9]/g, "");
+    const formattedValue = Number(numericValue).toLocaleString();
+    setFormattedAmount(formattedValue);
+    setTargetAmount(numericValue);
   };
 
   // 비밀번호 입력 변경 핸들러
@@ -60,68 +66,64 @@ const PasswordInputPage: React.FC = () => {
     }
   };
 
+  // 계좌 개설 요청
+  const creationAccount = async () => {
+    console.log("target : ", targetAmount);
+    try {
+      // 공통 헤더 설정
+      const headers = {
+        userId: "19",
+        userKey: "073548cb-7e5f-4594-b927-1e412758ca3f",
+      };
+
+      // 요청 URL 및 Body 설정
+      let url = "/api/accounts/personal";
+      const requestBody: {
+        password: string;
+        accountName?: string;
+        targetAmount?: number;
+      } = { password };
+
+      if (accountType === "travel") {
+        requestBody.accountName = accountName;
+        requestBody.targetAmount = parseInt(targetAmount, 10); // 목표 금액을 정수형으로 변환
+        url = "/api/accounts/travel/domestic";
+      }
+
+      // 계좌 개설 요청 전송
+      await client().post(url, requestBody, { headers });
+
+      // 성공 시 다음 단계로 이동
+      setStep(5);
+    } catch (error) {
+      // 에러가 AxiosError 인스턴스인지 확인
+      if (error instanceof Error && error.message) {
+        setModalMessage(error.message || "통장 개설에 실패했습니다.");
+      } else {
+        setModalMessage("알 수 없는 오류가 발생했습니다.");
+      }
+
+      // 상태 값 설정
+      setSubMessage([
+        {
+          key: 1,
+          text: "다시 시도해주세요.",
+          className: "text-xs text-gray-500",
+        },
+      ]);
+      setIsModalOpen(true); // 오류 메시지를 모달로 표시
+      setStep(3); // 비밀번호 입력 단계로 되돌아가기
+      setPassword("");
+      setConfirmPassword(""); // 비밀번호 초기화
+    }
+  };
+
   // 완료 버튼 핸들러
   const handleComplete = async () => {
     if (step === 3) {
       setStep(4); // 비밀번호 입력 완료 -> 재확인 단계로 이동
     } else if (step === 4 && confirmPassword === password) {
-      try {
-        // POST 요청을 보내기 위한 헤더 및 데이터 설정
-        const headers = {
-          "Content-Type": "application/json",
-          userId: "12345", // 실제 사용자 식별자 값으로 대체
-          userKey: "sampleUserKey", // 실제 사용자 키 값으로 대체
-        };
-
-        // 요청할 body 데이터 구성
-        const body = JSON.stringify({
-          password,
-          accountName,
-          targetAmount: parseInt(targetAmount, 10), // 목표 금액을 정수형으로 변환
-        });
-
-        // API 요청 전송
-        const response = await fetch(
-          "https://j11a604.p.ssafy.io/api/accounts/verification/account",
-          {
-            method: "POST",
-            headers,
-            body,
-          },
-        );
-
-        // 응답 결과 처리
-        if (response.ok) {
-          setStep(5); // 성공 시 성공 페이지로 이동
-        } else {
-          const errorData = await response.json();
-          setModalMessage(errorData.message || "통장 개설에 실패했습니다.");
-          setSubMessage([
-            {
-              key: 1,
-              text: "다시 시도해주세요.",
-              className: "text-xs text-gray-500",
-            },
-          ]);
-          setIsModalOpen(true); // 오류 메시지를 모달로 표시
-          setStep(3); // 비밀번호 입력 단계로 되돌아가기
-          setPassword("");
-          setConfirmPassword(""); // 비밀번호 초기화
-        }
-      } catch (error) {
-        setModalMessage("서버와의 통신 중 오류가 발생했습니다.");
-        setSubMessage([
-          {
-            key: 1,
-            text: "다시 시도해주세요.",
-            className: "text-xs text-gray-500",
-          },
-        ]);
-        setIsModalOpen(true); // 통신 실패 시 오류 메시지 표시
-        setStep(5);
-        setPassword("");
-        setConfirmPassword(""); // 비밀번호 초기화
-      }
+      creationAccount();
     } else {
       setModalMessage("비밀번호가 일치하지 않습니다.");
       setSubMessage([
@@ -322,7 +324,7 @@ const PasswordInputPage: React.FC = () => {
               </p>
               <input
                 type="text"
-                value={targetAmount}
+                value={formattedAmount}
                 onChange={handleTargetAmountChange}
                 placeholder="0"
                 className="border rounded-md p-2 mt-4 w-4/5 mb-10"

@@ -15,7 +15,7 @@ import BankSelectionPage from "./pages/AccountCreationPage/BankSelectionPage";
 import CreationMainPage from "./pages/AccountCreationPage/CreationMainPage";
 import AccountAuthPage from "./pages/AccountCreationPage/AccountAuthPage";
 import IdentityAuthPage from "./pages/AccountCreationPage/IdentityAuthPage";
-import TravleSetupPage from "./pages/AccountCreationPage/TravelAccountSetup";
+import AccountSetupPage from "./pages/AccountCreationPage/AccountSetupPage";
 import CurrencyAddPage from "./pages/AccountCreationPage/CurrencyAddPage";
 import MapTestPage from "./pages/AccountCreationPage/MapTestPage";
 import ExchangeRates from "./pages/Exchange/ExchangePage";
@@ -57,7 +57,7 @@ function App() {
                 <Route path="/bank" element={<BankSelectionPage />} />
                 <Route path="/account" element={<AccountAuthPage />} />
                 <Route path="/identity" element={<IdentityAuthPage />} />
-                <Route path="/setup" element={<TravleSetupPage />} />
+                <Route path="/setup" element={<AccountSetupPage />} />
                 <Route path="/currency" element={<CurrencyAddPage />} />
               </Routes>
             </AccountTypeProvider>
