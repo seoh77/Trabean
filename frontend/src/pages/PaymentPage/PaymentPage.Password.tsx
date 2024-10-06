@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+
 import TopBar from "../../components/TopBar";
 import FailModal from "./PaymentPage.Password.FailModal";
+import Keypad from "../AccountCreationPage/Keypad";
 import client from "../../client";
 import useAuthStore from "../../store/useAuthStore";
 
@@ -11,6 +13,7 @@ const Password: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [krwAmount, setKrwAmount] = useState<number | null>(null);
   const [foreignAmount, setForeignAmount] = useState<number | null>(null);
+  const [password, setPassword] = useState<string>("");
 
   const validateInfo = () => {
     if (amount === undefined) {
@@ -74,6 +77,14 @@ const Password: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const changePasswordInput = (newPassword: string) => {
+    setPassword(newPassword);
+  };
+
+  const submitPassword = () => {
+    console.log(password);
+  };
+
   console.log(
     `merchantName: ${merchantName}, currency: ${currency}, amount: ${amount}`,
   );
@@ -94,14 +105,17 @@ const Password: React.FC = () => {
     <div className="flex w-full h-dvh flex-col items-center relative">
       {isFail && <FailModal message={errorMessage} handleModal={handleModal} />}
       <TopBar isLogo={false} isWhite page="QR 결제" />
+
       <p className="text-lg pt-[100px]">{merchantName}</p>
       <h1 className="text-3xl font-semibold">
         {currency && currencyNameMap[currency]} {amount}
       </h1>
-      <p className="text-lg mt-[40px]">계좌 비밀번호를 입력하세요.</p>
-      <button type="button" className="btn-lg">
-        결제
-      </button>
+      <p className="text-lg mt-[40px] mb-5">계좌 비밀번호를 입력하세요.</p>
+      <Keypad
+        password={password}
+        onChange={changePasswordInput}
+        onComplete={submitPassword}
+      />
     </div>
   );
 };
