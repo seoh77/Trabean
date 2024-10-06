@@ -19,6 +19,7 @@ import CurrencyAddPage from "./pages/AccountCreationPage/CurrencyAddPage";
 import MapTestPage from "./pages/AccountCreationPage/MapTestPage";
 import ExchangeRates from "./pages/Exchange/ExchangePage";
 import ExchangeSplit from "./pages/SplitPage/SplitPage";
+import BottomBar from "./components/BottomBar";
 
 function App() {
   return (
@@ -57,6 +58,7 @@ function App() {
         <Route path="/exchange" element={<ExchangeRates />} />
         <Route path="/travel/split" element={<ExchangeSplit />} />
       </Routes>
+      <BottomBar />
     </div>
   );
 }
