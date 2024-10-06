@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ParentAccountIdResponseDTO {
 
-    @JsonProperty("accountId")
-    private Long accountId;
+    @JsonProperty("parentAccountId")
+    private Long parentAccountId;
 }

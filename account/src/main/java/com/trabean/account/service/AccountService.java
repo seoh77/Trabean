@@ -740,7 +740,7 @@ public class AccountService {
                 .getAccountNo();
 
         // Travel 서버에 외화 여행통장 ID로 한화 여행통장 ID 반환 요청
-        Long domesticAccountId = travelClient.getParentAccountId(foreignAccountId).getAccountId();
+        Long domesticAccountId = travelClient.getParentAccountId(foreignAccountId).getParentAccountId();
 
         String domesticAccountNo = ValidationUtil.validateAccount(accountRepository.findById(domesticAccountId)).getAccountNo();
 
