@@ -60,4 +60,11 @@ public class InternalController {
         AdminUserKeyResponseDTO responseDTO = internalService.getAdminUserKey(requestDTO);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
+
+    // 여행통장 비밀번호 변경 API
+    @PutMapping("/update-travel-account-password")
+    public ResponseEntity<InternalServerSuccessResponseDTO> updateTravelAccountPassword(@RequestBody UpdateTravelAccountPasswordRequestDTO requestDTO) {
+        InternalServerSuccessResponseDTO responseDTO = internalService.updateTravelAccountPassword(requestDTO);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
 }

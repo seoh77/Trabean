@@ -147,4 +147,19 @@ public class InternalService {
                 .build();
     }
 
+    // 여행통장 비밀번호 변경 서비스 로직
+    public InternalServerSuccessResponseDTO updateTravelAccountPassword(UpdateTravelAccountPasswordRequestDTO requestDTO) {
+
+        String hashedPassword = passwordEncoder.encode(requestDTO.getPassword() + PEPPER);
+
+        accountRepository.updatePasswordById(requestDTO.getDomesticAccountId(), hashedPassword);
+
+        for(Long foreignAccountId : requestDTO.getForeignAccountIdList()) {
+            accountRepository.updatePasswordById(foreignAccountId, hashedPassword);
+        }
+
+        return InternalServerSuccessResponseDTO.builder()
+                .message("비밀번호 변경 성공")
+                .build();
+    }
 }
