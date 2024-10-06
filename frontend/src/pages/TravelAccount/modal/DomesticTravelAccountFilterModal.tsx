@@ -5,12 +5,14 @@ import { formatDateString, getBeanImage, getToday } from "../util/util";
 import { TravelAccountMemberData } from "../type/type";
 import Loading from "../component/Loading";
 
-interface FilterModalProps {
+interface DomesticTravelAccountFilterModalProps {
   accountId: string | undefined;
   onClose: () => void;
 }
 
-const FilterModal: React.FC<FilterModalProps> = ({ accountId, onClose }) => {
+const DomesticTravelAccountFilterModal: React.FC<
+  DomesticTravelAccountFilterModalProps
+> = ({ accountId, onClose }) => {
   const nav = useNavigate();
 
   const [loading1, setLoading1] = useState(true); // 서버에서 데이터 수신 여부 체크
@@ -183,4 +185,4 @@ const FilterModal: React.FC<FilterModalProps> = ({ accountId, onClose }) => {
   );
 };
 
-export default FilterModal;
+export default DomesticTravelAccountFilterModal;

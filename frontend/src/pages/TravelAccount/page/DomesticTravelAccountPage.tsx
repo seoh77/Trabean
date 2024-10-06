@@ -20,7 +20,7 @@ import ChangeAccountNameModal from "../modal/ChangeAccountName";
 import ChangeTargetAmountModal from "../modal/ChangeTargetAmountModal";
 
 const DomesticTravelAccountPage: React.FC = () => {
-  const { parentAccountId } = useParams(); // Path Variable
+  const { accountId } = useParams(); // Path Variable
 
   const nav = useNavigate();
 
@@ -76,7 +76,7 @@ const DomesticTravelAccountPage: React.FC = () => {
   useEffect(() => {
     const fetchTravelAccountData = async () => {
       try {
-        const response = await client().get(`/api/travel/${parentAccountId}`);
+        const response = await client().get(`/api/travel/${accountId}`);
         setTravelAccountData(response.data);
         setAccountName(response.data.accountName);
       } catch (error) {
@@ -86,17 +86,17 @@ const DomesticTravelAccountPage: React.FC = () => {
       }
     };
 
-    if (parentAccountId) {
+    if (accountId) {
       fetchTravelAccountData();
     }
-  }, [parentAccountId]);
+  }, [accountId]);
 
   // Travel 서버 목표금액 전체 조회 (role 추가하기) API fetch 요청
   useEffect(() => {
     const fetchTravelAccountMemberAmountData = async () => {
       try {
         const response = await client().get(
-          `/api/travel/targetAmount/${parentAccountId}`,
+          `/api/travel/targetAmount/${accountId}`,
         );
         setTravelAccountMemberAmountData(response.data);
         setargetAmount(response.data.targetAmount);
@@ -108,10 +108,10 @@ const DomesticTravelAccountPage: React.FC = () => {
       }
     };
 
-    if (parentAccountId) {
+    if (accountId) {
       fetchTravelAccountMemberAmountData();
     }
-  }, [parentAccountId]);
+  }, [accountId]);
 
   // 로딩 중이면 로딩 스피너 표시
   if (loading1 || loading2) {
@@ -143,7 +143,50 @@ const DomesticTravelAccountPage: React.FC = () => {
             </div>
           </div>
 
+          {/* <button
+          type="button"
+          onClick={() =>
+            nav(`/accounts/travel/domestic/${parentAccountId}/detail`)
+          }
+        > */}
+
           {/* 여행통장 목록 중단 */}
+          <div className="py-4">
+            {travelAccountData?.account.map((account) => (
+              <div key={account.accountId}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (account.exchangeCurrency === "KRW") {
+                      nav(
+                        `/accounts/travel/domestic/${account.accountId}/detail`,
+                      );
+                    } else {
+                      nav(
+                        `/accounts/travel/foreign/${account.accountId}/detail`,
+                      );
+                    }
+                  }}
+                  className="flex justify-between items-center w-full py-4"
+                >
+                  <div className="flex items-center">
+                    <img
+                      src={getCurrencyImage(account.exchangeCurrency)}
+                      alt={account.exchangeCurrency}
+                      className="w-6 h-6"
+                    />
+                    <div className="ml-4 font-bold">{account.country}</div>
+                  </div>
+                  <div className="font-bold">
+                    {getCurrencySymbol(account.exchangeCurrency)}
+                    {account.accountBalance.toLocaleString()}
+                  </div>
+                </button>
+              </div>
+            ))}
+          </div>
+
+          {/* 여행통장 목록 중단
           <div className="py-4">
             {travelAccountData?.account.map((account) => (
               <div
@@ -164,7 +207,7 @@ const DomesticTravelAccountPage: React.FC = () => {
                 </div>
               </div>
             ))}
-          </div>
+          </div> */}
 
           {/* 여행통장 목록 하단 */}
           <div>
@@ -192,7 +235,7 @@ const DomesticTravelAccountPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() =>
-                  nav(`/accounts/travel/domestic/${parentAccountId}/members`)
+                  nav(`/accounts/travel/domestic/${accountId}/members`)
                 }
               >
                 멤버관리
@@ -287,7 +330,7 @@ const DomesticTravelAccountPage: React.FC = () => {
       {isChangeAccountNameModalOpen ? (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
           <ChangeAccountNameModal
-            accountId={parentAccountId}
+            accountId={accountId}
             accountName={accountName}
             onAccountNameChange={setAccountName}
             onClose={closeChangeAccountNameModal}
@@ -300,7 +343,7 @@ const DomesticTravelAccountPage: React.FC = () => {
         <div className="absolute inset-0 flex items-end bg-gray-900 bg-opacity-50">
           <div className="w-full">
             <ChangeTargetAmountModal
-              accountId={parentAccountId}
+              accountId={accountId}
               targetAmount={targetAmount.toString()}
               onTargetAmountChange={setargetAmount}
               onClose={closeChangeTargetAmountModal}

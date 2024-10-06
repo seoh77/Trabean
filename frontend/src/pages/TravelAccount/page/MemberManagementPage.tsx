@@ -14,7 +14,7 @@ import ChangeUserRoleModal from "../modal/ChangeUserRoleModal";
 import InviteMemberModal from "../modal/InviteMemberModal";
 
 const MemberManagementPage: React.FC = () => {
-  const { parentAccountId } = useParams(); // Path Variable
+  const { accountId } = useParams(); // Path Variable
 
   const nav = useNavigate();
 
@@ -73,7 +73,7 @@ const MemberManagementPage: React.FC = () => {
   useEffect(() => {
     const fetchTravelAccountData = async () => {
       try {
-        const response = await client().get(`/api/travel/${parentAccountId}`);
+        const response = await client().get(`/api/travel/${accountId}`);
         setTravelAccountData(response.data);
       } catch (error) {
         console.error(error);
@@ -82,17 +82,17 @@ const MemberManagementPage: React.FC = () => {
       }
     };
 
-    if (parentAccountId) {
+    if (accountId) {
       fetchTravelAccountData();
     }
-  }, [parentAccountId]);
+  }, [accountId]);
 
   // Account 서버 한화 여행통장 멤버 목록 조회 API fetch 요청
   useEffect(() => {
     const fetchTravelAccountData = async () => {
       try {
         const response = await client().get(
-          `/api/accounts/travel/domestic/${parentAccountId}/members`,
+          `/api/accounts/travel/domestic/${accountId}/members`,
         );
         setTravelAccountMemberData(response.data);
       } catch (error) {
@@ -102,10 +102,10 @@ const MemberManagementPage: React.FC = () => {
       }
     };
 
-    if (parentAccountId) {
+    if (accountId) {
       fetchTravelAccountData();
     }
-  }, [parentAccountId]);
+  }, [accountId]);
 
   // 로딩 중이면 로딩 스피너 표시
   if (loading1 || loading2) {
@@ -123,9 +123,7 @@ const MemberManagementPage: React.FC = () => {
       <div className="px-4 py-2 mb-8 border-b border-gray-300">
         <button
           type="button"
-          onClick={() =>
-            nav(`/accounts/travel/domestic/${parentAccountId}/detail`)
-          }
+          onClick={() => nav(`/accounts/travel/domestic/${accountId}/detail`)}
         >
           <div className="flex items-center mb-4">
             <img src={account} alt="account" className="w-12 h-12 mr-2" />
@@ -199,7 +197,7 @@ const MemberManagementPage: React.FC = () => {
         <div className="absolute inset-0 flex items-end bg-gray-900 bg-opacity-50">
           <div className="w-full">
             <ChangeUserRoleModal
-              accountId={parentAccountId}
+              accountId={accountId}
               memberInfo={memberInfo}
               onMemberInfoChange={handleUpdateMemberInfo}
               onClose={closeChangeUserRoleModal}
@@ -212,7 +210,7 @@ const MemberManagementPage: React.FC = () => {
       {isChangeInviteModalOpen ? (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
           <InviteMemberModal
-            accountId={parentAccountId}
+            accountId={accountId}
             onClose={closeChangeInviteModal}
           />
         </div>

@@ -3,14 +3,15 @@ import { useLocation, useParams } from "react-router-dom";
 import filter from "../../../assets/filter.png";
 import client from "../../../client";
 import {
-  DomesticTravelAccountDetailData,
-  DomesticTravelAccountTransaction,
+  ForeignTravelAccountDetailData,
+  ForeignTravelAccountTransaction,
 } from "../type/type";
 import TopBar from "../../../components/TopBar";
 import Loading from "../component/Loading";
-import DomesticTravelAccountFilterModal from "../modal/DomesticTravelAccountFilterModal";
+import ForeignTravelAccountFilterModal from "../modal/ForeignTravelAccountFilterModal";
+import { getCurrencySymbol } from "../util/util";
 
-const DomesticTravelAccountDetailPage: React.FC = () => {
+const ForeignTravelAccountDetailPage: React.FC = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const startDate = queryParams.get("startDate");
@@ -19,8 +20,8 @@ const DomesticTravelAccountDetailPage: React.FC = () => {
 
   const [loading, setLoading] = useState(true); // 서버에서 데이터 수신 여부 체크
 
-  const [domesticTravelAccountDetailData, setDomesticTravelAccountDetailData] =
-    useState<DomesticTravelAccountDetailData>(); // 한화 여행통장 상세조회 상태관리
+  const [foreignTravelAccountDetailData, setForeignTravelAccountDetailData] =
+    useState<ForeignTravelAccountDetailData>(); // 한화 여행통장 상세조회 상태관리
 
   // 검색 필터 모달
   const [isChangeFilterModalOpen, setIsChangeFilterModalOpen] = useState(false);
@@ -29,18 +30,18 @@ const DomesticTravelAccountDetailPage: React.FC = () => {
   const closeChangeFilterModal = () => setIsChangeFilterModalOpen(false);
 
   const handleTransferBalance = () => {
-    alert("이체 하기 누름!!!!!!");
+    alert("충전하기!!!!!!");
   };
 
-  // Account 서버 한화 여행통장 상세 조회 API fetch 요청
+  // Travel 서버 여행통장(외화) 상세 조회 API fetch 요청
   useEffect(() => {
-    const getDomesticTravelAccountDetailData = async () => {
+    const getForeignTravelAccountDetailData = async () => {
       try {
         const response = await client().get(
-          `/api/accounts/travel/domestic/${accountId}`,
+          `/api/travel/foreign/${accountId}`,
           { params: { startDate, endDate } },
         );
-        setDomesticTravelAccountDetailData(response.data);
+        setForeignTravelAccountDetailData(response.data);
       } catch (error) {
         console.error(error);
       } finally {
@@ -49,7 +50,7 @@ const DomesticTravelAccountDetailPage: React.FC = () => {
     };
 
     if (accountId) {
-      getDomesticTravelAccountDetailData();
+      getForeignTravelAccountDetailData();
     }
   }, [accountId, startDate, endDate]);
 
@@ -74,8 +75,8 @@ const DomesticTravelAccountDetailPage: React.FC = () => {
 
   // 거래 내역을 날짜별로 그룹화하는 함수
   const groupByDate = (
-    transactions: DomesticTravelAccountTransaction[],
-  ): { [date: string]: DomesticTravelAccountTransaction[] } =>
+    transactions: ForeignTravelAccountTransaction[],
+  ): { [date: string]: ForeignTravelAccountTransaction[] } =>
     transactions.reduce(
       (acc, transaction) => {
         const date = transaction.transactionDate;
@@ -85,15 +86,15 @@ const DomesticTravelAccountDetailPage: React.FC = () => {
         acc[date].push(transaction);
         return acc;
       },
-      {} as { [date: string]: DomesticTravelAccountTransaction[] },
+      {} as { [date: string]: ForeignTravelAccountTransaction[] },
     );
 
   // 날짜별로 그룹화된 거래 내역을 렌더링하는 함수
   const renderGroupedTransactions = () => {
-    if (!domesticTravelAccountDetailData?.transactionList) return null;
+    if (!foreignTravelAccountDetailData?.list) return null;
 
     const groupedTransactions = groupByDate(
-      domesticTravelAccountDetailData.transactionList,
+      foreignTravelAccountDetailData.list,
     );
 
     // 날짜를 내림차순으로 정렬
@@ -128,8 +129,8 @@ const DomesticTravelAccountDetailPage: React.FC = () => {
                 className={`py-1 font-bold ${getBalanceColor(transaction.transactionType)}`}
               >
                 {transaction.transactionBalance > 0
-                  ? `+₩${transaction.transactionBalance.toLocaleString()}`
-                  : `-₩${Math.abs(
+                  ? `+${getCurrencySymbol(foreignTravelAccountDetailData.exchangeCurrency)}${transaction.transactionBalance.toLocaleString()}`
+                  : `-${getCurrencySymbol(foreignTravelAccountDetailData.exchangeCurrency)}${Math.abs(
                       transaction.transactionBalance,
                     ).toLocaleString()}`}
               </div>
@@ -152,17 +153,30 @@ const DomesticTravelAccountDetailPage: React.FC = () => {
     <div className="h-full relative">
       {/* 네비게이션 바 */}
       <div className="pt-24">
-        <TopBar page="계좌 상세 조회" isWhite isLogo={false} />
+        <TopBar page="이용내역" isWhite isLogo={false} />
       </div>
 
-      {/* 한화 여행통장 정보 */}
+      {/* 외화 여행통장 정보 */}
       <div className="px-4 py-2">
         <div className="text-center">
           <div className="font-bold text-xl p-2">
-            {domesticTravelAccountDetailData?.accountName}
+            {foreignTravelAccountDetailData?.country}{" "}
+            {foreignTravelAccountDetailData?.exchangeCurrency}
           </div>
           <div className="font-bold p-2">
-            ₩{domesticTravelAccountDetailData?.accountBalance.toLocaleString()}
+            {foreignTravelAccountDetailData ? (
+              <>
+                {`${getCurrencySymbol(
+                  foreignTravelAccountDetailData.exchangeCurrency,
+                )}`}
+                {foreignTravelAccountDetailData?.accountBalance.toLocaleString(
+                  undefined,
+                  { minimumFractionDigits: 1, maximumFractionDigits: 1 },
+                )}
+              </>
+            ) : (
+              ""
+            )}
           </div>
         </div>
         <div className="py-4">
@@ -171,7 +185,7 @@ const DomesticTravelAccountDetailPage: React.FC = () => {
             onClick={handleTransferBalance}
             className="btn-md w-1/2 mx-auto block"
           >
-            이체 하기
+            충전하기
           </button>
         </div>
       </div>
@@ -194,7 +208,7 @@ const DomesticTravelAccountDetailPage: React.FC = () => {
       {isChangeFilterModalOpen ? (
         <div className="absolute inset-0 flex items-end bg-gray-900 bg-opacity-50">
           <div className="w-full">
-            <DomesticTravelAccountFilterModal
+            <ForeignTravelAccountFilterModal
               accountId={accountId}
               onClose={closeChangeFilterModal}
             />
@@ -205,4 +219,4 @@ const DomesticTravelAccountDetailPage: React.FC = () => {
   );
 };
 
-export default DomesticTravelAccountDetailPage;
+export default ForeignTravelAccountDetailPage;

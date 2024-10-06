@@ -63,3 +63,23 @@ export interface DomesticTravelAccountDetailData {
   bankName: string;
   transactionList: DomesticTravelAccountTransaction[];
 }
+
+// Front -> Travel
+// 여행통장(외화) 상세 조회 API
+// /api/travel/foreign/{accountId}?startDate={startDate}&endDate={endDate}&transactionType={transactionType}
+export interface ForeignTravelAccountTransaction {
+  transactionType: string;
+  transactionSummary: string;
+  transactionDate: string;
+  transactionTime: string;
+  transactionBalance: number;
+  transactionAfterBalance: number;
+  transactionMeno: string;
+}
+
+export interface ForeignTravelAccountDetailData {
+  country: string;
+  exchangeCurrency: string;
+  accountBalance: number;
+  list: ForeignTravelAccountTransaction[];
+}

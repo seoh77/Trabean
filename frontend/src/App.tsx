@@ -19,6 +19,7 @@ import ExchangeRates from "./pages/Exchange/ExchangePage";
 import DomesticTravelAccountPage from "./pages/TravelAccount/page/DomesticTravelAccountPage";
 import DomesticTravelAccountDetailPage from "./pages/TravelAccount/page/DomesticTravelAccountDetailPage";
 import MemberManagementPage from "./pages/TravelAccount/page/MemberManagementPage";
+import ForeignTravelAccountDetailPage from "./pages/TravelAccount/page/ForeignTravelAccountDetailPage";
 
 function App() {
   return (
@@ -27,15 +28,19 @@ function App() {
         <Route path="/" element={<MainPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route
-          path="/accounts/travel/domestic/:parentAccountId"
+          path="/accounts/travel/domestic/:accountId"
           element={<DomesticTravelAccountPage />}
         />
         <Route
-          path="/accounts/travel/domestic/:parentAccountId/detail"
+          path="/accounts/travel/domestic/:accountId/detail"
           element={<DomesticTravelAccountDetailPage />}
         />
         <Route
-          path="/accounts/travel/domestic/:parentAccountId/members"
+          path="/accounts/travel/foreign/:accountId/detail"
+          element={<ForeignTravelAccountDetailPage />}
+        />
+        <Route
+          path="/accounts/travel/domestic/:accountId/members"
           element={<MemberManagementPage />}
         />
 
