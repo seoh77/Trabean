@@ -2,7 +2,9 @@ package com.trabean.external.ssafy.foriegn.client;
 
 import com.trabean.config.FeignClientConfig;
 import com.trabean.external.ssafy.foriegn.dto.request.CreateForeignCurrencyDemandDepositAccountRequestDTO;
+import com.trabean.external.ssafy.foriegn.dto.request.InquireForeignCurrencyDemandDepositAccountRequestDTO;
 import com.trabean.external.ssafy.foriegn.dto.response.CreateForeignCurrencyDemandDepositAccountResponseDTO;
+import com.trabean.external.ssafy.foriegn.dto.response.InquireForeignCurrencyDemandDepositAccountResponseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,8 +27,14 @@ public interface ForeignClient {
     // SSAFY 금융 API p.231 - 계좌 목록 조회
     // 만드나?
 
-    // SSAFY 금융 API p.235 - 외화 계좌 조회 (단건)
-    // 만드나?
+    /**
+     * SSAFY 금융 API p.235 - 외화 계좌 조회 (단건)
+     *
+     * @param requestDTO
+     * @return
+     */
+    @PostMapping("/inquireForeignCurrencyDemandDepositAccount")
+    InquireForeignCurrencyDemandDepositAccountResponseDTO inquireForeignCurrencyDemandDepositAccount(@RequestBody InquireForeignCurrencyDemandDepositAccountRequestDTO requestDTO);
 
     // SSAFY 금융 API p.238 - 외화 예금주 조회
     // 만드나?

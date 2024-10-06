@@ -128,4 +128,11 @@ public class AccountController {
         SsafySuccessResponseDTO responseDTO = accountService.createForeignTravelAccount(requestDTO);
         return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
     }
+
+    // 외화 여행통장 생성일 조회 API
+    @GetMapping("traval/foreign/{accountId}/created")
+    public ResponseEntity<ForeignTravelAccountCreatedDateResponseDTO> getForeignTravelAccountCreatedDate(@PathVariable Long accountId) {
+        ForeignTravelAccountCreatedDateResponseDTO responseDTO = accountService.getForeignTravelAccountCreatedDate(accountId);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
 }

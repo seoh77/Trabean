@@ -28,7 +28,9 @@ import com.trabean.external.ssafy.domestic.dto.request.*;
 import com.trabean.external.ssafy.domestic.dto.response.*;
 import com.trabean.external.ssafy.foriegn.client.ForeignClient;
 import com.trabean.external.ssafy.foriegn.dto.request.CreateForeignCurrencyDemandDepositAccountRequestDTO;
+import com.trabean.external.ssafy.foriegn.dto.request.InquireForeignCurrencyDemandDepositAccountRequestDTO;
 import com.trabean.external.ssafy.foriegn.dto.response.CreateForeignCurrencyDemandDepositAccountResponseDTO;
+import com.trabean.external.ssafy.foriegn.dto.response.InquireForeignCurrencyDemandDepositAccountResponseDTO;
 import com.trabean.external.ssafy.memo.client.MemoClient;
 import com.trabean.external.ssafy.memo.dto.request.TransactionMemoRequestDTO;
 import com.trabean.interceptor.UserHeaderInterceptor;
@@ -669,6 +671,31 @@ public class AccountService {
         return SsafySuccessResponseDTO.builder()
                 .responseCode(createForeignCurrencyDemandDepositAccountResponseDTO.getHeader().getResponseCode())
                 .responseMessage(createForeignCurrencyDemandDepositAccountResponseDTO.getHeader().getResponseMessage())
+                .build();
+    }
+
+    // 외화 여행통장 생성일 조회 서비스 로직
+    public ForeignTravelAccountCreatedDateResponseDTO getForeignTravelAccountCreatedDate(Long accountId) {
+
+        String accountNo = ValidationUtil.validateInput(ValidateInputDTO.builder()
+                        .account(accountRepository.findById(accountId))
+                        .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(UserHeaderInterceptor.userId.get(), accountId))
+                        .accountType(AccountType.DOMESTIC)
+                        .build())
+                .getAccountNo();
+
+        // SSAFY 금융 API 외화 계좌 조회 (단건) 요청
+        InquireForeignCurrencyDemandDepositAccountRequestDTO inquireForeignCurrencyDemandDepositAccountRequestDTO = InquireForeignCurrencyDemandDepositAccountRequestDTO.builder()
+                .header(RequestHeader.builder()
+                        .apiName("inquireForeignCurrencyDemandDepositAccount")
+                        .userKey(UserHeaderInterceptor.userKey.get())
+                        .build())
+                .accountNo(accountNo)
+                .build();
+        InquireForeignCurrencyDemandDepositAccountResponseDTO inquireForeignCurrencyDemandDepositAccountResponseDTO = foreignClient.inquireForeignCurrencyDemandDepositAccount(inquireForeignCurrencyDemandDepositAccountRequestDTO);
+
+        return ForeignTravelAccountCreatedDateResponseDTO.builder()
+                .accountCreatedDate(inquireForeignCurrencyDemandDepositAccountResponseDTO.getRec().getAccountCreatedDate())
                 .build();
     }
 
