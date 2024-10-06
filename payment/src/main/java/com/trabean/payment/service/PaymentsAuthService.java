@@ -47,8 +47,9 @@ public class PaymentsAuthService {
 
     public String checkAccountPassword(ValidatePasswordRequest request) {
         log.info("유저 아이디 가져오기" + UserHeaderInterceptor.userId.get());
-        String requestBody = String.format("{\"userId\":\"%d\", \"accountId\":%d, \"password\":%s}",
+        String requestBody = String.format("{\"userId\":\"%d\", \"accountId\":%d, \"password\":\"%s\"}",
                 UserHeaderInterceptor.userId.get(), request.getAccountId(), request.getPassword());
+        log.info("@@@@@@@@@ payID 가져오기: " + request.getPayId());
         try {
             accountClient.validateAccountPassword(requestBody);
             Payments payment = paymentsRepository.findById(request.getPayId())
@@ -56,6 +57,10 @@ public class PaymentsAuthService {
             // 트랜잭션 id 발급
             return payment.getTransactionId();
         } catch (Unauthorized e) {
+            if (request.getPayId() == null) {
+                throw new PaymentsException("payID 를 가져오는데 실패했습니다.", HttpStatus.BAD_REQUEST);
+            }
+
             if (UserHeaderInterceptor.userId.get() == null) {
                 throw new PaymentsException("유저 ID를 가져오는 데 실패했습니다.", HttpStatus.BAD_GATEWAY);
             }

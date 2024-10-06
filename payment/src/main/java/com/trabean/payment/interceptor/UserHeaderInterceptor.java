@@ -20,7 +20,9 @@ public class UserHeaderInterceptor implements HandlerInterceptor {
             try {
                 userId.set(Long.parseLong(userIdHeader));
             } catch (RuntimeException e) {
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException(
+                        "유저 ID 값을 long으로 변환할 수 없습니다. 헤더 id값: " + request.getHeader("userID") + "헤더 key값"
+                                + request.getHeader("userKey"));
             }
         } else {
             userId.set(3L); // userId가 null일 경우 3으로 설정
