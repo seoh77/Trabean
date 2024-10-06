@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import NavBar from "./NavBar";
+import TopBar from "../../components/TopBar";
+import NextStepButton from "./NextStepButton";
+import Keypad from "./Keypad"; // 비밀번호 입력 창 컴포넌트
+import Modal from "./Modal";
 
 // 국기 이미지 파일 import
 import usdFlag from "../../assets/flagIcon/usd.png";
@@ -11,9 +14,22 @@ import chfFlag from "../../assets/flagIcon/chf.png";
 import cnyFlag from "../../assets/flagIcon/cny.png";
 import jpyFlag from "../../assets/flagIcon/jpy.png";
 
-const CurrencySelectionPage: React.FC = () => {
+interface SubMessage {
+  key: string | number;
+  text: string;
+  className?: string;
+}
+
+const CurrencyAddPage: React.FC = () => {
   const navigate = useNavigate(); // 페이지 이동을 위한 navigate 훅
   const [selectedCurrency, setSelectedCurrency] = useState<string | null>(null); // 선택된 통화 상태
+  const [isPasswordStep, setIsPasswordStep] = useState<boolean>(false); // 현재 단계 상태 관리
+  const [password, setPassword] = useState<string>(""); // 비밀번호 상태
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [modalMessage, setModalMessage] = useState<string>("");
+  const [subMessage, setSubMessage] = useState<SubMessage[]>([]);
+  const [attemptCount, setAttemptCount] = useState(0); // 현재 시도 횟수 상태
+  const maxAttempts = 5; // 최대 시도 횟수
 
   // 통화 목록 데이터
   const currencyList = [
@@ -34,68 +50,177 @@ const CurrencySelectionPage: React.FC = () => {
   // 다음 단계 이동 핸들러
   const handleNextStep = () => {
     if (selectedCurrency) {
-      // 선택된 통화 정보와 함께 다음 페이지로 이동
-      navigate("/creation/travel/next-step", { state: { selectedCurrency } });
+      setIsPasswordStep(true); // 비밀번호 단계로 변경
     }
   };
 
+  // 비밀번호 검증
+  const isVerificationCodeValid = async () => {
+    // API 요청에 사용할 header 및 body 데이터를 설정합니다.
+    const headers = {};
+
+    const body = JSON.stringify({
+      userId: 123,
+      accountId: 1234,
+      password,
+    });
+
+    try {
+      const response = await fetch(
+        "https://j11a604.p.ssafy.io/api/accounts/internal/verify-password", // API 엔드포인트 URL
+        {
+          method: "POST",
+          headers,
+          body,
+        },
+      );
+
+      return response.ok; // 응답이 성공적인 경우 true 반환
+    } catch (error) {
+      console.error("인증번호 검증 요청 실패:", error);
+      // return false; // 요청 실패 시 false 반환
+      return true;
+    }
+  };
+
+  // 비밀번호 입력 완료 핸들러
+  const handlePasswordComplete = async () => {
+    // 선택된 통화와 비밀번호 정보를 함께 다음 페이지로 이동
+    const isValid = await isVerificationCodeValid();
+    if (isValid) {
+      sessionStorage.setItem("isVerified", "true");
+      navigate("/creation/travel");
+    } else {
+      // 시도 횟수 증가 및 상태 업데이트
+      setAttemptCount((prev) => prev + 1);
+      if (attemptCount + 1 < maxAttempts) {
+        setModalMessage("올바르지 않은 비밀번호입니다.");
+        setSubMessage([
+          {
+            key: 1,
+            text: "비밀번호를 다시 확인해주세요.",
+            className: "text-xs text-gray-500",
+          },
+          {
+            key: 2,
+            text: `남은 시도 횟수 (${attemptCount + 1}/${maxAttempts})`,
+            className: "text-xs text-red-500",
+          },
+        ]);
+      }
+      setIsModalOpen(true);
+      setPassword(""); // 비밀번호 초기화
+    }
+  };
+
+  // 번호 입력시 password 번호 갱신
+  const handlePasswordChange = (newPassword: string) => {
+    setPassword(newPassword);
+  };
+
+  useEffect(() => {
+    if (attemptCount >= maxAttempts) {
+      setModalMessage("입력 가능 횟수를 초과하였습니다.");
+      setSubMessage([
+        {
+          key: 1,
+          text: "잠시 후 다시 시도해주세요.",
+          className: "text-xs text-red-500",
+        },
+      ]);
+      setIsModalOpen(true);
+
+      // 3초 후에 다른 페이지로 이동
+      setTimeout(() => {
+        navigate("/accounts/travel/domestic"); // 이동할 페이지 경로 설정
+      }, 3000);
+    }
+  }, [attemptCount, maxAttempts, navigate]);
+
+  // 모달 닫기 핸들러
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
-    <div className="px-6 py-8 bg-gray-50 min-h-screen">
-      <NavBar text="외화 추가" />
+    <div>
+      <TopBar isLogo={false} page="외화 추가" isWhite={isPasswordStep} />
+      {!isPasswordStep && (
+        <div className="w-full mx-auto px-6 py-8 bg-[#F4F4F5] min-h-screen">
+          {/* 상단 텍스트 */}
+          <div className="text-left mt-10 mb-6">
+            <h1 className="text-md font-semibold mb-2">
+              추가하고자 하는 통화를 선택해주세요
+            </h1>
+            <p className="text-xs text-gray-500">
+              * 이미 등록된 통화는 중복으로 추가할 수 없어요
+            </p>
+          </div>
 
-      {/* 상단 텍스트 */}
-      <div className="text-center mt-4 mb-6">
-        <h1 className="text-lg font-bold">
-          추가하고자 하는 통화를 선택해주세요
-        </h1>
-        <p className="text-sm text-gray-500">
-          * 이미 등록된 통화는 중복으로 추가할 수 없어요
-        </p>
-      </div>
+          {/* 통화 목록 */}
+          <div className="flex flex-col space-y-3">
+            {currencyList.map((currency) => (
+              <button
+                type="button"
+                key={currency.value}
+                onClick={() => handleCurrencySelect(currency.value)}
+                className={`flex items-center justify-between p-2 bg-white rounded-lg border ${
+                  selectedCurrency === currency.value
+                    ? "border-primary"
+                    : "border-transparent"
+                }`}
+              >
+                <div className="flex items-center">
+                  <img
+                    src={currency.img}
+                    alt={currency.name}
+                    className="w-8 h-8 mr-4 rounded-full"
+                  />
+                  <span className="text-xs font-medium">{currency.name}</span>
+                </div>
+                {selectedCurrency === currency.value && (
+                  <span className="text-primary font-bold">✔️</span>
+                )}
+              </button>
+            ))}
+          </div>
 
-      {/* 통화 목록 */}
-      <div className="flex flex-col space-y-4">
-        {currencyList.map((currency) => (
-          <button
-            type="button"
-            key={currency.value}
-            onClick={() => handleCurrencySelect(currency.value)}
-            className={`flex items-center justify-between p-4 bg-white rounded-lg shadow-md border ${
-              selectedCurrency === currency.value
-                ? "border-green-500"
-                : "border-transparent"
-            }`}
-          >
-            <div className="flex items-center">
-              <img
-                src={currency.img}
-                alt={currency.name}
-                className="w-10 h-10 mr-4 rounded-full"
-              />
-              <span className="text-md font-medium">{currency.name}</span>
-            </div>
-            {selectedCurrency === currency.value && (
-              <span className="text-green-500 font-bold">✔️</span>
-            )}
-          </button>
-        ))}
-      </div>
+          {/* 다음 단계 버튼 */}
+          <div className="flex justify-center mt-10">
+            <NextStepButton
+              isEnabled={!!selectedCurrency}
+              onClick={handleNextStep}
+              text="다음 단계"
+            />
+          </div>
+        </div>
+      )}
 
-      {/* 다음 단계 버튼 */}
-      <div className="flex justify-center mt-10">
-        <button
-          type="button"
-          onClick={handleNextStep}
-          className={`px-8 py-4 rounded-full text-lg font-bold text-white ${
-            selectedCurrency ? "bg-green-500" : "bg-gray-300"
-          }`}
-          disabled={!selectedCurrency}
-        >
-          다음 단계
-        </button>
-      </div>
+      {isPasswordStep && (
+        <div className="w-full mx-auto px-6 py-8 min-h-screen mt-16">
+          <p className="text-md mb-4 text-black text-center font-semibold">
+            통장 비밀번호를 입력해주세요
+          </p>
+          <p className="text-gray-700 mb-6 text-sm text-center">
+            “모임 통장 비밀 번호 6자리를 입력해주세요”
+          </p>
+          <Keypad
+            password={password}
+            onChange={handlePasswordChange}
+            onComplete={handlePasswordComplete}
+          />
+        </div>
+      )}
+
+      {isModalOpen && (
+        <Modal
+          message={modalMessage}
+          subMessage={subMessage}
+          onClose={closeModal}
+        />
+      )}
     </div>
   );
 };
 
-export default CurrencySelectionPage;
+export default CurrencyAddPage;
