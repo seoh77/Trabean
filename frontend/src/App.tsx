@@ -17,6 +17,7 @@ import IdentityAuthPage from "./pages/AccountCreationPage/IdentityAuthPage";
 import TravleSetupPage from "./pages/AccountCreationPage/TravelAccountSetup";
 import CurrencyAddPage from "./pages/AccountCreationPage/CurrencyAddPage";
 import ExchangeRates from "./pages/Exchange/ExchangePage";
+import ExchangeSplit from "./pages/SplitPage/SplitPage";
 
 function App() {
   return (
@@ -52,6 +53,7 @@ function App() {
         <Route path="/creation/travel/setup" element={<TravleSetupPage />} />
         <Route path="/creation/travel/currency" element={<CurrencyAddPage />} />
         <Route path="/exchange" element={<ExchangeRates />} />
+        <Route path="/travel/split" element={<ExchangeSplit />} />
       </Routes>
     </div>
   );
