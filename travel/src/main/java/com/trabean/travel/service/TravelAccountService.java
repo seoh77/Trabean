@@ -7,11 +7,13 @@ import com.trabean.travel.callApi.dto.request.BankCodeApiRequestDto;
 import com.trabean.travel.callApi.dto.response.AccountBalanceApiResponseDto.REC;
 import com.trabean.travel.callApi.dto.response.BankCodeApiResponseDto.BankInfo;
 import com.trabean.travel.dto.response.AccountInfoResponseDto;
+import com.trabean.travel.dto.response.ParentsAccountIdResponseDto;
 import com.trabean.travel.dto.response.TravelAccountIdResponseDto;
 import com.trabean.travel.dto.response.TravelAccountResponseDto;
 import com.trabean.travel.dto.response.TravelListAccountResponseDto;
 import com.trabean.travel.entity.ForeignTravelAccount;
 import com.trabean.travel.entity.KrwTravelAccount;
+import com.trabean.travel.repository.ForeignTravelAccountRepository;
 import com.trabean.travel.repository.KrwTravelAccountRepository;
 import com.trabean.util.RequestHeader;
 import java.util.ArrayList;
@@ -29,6 +31,7 @@ public class TravelAccountService {
     private final BankClient bankClient;
 
     private final CommonAccountService commonAccountService;
+    private final ForeignTravelAccountRepository foreignTravelAccountRepository;
 
     @Transactional
     public Long updateTravelAccountName(Long accountId, String accountName) {
@@ -137,5 +140,10 @@ public class TravelAccountService {
         }
 
         return list;
+    }
+
+    public ParentsAccountIdResponseDto getParentsAccountId(Long accountId) {
+        KrwTravelAccount parentsAccount = foreignTravelAccountRepository.findByAccountId(accountId).getParentAccount();
+        return new ParentsAccountIdResponseDto(parentsAccount.getAccountId());
     }
 }
