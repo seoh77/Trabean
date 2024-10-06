@@ -528,6 +528,31 @@ public class AccountService {
                 .build();
     }
 
+    // 한화 여행통장 잔액 조회 서비스 로직
+    public DomesticTravelAccountBalanceResponseDTO getDomesticTravelAccountBalance(Long accountId) {
+
+        String accountNo = ValidationUtil.validateInput(ValidateInputDTO.builder()
+                        .account(accountRepository.findById(accountId))
+                        .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(UserHeaderInterceptor.userId.get(), accountId))
+                        .accountType(AccountType.DOMESTIC)
+                        .build())
+                .getAccountNo();
+
+        // SSAFY 금융 API 계좌 잔액 조회 요청
+        InquireDemandDepositAccountBalanceRequestDTO inquireDemandDepositAccountBalanceRequestDTO = InquireDemandDepositAccountBalanceRequestDTO.builder()
+                .header(RequestHeader.builder()
+                        .apiName("inquireDemandDepositAccountBalance")
+                        .userKey(UserHeaderInterceptor.userKey.get())
+                        .build())
+                .accountNo(accountNo)
+                .build();
+        InquireDemandDepositAccountBalanceResponseDTO inquireDemandDepositAccountBalanceResponseDTO = domesticClient.inquireDemandDepositAccountBalance(inquireDemandDepositAccountBalanceRequestDTO);
+
+        return DomesticTravelAccountBalanceResponseDTO.builder()
+                .accountBalance(inquireDemandDepositAccountBalanceResponseDTO.getRec().getAccountBalance())
+                .build();
+    }
+
     // 한화 여행통장 계좌 이체 서비스 로직
     public SsafySuccessResponseDTO transferDomesticTravelAccount(Long accountId, TransferDomesticTravelAccountRequestDTO requestDTO) {
 

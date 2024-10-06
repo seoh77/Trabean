@@ -99,6 +99,13 @@ public class AccountController {
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
+    // 한화 여행통장 잔액 조회 API
+    @GetMapping("traval/domestic/{accountId}/accountBalance")
+    public ResponseEntity<DomesticTravelAccountBalanceResponseDTO> getDomesticTravelAccountBalance(@PathVariable Long accountId) {
+        DomesticTravelAccountBalanceResponseDTO responseDTO = accountService.getDomesticTravelAccountBalance(accountId);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
+
     // 한화 여행통장 계좌 이체 API
     @PostMapping("/travel/domestic/{accountId}/transfer")
     public ResponseEntity<SsafySuccessResponseDTO> transferDomesticTravelAccount(@PathVariable Long accountId,
