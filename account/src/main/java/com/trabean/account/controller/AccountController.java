@@ -93,14 +93,14 @@ public class AccountController {
     }
 
     // 한화 여행통장 생성일 조회 API
-    @GetMapping("traval/domestic/{accountId}/created")
+    @GetMapping("travel/domestic/{accountId}/created")
     public ResponseEntity<DomesticTravelAccountCreatedDateResponseDTO> getDomesticTravelAccountCreatedDate(@PathVariable Long accountId) {
         DomesticTravelAccountCreatedDateResponseDTO responseDTO = accountService.getDomesticTravelAccountCreatedDate(accountId);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
     // 한화 여행통장 잔액 조회 API
-    @GetMapping("traval/domestic/{accountId}/accountBalance")
+    @GetMapping("travel/domestic/{accountId}/accountBalance")
     public ResponseEntity<DomesticTravelAccountBalanceResponseDTO> getDomesticTravelAccountBalance(@PathVariable Long accountId) {
         DomesticTravelAccountBalanceResponseDTO responseDTO = accountService.getDomesticTravelAccountBalance(accountId);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
