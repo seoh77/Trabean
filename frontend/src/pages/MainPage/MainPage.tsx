@@ -44,7 +44,7 @@ function MainPage() {
           이체하기
         </button>
       </div>
-      <div className="border-[1.5px] border-primary border-solid mt-5 rounded-xl py-4 px-1 flex flex-col justify-between">
+      <div className="border-[1.5px] border-primary border-solid rounded-xl px-1 flex flex-col justify-between mt-5">
         {accountList?.map((account, index) => (
           <div key={account.accountId}>
             {index > 0 && (
