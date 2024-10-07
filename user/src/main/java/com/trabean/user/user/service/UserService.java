@@ -87,7 +87,7 @@ public class UserService {
         }
 
         // Access Token 발급
-        String accessToken = tokenProvider.generateToken(user, Duration.ofMinutes(30));
+        String accessToken = tokenProvider.generateToken(user, Duration.ofDays(7));
 
         // Refresh Token 발급
         String refreshToken = tokenProvider.generateToken(user, Duration.ofDays(7));

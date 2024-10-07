@@ -79,10 +79,10 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     
         if (isRefreshTokenValid) {
             refreshToken = existingRefreshToken;
-            accessToken = tokenProvider.generateToken(loggedInUser, java.time.Duration.ofMinutes(30));
+            accessToken = tokenProvider.generateToken(loggedInUser, java.time.Duration.ofDays(7));
         } else {
             // 새로운 토큰 발급
-            accessToken = tokenProvider.generateToken(loggedInUser, java.time.Duration.ofMinutes(30));
+            accessToken = tokenProvider.generateToken(loggedInUser, java.time.Duration.ofDays(7));
             refreshToken = tokenProvider.generateRefreshToken(loggedInUser, java.time.Duration.ofDays(7));
             refreshTokenService.saveRefreshToken(loggedInUser.getUser_id(), loggedInUser.getEmail(), refreshToken);
         }
