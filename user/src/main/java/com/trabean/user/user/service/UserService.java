@@ -95,7 +95,7 @@ public class UserService {
         String accessToken = tokenProvider.generateToken(user, Duration.ofDays(7));
 
         // Refresh Token 발급
-        String refreshToken = tokenProvider.generateToken(user, Duration.ofDays(7));
+        String refreshToken = tokenProvider.generateRefreshToken(user, Duration.ofDays(7));
         refreshTokento = refreshToken;
         // 기존 Refresh Token 확인
         Optional<RefreshToken> existingToken = refreshTokenRepository.findByUserId(user.getUser_id());
