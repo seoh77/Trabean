@@ -1,4 +1,5 @@
 package com.trabean.user.user.service;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.trabean.user.config.jwt.TokenProvider;
@@ -8,10 +9,16 @@ import com.trabean.user.user.dto.UserPaymentAccountIdResponse;
 import com.trabean.user.user.entity.RefreshToken;
 import com.trabean.user.user.repository.RefreshTokenRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 import com.trabean.user.user.controller.UserApiController;
 import com.trabean.user.user.dto.AddUserRequest;
@@ -22,6 +29,8 @@ import org.slf4j.LoggerFactory;
 import lombok.RequiredArgsConstructor;
 
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -33,11 +42,16 @@ public class UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ExternalApiService externalApiService; // 외부 API 호출을 위한 서비스 주입
     private final ObjectMapper objectMapper = new ObjectMapper(); // JSON 파싱을 위한 ObjectMapper
-	private static final Logger logger = LoggerFactory.getLogger(UserApiController.class); // 로그를 위한 Logger 추가
+    private static final Logger logger = LoggerFactory.getLogger(UserApiController.class); // 로그를 위한 Logger 추가
 
     private final RefreshTokenRepository refreshTokenRepository;
     private final TokenProvider tokenProvider;
     private final PasswordEncoder passwordEncoder;
+
+    private final RestTemplate restTemplate = new RestTemplate(); // 외부 API 호출을 위한 RestTemplate
+
+    private static final String API_URL = "https://finopenapi.ssafy.io/ssafy/api/v1/member/search";
+    private static final String API_KEY = "1b5cd29adccc46609ff1ce0a589584e0"; // 자동으로 추가될 API 키
 
     @Transactional
     public String save(AddUserRequest addUserRequestDto) throws Exception {
@@ -45,7 +59,6 @@ public class UserService {
         JsonNode responseJson = objectMapper.readTree(externalApiResponse);
 
         // 외부 API로 먼저 데이터 전송하여 userKey를 받아옴
-//        String userKey = externalApiService.sendToExternalApi(addUserRequestDto);
         String userKey = responseJson.path("userKey").asText();
 
         // 받은 userKey와 함께 유저를 로컬 DB에 저장
@@ -101,6 +114,52 @@ public class UserService {
         return accessToken;
     }
 
+    // 외부 API를 통해 이메일 중복 확인
+    private boolean checkEmailWithExternalApi(String email) {
+        try {
+            // 요청에 포함될 데이터 정의
+            Map<String, String> requestBody = new HashMap<>();
+            requestBody.put("userId", email);
+            requestBody.put("apiKey", API_KEY);  // 자동으로 apiKey 추가
+
+            // HttpHeaders 설정
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Content-Type", "application/json");
+
+            // 요청 본문과 헤더를 포함한 HttpEntity 생성
+            HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(requestBody, headers);
+
+            // 외부 API에 POST 요청 보내기
+            ResponseEntity<String> response = restTemplate.exchange(API_URL, HttpMethod.POST, requestEntity, String.class);
+
+            // 200 OK 응답이 오면 인증 실패(즉, 해당 이메일이 이미 존재)
+            return !response.getStatusCode().is2xxSuccessful();
+
+        } catch (HttpClientErrorException e) {
+            // 400 Bad Request 또는 에러가 발생하면 인증 성공 (즉, 해당 이메일이 없음)
+            if (e.getStatusCode().is4xxClientError()) {
+                return true;  // 인증 성공
+            } else {
+                // 그 외의 에러가 발생하면 false로 처리
+                return false;
+            }
+        } catch (Exception e) {
+            // 다른 예외 처리
+            return false;
+        }
+    }
+
+    // 내부 DB와 외부 API를 모두 확인하여 이메일 중복 체크
+    public boolean checkEmailDuplication(String email) {
+        // 내부 DB에서 이메일 중복 확인
+        boolean isEmailInDb = userRepository.existsByEmail(email);
+
+        // 외부 API에서 이메일 중복 확인
+        boolean isEmailInExternalApi = checkEmailWithExternalApi(email);
+
+        // 두 조건을 모두 만족해야 중복이 아닌 것으로 처리
+        return isEmailInDb && isEmailInExternalApi;
+    }
 
     // userId로 사용자 조회 및 payment_account_id 반환
     public UserPaymentAccountIdResponse getUserPaymentAccount(Long userId) {
@@ -136,21 +195,18 @@ public class UserService {
             user.setMainAccountId(mainAccountId);
             userRepository.save(user);
             return true;
-           }
+        }
         return false;
     }
+
     public String getMainAccountIdByEmail(String email) {
         Optional<User> user = userRepository.findByEmail(email);
         return user.map(User::getMain_account_id).orElse(null);
     }
 
-
     public String getMainAccountIdByUserId(Long userId) {
         Optional<User> user = userRepository.findById(userId);
         return user.map(User::getMain_account_id).orElse(null);
-    }
-    public boolean checkEmailDuplication(String email) {
-        return userRepository.existsByEmail(email);
     }
 
     public User findByUserId(Long userId) {

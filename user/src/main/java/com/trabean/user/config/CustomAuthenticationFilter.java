@@ -93,36 +93,13 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
             refreshTokenService.saveRefreshToken(loggedInUser.getUser_id(), loggedInUser.getEmail(), refreshToken);
         }
 
-        // 쿠키 설정 (accessToken)
-        Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
-        accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setSecure(true);
-        accessTokenCookie.setPath("/");
-        accessTokenCookie.setMaxAge(30 * 60); // 30분
+        // 헤더에 accessToken과 refreshToken 추가
+        response.addHeader("Authorization", "Bearer " + accessToken);
+        response.addHeader("Refresh-Token", refreshToken);
 
-        // 쿠키 설정 (refreshToken), 새로운 refreshToken이 발급된 경우에만 쿠키에 저장
-        if (!isRefreshTokenValid || existingRefreshToken == null) {
-            Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
-            refreshTokenCookie.setHttpOnly(true);
-            refreshTokenCookie.setSecure(true);
-            refreshTokenCookie.setPath("/");
-            refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60); // 1주일
-            response.addCookie(refreshTokenCookie);
-        }
-
-        // SameSite 속성을 직접 설정하여 응답에 추가
-        response.setHeader("Set-Cookie", "accessToken=" + accessToken + "; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=1800");
-        if (!isRefreshTokenValid || existingRefreshToken == null) {
-            response.setHeader("Set-Cookie", "refreshToken=" + refreshToken + "; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=604800");
-        }
-
-        // 응답 본문에 accessToken과 refreshToken을 포함하여 JSON으로 반환
+        // 응답 본문에 userKey를 포함하여 JSON으로 반환
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("userKey", userKey);
-        responseBody.put("accessToken", accessToken);
-        if (!isRefreshTokenValid || existingRefreshToken == null) {
-            responseBody.put("refreshToken", refreshToken);
-        }
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
