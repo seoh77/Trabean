@@ -23,7 +23,7 @@ const CreationMainPage: React.FC = () => {
         <div className="flex flex-col space-y-8">
           <button
             type="button"
-            className="shadow-lg w-72 h-40 bg-primary-light p-2 rounded-2xl flex flex-col justify-center items-center"
+            className="shadow-lg w-72 h-40 bg-primary-light p-2 rounded-2xl flex flex-col justify-center items-center hover:bg-[#90C183]"
             onClick={() => selectedType("travel")}
           >
             <img
@@ -35,7 +35,7 @@ const CreationMainPage: React.FC = () => {
           </button>
           <button
             type="button"
-            className="shadow-lg w-72 h-40 bg-primary-light p-2 rounded-2xl flex flex-col justify-center items-center"
+            className="shadow-lg w-72 h-40 bg-primary-light p-2 rounded-2xl flex flex-col justify-center items-center hover:bg-[#90C183]"
             onClick={() => selectedType("personal")}
           >
             <img
