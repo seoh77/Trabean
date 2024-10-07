@@ -33,6 +33,7 @@ public class Notification {
 
     public NotificationReadRes toReadDto() {
         NotificationReadRes notificationReadRes = new NotificationReadRes();
+        notificationReadRes.setNotificationId(notificationId);
         notificationReadRes.setAccountId(accountId);
         notificationReadRes.setAmount(amount);
         notificationReadRes.setNotificationType(notificationType);

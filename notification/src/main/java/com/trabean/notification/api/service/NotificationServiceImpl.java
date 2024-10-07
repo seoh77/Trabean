@@ -23,8 +23,10 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void saveNotification(NotificationCreateReq notificationCreateReq) {
-        Notification notification = notificationCreateReq.toEntity();
-        notificationRepository.save(notification);
+        log.info("알림발송 @@@@@@@@@@@@@@@@@@@@");
+        log.info(notificationCreateReq.getReceiverId().toString());
+        List<Notification> notifications = notificationCreateReq.toEntityList(); // 알림 리스트 생성
+        notificationRepository.saveAll(notifications); // 전부 저장
     }
 
     @Override
