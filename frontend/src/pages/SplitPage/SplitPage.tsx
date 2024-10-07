@@ -65,12 +65,12 @@ const ExchangeSplit: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col items-center h-screen bg-[#F2F9F4]">
+    <div className="flex flex-col items-center h-dvh bg-[#F2F9F4]">
       {/* Button to open the modal */}
       <button
         type="button"
         onClick={toggleModal}
-        className="px-4 py-2 bg-[#2F8F4E] text-white bottom rounded shadow hover:bg-green-600"
+        className="btn-lg text-white hover:bg-green-600"
       >
         N빵 나누기 시작하기
       </button>
@@ -134,14 +134,14 @@ const ExchangeSplit: React.FC = () => {
                   <button
                     type="button"
                     onClick={toggleModal} // Close button functionality
-                    className="px-4 py-2 bg-gray-200 text-gray-600 rounded shadow hover:bg-gray-300"
+                    className="btn-lg bg-gray-200 text-gray-600 hover:bg-gray-300 w-[115px]"
                   >
                     취소
                   </button>
                   <button
                     type="button"
                     onClick={nextStep}
-                    className="px-4 py-2 bg-[#2F8F4E] text-white rounded shadow hover:bg-green-600"
+                    className="btn-lg text-white hover:bg-green-600 w-[115px]"
                   >
                     확인
                   </button>
