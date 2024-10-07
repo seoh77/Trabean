@@ -21,52 +21,55 @@ const BottomBar: React.FC = () => {
   return (
     <>
       {isShowBottom && (
-        <div className="w-[360px] h-[60px] flex items-center fixed bottom-0 text-[#999999] shadow-2xl justify-around bg-white">
-          <div
-            onClick={() => {
-              navigate("/");
-            }}
-            role="presentation"
-            className={containerClass}
-          >
-            <img src={Home} alt="home" className={imgClass} />
-            <p className={textClass}>홈</p>
+        <>
+          <div className="pt-[60px]" />
+          <div className="w-[360px] h-[60px] flex items-center fixed bottom-0 text-[#999999] shadow-2xl justify-around bg-white">
+            <div
+              onClick={() => {
+                navigate("/");
+              }}
+              role="presentation"
+              className={containerClass}
+            >
+              <img src={Home} alt="home" className={imgClass} />
+              <p className={textClass}>홈</p>
+            </div>
+            <div
+              onClick={() => {
+                navigate("/payment/list");
+              }}
+              role="presentation"
+              className={containerClass}
+            >
+              <img
+                src={PaymentHistory}
+                alt="PaymentHistory"
+                className={imgClass}
+              />
+              <p className={textClass}>가계부</p>
+            </div>
+            <div
+              onClick={() => {
+                navigate("/exchange");
+              }}
+              role="presentation"
+              className={containerClass}
+            >
+              <img src={ExchangeRate} alt="exchangeRate" className={imgClass} />
+              <p className={textClass}>환율</p>
+            </div>
+            <div
+              onClick={() => {
+                navigate("/payment/qr");
+              }}
+              role="presentation"
+              className={containerClass}
+            >
+              <img src={Payment} alt="Payment" className={imgClass} />
+              <p className={textClass}>결제</p>
+            </div>
           </div>
-          <div
-            onClick={() => {
-              navigate("/payment/list");
-            }}
-            role="presentation"
-            className={containerClass}
-          >
-            <img
-              src={PaymentHistory}
-              alt="PaymentHistory"
-              className={imgClass}
-            />
-            <p className={textClass}>가계부</p>
-          </div>
-          <div
-            onClick={() => {
-              navigate("/exchange");
-            }}
-            role="presentation"
-            className={containerClass}
-          >
-            <img src={ExchangeRate} alt="exchangeRate" className={imgClass} />
-            <p className={textClass}>환율</p>
-          </div>
-          <div
-            onClick={() => {
-              navigate("/payment/qr");
-            }}
-            role="presentation"
-            className={containerClass}
-          >
-            <img src={Payment} alt="Payment" className={imgClass} />
-            <p className={textClass}>결제</p>
-          </div>
-        </div>
+        </>
       )}
       {null}
     </>
