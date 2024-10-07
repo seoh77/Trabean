@@ -7,6 +7,7 @@ import com.trabean.user.user.service.RefreshTokenService;
 import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -113,6 +114,9 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         response.setCharacterEncoding("UTF-8");
         response.setStatus(HttpServletResponse.SC_OK);
         response.getWriter().write(new ObjectMapper().writeValueAsString(responseBody));
+        response.addHeader("Authorization","Bearer "+ accessToken);
+        response.addCookie(createCookie("refreshToken", refreshToken));
+        response.setStatus(HttpStatus.OK.value());  
     }
     
     @Override
@@ -121,5 +125,12 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");
         response.getWriter().write(new ObjectMapper().writeValueAsString(Map.of("error", "Authentication failed")));
+    }
+
+    private Cookie createCookie(String key, String value) {
+        Cookie cookie = new Cookie(key, value);
+        cookie.setMaxAge(24*60*60);
+        cookie.setHttpOnly(true);
+        return cookie;
     }
 }
