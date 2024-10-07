@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 
+import { useNavigate } from "react-router-dom";
 import bean from "../../assets/bean.png";
 import userIcon from "../../assets/icon/userIcon.png";
 import keyIcon from "../../assets/icon/keyIcon.png";
@@ -8,6 +9,8 @@ import useAuthStore from "../../store/useAuthStore";
 import client from "../../client";
 
 function LoginPage() {
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState<string | null>(null);
   const [password, setPassword] = useState<string | null>(null);
 
@@ -42,14 +45,17 @@ function LoginPage() {
       { withCredentials: true },
     );
 
-    const token = response.data.split(" ")[1];
-    localStorage.setItem("accessToken", token);
-    setAccessToken(token);
-    getMainPaymentAccount();
+    if (response.status === 200) {
+      const token = response.data.split(" ")[1];
+      localStorage.setItem("accessToken", token);
+      setAccessToken(token);
+      getMainPaymentAccount();
+      navigate("/");
+    }
   };
 
   return (
-    <div className="bg-primary-light w-full h-full flex flex-col justify-center items-center">
+    <div className="bg-primary-light w-full h-dvh flex flex-col justify-center items-center">
       <img src={bean} alt="아이콘" className="w-[40px] mb-7" />
       <div className="bg-white w-[290px] h-[303px] rounded-3xl flex flex-col justify-between items-center py-7">
         <h3 className="text-gray-700 font-semibold text-4">Login</h3>
@@ -78,7 +84,13 @@ function LoginPage() {
         <button type="button" className="btn-md w-[75%]" onClick={onClickLogin}>
           로그인
         </button>
-        <button type="button" className="btn-gray-md w-[75%]">
+        <button
+          type="button"
+          className="btn-gray-md w-[75%]"
+          onClick={() => {
+            navigate("/join");
+          }}
+        >
           회원가입
         </button>
       </div>

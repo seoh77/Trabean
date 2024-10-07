@@ -32,7 +32,7 @@ import MemberManagementPage from "./pages/TravelAccount/page/MemberManagementPag
 
 function App() {
   return (
-    <div className="App">
+    <div className="App pb-[200px]">
       <Routes>
         <Route path="/" element={<MainPage />} />
         <Route path="/login" element={<LoginPage />} />
