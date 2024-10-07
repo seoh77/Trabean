@@ -1,24 +1,35 @@
+# ?? ??
 server:
-  port: 80  # 서버 포트 설정
+  port: 80  # ??????? ??? ?? ??
 
-# Eureka 설정
+# Eureka ??
 eureka:
   instance:
     hostname: j11a604.p.ssafy.io
   client:
-    register-with-eureka: true  # Eureka에 등록 여부
-    fetch-registry: true  # Eureka 서버에서 레지스트리 정보 가져오기
+    register-with-eureka: true  # Eureka ??? ?? ??
+    fetch-registry: true  # Eureka ???? ??? ??? ??? ???? ??
     service-url:
-      defaultZone:  # Eureka 서버 URL
+      defaultZone: http://j11a604.p.ssafy.io:8761/eureka # Eureka ??? ?? URL (??? ?? URL? ???? ?)
 
-# Spring 애플리케이션 설정
+# Spring ?????? ??
 spring:
   application:
-    name: gateway  # 애플리케이션 이름 설정
+    name: gateway  # ??????? ?? ??
 
-  # Spring Cloud Gateway 설정
+  # Spring Cloud Gateway ??
   cloud:
     gateway:
+      #      밑에 두줄은 JWT 적용되면 풀기
+      #      default-filters:
+      #        - name: JwtFilter
+      #        #          하단 부분은 JwtFilter에 들어가기전에 JwtFilter가 사용하는 Config 내부 클래스에 변수를 설정할 때 사용
+      #        #          args:
+      #        #            baseMessage: Spring Cloud Gateway Global Filter
+      #        #            preLogger: true
+      #        #            postLogger: true
+      #        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+
       globalcors:
         cors-configurations:
           '[/**]': # 모든 경로에 대한 CORS 설정
@@ -49,6 +60,7 @@ spring:
             - name: JwtFilter  # JwtFilter를 이 라우트에 적용
 
         - id: notificationRoute
+          #          uri: http://j11a604.p.ssafy.io:8083
           uri: lb://NOTIFICATION
           predicates:
             - Path=/api/notifications/**
