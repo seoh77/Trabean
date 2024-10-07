@@ -52,8 +52,8 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         // 현재 인증된 사용자 정보에서 userKey 가져오기
         User loggedInUser = (User) authResult.getPrincipal();
         String userKey = loggedInUser.getUser_key();
-
-        // 기존 Refresh Token이 있는지 확인 (쿠키에서 확인)
+    
+        // Refresh Token이 유효한지 확인하는 로직은 그대로 유지
         String existingRefreshToken = null;
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
@@ -64,49 +64,57 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 }
             }
         }
-
-        // Refresh Token이 유효한지 확인
+    
         boolean isRefreshTokenValid = existingRefreshToken != null && tokenProvider.validToken(existingRefreshToken);
-
+    
         String accessToken;
         String refreshToken;
-
+    
         if (existingRefreshToken != null && !isRefreshTokenValid) {
             // Refresh Token이 유효하지 않으면 삭제하고 새로 발급
             log.info("Invalid refresh token detected, deleting and generating new tokens");
-            refreshTokenService.deleteRefreshToken(String.valueOf(loggedInUser.getUser_id())); // DB에서 해당 Refresh Token 삭제 로직
-            existingRefreshToken = null; // 기존 쿠키에서의 토큰도 무효화
+            refreshTokenService.deleteRefreshToken(String.valueOf(loggedInUser.getUser_id()));
+            existingRefreshToken = null;
         }
-
+    
         if (isRefreshTokenValid) {
-            // Refresh Token이 유효하면 기존 토큰을 그대로 사용
-            log.info("Using existing refresh token");
             refreshToken = existingRefreshToken;
-            accessToken = tokenProvider.generateToken(loggedInUser, java.time.Duration.ofMinutes(30));  // 새로운 access token 발급
+            accessToken = tokenProvider.generateToken(loggedInUser, java.time.Duration.ofMinutes(30));
         } else {
-            // Refresh Token이 없거나 유효하지 않으면 새로운 토큰 발급
-            log.info("Generating new tokens");
+            // 새로운 토큰 발급
             accessToken = tokenProvider.generateToken(loggedInUser, java.time.Duration.ofMinutes(30));
             refreshToken = tokenProvider.generateRefreshToken(loggedInUser, java.time.Duration.ofDays(7));
-
-            // 새로운 Refresh Token을 DB에 저장
             refreshTokenService.saveRefreshToken(loggedInUser.getUser_id(), loggedInUser.getEmail(), refreshToken);
         }
-
-        // 헤더에 accessToken과 refreshToken 추가
-        response.addHeader("Authorization", "Bearer " + refreshToken);
-        response.addHeader("Refresh-Token", refreshToken);
-
+    
+        // 쿠키 설정 (accessToken)
+        Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
+        accessTokenCookie.setHttpOnly(true);
+        accessTokenCookie.setSecure(true); // HTTPS에서만 동작
+        accessTokenCookie.setPath("/");
+        accessTokenCookie.setMaxAge(7*24*60 * 60); // 30분
+    
+        // 쿠키 설정 (refreshToken)
+        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setSecure(true); // HTTPS에서만 동작
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60); // 1주일
+    
+        // Set-Cookie 헤더에 추가
+        response.addCookie(accessTokenCookie);
+        response.addCookie(refreshTokenCookie);
+    
         // 응답 본문에 userKey를 포함하여 JSON으로 반환
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("userKey", userKey);
-
+    
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.setStatus(HttpServletResponse.SC_OK);
         response.getWriter().write(new ObjectMapper().writeValueAsString(responseBody));
     }
-
+    
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
         // 인증 실패 시 처리

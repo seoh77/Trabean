@@ -80,7 +80,6 @@ public class SecurityConfig {
 		configuration.addAllowedMethod("*"); // 모든 HTTP 메소드 허용
 		configuration.addAllowedHeader("*"); // 모든 헤더 허용
 		configuration.setAllowCredentials(true); // 쿠키 허용
-
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration); // 모든 경로에 대해 위 설정 적용
 		return source;
