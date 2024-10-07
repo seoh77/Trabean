@@ -4,10 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b3d9fcae-7d7f-4e5c-9ea6-0a4d03bce3db" name="Changes" comment="test : tailwind.config 설정파일 수정">
+    <list default="true" id="b3d9fcae-7d7f-4e5c-9ea6-0a4d03bce3db" name="Changes" comment="test : NGINX를 사용 하지 않는 방식으로 테스트">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nginx.conf" beforeDir="false" afterPath="$PROJECT_DIR$/nginx.conf" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -105,7 +105,7 @@
       <workItem from="1727669247849" duration="2371000" />
       <workItem from="1727828045300" duration="18081000" />
       <workItem from="1728024285216" duration="8635000" />
-      <workItem from="1728033646395" duration="20384000" />
+      <workItem from="1728033646395" duration="20803000" />
     </task>
     <task id="LOCAL-00001" summary="docs : nginx 설정을 위한 추가 파일">
       <option name="closed" value="true" />
@@ -403,7 +403,15 @@
       <option name="project" value="LOCAL" />
       <updated>1728290043841</updated>
     </task>
-    <option name="localTasksCounter" value="38" />
+    <task id="LOCAL-00038" summary="test : NGINX를 사용 하지 않는 방식으로 테스트">
+      <option name="closed" value="true" />
+      <created>1728290714102</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1728290714102</updated>
+    </task>
+    <option name="localTasksCounter" value="39" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -422,7 +430,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="docs : SSL 인증서 파일 Pipeline에서 해결하는 방식으로 변경" />
     <MESSAGE value="docs : nginx.conf SSL 인증서 주소 변경" />
     <MESSAGE value="fix : nginx.conf 설정파일 수정" />
     <MESSAGE value="fix : react프로젝트 배포방식 수정으로인한 코드 수정" />
@@ -447,7 +454,8 @@
     <MESSAGE value="test : dockerfile, nginx 설정파일 수정 테스트" />
     <MESSAGE value="test : dockerfile, nginx 설정파일 원위치" />
     <MESSAGE value="test : tailwind.config 설정파일 수정" />
-    <option name="LAST_COMMIT_MESSAGE" value="test : tailwind.config 설정파일 수정" />
+    <MESSAGE value="test : NGINX를 사용 하지 않는 방식으로 테스트" />
+    <option name="LAST_COMMIT_MESSAGE" value="test : NGINX를 사용 하지 않는 방식으로 테스트" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
