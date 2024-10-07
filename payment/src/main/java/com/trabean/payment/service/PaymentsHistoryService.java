@@ -34,6 +34,17 @@ public class PaymentsHistoryService {
     // 전체 결제내역조회
     public PaymentsHistoryResponse getPaymentHistory(Long travelAccountId, LocalDate startdate, LocalDate enddate,
                                                      int page) {
+        if (travelAccountId == null) {
+            return new PaymentsHistoryResponse(
+                    null,
+                    null,
+                    new PaymentsHistoryResponse.Pagination(
+                            1L,
+                            1L,
+                            1L
+                    )
+            );
+        }
         // 통장 멤버인지 확인
         paymentsAccountService.validateTravelAccountMembers(travelAccountId);
         log.info("통장멤버@@@@@@@@@@@@@@@@@@@@@@@@@@");
@@ -89,6 +100,11 @@ public class PaymentsHistoryService {
     }
 
     public ChartResponse getChart(Long travelAccountId, LocalDate startdate, LocalDate enddate) {
+
+        if (travelAccountId == null) {
+            return new ChartResponse(null, null);
+        }
+
         // 통장 멤버인지 확인
         paymentsAccountService.validateTravelAccountMembers(travelAccountId);
 
@@ -131,6 +147,15 @@ public class PaymentsHistoryService {
 
     public PaymentsHistoryCategoryResponse getPaymentsByCategoryName(Long accountId, String categoryName,
                                                                      LocalDate startDate, LocalDate endDate, int page) {
+        if (accountId == null) {
+            return new PaymentsHistoryCategoryResponse(
+                    null,
+                    null,
+                    null,
+                    null
+            );
+        }
+
         // 통장 멤버인지 확인
         paymentsAccountService.validateTravelAccountMembers(accountId);
 
