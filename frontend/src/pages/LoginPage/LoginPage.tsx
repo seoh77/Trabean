@@ -84,7 +84,13 @@ function LoginPage() {
         <button type="button" className="btn-md w-[75%]" onClick={onClickLogin}>
           로그인
         </button>
-        <button type="button" className="btn-gray-md w-[75%]">
+        <button
+          type="button"
+          className="btn-gray-md w-[75%]"
+          onClick={() => {
+            navigate("/join");
+          }}
+        >
           회원가입
         </button>
       </div>

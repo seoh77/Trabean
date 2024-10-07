@@ -18,7 +18,8 @@ const BottomBar: React.FC = () => {
   const textClass = classNames("text-xs absolute -bottom-6");
   const isShowBottom =
     !location.pathname.startsWith("/payment/qr") &&
-    !location.pathname.startsWith("/login");
+    !location.pathname.startsWith("/login") &&
+    !location.pathname.startsWith("/join");
 
   return (
     <>
