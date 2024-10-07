@@ -72,7 +72,9 @@ const BankSelection: React.FC = () => {
               key={bank.name}
               type="button"
               className={`py-2.5 rounded-lg cursor-pointer transition-colors duration-200 ${
-                selectedBank === bank.name ? "bg-primary-light" : "bg-zinc-100"
+                selectedBank === bank.name
+                  ? "bg-primary-light"
+                  : "bg-zinc-100 hover:bg-zinc-300"
               }`}
               onClick={() => {
                 setSelectedBank(bank.name);
