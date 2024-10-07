@@ -94,6 +94,18 @@ public class UserApiController {
 
 		return ResponseEntity.ok(userNameResponse);
 	}
+	@GetMapping("/useremail/{userId}")
+	public ResponseEntity<UserEmailResponse> getUserEmail(@PathVariable Long userId) {
+		// logger.info("여기왔지롱");
+		UserEmailResponse userEmailResponse = userService.getUserEmail(userId);
+
+		// 만약 name가 null이면, null로 설정
+		if (userEmailResponse.getUserEmail() == null) {
+			userEmailResponse.setUserEmail(null);
+		}
+
+		return ResponseEntity.ok(userEmailResponse);
+	}
 
 	@PostMapping("/getuserkey")
 	public ResponseEntity<GetUserKeyResponse> getUserKey(@RequestBody GetUserKeyRequest request) {

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.trabean.user.config.jwt.TokenProvider;
 import com.trabean.user.user.dto.LoginRequest;
+import com.trabean.user.user.dto.UserEmailResponse;
 import com.trabean.user.user.dto.UserNameResponse;
 import com.trabean.user.user.dto.UserPaymentAccountIdResponse;
 import com.trabean.user.user.entity.RefreshToken;
@@ -187,6 +188,19 @@ public class UserService {
         // 사용자를 찾지 못한 경우 기본값을 반환
         return new UserNameResponse(null);
     }
+    public UserEmailResponse getUserEmail(Long userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            // User 객체를 UserResponse로 변환
+            return new UserEmailResponse(user.getUserEmail());
+        }
+
+        // 사용자를 찾지 못한 경우 기본값을 반환
+        return new UserEmailResponse(null);
+    }
+
 
     public boolean updateMainAccountId(Long userId, String mainAccountId) {
         Optional<User> userOptional = userRepository.findById(userId);
