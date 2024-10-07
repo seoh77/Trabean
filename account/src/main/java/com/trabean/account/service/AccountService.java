@@ -79,6 +79,12 @@ public class AccountService {
                 .build();
         InquireDemandDepositAccountListResponseDTO inquireDemandDepositAccountListResponseDTO = domesticClient.inquireDemandDepositAccountList(inquireDemandDepositAccountListRequestDTO);
 
+        if (inquireDemandDepositAccountListResponseDTO.getRec() == null) {
+            return AccountListResponseDTO.builder()
+                    .mainAccount(null)
+                    .accountList(new ArrayList<>())
+                    .build();
+        }
         return getAccountList(inquireDemandDepositAccountListResponseDTO);
     }
 
