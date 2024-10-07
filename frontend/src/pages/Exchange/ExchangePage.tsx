@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 // 국기 이미지 파일 import
 import usdFlag from "../../assets/flagIcon/usd.png";
@@ -9,6 +9,7 @@ import cadFlag from "../../assets/flagIcon/cad.png";
 import chfFlag from "../../assets/flagIcon/chf.png";
 import cnyFlag from "../../assets/flagIcon/cny.png";
 import jpyFlag from "../../assets/flagIcon/jpy.png";
+import TopBar from "../../components/TopBar";
 
 interface CurrencyData {
   id: number; // 나라 ID
@@ -22,11 +23,7 @@ interface CurrencyData {
 const ExchangeRates = () => {
   // 하드코딩된 데이터
   const { accountId } = useParams(); // Path Variable
-  const nav = useNavigate();
-  const handleExchange = () => {
-    // alert("친구들과 N빵하기 누름!!!!!!");
-    nav(`accounts/travel/domestic/${accountId}`); // 비밀번호 입력 페이지로 이동
-  };
+
   const currencies: CurrencyData[] = [
     {
       id: 1,
@@ -109,10 +106,13 @@ const ExchangeRates = () => {
   return (
     <div className="p-4">
       {/* 상단 제목 */}
+      <TopBar
+        isWhite
+        isLogo={false}
+        page="환율 조회"
+        path={`/accounts/travel/domestic/${accountId}`}
+      />
       <div className="flex items-center mb-6">
-        <button type="button" className="mr-4 text-lg" onClick={handleExchange}>
-          ←
-        </button>
         <h1 className="text-2xl font-bold">환율 조회</h1>
       </div>
 
