@@ -61,6 +61,8 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
 
             logger.info("accessToken has been validated."); // 유효한 토큰 로그 출력
 
+            logger.info("@@@@@@@@@@@@@@@@@@@여기까지옴00000000000000000000000");
+
             // JWT에서 userId 추출
             Long userId = jwtManger.getUserId(accessToken);
             UserKeyRes userKeyRes = userFeign.getUserKey(new UserIdReq(userId));
