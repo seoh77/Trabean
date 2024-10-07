@@ -1,5 +1,7 @@
 package com.trabean.gateway.filter;
 
+import com.trabean.gateway.client.dto.request.UserIdReq;
+import com.trabean.gateway.client.dto.response.UserKeyRes;
 import com.trabean.gateway.client.feign.UserFeign;
 import com.trabean.gateway.util.JwtManger;
 import org.slf4j.Logger;
@@ -8,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 /**
@@ -36,63 +40,60 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
             logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@jwt filter!"); // 필터가 실행됨을 알림
-//
-//            HttpHeaders headers = exchange.getRequest().getHeaders(); // 요청의 HTTP 헤더를 가져옴
-//            String accessToken = headers.getFirst("accessToken"); // 'accessToken' 헤더에서 토큰 값을 가져옴
-//
-//            // accessToken이 존재하지 않을 경우
-//            if (accessToken == null) {
-//                logger.info("accessToken is null!"); // accessToken이 없음을 로그에 기록
-//                exchange.getResponse().setStatusCode(HttpStatus.BAD_REQUEST); // 400 Bad Request 응답 설정
-//                return exchange.getResponse().setComplete(); // 응답을 완료 상태로 설정
-//            }
-//
-//            // accessToken의 유효성을 검사
-//            if (!jwtManger.checkTokenValidation(accessToken)) {
-//                logger.warn("accessToken is not valid."); // 유효하지 않은 accessToken 로그 출력
-//                exchange.getResponse().setStatusCode(HttpStatus.BAD_REQUEST); // 400 Bad Request 응답 설정
-//                return exchange.getResponse().setComplete(); // 응답을 완료 상태로 설정
-//            }
-//
-//            logger.info("accessToken has been validated."); // 유효한 토큰 로그 출력
-//
-//            // JWT에서 userId 추출
-//            Long userId = jwtManger.getUserId(accessToken);
-//            UserKeyRes userKeyRes = userFeign.getUserKey(new UserIdReq(userId));
-//            String userKey = userKeyRes.getUserKey();
-//
-//            try {
-//                // userId와 userKey를 암호화
+
+            HttpHeaders headers = exchange.getRequest().getHeaders(); // 요청의 HTTP 헤더를 가져옴
+            String accessToken = headers.getFirst("accessToken"); // 'accessToken' 헤더에서 토큰 값을 가져옴
+
+            // accessToken이 존재하지 않을 경우
+            if (accessToken == null) {
+                logger.info("accessToken is null!"); // accessToken이 없음을 로그에 기록
+                exchange.getResponse().setStatusCode(HttpStatus.BAD_REQUEST); // 400 Bad Request 응답 설정
+                return exchange.getResponse().setComplete(); // 응답을 완료 상태로 설정
+            }
+
+            // accessToken의 유효성을 검사
+            if (!jwtManger.checkTokenValidation(accessToken)) {
+                logger.warn("accessToken is not valid."); // 유효하지 않은 accessToken 로그 출력
+                exchange.getResponse().setStatusCode(HttpStatus.BAD_REQUEST); // 400 Bad Request 응답 설정
+                return exchange.getResponse().setComplete(); // 응답을 완료 상태로 설정
+            }
+
+            logger.info("accessToken has been validated."); // 유효한 토큰 로그 출력
+
+            // JWT에서 userId 추출
+            Long userId = jwtManger.getUserId(accessToken);
+            UserKeyRes userKeyRes = userFeign.getUserKey(new UserIdReq(userId));
+            String userKey = userKeyRes.getUserKey();
+
+            try {
+                // userId와 userKey를 암호화
 //                String encryptedUserId = Encryption.encrypt(String.valueOf(userId));
 //                String encryptedUserKey = Encryption.encrypt(userKey);
 
-            // 헤더에 암호화된 userId와 userKey 추가
+//             헤더에 암호화된 userId와 userKey 추가
 //                exchange.getRequest().mutate()
 //                        .header("userId", encryptedUserId)
 //                        .header("userKey", encryptedUserKey)
 //                        .build();
-//                } catch (Exception e) {
-//                    logger.error("Encryption error: ", e);
-//                    exchange.getResponse().setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
-//                    return exchange.getResponse().setComplete();
-//                }
-
-            logger.info(exchange.getRequest().getURI().toString());
-            if (exchange.getRequest().getHeaders().get("Origin") == null) {
-                logger.info("Origin header is 널이다!~!!!!!!!!!!!!!!!!!!!!");
-            } else {
-//               exchange.getRequest().getHeaders().set("Origin","http://j11a604.p.ssafy.io");
-                logger.info("@@@@@@@@@@@@@@@@@@@@@@@@" + exchange.getRequest().getHeaders().get("Origin").toString());
+                exchange.getRequest().mutate()
+                        .header("userId", userId.toString())
+                        .header("userKey", userKey)
+                        .build();
+            } catch (Exception e) {
+                logger.error("Encryption error: ", e);
+                exchange.getResponse().setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
+                return exchange.getResponse().setComplete();
             }
+
 
 
             /*
              *   account id=59를 갖고있는 유저 아이디=15 로 테스트
              * */
-            exchange.getRequest().mutate()
-                    .header("userId", "31")
-                    .header("userKey", "9c9f889b-5509-41a7-b6af-b4e83602aeb4")
-                    .build();
+//            exchange.getRequest().mutate()
+//                    .header("userId", "31")
+//                    .header("userKey", "9c9f889b-5509-41a7-b6af-b4e83602aeb4")
+//                    .build();
 
 
             return chain.filter(exchange); // 다음 필터로 요청을 전달
