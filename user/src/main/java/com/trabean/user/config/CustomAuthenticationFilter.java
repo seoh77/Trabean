@@ -89,7 +89,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         }
     
         // 쿠키 설정 (accessToken)
-        Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
+        Cookie accessTokenCookie = new Cookie("accessToken윤희", accessToken);
         accessTokenCookie.setHttpOnly(true);
         accessTokenCookie.setSecure(true); // HTTPS에서만 동작
         accessTokenCookie.setPath("/api/login");
