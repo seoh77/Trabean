@@ -6,6 +6,7 @@ import Home from "../assets/home.png";
 import PaymentHistory from "../assets/paymentHistory.png";
 import Payment from "../assets/payment.png";
 import ExchangeRate from "../assets/exchangeRate.png";
+import Bell from "../assets/Bell.png";
 
 const BottomBar: React.FC = () => {
   const navigate = useNavigate();
@@ -70,6 +71,16 @@ const BottomBar: React.FC = () => {
             >
               <img src={Payment} alt="Payment" className={imgClass} />
               <p className={textClass}>결제</p>
+            </div>
+            <div
+              onClick={() => {
+                navigate("/notification");
+              }}
+              role="presentation"
+              className={containerClass}
+            >
+              <img src={Bell} alt="Bell" className={imgClass} />
+              <p className={textClass}>알림</p>
             </div>
           </div>
         </>
