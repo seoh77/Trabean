@@ -25,6 +25,10 @@ import com.trabean.user.user.controller.UserApiController;
 import com.trabean.user.user.dto.AddUserRequest;
 import com.trabean.user.user.entity.User;
 import com.trabean.user.user.repository.UserRepository;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import lombok.RequiredArgsConstructor;
@@ -77,7 +81,7 @@ public class UserService {
     }
     public String refreshTokento;
     // 로그인 처리 로직
-    public String login(LoginRequest loginRequest) {
+    public String login(LoginRequest loginRequest, HttpServletResponse response) {
         // 사용자 이메일로 데이터베이스에서 사용자 찾기
         User user = userRepository.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
@@ -111,6 +115,8 @@ public class UserService {
                             .build()
             );
         }
+
+		response.addCookie(createCookie("refreshToken", refreshToken));
 
         return accessToken;
     }
@@ -226,4 +232,10 @@ public class UserService {
     public User findByUserId(Long userId) {
         return userRepository.findById(userId).orElse(null);
     }
+	private Cookie createCookie(String key, String value) {
+		Cookie cookie = new Cookie(key, value);
+		cookie.setMaxAge(24*60*60);
+		cookie.setHttpOnly(true);
+		return cookie;
+	}
 }

@@ -63,11 +63,10 @@ public class UserApiController {
 	public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
 		try {
 			// 로그인 로직 호출 및 Access Token 반환
-			String accessToken = userService.login(loginRequest);
+			String accessToken = userService.login(loginRequest,response);
 			logger.info("여기왔지롱 userapicontroller");
 			String refreshToken = userService.refreshTokento;
 			response.addHeader("Authorization","Bearer "+ accessToken);
-			response.addCookie(createCookie("refreshToken", refreshToken));
 			return ResponseEntity.ok().body("Bearer " + accessToken);
 		} catch (RuntimeException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
