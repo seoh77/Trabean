@@ -94,7 +94,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         }
 
         // 헤더에 accessToken과 refreshToken 추가
-        response.addHeader("Authorization", "Bearer " + accessToken);
+        response.addHeader("Authorization", "Bearer " + refreshToken);
         response.addHeader("Refresh-Token", refreshToken);
 
         // 응답 본문에 userKey를 포함하여 JSON으로 반환
