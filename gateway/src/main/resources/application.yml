@@ -14,8 +14,6 @@ eureka:
 
 # Spring ?????? ??
 spring:
-  main:
-    web-application-type: reactive
   application:
     name: gateway  # ??????? ?? ??
 
@@ -23,14 +21,14 @@ spring:
   cloud:
     gateway:
       #      밑에 두줄은 JWT 적용되면 풀기
-      #      default-filters:
-      #        - name: JwtFilter
-      #        #          하단 부분은 JwtFilter에 들어가기전에 JwtFilter가 사용하는 Config 내부 클래스에 변수를 설정할 때 사용
-      #        #          args:
-      #        #            baseMessage: Spring Cloud Gateway Global Filter
-      #        #            preLogger: true
-      #        #            postLogger: true
-      #        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+      default-filters:
+        - name: JwtFilter
+        #          하단 부분은 JwtFilter에 들어가기전에 JwtFilter가 사용하는 Config 내부 클래스에 변수를 설정할 때 사용
+        #          args:
+        #            baseMessage: Spring Cloud Gateway Global Filter
+        #            preLogger: true
+        #            postLogger: true
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
 
       globalcors:
         cors-configurations:
@@ -44,47 +42,62 @@ spring:
               - POST
               - DELETE
               - OPTIONS
-
-      routes: # 라우트 설정
-        # JwtFilter가 적용되는 라우트
-        - id: accountRoute
-          uri: lb://ACCOUNT
-          predicates:
-            - Path=/api/accounts/**
-          filters:
-            - name: JwtFilter  # JwtFilter를 이 라우트에 적용
+      routes: # ??? ?? ??아
+        - id: accountRoute  # ??? ID
+          uri: lb://ACCOUNT # ??? ??? URI (??? ?? URI? ???? ?)
+          predicates: # ??? ????? ??
+            - Path=/api/accounts/**  # /account/** ??? ?? ??? ??
 
         - id: chatbotRoute
           uri: lb://CHATBOT
           predicates:
             - Path=/api/chatbot/**
-          filters:
-            - name: JwtFilter  # JwtFilter를 이 라우트에 적용
 
         - id: notificationRoute
           #          uri: http://j11a604.p.ssafy.io:8083
           uri: lb://NOTIFICATION
           predicates:
             - Path=/api/notifications/**
-          filters:
-            - name: JwtFilter  # JwtFilter를 이 라우트에 적용
 
         - id: paymentRoute
           uri: lb://PAYMENT
           predicates:
             - Path=/api/payments/**
-          filters:
-            - name: JwtFilter  # JwtFilter를 이 라우트에 적용
 
         - id: travelRoute
           uri: lb://TRAVEL
           predicates:
             - Path=/api/travel/**
-          filters:
-            - name: JwtFilter  # JwtFilter를 이 라우트에 적용
 
         - id: userRoute
           uri: lb://USER
           predicates:
-            - Path=/api/user/**  # JwtFilter가 적용되지 않음
-          # 필터를 명시적으로 설정하지 않으면 JwtFilter가 적용되지 않음
+            - Path=/api/user/**
+
+
+#      globalcors:
+#        cors-configurations:
+#          "[/**]":
+#            allow-credentials: true
+#            allowed-origins:
+#              - "*"
+#            allowed-headers:
+#              - Authorization
+#              - Authorization-refresh
+#            allowed-methods:
+#              - PUT
+#              - GET
+#              - POST
+#              - DELETE
+#              - PATCH
+#              - OPTIONS         # 없애고 확인해보기
+
+
+
+
+
+logging:
+  level:
+    root: info # 전체 로그 레벨을 info 설정
+
+
