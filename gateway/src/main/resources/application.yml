@@ -15,20 +15,19 @@ eureka:
 # Spring ?????? ??
 spring:
   application:
-    name: gateway  # ??????? ?? ??
+    name: gateway  # 애플리케이션 이름 설정
 
-  # Spring Cloud Gateway ??
+  # Spring Cloud Gateway 설정
   cloud:
     gateway:
-      #      밑에 두줄은 JWT 적용되면 풀기
-      #      default-filters:
-      #        - name: JwtFilter
-      #        #          하단 부분은 JwtFilter에 들어가기전에 JwtFilter가 사용하는 Config 내부 클래스에 변수를 설정할 때 사용
-      #        #          args:
-      #        #            baseMessage: Spring Cloud Gateway Global Filter
-      #        #            preLogger: true
-      #        #            postLogger: true
-      #        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+      # 기본 필터 설정 (필요에 따라 주석 해제)
+      # default-filters:
+      #   - name: JwtFilter
+      #     args:
+      #       baseMessage: Spring Cloud Gateway Global Filter
+      #       preLogger: true
+      #       postLogger: true
+      #   - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
 
       globalcors:
         cors-configurations:
@@ -44,6 +43,7 @@ spring:
               - POST
               - DELETE
               - OPTIONS
+
       routes: # ??? ?? ??아
         - id: accountRoute
           uri: lb://ACCOUNT
