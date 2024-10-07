@@ -76,6 +76,28 @@
       <recent name="C:\ssafy\2학기 특화플젝\frontend\S11P21A604\frontend\build\static\css" />
     </key>
   </component>
+  <component name="RunManager">
+    <configuration name="Dockerfile build-stage" type="docker-deploy" factoryName="dockerfile" temporary="true" server-name="Docker">
+      <deployment type="dockerfile">
+        <settings>
+          <option name="imageTag" value="node20_build-stage" />
+          <option name="buildCliOptions" value="--target build-stage" />
+          <option name="buildOnly" value="true" />
+          <option name="sourceFilePath" value="Dockerfile" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="docker-deploy" factoryName="dockerfile" temporary="true">
+      <deployment type="dockerfile" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Docker.Dockerfile build-stage" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
