@@ -6,7 +6,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "NOTIFICATION", path = "/api/user") // 서비스 이름 설정
+@FeignClient(name = "user", path = "/api/user") // 서비스 이름 설정
 public interface UserFeign {
 
     @PostMapping("/getuserkey")
