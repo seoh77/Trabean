@@ -65,6 +65,7 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
             Long userId = jwtManger.getUserId(accessToken);
             UserKeyRes userKeyRes = userFeign.getUserKey(new UserIdReq(userId));
             String userKey = userKeyRes.getUserKey();
+            logger.info("@@@@@@@@@@@@@@@@@@@여기까지옴1111111111111111111111111");
 
             try {
                 // 헤더에 userId와 userKey 추가
@@ -72,9 +73,12 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
                         .header("userId", userId.toString())
                         .header("userKey", userKey)
                         .build();
-
+                System.out.println("userId " + userId);
+                System.out.println("userKey " + userKey);
+                logger.info("@@@@@@@@@@@@@@@@@@@여기까지옴2222222222222222");
                 // 변경된 요청으로 exchange 객체 업데이트
                 exchange = exchange.mutate().request(mutatedRequest).build();
+                logger.info("@@@@@@@@@@@@@@@@@@@여기까지옴3333333333333333333333");
             } catch (Exception e) {
                 logger.error("Error while adding headers: ", e);
                 exchange.getResponse().setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR); // 500 Internal Server Error
