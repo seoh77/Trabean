@@ -27,6 +27,7 @@ function LoginPage() {
       const response = await client().get("/api/accounts/main-account");
       const { paymentAccountId } = response.data;
       console.log(response.data);
+      localStorage.setItem("paymentAccountId", paymentAccountId);
       // Store에 paymentAccountId 저장
       useAuthStore.setState({ paymentAccountId });
     } catch (error) {
