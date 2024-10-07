@@ -64,4 +64,20 @@ public class JwtManger {
             return null;
         }
     }
+
+    public String getUserKey(String accessToken) {
+
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(accessToken)
+                    .getBody()
+                    .get("userKey", String.class);
+
+        } catch (Exception e) {
+            logger.error("토큰에서 userKey값을 가져오는데에 실패", e);
+            return null;
+        }
+    }
 }

@@ -1,7 +1,5 @@
 package com.trabean.gateway.filter;
 
-import com.trabean.gateway.client.dto.request.UserIdReq;
-import com.trabean.gateway.client.dto.response.UserKeyRes;
 import com.trabean.gateway.client.feign.UserFeign;
 import com.trabean.gateway.util.JwtManger;
 import org.slf4j.Logger;
@@ -62,8 +60,11 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
 
             // JWT에서 userId 추출
             Long userId = jwtManger.getUserId(accessToken);
-            UserKeyRes userKeyRes = userFeign.getUserKey(new UserIdReq(userId));
-            String userKey = userKeyRes.getUserKey();
+            //feign을 사용해서 userKey 추출방법
+//            UserKeyRes userKeyRes = userFeign.getUserKey(new UserIdReq(userId));
+            //토큰에 있는 userKey 추출
+            String userKey = jwtManger.getUserKey(accessToken);
+
 
             try {
                 // userId와 userKey를 암호화
