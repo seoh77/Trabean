@@ -1,103 +1,76 @@
-# ?? ??
 server:
-  port: 80  # ??????? ??? ?? ??
+  port: 80  # 서버 포트 설정
 
-# Eureka ??
+# Eureka 설정
 eureka:
   instance:
     hostname: j11a604.p.ssafy.io
   client:
-    register-with-eureka: true  # Eureka ??? ?? ??
-    fetch-registry: true  # Eureka ???? ??? ??? ??? ???? ??
+    register-with-eureka: true  # Eureka에 등록 여부
+    fetch-registry: true  # Eureka 서버에서 레지스트리 정보 가져오기
     service-url:
-      defaultZone: http://j11a604.p.ssafy.io:8761/eureka # Eureka ??? ?? URL (??? ?? URL? ???? ?)
+      defaultZone:  # Eureka 서버 URL
 
-# Spring ?????? ??
+# Spring 애플리케이션 설정
 spring:
   application:
-    name: gateway  # ??????? ?? ??
+    name: gateway  # 애플리케이션 이름 설정
 
-  # Spring Cloud Gateway ??
+  # Spring Cloud Gateway 설정
   cloud:
     gateway:
-      #      밑에 두줄은 JWT 적용되면 풀기
-      default-filters:
-        - name: JwtFilter
-      #          하단 부분은 JwtFilter에 들어가기전에 JwtFilter가 사용하는 Config 내부 클래스에 변수를 설정할 때 사용
-      #          args:
-      #            baseMessage: Spring Cloud Gateway Global Filter
-      #            preLogger: true
-      #            postLogger: true
-        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
-
       globalcors:
         cors-configurations:
-          '[/**]':  # 모든 경로에 대한 CORS 설정
+          '[/**]': # 모든 경로에 대한 CORS 설정
             allowedOrigins: '*'  # 허용하는 출처
             allow-credentials: false  # 인증 정보 허용
             allowedHeaders: '*'  # 허용하는 헤더
-            allowedMethods:  # 허용하는 HTTP 메서드
+            allowedMethods: # 허용하는 HTTP 메서드
               - PUT
               - GET
               - POST
               - DELETE
               - OPTIONS
-      routes: # ??? ?? ??아
-        - id: accountRoute  # ??? ID
-          uri: lb://ACCOUNT # ??? ??? URI (??? ?? URI? ???? ?)
-          predicates: # ??? ????? ??
-            - Path=/api/accounts/**  # /account/** ??? ?? ??? ??
+
+      routes: # 라우트 설정
+        # JwtFilter가 적용되는 라우트
+        - id: accountRoute
+          uri: lb://ACCOUNT
+          predicates:
+            - Path=/api/accounts/**
+          filters:
+            - name: JwtFilter  # JwtFilter를 이 라우트에 적용
 
         - id: chatbotRoute
           uri: lb://CHATBOT
           predicates:
             - Path=/api/chatbot/**
+          filters:
+            - name: JwtFilter  # JwtFilter를 이 라우트에 적용
 
         - id: notificationRoute
-          #          uri: http://j11a604.p.ssafy.io:8083
           uri: lb://NOTIFICATION
           predicates:
             - Path=/api/notifications/**
+          filters:
+            - name: JwtFilter  # JwtFilter를 이 라우트에 적용
 
         - id: paymentRoute
           uri: lb://PAYMENT
           predicates:
             - Path=/api/payments/**
+          filters:
+            - name: JwtFilter  # JwtFilter를 이 라우트에 적용
 
         - id: travelRoute
           uri: lb://TRAVEL
           predicates:
             - Path=/api/travel/**
+          filters:
+            - name: JwtFilter  # JwtFilter를 이 라우트에 적용
 
         - id: userRoute
           uri: lb://USER
           predicates:
-            - Path=/api/user/**
-
-
-#      globalcors:
-#        cors-configurations:
-#          "[/**]":
-#            allow-credentials: true
-#            allowed-origins:
-#              - "*"
-#            allowed-headers:
-#              - Authorization
-#              - Authorization-refresh
-#            allowed-methods:
-#              - PUT
-#              - GET
-#              - POST
-#              - DELETE
-#              - PATCH
-#              - OPTIONS         # 없애고 확인해보기
-
-
-
-
-
-logging:
-  level:
-    root: info # 전체 로그 레벨을 info 설정
-
-
+            - Path=/api/user/**  # JwtFilter가 적용되지 않음
+          # 필터를 명시적으로 설정하지 않으면 JwtFilter가 적용되지 않음
