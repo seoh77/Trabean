@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b3d9fcae-7d7f-4e5c-9ea6-0a4d03bce3db" name="Changes" comment="test : dockerfile, nginx 설정파일 원위치">
+    <list default="true" id="b3d9fcae-7d7f-4e5c-9ea6-0a4d03bce3db" name="Changes" comment="test : tailwind.config 설정파일 수정">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tailwind.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/tailwind.config.js" afterDir="false" />
     </list>
@@ -101,7 +101,7 @@
       <workItem from="1727669247849" duration="2371000" />
       <workItem from="1727828045300" duration="18081000" />
       <workItem from="1728024285216" duration="8635000" />
-      <workItem from="1728033646395" duration="18807000" />
+      <workItem from="1728033646395" duration="19779000" />
     </task>
     <task id="LOCAL-00001" summary="docs : nginx 설정을 위한 추가 파일">
       <option name="closed" value="true" />
@@ -383,7 +383,15 @@
       <option name="project" value="LOCAL" />
       <updated>1728288216395</updated>
     </task>
-    <option name="localTasksCounter" value="36" />
+    <task id="LOCAL-00036" summary="test : tailwind.config 설정파일 수정">
+      <option name="closed" value="true" />
+      <created>1728289018414</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1728289018414</updated>
+    </task>
+    <option name="localTasksCounter" value="37" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -402,7 +410,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="docs : SSL 인증서 저장경로 수정" />
     <MESSAGE value="docs : SSL 인증서 파일 Pipeline에서 해결하는 방식으로 변경" />
     <MESSAGE value="docs : nginx.conf SSL 인증서 주소 변경" />
     <MESSAGE value="fix : nginx.conf 설정파일 수정" />
@@ -427,7 +434,8 @@
     <MESSAGE value="test : npm build -&gt; npm run build로 수정" />
     <MESSAGE value="test : dockerfile, nginx 설정파일 수정 테스트" />
     <MESSAGE value="test : dockerfile, nginx 설정파일 원위치" />
-    <option name="LAST_COMMIT_MESSAGE" value="test : dockerfile, nginx 설정파일 원위치" />
+    <MESSAGE value="test : tailwind.config 설정파일 수정" />
+    <option name="LAST_COMMIT_MESSAGE" value="test : tailwind.config 설정파일 수정" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
