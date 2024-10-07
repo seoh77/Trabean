@@ -123,7 +123,7 @@ const ExchangeRates = () => {
         {mainCurrencies.map((currency) => (
           <div
             key={currency.id}
-            className="flex justify-between items-center mb-4 p-2 border rounded-lg shadow-sm hover:bg-gray-100"
+            className="flex justify-between items-center mb-4 p-2 border rounded-lg shadow-sm"
           >
             <div className="flex items-center">
               <img
@@ -155,7 +155,7 @@ const ExchangeRates = () => {
         {otherCurrencies.map((currency) => (
           <div
             key={currency.id}
-            className="flex justify-between items-center mb-4 p-2 border rounded-lg shadow-sm hover:bg-gray-100"
+            className="flex justify-between items-center mb-4 p-2 border rounded-lg shadow-sm"
           >
             <div className="flex items-center">
               <img
