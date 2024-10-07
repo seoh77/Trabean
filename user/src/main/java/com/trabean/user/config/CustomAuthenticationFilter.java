@@ -53,7 +53,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         User loggedInUser = (User) authResult.getPrincipal();
         String userKey = loggedInUser.getUser_key();
 
-        // 기존 Refresh Token이 있는지 확인 (쿠키 또는 DB에서 확인 가능)
+        // 기존 Refresh Token이 있는지 확인 (쿠키에서 확인)
         String existingRefreshToken = null;
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
@@ -82,7 +82,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
             // Refresh Token이 유효하면 기존 토큰을 그대로 사용
             log.info("Using existing refresh token");
             refreshToken = existingRefreshToken;
-            accessToken = tokenProvider.generateToken(loggedInUser, java.time.Duration.ofMinutes(30));  // 새로운 access token은 발급
+            accessToken = tokenProvider.generateToken(loggedInUser, java.time.Duration.ofMinutes(30));  // 새로운 access token 발급
         } else {
             // Refresh Token이 없거나 유효하지 않으면 새로운 토큰 발급
             log.info("Generating new tokens");

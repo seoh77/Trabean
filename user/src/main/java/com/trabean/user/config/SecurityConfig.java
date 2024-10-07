@@ -51,6 +51,7 @@ public class SecurityConfig {
 								"/api/token",
 								"/login",
 								"/signup",
+								"/email/**",
 								"/api/user/email/send-verification-code",
 								"/api/user/email/verify-code").permitAll() // 토큰 발급 URL 허용
 						.anyRequest().permitAll()) // 나머지 모든 요청은 인증 필요
