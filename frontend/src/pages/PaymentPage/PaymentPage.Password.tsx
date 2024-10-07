@@ -48,7 +48,7 @@ const Password: React.FC = () => {
   // qr 읽어온 직후 정보 업데이트 api 호출
   const updatePaymentInfo = async () => {
     const { paymentAccountId } = useAuthStore.getState();
-    const accountId = paymentAccountId ? parseInt(paymentAccountId, 10) : 1;
+    const accountId = paymentAccountId ? parseInt(paymentAccountId, 10) : 115;
     try {
       validateInfo();
       const requestBody: {
@@ -138,7 +138,7 @@ const Password: React.FC = () => {
   const submitPassword = async () => {
     try {
       const { paymentAccountId } = useAuthStore.getState();
-      const accountId = paymentAccountId ? parseInt(paymentAccountId, 10) : 1;
+      const accountId = paymentAccountId ? parseInt(paymentAccountId, 10) : 115;
 
       // 요청 바디 생성
       const requestBody = {
