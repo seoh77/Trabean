@@ -25,7 +25,7 @@ public class UserHeaderInterceptor implements HandlerInterceptor {
                                 + request.getHeader("userKey"));
             }
         } else {
-            userId.set(3L); // userId가 null일 경우 3으로 설정
+            userId.set(31L); // userId가 null일 경우 3으로 설정
         }
 
         if (userKeyHeader != null) {
