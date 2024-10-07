@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 // 국기 이미지 파일 import
 import usdFlag from "../../assets/flagIcon/usd.png";
@@ -20,6 +21,12 @@ interface CurrencyData {
 
 const ExchangeRates = () => {
   // 하드코딩된 데이터
+  const { accountId } = useParams(); // Path Variable
+  const nav = useNavigate();
+  const handleExchange = () => {
+    // alert("친구들과 N빵하기 누름!!!!!!");
+    nav(`accounts/travel/domestic/${accountId}`); // 비밀번호 입력 페이지로 이동
+  };
   const currencies: CurrencyData[] = [
     {
       id: 1,
@@ -103,7 +110,7 @@ const ExchangeRates = () => {
     <div className="p-4">
       {/* 상단 제목 */}
       <div className="flex items-center mb-6">
-        <button type="button" className="mr-4 text-lg">
+        <button type="button" className="mr-4 text-lg" onClick={handleExchange}>
           ←
         </button>
         <h1 className="text-2xl font-bold">환율 조회</h1>
