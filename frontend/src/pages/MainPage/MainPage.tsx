@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import Account from "./MainPage.Account";
 
@@ -20,6 +21,7 @@ function MainPage() {
   const [accountList, setAccountList] = useState<Array<AccountType> | null>(
     null,
   );
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getAccountInfo = async () => {
@@ -59,7 +61,11 @@ function MainPage() {
           </div>
         ))}
       </div>
-      <div className="mt-5 border-[1.5px] border-primary-light border-solid rounded-lg flex justify-center items-center h-11">
+      <div
+        className="mt-5 border-[1.5px] border-primary-light border-solid rounded-lg flex justify-center items-center h-11 hover:cursor-pointer"
+        onClick={() => navigate("/creation")}
+        role="presentation"
+      >
         <img src={plusIcon} alt="통장추가버튼" className="h-5" />
       </div>
     </div>
