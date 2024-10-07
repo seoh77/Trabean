@@ -12,6 +12,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 /**
  * 글로벌 filter로 적용할지 특정 라우터에 적용할지는 yml 파일에서 설정
  */
@@ -40,7 +42,9 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
             logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@jwt filter!"); // 필터가 실행됨을 알림
 
             HttpHeaders headers = exchange.getRequest().getHeaders(); // 요청의 HTTP 헤더를 가져옴
-            String accessToken = headers.getFirst("accessToken"); // 'accessToken' 헤더에서 토큰 값을 가져옴
+//            String accessToken = headers.getFirst("accessToken"); // 'accessToken' 헤더에서 토큰 값을 가져옴
+            String accessToken = Objects.requireNonNull(headers.getFirst("Authorization")).substring(7); // 'accessToken' 헤더에서 토큰 값을 가져옴
+
 
             // accessToken이 존재하지 않을 경우
             if (accessToken == null) {
