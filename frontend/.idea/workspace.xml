@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b3d9fcae-7d7f-4e5c-9ea6-0a4d03bce3db" name="Changes" comment="test : Dockerfile 수정">
+    <list default="true" id="b3d9fcae-7d7f-4e5c-9ea6-0a4d03bce3db" name="Changes" comment="refactor : /creation* -&gt; /creation/*로 수정">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nginx.conf" beforeDir="false" afterPath="$PROJECT_DIR$/nginx.conf" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -131,7 +132,7 @@
       <workItem from="1727669247849" duration="2371000" />
       <workItem from="1727828045300" duration="18081000" />
       <workItem from="1728024285216" duration="8635000" />
-      <workItem from="1728033646395" duration="23033000" />
+      <workItem from="1728033646395" duration="23605000" />
     </task>
     <task id="LOCAL-00001" summary="docs : nginx 설정을 위한 추가 파일">
       <option name="closed" value="true" />
@@ -477,7 +478,15 @@
       <option name="project" value="LOCAL" />
       <updated>1728293083447</updated>
     </task>
-    <option name="localTasksCounter" value="44" />
+    <task id="LOCAL-00044" summary="refactor : /creation* -&gt; /creation/*로 수정">
+      <option name="closed" value="true" />
+      <created>1728293482943</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1728293482943</updated>
+    </task>
+    <option name="localTasksCounter" value="45" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -496,7 +505,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="docs : Dockerfile에 프론트 ENDPOINT 환경변수 설정 추가" />
     <MESSAGE value="docs : nginx 설정에 CORS 설정 추가" />
     <MESSAGE value="test : 프로젝트 빌드시 정상적인 환경변수 설정되는지 테스트" />
     <MESSAGE value="test : 프로젝트 빌드시 정상적인 환경변수 설정되는지 테스트(원위치)" />
@@ -521,7 +529,8 @@
     <MESSAGE value="test : NGINX는 사용해야하는 것이다" />
     <MESSAGE value="test : npm 명령어 수정" />
     <MESSAGE value="test : Dockerfile 수정" />
-    <option name="LAST_COMMIT_MESSAGE" value="test : Dockerfile 수정" />
+    <MESSAGE value="refactor : /creation* -&gt; /creation/*로 수정" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor : /creation* -&gt; /creation/*로 수정" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
