@@ -6,7 +6,13 @@ WORKDIR /app
 COPY package*.json ./
 
 # Yarn을 사용하여 의존성 설치
-RUN npm install
+#RUN npm install
+
+#윤희님 픽
+RUN npm install -D tailwindcss@latest postcss@latest autoprefixer@latest
+RUN npx tailwindcss init -p
+RUN npm i
+
 # 모든 소스 파일을 현재 작업 디렉토리로 복사
 COPY . .
 # ARG 추가
