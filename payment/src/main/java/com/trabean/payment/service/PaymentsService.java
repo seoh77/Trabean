@@ -1,13 +1,19 @@
 package com.trabean.payment.service;
 
+import com.trabean.payment.client.NotificationClient;
+import com.trabean.payment.dto.request.NotificationRequest;
 import com.trabean.payment.dto.request.RequestPaymentRequest;
 import com.trabean.payment.dto.response.PaymentResponse;
+import com.trabean.payment.dto.response.TravelAccountMemberListResponse;
+import com.trabean.payment.dto.response.TravelAccountMemberListResponse.Members;
 import com.trabean.payment.entity.Payments;
 import com.trabean.payment.exception.PaymentsException;
 import com.trabean.payment.interceptor.UserHeaderInterceptor;
 import com.trabean.payment.repository.PaymentsRepository;
 import com.trabean.payment.util.ApiName;
 import jakarta.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -25,6 +31,7 @@ public class PaymentsService {
     private final PaymentsWithdrawalService paymentsWithdrawalService;
     private final PaymentsUpdateInfoService paymentsUpdateInfoService;
     private final PaymentsRepository paymentsRepository;
+    private final NotificationClient notificationClient;
 
     // 공통된 결제 요청 검증 메서드
     private void validateRequestPayment(Long accountId, RequestPaymentRequest request) {
@@ -95,6 +102,27 @@ public class PaymentsService {
 
         // 결제 상태를 성공으로 업데이트
         paymentsUpdateInfoService.updateSuccess(request.getPayId());
+
+        // 여행통장 멤버 조회
+        TravelAccountMemberListResponse memberListResponse = paymentsAccountService.validateTravelAccountMembers(
+                paymentAccountId);
+
+        // 여행 통장 멤버 list 에 담기
+        List<Long> membersId = new ArrayList<>();
+        for (Members members : memberListResponse.getMembers()) {
+            membersId.add(members.getUserId());
+        }
+
+        // 결제 알림 발송
+        NotificationRequest notificationRequest = NotificationRequest.builder().
+                senderId(UserHeaderInterceptor.userId.get())
+                .receiverId(membersId)
+                .accountId(paymentAccountId)
+                .notificationType("PAYMENT")
+                .amount(request.getForeignAmount() != null ? Math.round(request.getForeignAmount())
+                        : request.getKrwAmount())
+                .build();
+        notificationClient.sendNotification(notificationRequest);
 
         // 응답 생성
         PaymentResponse.PaymentInfo paymentInfo = PaymentResponse.PaymentInfo.builder()

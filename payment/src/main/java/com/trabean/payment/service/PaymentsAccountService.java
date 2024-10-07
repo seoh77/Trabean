@@ -184,11 +184,12 @@ public class PaymentsAccountService {
         return response.get("userKey");
     }
 
-    public void validateTravelAccountMembers(Long accountId) {
+    public TravelAccountMemberListResponse validateTravelAccountMembers(Long accountId) {
         try {
             TravelAccountMemberListResponse response = accountClient.getTravelAccountMembers(accountId,
                     UserHeaderInterceptor.userId.get(), UserHeaderInterceptor.userKey.get());
             log.info(response.toString() + "민우 API 호출한거 (여행통장 멤버인지 조회)");
+            return response;
         } catch (FeignException error) {
             if (error.status() == 404) {
                 throw new PaymentsException("권한이 거부되었습니다.", HttpStatus.UNAUTHORIZED);
