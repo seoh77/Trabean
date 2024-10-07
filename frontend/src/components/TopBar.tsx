@@ -7,10 +7,12 @@ interface topBar {
   isLogo: boolean;
   // eslint-disable-next-line react/require-default-props
   page?: string;
+  // eslint-disable-next-line react/require-default-props
+  path?: string;
   isWhite: boolean;
 }
 
-const TopBar: React.FC<topBar> = ({ isLogo, page, isWhite }) => {
+const TopBar: React.FC<topBar> = ({ isLogo, page, isWhite, path }) => {
   const navigate = useNavigate();
 
   // 배경색 클래스 설정
@@ -21,6 +23,14 @@ const TopBar: React.FC<topBar> = ({ isLogo, page, isWhite }) => {
       "bg-white": isWhite,
     },
   );
+
+  const goNavigate = () => {
+    if (path === "" || path === null || path === undefined) {
+      navigate(-1);
+    } else {
+      navigate(path);
+    }
+  };
 
   return (
     <div
@@ -33,7 +43,7 @@ const TopBar: React.FC<topBar> = ({ isLogo, page, isWhite }) => {
         {/* 뒤로가기 버튼 */}
         <span
           className="absolute left-3 cursor-pointer"
-          onClick={() => navigate(-1)}
+          onClick={goNavigate}
           role="presentation"
         >
           ←
