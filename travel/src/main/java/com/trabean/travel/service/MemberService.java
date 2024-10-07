@@ -76,16 +76,27 @@ public class MemberService {
         mailSender.send(mimeMessage);
     }
 
+    @Transactional
     public String join(MemberJoinRequestDto memberJoinRequestDto) {
         Long userId = UserHeaderInterceptor.userId.get();
+        String email = userClient.getUserEmail(userId).getUserEmail();
+
         Long krwAccountId = memberJoinRequestDto.getAccountId();
-        List<Long> foreignAccountIdList = getChildAccounts(krwAccountId);
+        KrwTravelAccount krwTravelAccount = krwTravelAccountRepository.findByAccountId(krwAccountId);
+        Invitation invitation = invitationRepository.findByEmailAndAccount(email, krwTravelAccount);
 
-        MemberJoinApiRequestDto memberJoinApiRequestDto = new MemberJoinApiRequestDto(
-                userId, krwAccountId, foreignAccountIdList
-        );
+        if(invitation != null && !invitation.isAccepted()) {
+            List<Long> foreignAccountIdList = getChildAccounts(krwAccountId);
 
-        return accountClient.joinMember(memberJoinApiRequestDto).getMessage();
+            MemberJoinApiRequestDto memberJoinApiRequestDto = new MemberJoinApiRequestDto(
+                    userId, krwAccountId, foreignAccountIdList
+            );
+
+            invitation.changeIsAccepted(true);
+            return accountClient.joinMember(memberJoinApiRequestDto).getMessage();
+        }
+
+        return null;
     }
 
     public String changeRole(MemberRoleChangeRequestDto memberRoleChangeRequestDto) {

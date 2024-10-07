@@ -46,4 +46,8 @@ public class Invitation {
         this.account = account;
     }
 
+    public void changeIsAccepted(boolean isAccepted) {
+        this.isAccepted = isAccepted;
+    }
+
 }
