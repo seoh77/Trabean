@@ -1,6 +1,5 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import "../../index.css";
 
 // 국기 이미지 파일 import
 import usdFlag from "../../assets/flagIcon/usd.png";
