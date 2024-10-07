@@ -2,8 +2,10 @@ package com.trabean.travel.service;
 
 import com.trabean.interceptor.UserHeaderInterceptor;
 import com.trabean.travel.callApi.client.AccountClient;
+import com.trabean.travel.callApi.client.UserClient;
 import com.trabean.travel.callApi.dto.request.MemberJoinApiRequestDto;
 import com.trabean.travel.callApi.dto.request.MemberRoleUpdateApiRequestDto;
+import com.trabean.travel.callApi.dto.response.UserEmailApiResponseDto;
 import com.trabean.travel.dto.request.InvitaionRequestDto;
 import com.trabean.travel.dto.request.MemberJoinRequestDto;
 import com.trabean.travel.dto.request.MemberRoleChangeRequestDto;
@@ -34,6 +36,7 @@ public class MemberService {
     private final KrwTravelAccountRepository krwTravelAccountRepository;
 
     private final AccountClient accountClient;
+    private final UserClient userClient;
 
     @Transactional
     public void invite(InvitaionRequestDto invitaionRequestDto) {
@@ -108,5 +111,20 @@ public class MemberService {
         }
 
         return foreignAccountIdList;
+    }
+
+    public Boolean isInviteMember(Long accountId) {
+        Long userId = UserHeaderInterceptor.userId.get();
+        String email = userClient.getUserEmail(userId).getUserEmail();
+
+        KrwTravelAccount account = krwTravelAccountRepository.findByAccountId(accountId);
+
+        Invitation invitation = invitationRepository.findByEmailAndAccount(email, account);
+
+        if(invitation != null) {
+            return true;
+        }
+
+        return false;
     }
 }

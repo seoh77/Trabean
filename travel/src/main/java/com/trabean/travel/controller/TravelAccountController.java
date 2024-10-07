@@ -190,4 +190,9 @@ public class TravelAccountController {
     public ResponseEntity<String> getAccountName(@PathVariable Long accountId) {
         return ResponseEntity.ok(travelAccountService.getAccountName(accountId));
     }
+
+    @GetMapping("/invite-member/{accountId}")
+    public ResponseEntity<Boolean> isInviteMember(@PathVariable Long accountId) {
+        return ResponseEntity.ok(memberService.isInviteMember(accountId));
+    }
 }
