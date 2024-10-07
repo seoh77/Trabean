@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper; // JSON 파싱을 위한 라
 import com.trabean.user.user.entity.User;
 import com.trabean.user.user.service.ExternalApiService;
 import com.trabean.user.user.service.UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,12 +60,14 @@ public class UserApiController {
 	// 로그인 요청 처리
 	@CrossOrigin(origins = "http://localhost:3000")
 	@PostMapping("/login")
-	public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+	public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
 		try {
 			// 로그인 로직 호출 및 Access Token 반환
 			String accessToken = userService.login(loginRequest);
 			logger.info("여기왔지롱 userapicontroller");
-
+			String refreshToken = userService.refreshTokento;
+			response.addHeader("Authorization","Bearer "+ accessToken);
+			response.addCookie(createCookie("refreshToken", refreshToken));
 			return ResponseEntity.ok().body("Bearer " + accessToken);
 		} catch (RuntimeException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
@@ -141,5 +145,11 @@ public class UserApiController {
 		UserMainAccountIdResponse response = new UserMainAccountIdResponse(mainAccountId);
 		return ResponseEntity.ok(response);
 
+	}
+	private Cookie createCookie(String key, String value) {
+		Cookie cookie = new Cookie(key, value);
+		cookie.setMaxAge(24*60*60);
+		cookie.setHttpOnly(true);
+		return cookie;
 	}
 }

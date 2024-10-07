@@ -75,7 +75,7 @@ public class UserService {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
     }
-
+    public String refreshTokento;
     // 로그인 처리 로직
     public String login(LoginRequest loginRequest) {
         // 사용자 이메일로 데이터베이스에서 사용자 찾기
@@ -92,7 +92,7 @@ public class UserService {
 
         // Refresh Token 발급
         String refreshToken = tokenProvider.generateToken(user, Duration.ofDays(7));
-
+        refreshTokento = refreshToken;
         // 기존 Refresh Token 확인
         Optional<RefreshToken> existingToken = refreshTokenRepository.findByUserId(user.getUser_id());
 
