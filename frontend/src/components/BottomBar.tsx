@@ -16,7 +16,9 @@ const BottomBar: React.FC = () => {
   );
   const imgClass = classNames("w-[25px] absolute -bottom-1");
   const textClass = classNames("text-xs absolute -bottom-6");
-  const isShowBottom = !location.pathname.startsWith("/payment/qr");
+  const isShowBottom =
+    !location.pathname.startsWith("/payment/qr") &&
+    !location.pathname.startsWith("/login");
 
   return (
     <>

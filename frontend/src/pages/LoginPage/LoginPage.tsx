@@ -55,7 +55,7 @@ function LoginPage() {
   };
 
   return (
-    <div className="bg-primary-light w-full h-full flex flex-col justify-center items-center">
+    <div className="bg-primary-light w-full h-dvh flex flex-col justify-center items-center">
       <img src={bean} alt="아이콘" className="w-[40px] mb-7" />
       <div className="bg-white w-[290px] h-[303px] rounded-3xl flex flex-col justify-between items-center py-7">
         <h3 className="text-gray-700 font-semibold text-4">Login</h3>
