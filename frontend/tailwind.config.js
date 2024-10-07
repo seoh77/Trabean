@@ -1,5 +1,5 @@
 /** @type {import("tailwindcss").Config} */
-export default {
+module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"], // HTML 및 JS 파일 경로
   theme: {
     extend: {
