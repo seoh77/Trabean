@@ -57,7 +57,8 @@ const DomesticTravelAccountPage: React.FC = () => {
 
   // 함수 모음
   const handleNBbang = () => {
-    alert("친구들과 N빵하기 누름!!!!!!");
+    // alert("친구들과 N빵하기 누름!!!!!!");
+    nav("/travel/split"); // 비밀번호 입력 페이지로 이동
   };
 
   const handlePayment = () => {

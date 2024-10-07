@@ -84,8 +84,9 @@ const Password: React.FC = () => {
       currency &&
       (krwAmount || foreignAmount)
     ) {
-      updatePaymentInfo();
+      return;
     }
+    updatePaymentInfo();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [merchantId, currency, krwAmount, foreignAmount]);
 

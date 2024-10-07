@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 
+import { useNavigate } from "react-router-dom";
 import bean from "../../assets/bean.png";
 import userIcon from "../../assets/icon/userIcon.png";
 import keyIcon from "../../assets/icon/keyIcon.png";
@@ -8,6 +9,8 @@ import useAuthStore from "../../store/useAuthStore";
 import client from "../../client";
 
 function LoginPage() {
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState<string | null>(null);
   const [password, setPassword] = useState<string | null>(null);
 
@@ -27,6 +30,7 @@ function LoginPage() {
       const response = await client().get("/api/accounts/main-account");
       const { paymentAccountId } = response.data;
       console.log(response.data);
+      localStorage.setItem("paymentAccountId", paymentAccountId);
       // Store에 paymentAccountId 저장
       useAuthStore.setState({ paymentAccountId });
     } catch (error) {
@@ -41,10 +45,13 @@ function LoginPage() {
       { withCredentials: true },
     );
 
-    const token = response.data.split(" ")[1];
-    localStorage.setItem("accessToken", token);
-    setAccessToken(token);
-    getMainPaymentAccount();
+    if (response.status === 200) {
+      const token = response.data.split(" ")[1];
+      localStorage.setItem("accessToken", token);
+      setAccessToken(token);
+      getMainPaymentAccount();
+      navigate("/");
+    }
   };
 
   return (
