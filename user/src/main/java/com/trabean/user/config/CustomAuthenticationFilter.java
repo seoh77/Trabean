@@ -96,7 +96,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         accessTokenCookie.setMaxAge(7*24*60 * 60); // 30분
     
         // 쿠키 설정 (refreshToken)
-        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+        Cookie refreshTokenCookie = new Cookie("refreshToken윤희", refreshToken);
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setSecure(true); // HTTPS에서만 동작
         refreshTokenCookie.setPath("/");
@@ -114,8 +114,8 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         response.setCharacterEncoding("UTF-8");
         response.setStatus(HttpServletResponse.SC_OK);
         response.getWriter().write(new ObjectMapper().writeValueAsString(responseBody));
-        response.addHeader("Authorization","Bearer "+ accessToken);
-        response.addCookie(createCookie("refreshToken", refreshToken));
+        response.addHeader("Authorization","Bearer뀨 "+ accessToken);
+        response.addCookie(createCookie("refreshToken뀨", refreshToken));
         response.setStatus(HttpStatus.OK.value());  
     }
     
