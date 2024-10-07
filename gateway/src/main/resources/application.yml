@@ -43,10 +43,10 @@ spring:
               - DELETE
               - OPTIONS
       routes: # ??? ?? ??아
-        - id: chatbotRoute
-          uri: lb://CHATBOT
+        - id: accountRoute
+          uri: lb://ACCOUNT
           predicates:
-            - Path=/api/chatbot/**
+            - Path=/api/accounts/**
           filters:
             - name: JwtFilter  # JwtFilter를 이 라우트에 적용
 
