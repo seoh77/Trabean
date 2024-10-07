@@ -92,7 +92,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
         accessTokenCookie.setHttpOnly(true);
         accessTokenCookie.setSecure(true); // HTTPS에서만 동작
-        accessTokenCookie.setPath("/");
+        accessTokenCookie.setPath("/api/user/login");
         accessTokenCookie.setMaxAge(7*24*60 * 60); // 30분
     
         // 쿠키 설정 (refreshToken)
