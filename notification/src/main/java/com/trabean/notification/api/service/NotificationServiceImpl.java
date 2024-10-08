@@ -44,6 +44,6 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public boolean getStatus(Long userId) {
-        return notificationRepository.existsByReceiverIdAndRead(userId, false);
+        return notificationRepository.existsByReceiverIdAndIsRead(userId, false);
     }
 }

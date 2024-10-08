@@ -11,5 +11,5 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 //    boolean existsByIsRead(boolean isRead);
 
 
-    boolean existsByReceiverIdAndRead(Long userId, boolean isRead);
+    boolean existsByReceiverIdAndIsRead(Long userId, boolean isRead);
 }
