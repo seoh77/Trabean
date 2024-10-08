@@ -100,6 +100,7 @@ const PaymentHistory: React.FC = () => {
                 endDate={endDate}
                 token={token}
                 formatDate={formatDate}
+                categoryName={category}
               />
             )}
             {category !== "ALL" && (
