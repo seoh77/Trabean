@@ -47,7 +47,9 @@ public class NotificationController {
 
     @GetMapping(value = "/status", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter handleSse() {
-        SseEmitter sseEmitter = new SseEmitter();
+        
+        SseEmitter sseEmitter = new SseEmitter(60000L); // 60초 타임아웃 설정
+
         new Thread(() -> {
             try {
                 while (true) {
