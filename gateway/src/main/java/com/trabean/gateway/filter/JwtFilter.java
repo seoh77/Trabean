@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+import java.net.URI;
 import java.util.Objects;
 
 /**
@@ -42,16 +43,15 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
             logger.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@jwt filter!"); // 필터가 실행됨을 알림
 
             HttpHeaders headers = exchange.getRequest().getHeaders(); // 요청의 HTTP 헤더를 가져옴
-//            String accessToken = headers.getFirst("accessToken"); // 'accessToken' 헤더에서 토큰 값을 가져옴
-
-//            null이면 nullPointException 발생하는 코드
-            String accessToken = Objects.requireNonNull(headers.getFirst("Authorization")).substring(7); // 'accessToken' 헤더에서 토큰 값을 가져옴
-
-
-            // accessToken이 존재하지 않을 경우
-            if (accessToken == null) {
+            String accessToken = "";
+            try {
+                accessToken = Objects.requireNonNull(headers.getFirst("Authorization")).substring(7); // 'Authorization' 헤더에서 토큰 값을 가져옴
+            } catch (NullPointerException e) {
                 logger.info("accessToken is null!"); // accessToken이 없음을 로그에 기록
-                exchange.getResponse().setStatusCode(HttpStatus.BAD_REQUEST); // 400 Bad Request 응답 설정
+//                exchange.getResponse().setStatusCode(HttpStatus.BAD_REQUEST); // 400 Bad Request 응답 설정
+
+                exchange.getResponse().setStatusCode(HttpStatus.FOUND);
+                exchange.getResponse().getHeaders().setLocation(URI.create("/login"));
                 return exchange.getResponse().setComplete(); // 응답을 완료 상태로 설정
             }
 
@@ -60,6 +60,7 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
                 logger.warn("accessToken is not valid."); // 유효하지 않은 accessToken 로그 출력
                 exchange.getResponse().setStatusCode(HttpStatus.BAD_REQUEST); // 400 Bad Request 응답 설정
                 return exchange.getResponse().setComplete(); // 응답을 완료 상태로 설정
+
             }
 
             logger.info("accessToken has been validated."); // 유효한 토큰 로그 출력
