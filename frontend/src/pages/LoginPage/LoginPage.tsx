@@ -27,7 +27,7 @@ function LoginPage() {
   const getMainPaymentAccount = async () => {
     try {
       // API 요청을 통해 결제 계좌 ID 가져오기
-      const response = await client().get("/api/accounts/main-account");
+      const response = await client().get("/api/payments/main-account");
       const { paymentAccountId } = response.data;
       console.log(response.data);
       localStorage.setItem("paymentAccountId", paymentAccountId);
