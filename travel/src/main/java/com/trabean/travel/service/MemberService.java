@@ -2,9 +2,11 @@ package com.trabean.travel.service;
 
 import com.trabean.interceptor.UserHeaderInterceptor;
 import com.trabean.travel.callApi.client.AccountClient;
+import com.trabean.travel.callApi.client.NotificationClient;
 import com.trabean.travel.callApi.client.UserClient;
 import com.trabean.travel.callApi.dto.request.MemberJoinApiRequestDto;
 import com.trabean.travel.callApi.dto.request.MemberRoleUpdateApiRequestDto;
+import com.trabean.travel.callApi.dto.request.NotificationApiRequestDto;
 import com.trabean.travel.callApi.dto.response.UserEmailApiResponseDto;
 import com.trabean.travel.dto.request.InvitaionRequestDto;
 import com.trabean.travel.dto.request.MemberJoinRequestDto;
@@ -37,13 +39,39 @@ public class MemberService {
 
     private final AccountClient accountClient;
     private final UserClient userClient;
+    private final NotificationClient notificationClient;
 
     @Transactional
     public void invite(InvitaionRequestDto invitaionRequestDto) {
-        Long accountId = invitaionRequestDto.getAccountId();
-        KrwTravelAccount account = krwTravelAccountRepository.findByAccountId(accountId);
-
         String email = invitaionRequestDto.getEmail();
+
+        // 메일발송
+        try {
+            sendMail(email);
+        } catch (MessagingException e) {
+            throw new RuntimeException("메일 전송 중 문제가 발생했습니다.", e);
+        }
+
+        // 우리 회원이라면 알림을 추가로 발송
+        Long accountId = invitaionRequestDto.getAccountId();
+        Long receiverId = userClient.isMember(email);
+
+        if(receiverId != null) {
+            List<Long> receiverList = new ArrayList<>();
+            receiverList.add(receiverId);
+
+            NotificationApiRequestDto notificationApiRequestDto = NotificationApiRequestDto.builder()
+                    .senderId(UserHeaderInterceptor.userId.get())
+                    .receiverId(receiverList)
+                    .accountId(accountId)
+                    .notificationType("INVITE")
+                    .build();
+
+            notificationClient.postNotification(notificationApiRequestDto);
+        }
+
+        // Invitation DB에 저장
+        KrwTravelAccount account = krwTravelAccountRepository.findByAccountId(accountId);
 
         Invitation invitation = Invitation.builder()
                 .email(email)
@@ -51,12 +79,6 @@ public class MemberService {
                 .inviteDate(new Timestamp(System.currentTimeMillis()))
                 .account(account)
                 .build();
-
-        try {
-            sendMail(email);
-        } catch (MessagingException e) {
-            throw new RuntimeException("메일 전송 중 문제가 발생했습니다.", e);
-        }
 
         invitationRepository.save(invitation);
     }
