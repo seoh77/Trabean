@@ -64,7 +64,7 @@ const PaymentList: React.FC = () => {
   };
 
   return (
-    <div className="w-full bg-[#F4F4F5] h-full pt-[4.375rem] flex flex-col items-center">
+    <div className="w-full bg-[#F4F4F5] pt-[4.375rem] flex flex-col items-center">
       <div className="w-[300px]">
         <h1 className="text-base text-gray-900 font-semibold flex justify-between">
           지출 내역

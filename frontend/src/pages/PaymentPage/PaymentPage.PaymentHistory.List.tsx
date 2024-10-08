@@ -17,6 +17,7 @@ interface ListProps {
   startDate: string | null;
   endDate: string | null;
   formatDate: (date: string) => string;
+  categoryName: string | null;
 }
 
 interface PaymentItem {
@@ -35,6 +36,7 @@ const List: React.FC<ListProps> = ({
   endDate,
   token,
   formatDate,
+  categoryName,
 }) => {
   const [payments, setPayments] = useState<PaymentItem[]>([]);
   const [page, setPage] = useState<number>(1);
@@ -64,7 +66,12 @@ const List: React.FC<ListProps> = ({
 
   const fetchPaymentList = useCallback(
     async (reset = false) => {
-      if (isLoading || (totalPage !== null && page > totalPage)) return;
+      if (
+        isLoading ||
+        (totalPage !== null && page > totalPage) ||
+        categoryName !== "ALL"
+      )
+        return;
 
       try {
         setIsLoading(true);
