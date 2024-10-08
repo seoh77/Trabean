@@ -14,6 +14,7 @@ import com.trabean.common.InternalServerSuccessResponseDTO;
 import com.trabean.common.SsafySuccessResponseDTO;
 import com.trabean.exception.custom.InvalidPasswordException;
 import com.trabean.exception.custom.UserAccountRelationNotFoundException;
+import com.trabean.external.msa.notification.client.NotificationClient;
 import com.trabean.external.msa.travel.client.TravelClient;
 import com.trabean.external.msa.travel.dto.request.SaveDomesticTravelAccountRequestDTO;
 import com.trabean.external.msa.travel.dto.request.SaveForeignTravelAccountRequestDTO;
@@ -64,6 +65,7 @@ public class AccountService {
 
     private final UserClient userClient;
     private final TravelClient travelClient;
+    private final NotificationClient notificationClient;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -109,6 +111,7 @@ public class AccountService {
                     .accountName(savedAccountName)
                     .bankName(account.getBankName())
                     .accountBalance(account.getAccountBalance())
+                    .accountType(savedAccount.getAccountType())
                     .build();
 
             if (savedAccount.getAccountId().equals(mainAccountId)) {

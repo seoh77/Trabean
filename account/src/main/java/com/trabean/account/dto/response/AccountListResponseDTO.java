@@ -1,6 +1,7 @@
 package com.trabean.account.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.trabean.account.domain.Account.AccountType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,5 +29,6 @@ public class AccountListResponseDTO {
         private String accountName;
         private String bankName;
         private Long accountBalance;
+        private AccountType accountType;
     }
 }
