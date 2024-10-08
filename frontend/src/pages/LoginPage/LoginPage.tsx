@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useState } from "react";
 
 import { useNavigate } from "react-router-dom";
@@ -40,18 +40,32 @@ function LoginPage() {
   };
 
   const onClickLogin = async () => {
-    const response = await axios.post(
-      `${process.env.REACT_APP_END_POINT}/api/user/login`,
-      { email, password },
-      { withCredentials: true },
-    );
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_END_POINT}/api/user/login`,
+        { email, password },
+        { withCredentials: true },
+      );
 
-    if (response.status === 200) {
-      const token = response.data.split(" ")[1];
-      localStorage.setItem("accessToken", token);
-      setAccessToken(token);
-      getMainPaymentAccount();
-      navigate("/");
+      if (response.status === 200) {
+        const token = response.data.split(" ")[1];
+        localStorage.setItem("accessToken", token);
+        setAccessToken(token);
+        getMainPaymentAccount();
+        navigate("/");
+      }
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        if (error.response && error.response.status === 400) {
+          alert("비밀번호가 일치하지 않습니다.");
+          setEmail(null);
+          setPassword(null);
+        } else {
+          console.error("로그인 중 오류가 발생했습니다.", error);
+        }
+      } else {
+        console.error("알 수 없는 오류가 발생했습니다.", error);
+      }
     }
   };
 

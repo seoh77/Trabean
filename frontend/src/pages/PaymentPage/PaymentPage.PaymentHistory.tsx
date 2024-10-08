@@ -6,7 +6,6 @@ import CategoryList from "./PaymentPage.PaymentHistory.CategoryList";
 import TopBar from "../../components/TopBar";
 
 const PaymentHistory: React.FC = () => {
-  const [token] = useState<string | null>(null);
   const [startDate, setStartDate] = useState<string | null>(null);
   const [endDate, setEndDate] = useState<string | null>(null);
   const [showDate, setShowDate] = useState<boolean>(false);
@@ -87,7 +86,6 @@ const PaymentHistory: React.FC = () => {
           <div className="bg-white rounded-[15px] py-[0.875rem] px-[1rem] flex flex-col items-center h-full">
             <Chart
               handleTotalAmount={handleTotalAmount}
-              token={token}
               startDate={startDate}
               endDate={endDate}
               formatDate={formatDate}
@@ -98,7 +96,6 @@ const PaymentHistory: React.FC = () => {
               <List
                 startDate={startDate}
                 endDate={endDate}
-                token={token}
                 formatDate={formatDate}
                 categoryName={category}
               />
@@ -107,7 +104,6 @@ const PaymentHistory: React.FC = () => {
               <CategoryList
                 startDate={startDate}
                 endDate={endDate}
-                token={token}
                 formatDate={formatDate}
                 categoryName={category}
                 travelAccountId={localStorage.getItem("paymentAccountId")}

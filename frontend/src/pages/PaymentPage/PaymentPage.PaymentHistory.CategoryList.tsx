@@ -13,7 +13,6 @@ import shopping from "../../assets/paymentListIcon/SHOPPING.png";
 import transportation from "../../assets/paymentListIcon/TRANSPORTATION.png";
 
 interface ListProps {
-  token: string | null;
   startDate: string | null;
   endDate: string | null;
   formatDate: (date: string) => string;
@@ -35,7 +34,6 @@ interface PaymentItem {
 const CategoryList: React.FC<ListProps> = ({
   startDate,
   endDate,
-  token,
   formatDate,
   travelAccountId,
   categoryName,
@@ -73,8 +71,9 @@ const CategoryList: React.FC<ListProps> = ({
         isLoading ||
         (totalPage !== null && page > totalPage) ||
         categoryName === "ALL"
-      )
+      ) {
         return;
+      }
 
       try {
         setIsLoading(true);
@@ -109,7 +108,6 @@ const CategoryList: React.FC<ListProps> = ({
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
-      token,
       page,
       totalPage,
       startDate,
@@ -128,7 +126,7 @@ const CategoryList: React.FC<ListProps> = ({
     setPayments([]);
     fetchPaymentList(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token, startDate, endDate, travelAccountId, categoryName]);
+  }, [startDate, endDate, travelAccountId, categoryName]);
 
   // 스크롤 이벤트를 감지하여 무한 스크롤 구현
   useEffect(() => {
@@ -164,7 +162,7 @@ const CategoryList: React.FC<ListProps> = ({
   const maxLength = 7;
 
   return (
-    <div className="w-full bg-white">
+    <div className="w-full">
       {payments && Object.keys(groupedPayments).length > 0
         ? Object.entries(groupedPayments).map(([date, paymentsOnDate]) => (
             <div key={date} className="w-full px-[20px] mb-4">
@@ -180,7 +178,7 @@ const CategoryList: React.FC<ListProps> = ({
                   className="w-full flex mb-4 items-center"
                 >
                   <img
-                    src={categoryIconMap[payment.category] || other}
+                    src={categoryIconMap[categoryName] || other}
                     alt={payment.category}
                     className="w-8 h-8 mr-2"
                   />
