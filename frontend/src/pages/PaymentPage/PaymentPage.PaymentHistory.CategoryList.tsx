@@ -71,8 +71,9 @@ const CategoryList: React.FC<ListProps> = ({
         isLoading ||
         (totalPage !== null && page > totalPage) ||
         categoryName === "ALL"
-      )
+      ) {
         return;
+      }
 
       try {
         setIsLoading(true);
