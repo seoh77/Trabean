@@ -42,7 +42,7 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
             logger.info("@@@@@@@@@@jwt filter!"); // 필터가 실행됨을 알림
 
             String requestURI = exchange.getRequest().getURI().getPath();
-            if (requestURI.equals("/api/user/login") || requestURI.equals("/api/user/signup") || requestURI.equals("/login") || requestURI.equals("/join")) {
+            if (requestURI.equals("/api/user/login") || requestURI.equals("/api/user/signup")) {
                 // 특정 URI일 경우 바로 응답을 완료
                 logger.info(requestURI + " -> 해당 요청은 필터를 사용하지 않음!"); // 필터가 실행됨을 알림
                 return exchange.getResponse().setComplete();
