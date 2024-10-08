@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import beanProfile from "../../assets/bean_profile.png";
-
+// import CustomKeypad from "../AccountCreationPage/Keypad";
 interface Transfer {
   id: number;
   name: string;
@@ -82,7 +82,7 @@ const TransferLists: React.FC = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-6">계좌 선택</h1>
+      <h1 className="text-2xl font-bold mb-6">이체</h1>
       {/* 직접 입력 */}
       <input
         type="text"
