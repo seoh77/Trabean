@@ -79,11 +79,7 @@ const Password: React.FC = () => {
   };
 
   useEffect(() => {
-    if (
-      (merchantId === null || merchantId === undefined) &&
-      currency &&
-      (krwAmount || foreignAmount)
-    ) {
+    if (!merchantId || !currency || (!krwAmount && !foreignAmount)) {
       return;
     }
     updatePaymentInfo();
