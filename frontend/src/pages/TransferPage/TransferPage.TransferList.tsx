@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom"; // useNavigate 추가
 import beanProfile from "../../assets/bean_profile.png";
 import trabeanLogo from "../../assets/logo.png";
+import { formatNumberWithCommas } from "../../utils/formatNumber";
 
 interface TransferDetails {
   id?: number;
@@ -73,7 +74,9 @@ const TransferList: React.FC = () => {
 
       {/* 금액 입력 */}
       <div className="w-full flex justify-center items-center mb-6">
-        <span className="text-2xl font-bold">{amount || "0"} 원</span>
+        <span className="text-2xl font-bold">
+          {formatNumberWithCommas(parseInt(amount, 10)) || "0"} 원
+        </span>
         <button type="button" onClick={handleClear} className="ml-2">
           <img src="/assets/clear-icon.png" alt="clear" className="w-6 h-6" />
         </button>
