@@ -29,5 +29,6 @@ public class NotificationRequestDTO {
     public static enum Type {
         DEPOSIT,
         WITHDRAW,
+        AUTH
     }
 }

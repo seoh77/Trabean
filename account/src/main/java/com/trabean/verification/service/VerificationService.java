@@ -4,6 +4,9 @@ import com.trabean.account.repository.AccountRepository;
 import com.trabean.common.SsafySuccessResponseDTO;
 import com.trabean.external.msa.notification.client.NotificationClient;
 import com.trabean.external.msa.notification.dto.request.NotificationRequestDTO;
+import com.trabean.external.ssafy.domestic.client.DomesticClient;
+import com.trabean.external.ssafy.domestic.dto.request.InquireTransactionHistoryRequestDTO;
+import com.trabean.external.ssafy.domestic.dto.response.InquireTransactionHistoryResponseDTO;
 import com.trabean.external.ssafy.verification.client.VerificationClient;
 import com.trabean.external.ssafy.verification.dto.request.CheckAuthCodeRequestDTO;
 import com.trabean.external.ssafy.verification.dto.request.OpenAccountAuthRequestDTO;
@@ -19,7 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.trabean.external.msa.notification.dto.request.NotificationRequestDTO.Type.DEPOSIT;
+import static com.trabean.external.msa.notification.dto.request.NotificationRequestDTO.Type.AUTH;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +30,7 @@ public class VerificationService {
 
     private final AccountRepository accountRepository;
 
+    private final DomesticClient domesticClient;
     private final VerificationClient verificationClient;
 
     private final NotificationClient notificationClient;
@@ -44,17 +48,25 @@ public class VerificationService {
                 .build();
         OpenAccountAuthResponseDTO openAccountAuthResponseDTO = verificationClient.openAccountAuth(openAccountAuthRequestDTO);
 
-        Long accountId = ValidationUtil.validateAccount(accountRepository.findByAccountNo(requestDTO.getAccountNo())).getAccountId();
+        // SSAFY 금융 API 계좌 거래 내역 조회 (단건) 요청
+        InquireTransactionHistoryRequestDTO inquireTransactionHistoryRequestDTO = InquireTransactionHistoryRequestDTO.builder()
+                .header(RequestHeader.builder()
+                        .apiName("inquireTransactionHistory")
+                        .userKey(UserHeaderInterceptor.userKey.get())
+                        .build())
+                .accountNo(openAccountAuthResponseDTO.getRec().getAccountNo())
+                .transactionUniqueNo(openAccountAuthResponseDTO.getRec().getTransactionUniqueNo())
+                .build();
+        InquireTransactionHistoryResponseDTO inquireTransactionHistoryResponseDTO = domesticClient.inquireTransactionHistory(inquireTransactionHistoryRequestDTO);
 
+        // Notification 서버 입출금 시 알림 생성 요청
         NotificationRequestDTO notificationRequestDTO = NotificationRequestDTO.builder()
                     .senderId(-1L)
                     .receiverIdList(List.of(UserHeaderInterceptor.userId.get()))
-                    .accountId(accountId)
-                    .notificationType(DEPOSIT)
-                    .amount(1L)
+                    .accountId(ValidationUtil.validateAccount(accountRepository.findByAccountNo(requestDTO.getAccountNo())).getAccountId())
+                    .notificationType(AUTH)
+                    .amount(Long.valueOf(inquireTransactionHistoryResponseDTO.getRec().getTransactionSummary().split(" ")[1]))
                 .build();
-
-        // Notification 서버 입출금 시 알림 생성 요청
         notificationClient.sendNotification(notificationRequestDTO);
 
         return SsafySuccessResponseDTO.builder()
