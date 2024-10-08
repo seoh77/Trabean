@@ -21,13 +21,13 @@ spring:
   cloud:
     gateway:
       # 기본 필터 설정 (필요에 따라 주석 해제)
-      # default-filters:
-      #   - name: JwtFilter
-      #     args:
-      #       baseMessage: Spring Cloud Gateway Global Filter
-      #       preLogger: true
-      #       postLogger: true
-      #   - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+      default-filters:
+        #   - name: JwtFilter
+        #     args:
+        #       baseMessage: Spring Cloud Gateway Global Filter
+        #       preLogger: true
+        #       postLogger: true
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
 
       globalcors:
         cors-configurations:
