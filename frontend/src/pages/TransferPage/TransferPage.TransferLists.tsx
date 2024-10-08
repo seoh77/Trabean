@@ -96,7 +96,7 @@ const TransferLists: React.FC = () => {
       <button
         type="button"
         onClick={handleConfirm}
-        className="mb-6 w-full bg-green-500 text-white py-3 rounded-lg text-lg font-semibold"
+        className="mb-6 w-full bg-primary text-white py-3 text-lg font-semibold"
       >
         확인
       </button>

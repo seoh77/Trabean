@@ -60,8 +60,10 @@ const ExchangeSplit: React.FC = () => {
   useEffect(() => {
     // 하드코딩된 데이터를 설정
     setDividedAmount(
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       Math.floor(exampleData.totalAmount! / exampleData.totalNo!),
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const toggleMemberSelection = (member: TravelAccountMember) => {
@@ -109,14 +111,11 @@ const ExchangeSplit: React.FC = () => {
   };
 
   // "N빵 하시겠습니까?" 모달에서 아니오를 누르면 모달만 닫기
-  const cancelNBbang = () => {
-    setStep(1);
-  };
+
   const handleCloseModalfirst = () => {
     setIsVisible(false);
     setStep(1); // step을 초기 상태로 변경
     window.location.reload(); // 페이지 새로고침
-    cancelNBbang();
   };
   return (
     <div className="relative">
@@ -132,7 +131,7 @@ const ExchangeSplit: React.FC = () => {
 
       {/* Modal Wrapper */}
       <div
-        className={`fixed bottom-[60px] left-0 right-0 w-full max-w-[360px] mx-auto mt-4 ${
+        className={`fixed bottom-[0px] left-0 right-0 w-full max-w-[360px] mx-auto mt-4 ${
           isVisible ? "block" : "hidden"
         }`}
         style={{ zIndex: 901 }} // 기본 모달의 z-index
@@ -140,7 +139,7 @@ const ExchangeSplit: React.FC = () => {
         {/* Modal */}
         <div
           role="presentation"
-          className="bg-white p-4 rounded-[40px] shadow-lg border border-gray-300 h-full flex flex-col items-center justify-center"
+          className="bg-white p-4 rounded-t-[40px] shadow-lg border border-gray-300 h-full flex flex-col items-center justify-center"
           onClick={(e) => e.stopPropagation()} // 모달 클릭 시 오버레이 닫히는 동작 방지
         >
           {/* step 1: N빵 목록 */}
