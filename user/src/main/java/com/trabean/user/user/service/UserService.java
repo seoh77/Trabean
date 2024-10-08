@@ -168,6 +168,18 @@ public class UserService {
         return isEmailInDb && isEmailInExternalApi;
     }
 
+    // 내부 DB와 외부 API를 모두 확인하여 이메일 중복 체크
+    public boolean checkEmailDBDuplication(String email) {
+        // 내부 DB에서 이메일 중복 확인
+        boolean isEmailInDb = userRepository.existsByEmail(email);
+
+        // 외부 API에서 이메일 중복 확인
+//        boolean isEmailInExternalApi = checkEmailWithExternalApi(email);
+
+        // 두 조건을 모두 만족해야 중복이 아닌 것으로 처리
+        return isEmailInDb;
+    }
+
     // userId로 사용자 조회 및 payment_account_id 반환
     public UserPaymentAccountIdResponse getUserPaymentAccount(Long userId) {
         Optional<User> userOptional = userRepository.findById(userId);

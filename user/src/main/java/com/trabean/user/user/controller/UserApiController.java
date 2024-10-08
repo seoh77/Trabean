@@ -122,6 +122,8 @@ public class UserApiController {
 		return ResponseEntity.ok(response);
 	}
 
+
+
 	@PostMapping("/mainAccountId")
 	public ResponseEntity<String> updateMainAccountId(@RequestBody MainAccountIdRequest request) {
 		boolean isUpdated = userService.updateMainAccountId(request.getUserId(), request.getMainAccountId());
@@ -132,6 +134,12 @@ public class UserApiController {
 
 		}
 	}
+
+	@GetMapping("/emailDB/{email}")
+	public ResponseEntity<Boolean> checkEmailDBDuplication(@PathVariable String email) {
+		return ResponseEntity.ok(userService.checkEmailDBDuplication(email));
+	}
+
 
 	@GetMapping("/email/{email}")
 	public ResponseEntity<Boolean> checkEmailDuplication(@PathVariable String email) {
