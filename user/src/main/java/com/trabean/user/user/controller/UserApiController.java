@@ -136,8 +136,11 @@ public class UserApiController {
 	}
 
 	@GetMapping("/emailDB/{email}")
-	public ResponseEntity<Boolean> checkEmailDBDuplication(@PathVariable String email) {
-		return ResponseEntity.ok(userService.checkEmailDBDuplication(email));
+	public ResponseEntity<Long> checkEmailDBDuplication(@PathVariable String email) {
+		if (userService.checkEmailDBDuplication(email)){
+			return ResponseEntity.ok(userService.findByEmail(email).getUser_id());
+		};
+		return ResponseEntity.ok(null);
 	}
 
 
