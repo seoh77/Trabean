@@ -69,7 +69,12 @@ const CategoryList: React.FC<ListProps> = ({
 
   const fetchPaymentList = useCallback(
     async (reset = false) => {
-      if (isLoading || (totalPage !== null && page > totalPage)) return;
+      if (
+        isLoading ||
+        (totalPage !== null && page > totalPage) ||
+        categoryName === "ALL"
+      )
+        return;
 
       try {
         setIsLoading(true);

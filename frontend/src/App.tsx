@@ -33,7 +33,7 @@ import InvitePage from "./pages/InvitePage/InvitePage";
 
 function App() {
   return (
-    <div className="App pb-[200px]">
+    <div className="App">
       <Routes>
         <Route path="/" element={<MainPage />} />
         <Route path="/login" element={<LoginPage />} />
