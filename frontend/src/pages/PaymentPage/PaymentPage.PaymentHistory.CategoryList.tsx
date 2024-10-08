@@ -17,7 +17,7 @@ interface ListProps {
   startDate: string | null;
   endDate: string | null;
   formatDate: (date: string) => string;
-  travelAccountId: number;
+  travelAccountId: string | null;
   categoryName: string;
   handleTotalAmount: (amount: string) => void;
 }
