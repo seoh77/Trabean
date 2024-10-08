@@ -52,10 +52,7 @@ function LoginPage() {
       setAccessToken(token);
       getMainPaymentAccount();
       navigate("/");
-    } else if (
-      response.status === 400 &&
-      response.data === "비밀번호가 일치하지 않습니다."
-    ) {
+    } else if (response.status === 400) {
       alert("비밀번호가 일치하지 않습니다.");
       setEmail(null);
       setPassword(null);
