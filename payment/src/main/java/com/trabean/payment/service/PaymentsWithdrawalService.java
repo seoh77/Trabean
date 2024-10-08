@@ -5,6 +5,7 @@ import com.trabean.payment.dto.request.Header;
 import com.trabean.payment.dto.request.RequestPaymentRequest;
 import com.trabean.payment.dto.request.WithdrawalRequest;
 import com.trabean.payment.dto.response.WithdrawalResponse;
+import com.trabean.payment.entity.Merchants;
 import com.trabean.payment.exception.PaymentsException;
 import com.trabean.payment.repository.MerchantsRepository;
 import com.trabean.payment.util.ApiName;
@@ -13,7 +14,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -26,8 +26,9 @@ public class PaymentsWithdrawalService {
     private final PaymentsAccountService paymentsAccountService;
     private final DemandDepositClient demandDepositClient;
     private static final Logger logger = LoggerFactory.getLogger(PaymentsWithdrawalService.class);
+    private final MerchantsRepository merchantsRepository;
 
-//    // 유저 키 임시 설정
+    //    // 유저 키 임시 설정
 //    @Value("9e10349e-91e9-474d-afb4-564b24178d9f")
 //    private String userKey;
 //
@@ -41,9 +42,12 @@ public class PaymentsWithdrawalService {
                 : (long) request.getForeignAmount().doubleValue();
         logger.info("출금 중 오류 발생 : " + request.getKrwAmount());
 
+        Merchants merchant = merchantsRepository.findById(request.getMerchantId())
+                .orElseThrow(() -> new PaymentsException("결제할 가맹점 정보를 찾지 못했습니다.", HttpStatus.BAD_REQUEST));
+
         WithdrawalRequest withdrawalRequest = new WithdrawalRequest(
                 Header.builder().apiName(apiType).userKey(userKey).build(),
-                accountNo, price, "(수시 입출금): 출금"
+                accountNo, price, merchant.getName()
         );
 
         try {
