@@ -51,13 +51,18 @@ public class NotificationController {
         new Thread(() -> {
             try {
                 while (true) {
-                    sseEmitter.send(notificationService.getStatus(UserHeaderInterceptor.userId.get()) ? "1" : "0");
+                    String result = notificationService.getStatus(UserHeaderInterceptor.userId.get()) ? "1" : "0";
+                    sseEmitter.send(result);
+                    log.info("정보를 한번 보내볼게요 : " + result);
                     Thread.sleep(5000); // 5초마다 체크
                 }
             } catch (IOException | InterruptedException e) {
+                log.info("정보 보내는 거 종료");
                 sseEmitter.completeWithError(e);
             }
+            log.info("정보 보내는 거 종료");
         }).start();
+        log.info("정보 보내는 거 종료");
         return sseEmitter;
     }
 //
