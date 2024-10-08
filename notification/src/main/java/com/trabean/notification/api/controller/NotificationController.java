@@ -11,9 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Flux;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.time.Duration;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -46,9 +46,19 @@ public class NotificationController {
 
 
     @GetMapping(value = "/status", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<String> streamEvents() {
-        return Flux.interval(Duration.ofSeconds(1))
-                .map(sequence -> notificationService.getStatus(UserHeaderInterceptor.userId.get()) ? "1" : "0");
+    public SseEmitter handleSse() {
+        SseEmitter sseEmitter = new SseEmitter();
+        new Thread(() -> {
+            try {
+                while (true) {
+                    sseEmitter.send(notificationService.getStatus(UserHeaderInterceptor.userId.get()) ? "1" : "0");
+                    Thread.sleep(5000); // 5초마다 체크
+                }
+            } catch (IOException | InterruptedException e) {
+                sseEmitter.completeWithError(e);
+            }
+        }).start();
+        return sseEmitter;
     }
 //
 //    @GetMapping("/test")
