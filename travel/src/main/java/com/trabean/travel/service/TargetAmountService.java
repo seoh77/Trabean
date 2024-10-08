@@ -3,6 +3,7 @@ package com.trabean.travel.service;
 import com.trabean.interceptor.UserHeaderInterceptor;
 import com.trabean.travel.callApi.client.AccountClient;
 import com.trabean.travel.callApi.client.DemandDepositClient;
+import com.trabean.travel.callApi.client.UserClient;
 import com.trabean.travel.callApi.dto.request.AccountHistoryApiRequestDto;
 import com.trabean.travel.callApi.dto.response.AccountHistoryApiResponseDto;
 import com.trabean.travel.callApi.dto.response.MemberInfoApiResponseDto;
@@ -28,6 +29,7 @@ public class TargetAmountService {
     private final CommonAccountService commonAccountService;
     private final DemandDepositClient demandDepositClient;
     private final AccountClient accountClient;
+    private final UserClient userClient;
 
     static class Member {
         private Long userId;
@@ -96,11 +98,23 @@ public class TargetAmountService {
 
         List<MemberDetail> memberInfoApiResponseDto = accountClient.getMemberInfo(accountId, userId).getMembers();
         for (MemberDetail member : memberInfoApiResponseDto) {
+            Long memberId = member.getUserId();
+            System.out.println("member.getUserId(): " + memberId);
+            Long mainAccountId = userClient.getMainAccountId(memberId).getMainAccountId();
+            System.out.println("mainAccountId: " + mainAccountId);
+            String mainAccountNo = null;
+
+            if(mainAccountId != null) {
+                mainAccountNo = commonAccountService.getAccountNo(mainAccountId);
+            }
+
             memberList.add(MemberInfo.builder()
-                    .userId(member.getUserId())
-                    .userName(member.getUserName())
-                    .role(member.getRole())
-                    .amount(depositMap.get(member.getUserId()))
+                            .userId(member.getUserId())
+                            .userName(member.getUserName())
+                            .role(member.getRole())
+                            .amount(depositMap.get(member.getUserId()))
+                            .mainAccountId(mainAccountId)
+                            .mainAccountNumber(mainAccountNo)
                     .build());
         }
 

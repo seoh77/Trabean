@@ -1,5 +1,6 @@
 package com.trabean.travel.callApi.client;
 
+import com.trabean.travel.callApi.dto.response.MainAccountIdApiResponseDto;
 import com.trabean.travel.callApi.dto.response.UserEmailApiResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.FeignClientsConfiguration;
@@ -20,5 +21,11 @@ public interface UserClient {
      */
     @GetMapping("/emailDB/{email}")
     Long isMember(@PathVariable String email);
+
+    /**
+     * User API : userId로 mainAccountId 반환
+     */
+    @GetMapping("/mainAccountId/{userId}")
+    MainAccountIdApiResponseDto getMainAccountId(@PathVariable Long userId);
 
 }

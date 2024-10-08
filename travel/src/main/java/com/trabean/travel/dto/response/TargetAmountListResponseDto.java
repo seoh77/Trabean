@@ -22,6 +22,8 @@ public class TargetAmountListResponseDto {
         private String userName;
         private String role;
         private Double amount;
+        private Long mainAccountId;
+        private String mainAccountNumber;
     }
 
 }
