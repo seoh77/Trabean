@@ -41,4 +41,9 @@ public class NotificationServiceImpl implements NotificationService {
         Notification notification = notificationRepository.findById(notificationId).orElseThrow(() -> NotificationReadException.instance);
         notification.setRead(true);
     }
+
+    @Override
+    public boolean getStatus(Long userId) {
+        return notificationRepository.existsByReceiverIdAndRead(userId, false);
+    }
 }

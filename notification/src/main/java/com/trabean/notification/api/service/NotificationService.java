@@ -13,4 +13,6 @@ public interface NotificationService {
     public List<NotificationReadRes> findByUserId(Long userId);
 
     void updateIsReadById(Long notificationId);
+
+    boolean getStatus(Long userId);
 }

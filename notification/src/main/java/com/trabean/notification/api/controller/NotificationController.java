@@ -8,9 +8,12 @@ import com.trabean.notification.api.service.NotificationService;
 import com.trabean.notification.interceptor.UserHeaderInterceptor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 
+import java.time.Duration;
 import java.util.List;
 
 @RestController
@@ -39,6 +42,13 @@ public class NotificationController {
     public ResponseEntity<?> updateIsRead(@PathVariable Long notificationId) {
         notificationService.updateIsReadById(notificationId);
         return ResponseEntity.ok().build();
+    }
+
+
+    @GetMapping(value = "/status", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<String> streamEvents() {
+        return Flux.interval(Duration.ofSeconds(1))
+                .map(sequence -> notificationService.getStatus(UserHeaderInterceptor.userId.get()) ? "1" : "0");
     }
 //
 //    @GetMapping("/test")
