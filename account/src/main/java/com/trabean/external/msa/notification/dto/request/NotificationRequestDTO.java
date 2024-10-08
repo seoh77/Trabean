@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.List;
+
 @Builder
 @Getter
 public class NotificationRequestDTO {
@@ -12,7 +14,7 @@ public class NotificationRequestDTO {
     private Long senderId;
 
     @JsonProperty("receiverId")
-    private Long receiverId;
+    private List<Long> receiverIdList;
 
     @JsonProperty("accountId")
     private Long accountId;
@@ -25,9 +27,7 @@ public class NotificationRequestDTO {
 
     @Getter
     public static enum Type {
-        INVITE,
         DEPOSIT,
         WITHDRAW,
-        PAYMENT
     }
 }
