@@ -162,7 +162,7 @@ const CategoryList: React.FC<ListProps> = ({
   const maxLength = 7;
 
   return (
-    <div className="w-full bg-red-100">
+    <div className="w-full">
       {payments && Object.keys(groupedPayments).length > 0
         ? Object.entries(groupedPayments).map(([date, paymentsOnDate]) => (
             <div key={date} className="w-full px-[20px] mb-4">
