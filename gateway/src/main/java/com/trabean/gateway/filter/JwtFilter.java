@@ -12,7 +12,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
-import java.net.URI;
 import java.util.Objects;
 
 /**
@@ -48,10 +47,7 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
                 accessToken = Objects.requireNonNull(headers.getFirst("Authorization")).substring(7); // 'Authorization' 헤더에서 토큰 값을 가져옴
             } catch (NullPointerException e) {
                 logger.info("accessToken is null!"); // accessToken이 없음을 로그에 기록
-//                exchange.getResponse().setStatusCode(HttpStatus.BAD_REQUEST); // 400 Bad Request 응답 설정
-
-                exchange.getResponse().setStatusCode(HttpStatus.FOUND);
-                exchange.getResponse().getHeaders().setLocation(URI.create("/login"));
+                exchange.getResponse().setStatusCode(HttpStatus.BAD_REQUEST); // 400 Bad Request 응답 설정
                 return exchange.getResponse().setComplete(); // 응답을 완료 상태로 설정
             }
 

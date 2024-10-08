@@ -49,60 +49,55 @@ spring:
           uri: lb://ACCOUNT
           predicates:
             - Path=/api/accounts/**
-          filters:
-            - name: JwtFilter  # JwtFilter를 이 라우트에 적용
+        #          filters:
+        #            - name: JwtFilter  # JwtFilter를 이 라우트에 적용
 
         - id: chatbotRoute
           uri: lb://CHATBOT
           predicates:
             - Path=/api/chatbot/**
-          filters:
-            - name: JwtFilter  # JwtFilter를 이 라우트에 적용
+        #          filters:
+        #            - name: JwtFilter  # JwtFilter를 이 라우트에 적용
 
         - id: notificationRoute
           #          uri: http://j11a604.p.ssafy.io:8083
           uri: lb://NOTIFICATION
           predicates:
             - Path=/api/notifications/**
-          filters:
-            - name: JwtFilter  # JwtFilter를 이 라우트에 적용
+        #          filters:
+        #            - name: JwtFilter  # JwtFilter를 이 라우트에 적용
 
         - id: paymentRoute
           uri: lb://PAYMENT
           predicates:
             - Path=/api/payments/**
-          filters:
-            - name: JwtFilter  # JwtFilter를 이 라우트에 적용
+        #          filters:
+        #            - name: JwtFilter  # JwtFilter를 이 라우트에 적용
 
         - id: travelRoute
           uri: lb://TRAVEL
           predicates:
             - Path=/api/travel/**
-          filters:
-            - name: JwtFilter  # JwtFilter를 이 라우트에 적용
+        #          filters:
+        #            - name: JwtFilter  # JwtFilter를 이 라우트에 적용
 
         - id: userRoute
           uri: lb://USER
           predicates:
             - Path=/api/user/**
 
+        # 특정 URI를 제외한 나머지 경로에 대해 JWT 필터를 적용
+        - id: jwtFilterRoute
+          predicates:
+            - Path=/**  # 모든 API 경로에 대해 적용
+            #              특정 경로 제외
+            - Path=!/api/user/login
+            - Path=!/api/user/signup
+            - Path=!/login
+            - Path=!/join
+          filters:
+            - name: JwtFilter  # JWT 필터를 이 라우트에 적용
 
-#      globalcors:
-#        cors-configurations:
-#          "[/**]":
-#            allow-credentials: true
-#            allowed-origins:
-#              - "*"
-#            allowed-headers:
-#              - Authorization
-#              - Authorization-refresh
-#            allowed-methods:
-#              - PUT
-#              - GET
-#              - POST
-#              - DELETE
-#              - PATCH
-#              - OPTIONS         # 없애고 확인해보기
 
 
 
