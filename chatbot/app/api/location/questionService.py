@@ -30,7 +30,7 @@ class ChatBotQuestion:
             Question("여행 기간은 총 몇 일인가요?", self.travelDurationOptions),
             Question("주로 어떤 이동 수단을 이용하시나요?", self.transportationsOptions),
             Question("선호하는 숙박 시설이 있나요?", self.logingOptions),
-            Question("여행 테마는 무엇인가요? (중복 선택 가능)", self.travelThemeOptions),
+            Question("여행의 테마는 무엇인가요? (중복 선택 가능)", self.travelThemeOptions),
             Question("여행 시 중요하게 생각하는 우선순위를 차례로 선택해주세요.", self.priorityOptions),
             Question("방문하고 싶은 관광 명소를 선택해주세요.", [])
         ]

@@ -23,17 +23,18 @@ async def getQuestion(
         raise HTTPException(status_code=405, detail=f"{questionNum}은 POST 요청")
     question = await chatBot.getQuestion(questionIndex, country)
     if "error" in question:
+        print(f"questionIndex: {questionIndex}, question: {question}, type: {type(question)}")
         raise HTTPException(status_code=400, detail=question["error"])
     return question
 
 
-# POST 요청을 처리하는 엔드포인트 (questionIndex가 5일 때만)
+# POST 요청을 처리하는 엔드포인트 (questionIndex가 7일 때만)
 @locationQuestionRouter.post("/location/{questionIndex}", response_model=QuestionOption)
 async def postQuestion(
     questionIndex: int,
     requestBody: LocationRequest  # POST 요청에서 body 데이터를 처리
 ):
-    if questionIndex != questionNum:  # POST 요청은 5만 허용
+    if questionIndex != questionNum:  # POST 요청은 7만 허용
         raise HTTPException(status_code=405, detail=f"POST 요청은 {questionNum}만 가능")
     question = await chatBot.getQuestion(questionIndex, requestBody.country, requestBody)
     if "error" in question:
