@@ -6,7 +6,6 @@ import { formatNumberWithCommas } from "../../utils/formatNumber";
 interface ChartProps {
   startDate: string | null;
   endDate: string | null;
-  token: string | null;
   formatDate: (date: string) => string;
   handleTotalAmount: (amount: string) => void;
   signalFetchChart: boolean;
@@ -22,7 +21,6 @@ interface Category {
 const Chart: React.FC<ChartProps> = ({
   startDate,
   endDate,
-  token,
   formatDate,
   handleTotalAmount,
   signalFetchChart,
@@ -79,7 +77,7 @@ const Chart: React.FC<ChartProps> = ({
   useEffect(() => {
     fetchChart();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token, signalFetchChart]);
+  }, [signalFetchChart]);
 
   // 커스텀 레이블 렌더링 함수
   const renderCustomizedLabel = ({

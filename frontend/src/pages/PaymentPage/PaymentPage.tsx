@@ -49,18 +49,29 @@ const PaymentPage: React.FC = () => {
   return (
     <div className="flex flex-col items-center h-dvh justify-center">
       <TopBar isWhite isLogo={false} page="QR 결제" />
-      <video
-        ref={videoRef}
+      <div
         style={{
           width: "250px",
           height: "250px",
           border: "3px solid #6FA760",
           borderRadius: "15px",
+          overflow: "hidden", // 비디오가 컨테이너 밖으로 나가는 것을 방지
         }}
-        autoPlay
       >
-        <track kind="captions" src="" label="No captions needed" />
-      </video>
+        <video
+          ref={videoRef}
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover", // 화면이 꽉 차도록 비율 유지
+            objectPosition: "center", // 중앙에 위치하도록 설정
+            aspectRatio: "1 / 1", // 정사각형 비율을 유지
+          }}
+          autoPlay
+        >
+          <track kind="captions" src="" label="No captions needed" />
+        </video>
+      </div>
       <p className="mt-[20px] font-semibold">
         카메라 중앙에 QR 코드를 인식해주세요 !
       </p>
