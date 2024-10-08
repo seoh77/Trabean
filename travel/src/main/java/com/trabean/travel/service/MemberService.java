@@ -42,17 +42,17 @@ public class MemberService {
 
     @Transactional
     public void invite(InvitaionRequestDto invitaionRequestDto) {
+        Long accountId = invitaionRequestDto.getAccountId();
         String email = invitaionRequestDto.getEmail();
 
         // 메일발송
         try {
-            sendMail(email);
+            sendMail(accountId, email);
         } catch (MessagingException e) {
             throw new RuntimeException("메일 전송 중 문제가 발생했습니다.", e);
         }
 
         // 우리 회원이라면 알림을 추가로 발송
-        Long accountId = invitaionRequestDto.getAccountId();
         Long receiverId = userClient.isMember(email);
 
         if(receiverId != null) {
@@ -83,19 +83,23 @@ public class MemberService {
     }
 
     @Async
-    public void sendMail(String to) throws MessagingException {
+    public void sendMail(Long accountId, String email) throws MessagingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
 
         String subject = "[Trabean] 여행통장에 초대되었습니다.";
-        String body = "여행통장에 초대되었습니다.";
+        String url = "https://j11a604.p.ssafy.io/accounts/travel/domestic/" + accountId + "/invite?email=" + email;
+        String body = "<p>여행통장에 초대되었습니다.</p>"
+                + "<a href='" + url + "' style='display: inline-block; padding: 10px 20px; font-size: 16px; color: #ffffff; background-color: #28a745; text-decoration: none; border-radius: 5px;'>"
+                + "여행통장 보기</a>";
 
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
-        mimeMessageHelper.setTo(to);                // 수신자
-        mimeMessageHelper.setSubject(subject);      // 제목
-        mimeMessageHelper.setText(body, true); // 본문
+        mimeMessageHelper.setTo(email);                  // 수신자
+        mimeMessageHelper.setSubject(subject);           // 제목
+        mimeMessageHelper.setText(body, true);      // HTML 본문
 
         mailSender.send(mimeMessage);
     }
+
 
     @Transactional
     public String join(MemberJoinRequestDto memberJoinRequestDto) {
