@@ -16,6 +16,17 @@ const Password: React.FC = () => {
   const [password, setPassword] = useState<string>("");
   const [payId, setPayId] = useState<number | null>(null);
 
+  useEffect(() => {
+    if (!amount || !currency) {
+      return;
+    }
+    if (currency === "KRW") {
+      setKrwAmount(parseInt(amount, 10));
+    } else {
+      setForeignAmount(parseInt(amount, 10));
+    }
+  }, [amount, currency]);
+
   const navigate = useNavigate();
   const validateInfo = () => {
     if (amount === undefined) {
@@ -68,6 +79,7 @@ const Password: React.FC = () => {
       const response = await client().post(`/api/payments/info`, requestBody);
       setIsFail(false);
       setErrorMessage(null);
+      setErrorMessage(response.data);
       console.log(response.data);
       setPayId(response.data.data.payId);
     } catch (error) {
@@ -80,9 +92,17 @@ const Password: React.FC = () => {
   };
 
   useEffect(() => {
+    console.log("useEffect triggered", {
+      merchantId,
+      currency,
+      krwAmount,
+      foreignAmount,
+    });
+
     if (!merchantId || !currency || (!krwAmount && !foreignAmount)) {
       return;
     }
+
     updatePaymentInfo();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [merchantId, currency, krwAmount, foreignAmount]);
