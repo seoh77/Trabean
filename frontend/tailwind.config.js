@@ -1,6 +1,6 @@
 /** @type {import("tailwindcss").Config} */
 export default {
-  content: ["./src/**/*.{js,jsx,ts,tsx}"], // HTML 및 JS 파일 경로
+  content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
       colors: {
