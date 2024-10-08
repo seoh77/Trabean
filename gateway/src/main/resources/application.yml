@@ -22,11 +22,11 @@ spring:
     gateway:
       # 기본 필터 설정 (필요에 따라 주석 해제)
       default-filters:
-        #   - name: JwtFilter
-        #     args:
-        #       baseMessage: Spring Cloud Gateway Global Filter
-        #       preLogger: true
-        #       postLogger: true
+        - name: JwtFilter
+          args:
+            baseMessage: Spring Cloud Gateway Global Filter
+            preLogger: true
+            postLogger: true
         - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
 
       globalcors:
@@ -85,18 +85,20 @@ spring:
           uri: lb://USER
           predicates:
             - Path=/api/user/**
-
-        # 특정 URI를 제외한 나머지 경로에 대해 JWT 필터를 적용
-        - id: jwtFilterRoute
-          predicates:
-            - Path=/**  # 모든 API 경로에 대해 적용
-            #              특정 경로 제외
-            - Path=!/api/user/login
-            - Path=!/api/user/signup
-            - Path=!/login
-            - Path=!/join
-          filters:
-            - name: JwtFilter  # JWT 필터를 이 라우트에 적용
+#
+#        # 특정 URI를 제외한 나머지 경로에 대해 JWT 필터를 적용
+#        - id: jwtFilterRoute
+#        #          사용하지는 않지만 임의 설정
+#        - uri: lb://USER
+#          predicates:
+#            - Path=/**  # 모든 API 경로에 대해 적용
+#            #              특정 경로 제외
+#            - Path=!/api/user/login
+#            - Path=!/api/user/signup
+#            - Path=!/login
+#            - Path=!/join
+#          filters:
+#            - name: JwtFilter  # JWT 필터를 이 라우트에 적용
 
 
 
