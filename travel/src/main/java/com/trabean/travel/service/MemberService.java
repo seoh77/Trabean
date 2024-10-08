@@ -7,7 +7,6 @@ import com.trabean.travel.callApi.client.UserClient;
 import com.trabean.travel.callApi.dto.request.MemberJoinApiRequestDto;
 import com.trabean.travel.callApi.dto.request.MemberRoleUpdateApiRequestDto;
 import com.trabean.travel.callApi.dto.request.NotificationApiRequestDto;
-import com.trabean.travel.callApi.dto.response.UserEmailApiResponseDto;
 import com.trabean.travel.dto.request.InvitaionRequestDto;
 import com.trabean.travel.dto.request.MemberJoinRequestDto;
 import com.trabean.travel.dto.request.MemberRoleChangeRequestDto;
