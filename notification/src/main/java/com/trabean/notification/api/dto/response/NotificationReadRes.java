@@ -13,6 +13,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 public class NotificationReadRes {
 
+    private Long notificationId;
     private Long senderId;
     private Long accountId;
     private boolean isRead;
