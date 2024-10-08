@@ -368,7 +368,7 @@ public class AccountService {
                         .userKey(UserHeaderInterceptor.userKey.get())
                         .build())
                 .accountNo(requestDTO.getWithdrawalAccountNo())
-                .transactionUniqueNo(updateDemandDepositAccountTransferResponseDTO.getRec().get(0).getTransactionUniqueNo())
+                .transactionUniqueNo(updateDemandDepositAccountTransferResponseDTO.getRec().get(1).getTransactionUniqueNo())
                 .transactionMemo(String.valueOf(UserHeaderInterceptor.userId.get()))
                 .build();
         memoClient.transactionMeno(transactionMemoRequestDTO);
@@ -590,7 +590,7 @@ public class AccountService {
                         .userKey(UserHeaderInterceptor.userKey.get())
                         .build())
                 .accountNo(requestDTO.getWithdrawalAccountNo())
-                .transactionUniqueNo(updateDemandDepositAccountTransferResponseDTO.getRec().get(0).getTransactionUniqueNo())
+                .transactionUniqueNo(updateDemandDepositAccountTransferResponseDTO.getRec().get(1).getTransactionUniqueNo())
                 .transactionMemo(String.valueOf(UserHeaderInterceptor.userId.get()))
                 .build();
         memoClient.transactionMeno(transactionMemoRequestDTO);
