@@ -17,7 +17,7 @@ root.render(
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
-      .register("./serviceWorker.js")
+      .register("/serviceWorker.js", { type: "module" })
       .then((registration) => {
         console.log(
           "Service Worker registered with scope:",
@@ -32,10 +32,12 @@ if ("serviceWorker" in navigator) {
 
 // PWA 설치 요청 관련 로직 추가
 const InstallPrompt = () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isInstallable, setIsInstallable] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleBeforeInstallPrompt = (event: any) => {
       event.preventDefault(); // 자동으로 설치 창이 뜨는 것을 방지
       setDeferredPrompt(event); // 나중에 설치할 수 있도록 이벤트 저장

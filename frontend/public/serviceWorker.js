@@ -4,10 +4,11 @@ import { precacheAndRoute, createHandlerBoundToURL } from "workbox-precaching";
 import { registerRoute } from "workbox-routing";
 import { StaleWhileRevalidate } from "workbox-strategies";
 
-const cacheName = "my-app-cache-v1";
+const cacheName = "Trabean-Cache";
 const cacheFiles = [
   "/", // 루트 경로
   "/index.html", // 인덱스 HTML 파일
+  "/index.css",
   // 필요한 정적 리소스를 여기에 추가 (예: CSS, 이미지, JS 파일)
 ];
 
