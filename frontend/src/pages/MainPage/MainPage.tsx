@@ -46,7 +46,13 @@ function MainPage() {
           <div className="text-3xl font-bold">
             {formatNumberWithCommas(mainAccount.accountBalance)}
           </div>
-          <button type="button" className="btn-lg">
+          <button
+            type="button"
+            className="btn-lg"
+            onClick={() => {
+              navigate(`/transfer/list/${mainAccount}`);
+            }}
+          >
             이체하기
           </button>
         </div>

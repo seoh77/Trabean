@@ -56,7 +56,7 @@ const PaymentHistory: React.FC = () => {
   return (
     <>
       <TopBar isWhite={false} isLogo={false} page="가계부" />
-      <div className="w-full bg-[#F4F4F5] h-vdh py-[4.375rem] flex flex-col items-center pt-[90px]">
+      <div className="w-full bg-[#F4F4F5] h-dvh py-[4.375rem] flex flex-col items-center pt-[90px]">
         <div className="w-[300px]">
           <h1 className="text-base text-gray-900 font-semibold flex justify-between">
             지출 내역
@@ -100,6 +100,7 @@ const PaymentHistory: React.FC = () => {
                 endDate={endDate}
                 token={token}
                 formatDate={formatDate}
+                categoryName={category}
               />
             )}
             {category !== "ALL" && (
@@ -109,7 +110,7 @@ const PaymentHistory: React.FC = () => {
                 token={token}
                 formatDate={formatDate}
                 categoryName={category}
-                travelAccountId={1}
+                travelAccountId={localStorage.getItem("paymentAccountId")}
                 handleTotalAmount={handleTotalAmount}
               />
             )}

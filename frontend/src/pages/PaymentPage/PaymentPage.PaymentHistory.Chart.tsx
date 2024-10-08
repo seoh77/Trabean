@@ -61,9 +61,13 @@ const Chart: React.FC<ChartProps> = ({
       startdate: startDate ? formatDate(startDate) : null,
       enddate: endDate ? formatDate(endDate) : null,
     };
-    const response = await client().get(`/api/payments/1/chart`, {
-      params,
-    });
+    const paymentAccountId = localStorage.getItem("paymentAccountId");
+    const response = await client().get(
+      `/api/payments/${paymentAccountId}/chart`,
+      {
+        params,
+      },
+    );
     console.log(response.data);
     const price = response.data.totalAmount;
     const formattedPrice = formatNumberWithCommas(price);
