@@ -44,10 +44,10 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
             String requestURI = exchange.getRequest().getURI().getPath();
             if (requestURI.equals("/api/user/login") || requestURI.equals("/api/user/signup") || requestURI.equals("/login") || requestURI.equals("/join")) {
                 // 특정 URI일 경우 바로 응답을 완료
-                logger.info("@@@@@@@@@@해당 요청은 필터를 사용하지 않음!"); // 필터가 실행됨을 알림
+                logger.info(requestURI + " -> 해당 요청은 필터를 사용하지 않음!"); // 필터가 실행됨을 알림
                 return exchange.getResponse().setComplete();
             }
-            logger.info("@@@@@@@@@@해당 요청은 필터를 사용한다!"); // 필터가 실행됨을 알림
+            logger.info(requestURI + " -> 해당 요청은 필터를 사용함!"); // 필터가 실행됨을 알림
 
             HttpHeaders headers = exchange.getRequest().getHeaders(); // 요청의 HTTP 헤더를 가져옴
             String accessToken = "";
