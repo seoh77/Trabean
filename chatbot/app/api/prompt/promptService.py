@@ -33,6 +33,27 @@ class QuestionService:
     self.repository = PineconeRepository()
     self.llm = ChatOpenAI(model=LLMmodel)
     self.prompt = hub.pull(ragPrompt)  # 알맞은 프롬프트 생성 모델 불러오기
+
+  def is_greeting_term(self, query):# 인사 관련 용어가 질문에 포함되어 있는지 확인
+    greeting_terms = [
+    "hello", "hi", "안녕", "안녕하세요", "하이", "헬로", "반가워", "안부", 
+    "잘 지내?", "오랜만이야", "어이", "여보세요", "굿모닝", "굿이브닝", "굿애프터눈", 
+    "굿나잇", "좋은 아침", "잘 자", "안녕히 주무세요", "좋은 하루", "잘 있었어?", "별일 없지?", 
+    "만나서 반가워", "어떻게 지냈어?", "즐거운 하루", "또 봐", "다음에 봐", "행복해", "평안하길", 
+    "환영해", "어서 와", "잘 있었니?", "살아있었네?", "기분 좋지?", "행복한 하루 보내", 
+    ]
+    return any(term in query.lower() for term in greeting_terms)
+
+  def is_trabean_bank_terms(self, query):
+    trabean_bank_terms = [
+        "이용 약관", "서비스 약관", "개인정보 처리방침", "권리", "의무", "서비스 이용 조건",
+    "책임", "데이터 보호", "약관 변경", "서비스 종료", "정책", "사용자 동의", "보안 정책",
+    "법적 책임", "사용자 권리", "보안", "이용 정책", "사용자 의무", "계정 관리", "약관 동의",
+     "환전", "이체", "예금", "대출", "통장 개설", "계좌 생성", "잔액 조회", "송금", "수수료",
+    "출금", "입금", "외화 환전", "이자", "비밀번호 변경", "ATM 이용", "카드 발급", "통장 관리",
+    "금융 상품", "적금", "예금 금리", "적금 금리", "입출금 한도", "여행 통장", "외환 서비스"]
+    # 경제 용어가 질문에 포함되어 있는지 확인
+    return any(term in query for term in trabean_bank_terms)
   
   def getQuestion(self, query):
     dictionary = self.repository.getDictionary()
@@ -49,6 +70,16 @@ class QuestionService:
     return question
   
   def getAIMessage(self, query):
+    is_greeting = self.is_greeting_term(query)
+    is_bank = self.is_trabean_bank_terms(query)
+    
+    if(is_greeting and (not is_bank)):
+       print("HHHHH")
+       answer = self.llm.invoke(query)
+       print(answer)
+       return "ddd"
+       # return AnswerResponse(answer=answer['choices'][0]['text'])
+    
     question = self.getQuestion(query)
     retriever = self.repository.getRetriever(question)
     qa_chain = RetrievalQA.from_chain_type(  # RetrievalQA 객체 생성
@@ -60,7 +91,6 @@ class QuestionService:
     if isinstance(answer_dict, dict) and 'result' in answer_dict:
         return AnswerResponse(answer=answer_dict['result'])
 
-    # 만약 answer_dict가 예상치 못한 형식이면 오류를 반환
     raise ValueError(f"Unexpected response format: {answer_dict}")
 
 # service = QuestionService()
