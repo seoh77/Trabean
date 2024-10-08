@@ -95,7 +95,11 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
                     .header("userId", "31")
                     .header("userKey", "9c9f889b-5509-41a7-b6af-b4e83602aeb4")
                     .build();
-            logger.info("gateway에서 요청 전달{}", exchange.getRequest());
+            // 요청 정보를 JSON 형태로 로그에 출력
+            logger.info("gateway에서 요청 전달: method={}, uri={}, headers={}",
+                    exchange.getRequest().getMethod(),
+                    exchange.getRequest().getURI(),
+                    exchange.getRequest().getHeaders());
             return chain.filter(exchange); // 다음 필터로 요청을 전달
         };
     }
