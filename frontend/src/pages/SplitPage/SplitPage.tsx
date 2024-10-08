@@ -59,7 +59,7 @@ const ExchangeSplit: React.FC<SplitProps> = ({
     );
 
     if (invalidMembers.length > 0) {
-      setIsErrorModalVisible(true); // 오류 모달을 띄움
+      setIsErrorModalVisible(true); // 메인 계좌가 없는 멤버가 있으면 오류 모달을 띄움
     } else {
       // 선택된 멤버들을 서버로 보내는 로직 추가
       try {
@@ -85,6 +85,9 @@ const ExchangeSplit: React.FC<SplitProps> = ({
         if (response.status === 200) {
           setIsConfirmModalVisible(false);
           setIsSuccessModalVisible(true); // N빵 성공 모달 띄우기
+        } else {
+          // 상태 코드가 200이 아닌 경우에는 실패로 간주
+          setIsErrorModalVisible(true); // N빵 실패 모달 띄우기
         }
       } catch (error) {
         console.error("N빵 처리 중 오류 발생", error);
