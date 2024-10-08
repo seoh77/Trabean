@@ -9,14 +9,9 @@ import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
@@ -53,9 +48,15 @@ public class ExchangeRateService {
             // 문자열을 double 로 변환
             double exchangeRate = Double.parseDouble(exchangeRateString);
             logger.info(exchangeRateString + " 환율로 계산 -> " + Math.round(exchangeRate * foreignAmount));
-            // 계산 결과 리턴
-            return Math.round(exchangeRate * foreignAmount);
 
+            // 엔화일 경우의 계산 방식 (원화 100원당 외화 계산)
+            if (response.getRec().getCurrency().equals("JPY")) {
+                // 엔화는 100원당 외화 환율로 계산, foreignAmount를 100으로 나눔
+                return Math.round(exchangeRate * foreignAmount / 100);
+            } else {
+                // 다른 통화는 일반적인 방식으로 계산
+                return Math.round(exchangeRate * foreignAmount);
+            }
         } catch (RestClientException e) {
             logger.error("환율 조회 API 호출 중 오류 발생: {}", e.getMessage());
             throw new PaymentsException("환율 조회 API 호출 중 오류 발생" + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
