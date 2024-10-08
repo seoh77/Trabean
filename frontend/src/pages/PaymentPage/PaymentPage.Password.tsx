@@ -68,6 +68,7 @@ const Password: React.FC = () => {
       const response = await client().post(`/api/payments/info`, requestBody);
       setIsFail(false);
       setErrorMessage(null);
+      console.log(response.data);
       setPayId(response.data.data.payId);
     } catch (error) {
       setIsFail(true);
