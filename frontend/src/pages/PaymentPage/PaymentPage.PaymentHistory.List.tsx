@@ -13,7 +13,6 @@ import shopping from "../../assets/paymentListIcon/SHOPPING.png";
 import transportation from "../../assets/paymentListIcon/TRANSPORTATION.png";
 
 interface ListProps {
-  token: string | null;
   startDate: string | null;
   endDate: string | null;
   formatDate: (date: string) => string;
@@ -34,7 +33,6 @@ interface PaymentItem {
 const List: React.FC<ListProps> = ({
   startDate,
   endDate,
-  token,
   formatDate,
   categoryName,
 }) => {
@@ -103,7 +101,7 @@ const List: React.FC<ListProps> = ({
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [token, page, totalPage, startDate, endDate, formatDate, isLoading],
+    [page, totalPage, startDate, endDate, formatDate, isLoading],
   );
 
   // 초기 렌더링 및 날짜 변경 시 데이터를 다시 불러오기 위한 useEffect 훅
@@ -113,7 +111,7 @@ const List: React.FC<ListProps> = ({
     setPayments([]);
     fetchPaymentList(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token, startDate, endDate]);
+  }, [startDate, endDate, categoryName]);
 
   // 스크롤 이벤트를 감지하여 무한 스크롤 구현
   useEffect(() => {
