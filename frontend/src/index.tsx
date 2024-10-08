@@ -34,14 +34,12 @@ if ("serviceWorker" in navigator) {
 const InstallPrompt = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
-  const [isInstallable, setIsInstallable] = useState(false);
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleBeforeInstallPrompt = (event: any) => {
       event.preventDefault(); // 자동으로 설치 창이 뜨는 것을 방지
       setDeferredPrompt(event); // 나중에 설치할 수 있도록 이벤트 저장
-      setIsInstallable(true); // 설치 가능한 상태로 설정
     };
 
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
@@ -54,30 +52,30 @@ const InstallPrompt = () => {
     };
   }, []);
 
-  const handleInstallClick = async () => {
-    if (deferredPrompt) {
-      deferredPrompt.prompt(); // 설치 요청 표시
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === "accepted") {
-        console.log("사용자가 PWA 설치를 수락했습니다.");
-      } else {
-        console.log("사용자가 PWA 설치를 거부했습니다.");
+  // 컴포넌트가 렌더링될 때 설치 여부를 바로 묻는 함수
+  useEffect(() => {
+    const handleInstallPrompt = async () => {
+      if (deferredPrompt) {
+        const installConfirmed = window.confirm("이 앱을 설치하시겠습니까?");
+        if (installConfirmed) {
+          deferredPrompt.prompt(); // 설치 요청 표시
+          const { outcome } = await deferredPrompt.userChoice;
+          if (outcome === "accepted") {
+            alert("사용자가 PWA 설치를 수락했습니다.");
+          } else {
+            alert("사용자가 PWA 설치를 거부했습니다.");
+          }
+        } else {
+          alert("사용자가 PWA 설치를 취소했습니다.");
+        }
+        setDeferredPrompt(null); // 설치 요청 후 초기화
       }
-      setDeferredPrompt(null); // 설치 요청 후 초기화
-      setIsInstallable(false); // 설치 버튼 숨김
-    }
-  };
+    };
 
-  return (
-    <>
-      {isInstallable && (
-        <button type="button" onClick={handleInstallClick}>
-          이 앱을 설치하시겠습니까?
-        </button>
-      )}
-      null
-    </>
-  );
+    handleInstallPrompt();
+  }, [deferredPrompt]);
+
+  return null; // 버튼이 필요 없으므로 아무것도 렌더링하지 않음
 };
 
 // InstallPrompt 컴포넌트 렌더링
