@@ -10,6 +10,7 @@ from .promptSchemas import AnswerResponse
 from .promptRepository import PineconeRepository
 from langchain import hub
 from pinecone import Pinecone
+import re
 
 from dotenv import load_dotenv
 import getpass
@@ -31,10 +32,10 @@ langsmith_api_key = os.environ.get("LANGSMITH_API_KEY")
 class QuestionService:
   def __init__(self, LLMmodel='gpt-4o', index_name="chatbot-index", emmodel='text-embedding-3-large', ragPrompt="rlm/rag-prompt", k=4):
     self.repository = PineconeRepository()
-    self.llm = ChatOpenAI(model=LLMmodel)
+    self.llm = ChatOpenAI(model=LLMmodel, max_tokens=216)
     self.prompt = hub.pull(ragPrompt)  # 알맞은 프롬프트 생성 모델 불러오기
 
-  def is_greeting_term(self, query):# 인사 관련 용어가 질문에 포함되어 있는지 확인
+  def isGreetingTerm(self, query):# 인사 관련 용어가 질문에 포함되어 있는지 확인
     greeting_terms = [
     "hello", "hi", "안녕", "안녕하세요", "하이", "헬로", "반가워", "안부", 
     "잘 지내?", "오랜만이야", "어이", "여보세요", "굿모닝", "굿이브닝", "굿애프터눈", 
@@ -44,16 +45,20 @@ class QuestionService:
     ]
     return any(term in query.lower() for term in greeting_terms)
 
-  def is_trabean_bank_terms(self, query):
+  def isTrabeanBankTerms(self, query):# 경제 용어가 질문에 포함되어 있는지 확인
     trabean_bank_terms = [
-        "이용 약관", "서비스 약관", "개인정보 처리방침", "권리", "의무", "서비스 이용 조건",
-    "책임", "데이터 보호", "약관 변경", "서비스 종료", "정책", "사용자 동의", "보안 정책",
-    "법적 책임", "사용자 권리", "보안", "이용 정책", "사용자 의무", "계정 관리", "약관 동의",
-     "환전", "이체", "예금", "대출", "통장 개설", "계좌 생성", "잔액 조회", "송금", "수수료",
-    "출금", "입금", "외화 환전", "이자", "비밀번호 변경", "ATM 이용", "카드 발급", "통장 관리",
+    "트래빈", "Trabean", "trabean", "트레빈", "이용 약관", "서비스 약관", "개인정보 처리방침", 
+    "권리", "의무", "서비스 이용 조건","책임", "데이터 보호", "약관 변경", "서비스 종료", "정책", 
+    "사용자 동의", "보안 정책","법적 책임", "사용자 권리", "보안", "이용 정책", "사용자 의무", 
+    "계정 관리", "약관 동의", "환전", "이체", "예금", "대출", "통장 개설", "계좌 생성", "잔액 조회", "송금", 
+    "수수료", "출금", "입금", "외화 환전", "이자", "비밀번호 변경", "ATM 이용", "카드 발급", "통장",
     "금융 상품", "적금", "예금 금리", "적금 금리", "입출금 한도", "여행 통장", "외환 서비스"]
-    # 경제 용어가 질문에 포함되어 있는지 확인
     return any(term in query for term in trabean_bank_terms)
+  
+  def formatText(self, text: str) -> str:# 각 문장에 줄바꿈(\n)을 추가하여 반환
+    sentences = re.split(r'(?<=[.!?]) +', text)
+    formatted_text = "\n".join(sentences)
+    return formatted_text
   
   def getQuestion(self, query):
     dictionary = self.repository.getDictionary()
@@ -70,15 +75,13 @@ class QuestionService:
     return question
   
   def getAIMessage(self, query):
-    is_greeting = self.is_greeting_term(query)
-    is_bank = self.is_trabean_bank_terms(query)
+    isGreeting = self.isGreetingTerm(query)
+    isBank = self.isTrabeanBankTerms(query)
     
-    if(is_greeting and (not is_bank)):
-       print("HHHHH")
-       answer = self.llm.invoke(query)
-       print(answer)
-       return "ddd"
-       # return AnswerResponse(answer=answer['choices'][0]['text'])
+    if(isGreeting and (not isBank)):
+       res = self.llm.invoke(query)
+       res = self.formatText(res.content)
+       return AnswerResponse(answer=res)
     
     question = self.getQuestion(query)
     retriever = self.repository.getRetriever(question)
@@ -88,8 +91,10 @@ class QuestionService:
         chain_type_kwargs={"prompt": self.prompt}
     )
     answer_dict = qa_chain.invoke({"query": question})
+    
     if isinstance(answer_dict, dict) and 'result' in answer_dict:
-        return AnswerResponse(answer=answer_dict['result'])
+      res = self.formatText(answer_dict['result'])
+      return AnswerResponse(answer=res)
 
     raise ValueError(f"Unexpected response format: {answer_dict}")
 

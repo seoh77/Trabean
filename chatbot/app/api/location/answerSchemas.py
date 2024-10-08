@@ -28,7 +28,7 @@ class Location(BaseModel):
 
 
 class DisplayName(BaseModel):
-    text: str
+    text: str = None
     languageCode: Optional[str] = None
 
 
@@ -40,12 +40,12 @@ class PaymentOptions(BaseModel):
 
 class Place(BaseModel):
     id: str
-    formattedAddress: str
+    formattedAddress: str = None
     location: Location
-    rating: float
-    googleMapsUri: str
-    userRatingCount: int
-    displayName: DisplayName
+    rating: float = None
+    googleMapsUri: str = None
+    userRatingCount: int = None
+    displayName: DisplayName = None
     primaryType: Optional[str] = None
     editorialSummary: Optional[DisplayName] = None
     goodForChildren: Optional[bool] = None
@@ -58,14 +58,14 @@ class Route(BaseModel):
 
 
 class Hotel(BaseModel):
-    id: str
-    formattedAddress: str
+    id: str = None
+    formattedAddress: str = None
     location: Location
-    rating: float
-    googleMapsUri: str
-    userRatingCount: int
-    displayName: DisplayName
-    primaryType: str
+    rating: float = None
+    googleMapsUri: str = None
+    userRatingCount: int = None
+    displayName: DisplayName = None
+    primaryType: str = None
     editorialSummary: Optional[DisplayName] = None
     goodForChildren: Optional[bool] = None
     paymentOptions: Optional[PaymentOptions] = None
