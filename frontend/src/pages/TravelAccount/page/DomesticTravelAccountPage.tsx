@@ -12,12 +12,13 @@ import {
   getCurrencySymbol,
 } from "../util/util";
 import TopBar from "../../../components/TopBar";
-// import Alarm from "../component/Alarm";
+import Alarm from "../component/Alarm";
 import TargetAmountProgressBar from "../component/TargetAmountProgressBar";
 import ChatBot from "../component/ChatBot";
 import Loading from "../component/Loading";
 import ChangeAccountNameModal from "../modal/ChangeAccountName";
 import ChangeTargetAmountModal from "../modal/ChangeTargetAmountModal";
+import SplitPage from "../../SplitPage/SplitPage";
 
 const DomesticTravelAccountPage: React.FC = () => {
   const { accountId } = useParams(); // Path Variable
@@ -30,13 +31,15 @@ const DomesticTravelAccountPage: React.FC = () => {
   const [travelAccountData, setTravelAccountData] =
     useState<TravelAccountData>(); // 한화 여행통장 + 외화 여행통장 상태관리
 
+  // const [TravelAccount, setTravelAccount] =
+  // useState<TravelAccount>(); //한화 여행통장
   const [travelAccountMemberAmountData, setTravelAccountMemberAmountData] =
     useState<TravelAccountMemberAmountData>(); // 여행통장 멤버 상태관리
 
   const [accountName, setAccountName] = useState<string>(); // 여행통장 이름 상태관리
   const [targetAmount, setargetAmount] = useState<number>(0); // 목표 금액 상태 상태관리
   const [collectedAmount, setCollectedAmount] = useState<number>(0); // 현재 모인 금액 상태 상태관리
-
+  const [isSplitModalOpen, setIsSplitModalOpen] = useState(false);
   // 여행통장 이름 변경 모달
   const [isChangeAccountNameModalOpen, setIsChangeAccountNameModalOpen] =
     useState(false);
@@ -58,7 +61,8 @@ const DomesticTravelAccountPage: React.FC = () => {
   // 함수 모음
   const handleNBbang = () => {
     // alert("친구들과 N빵하기 누름!!!!!!");
-    nav("/travel/split"); // 비밀번호 입력 페이지로 이동
+    // nav("/travel/split"); // 비밀번호 입력 페이지로 이동
+    setIsSplitModalOpen(true);
   };
 
   const handlePayment = () => {
@@ -69,6 +73,9 @@ const DomesticTravelAccountPage: React.FC = () => {
     alert("예산관리 가계부 누름!!!!!!");
   };
 
+  // const closeSplitModal = () => {
+  //   setIsSplitModalOpen(false);
+  // };
   // Travel 서버 여행통장 조회 API fetch 요청
   useEffect(() => {
     const fetchTravelAccountData = async () => {
@@ -123,9 +130,9 @@ const DomesticTravelAccountPage: React.FC = () => {
       </div>
 
       {/* 알림 */}
-      {/* <div className="px-4 py-2">
+      <div className="px-4 py-2">
         <Alarm />
-      </div> */}
+      </div>
 
       {/* 여행통장 목록 */}
       <div className="px-4 py-2">
@@ -337,6 +344,21 @@ const DomesticTravelAccountPage: React.FC = () => {
         </div>
       ) : null}
 
+      {/* 유저 권한 변경 모달 */}
+      {isSplitModalOpen ? (
+        <div className="absolute inset-0 flex items-end py-8 bg-gray-900 bg-opacity-50">
+          <div className="w-full">
+            <SplitPage
+              totalAmount={collectedAmount}
+              totalNo={travelAccountMemberAmountData?.memberList.length}
+              withdrawalAccountId={accountId}
+              withdrawalAccountNo={travelAccountData?.accountNo}
+              depositAccountList={travelAccountMemberAmountData?.memberList}
+              onClose={() => setIsSplitModalOpen(false)}
+            />
+          </div>
+        </div>
+      ) : null}
       {/* 목표 관리 모달 */}
       {isChangeTargetAmountModalOpen ? (
         <div className="absolute inset-0 flex items-end py-8 bg-gray-900 bg-opacity-50">

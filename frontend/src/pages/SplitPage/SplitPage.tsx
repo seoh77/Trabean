@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios"; // Axios import 추가
 
 import beanProfile from "../../assets/bean_profile.png";
 import kingBeanProfile from "../../assets/bean_admin.png"; // kingbean 이미지 추가
@@ -6,7 +7,23 @@ import checkIcon from "../../assets/successIcon.png"; // 성공 아이콘
 import warningIcon from "../../assets/importantIcon.png"; // 경고 아이콘
 import { TravelAccountMember } from "../TravelAccount/type/type";
 
-const ExchangeSplit: React.FC = () => {
+interface SplitProps {
+  totalAmount: number;
+  totalNo: number | undefined;
+  withdrawalAccountNo: string | undefined;
+  withdrawalAccountId: string | undefined; // 출금계좌ID 추가
+  depositAccountList: TravelAccountMember[] | undefined;
+  onClose: () => void;
+}
+
+const ExchangeSplit: React.FC<SplitProps> = ({
+  totalAmount,
+  totalNo,
+  withdrawalAccountNo,
+  withdrawalAccountId, // 출금계좌ID 추가
+  depositAccountList,
+  onClose,
+}) => {
   const [isVisible, setIsVisible] = useState(true); // N빵 나누기 모달
   const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false); // N빵 확인 모달
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false); // N빵 성공 모달
@@ -17,54 +34,12 @@ const ExchangeSplit: React.FC = () => {
     [],
   ); // 선택된 멤버 목록
 
-  // 하드코딩된 예시 데이터
-  const exampleData = {
-    totalAmount: 100000,
-    totalNo: 4,
-    withdrawalAccountId: "1234567890",
-    withdrawalAccountNo: "356-0630-5770-33",
-    depositAccountList: [
-      {
-        userId: 1,
-        userName: "김철수",
-        role: "admin", // admin 역할
-        amount: 25000,
-        mainAccountId: 12345,
-        mainAccountNo: "123-456-789012",
-      },
-      {
-        userId: 2,
-        userName: "이영희",
-        role: "member",
-        amount: 25000,
-        mainAccountId: null, // 메인 계좌가 설정되지 않음
-        mainAccountNo: "",
-      },
-      {
-        userId: 3,
-        userName: "박수민",
-        role: "member",
-        amount: 25000,
-        mainAccountId: 67890,
-        mainAccountNo: "123-456-789013",
-      },
-      {
-        userId: 4,
-        userName: "최지원",
-        role: "member",
-        amount: 25000,
-        mainAccountId: 54321,
-        mainAccountNo: "123-456-789014",
-      },
-    ],
-  };
-
   useEffect(() => {
-    // 하드코딩된 데이터를 설정
-    setDividedAmount(
-      Math.floor(exampleData.totalAmount! / exampleData.totalNo!),
-    );
-  }, []);
+    // eslint-disable-next-line eqeqeq
+    if (totalNo && totalNo > 0) {
+      setDividedAmount(Math.floor(totalAmount / totalNo));
+    }
+  }, [totalAmount, totalNo]);
 
   const toggleMemberSelection = (member: TravelAccountMember) => {
     setSelectedMembers((prevSelected) => {
@@ -78,7 +53,7 @@ const ExchangeSplit: React.FC = () => {
   };
 
   // N빵 진행 확인 버튼 클릭 시
-  const handleSplit = () => {
+  const handleSplit = async () => {
     const invalidMembers = selectedMembers.filter(
       (member) => member.mainAccountId === null,
     );
@@ -86,7 +61,35 @@ const ExchangeSplit: React.FC = () => {
     if (invalidMembers.length > 0) {
       setIsErrorModalVisible(true); // 오류 모달을 띄움
     } else {
-      setIsConfirmModalVisible(true); // N빵 확인 모달을 띄움
+      // 선택된 멤버들을 서버로 보내는 로직 추가
+      try {
+        // POST 요청을 위한 데이터 구조 생성
+        const requestData = {
+          totalAmount,
+          totalNo,
+          withdrawalAccountId,
+          withdrawalAccountNo,
+          depositAccountList: selectedMembers.map((member) => ({
+            userId: member.userId,
+            accountNumber: member.mainAccountNo,
+          })),
+        };
+
+        // API로 POST 요청 보내기
+        const response = await axios.post(
+          "https://j11a604.p.ssafy.io/api/travel/split",
+          requestData,
+        );
+
+        // 요청이 성공하면 N빵 성공 모달을 띄움
+        if (response.status === 200) {
+          setIsConfirmModalVisible(false);
+          setIsSuccessModalVisible(true); // N빵 성공 모달 띄우기
+        }
+      } catch (error) {
+        console.error("N빵 처리 중 오류 발생", error);
+        setIsErrorModalVisible(true); // 오류 모달을 띄움
+      }
     }
   };
 
@@ -96,16 +99,18 @@ const ExchangeSplit: React.FC = () => {
 
   const handleCloseModal = () => {
     setIsVisible(false);
+    onClose();
     window.location.reload(); // 페이지 새로고침
   };
 
   const confirmNBbang = () => {
     setIsConfirmModalVisible(false);
-    setIsSuccessModalVisible(true); // N빵 성공 모달 띄우기
+    handleSplit(); // N빵 진행
   };
 
   const closeSuccessModal = () => {
     setIsSuccessModalVisible(false);
+    onClose();
     window.location.reload(); // 페이지 새로고침
   };
 
@@ -115,20 +120,10 @@ const ExchangeSplit: React.FC = () => {
 
   return (
     <div className="relative">
-      {/* 배경 오버레이 */}
-      {isVisible && (
-        <div
-          role="presentation"
-          className="fixed inset-0 bg-gray-900 bg-opacity-50"
-          onClick={handleCloseModal} // 오버레이 클릭 시 모달 닫기
-          style={{ zIndex: 900 }}
-        />
-      )}
-
       {/* N빵 나누기 모달 */}
       {isVisible && (
         <div
-          className="fixed bottom-0 left-0 right-0 w-full max-w-[360px] mx-auto mt-4"
+          className="fixed bottom-0 w-full max-w-[360px] mx-auto mt-4"
           style={{ zIndex: 901 }}
         >
           <div
@@ -140,14 +135,12 @@ const ExchangeSplit: React.FC = () => {
               N빵 나누기
             </h1>
             <div className="mb-2">
-              <p className="text-gray-600">
-                출금 계좌: {exampleData.withdrawalAccountNo}
-              </p>
+              <p className="text-gray-600">출금 계좌: {withdrawalAccountNo}</p>
             </div>
 
             {/* 스크롤 가능한 목록 */}
             <div className="flex-grow overflow-y-auto space-y-2 mb-4 max-h-[300px] w-full">
-              {exampleData.depositAccountList?.map((member) => (
+              {depositAccountList?.map((member) => (
                 <div
                   key={member.userId}
                   className={`flex justify-between items-center p-2 bg-[#F9F9F9] rounded shadow ${
@@ -201,6 +194,7 @@ const ExchangeSplit: React.FC = () => {
                 type="button"
                 onClick={handleSplit}
                 className="btn-lg text-white hover:bg-green-600 w-[115px]"
+                disabled={totalNo === 0 || totalNo === undefined} // totalNo가 0이거나 undefined일 때 비활성화
               >
                 확인
               </button>
@@ -246,13 +240,13 @@ const ExchangeSplit: React.FC = () => {
           style={{ zIndex: 903 }}
         >
           <div className="bg-white p-8 rounded-lg shadow-lg">
-            <h1 className="text-xl font-bold text-center mb-4">
+            <h1 className="text-xl font-bold text-center mb-4 m-auto">
               N빵이 완료되었습니다!
             </h1>
             <img
               src={checkIcon}
               alt="success"
-              className="w-16 h-16 mb-6" // 더 크게 조정
+              className="w-16 h-16 mb-6 m-auto" // 더 크게 조정
             />
             <button
               type="button"
@@ -271,14 +265,14 @@ const ExchangeSplit: React.FC = () => {
           className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50"
           style={{ zIndex: 999 }}
         >
-          <div className="bg-white p-8 rounded-lg shadow-lg">
+          <div className="bg-white p-8 rounded-lg shadow-lg max-w-[330px]">
             <h1 className="text-xl font-bold text-center mb-4">
               N빵에 실패하였습니다!
             </h1>
             <img
               src={warningIcon}
               alt="fail"
-              className="w-16 h-16 mb-6" // 더 크게 조정
+              className="w-16 h-16 m-auto" // 더 크게 조정
             />
             <p className="text-gray-800 text-center mb-4">
               선택된 멤버 중 메인 계좌가 설정되지 않은 사람이 있습니다. 설정 후
