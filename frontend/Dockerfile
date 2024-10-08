@@ -6,7 +6,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Yarn을 사용하여 의존성 설치
-RUN npm install
+RUN npm ci
 # 모든 소스 파일을 현재 작업 디렉토리로 복사
 COPY . .
 # ARG 추가
@@ -17,7 +17,7 @@ RUN npm run build
 #RUN echo "REACT_APP_END_POINT: $REACT_APP_END_POINT" && yarn build
 
 # 프로덕션 단계 설정
-FROM nginx:stable-alpine AS production-stage
+FROM nginx:alpine AS production-stage
 # 빌드 단계에서 생성된 빌드 결과물을 Nginx의 기본 HTML 디렉토리로 복사
 COPY --from=build-stage /app/build /usr/share/nginx/html
 

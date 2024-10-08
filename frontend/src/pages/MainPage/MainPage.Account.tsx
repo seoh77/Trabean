@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+
 import soyIcon from "../../assets/icon/soyIcon.png";
 import arrowRIcon from "../../assets/icon/arrowRIcon.png";
 import { formatNumberWithCommas } from "../../utils/formatNumber";
@@ -15,8 +17,13 @@ interface AccountProps {
 }
 
 function Account({ account }: AccountProps) {
+  const navigate = useNavigate();
   return (
-    <div className="flex items-center px-3 my-3">
+    <div
+      role="presentation"
+      className="flex items-center px-3 my-3"
+      onClick={() => navigate(`/accounts/travel/domestic/${account.accountId}`)}
+    >
       <img src={soyIcon} alt="통장아이콘" className="w-[30px]" />
       <div className="flex flex-col w-[170px] truncate text-ellipsis ml-2">
         <h5 className="text-sm font-bold">{account.accountName}</h5>

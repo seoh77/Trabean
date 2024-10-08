@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { AccountTypeProvider } from "./pages/AccountCreationPage/AccountTypeContext";
 import PaymentHistory from "./pages/PaymentPage/PaymentPage.PaymentHistory";
 import PaymentPage from "./pages/PaymentPage/PaymentPage";
@@ -76,7 +76,7 @@ function App() {
         <Route path="/transfer/list" element={<TransferLists />} />
         <Route path="/transfer/list/:account" element={<TransferList />} />
         <Route
-          path="/creation*"
+          path="/creation/*"
           element={
             <AccountTypeProvider>
               <Routes>

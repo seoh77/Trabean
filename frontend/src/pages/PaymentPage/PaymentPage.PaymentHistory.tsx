@@ -109,7 +109,7 @@ const PaymentHistory: React.FC = () => {
                 token={token}
                 formatDate={formatDate}
                 categoryName={category}
-                travelAccountId={1}
+                travelAccountId={localStorage.getItem("paymentAccountId")}
                 handleTotalAmount={handleTotalAmount}
               />
             )}

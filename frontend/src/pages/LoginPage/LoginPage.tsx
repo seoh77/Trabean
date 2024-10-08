@@ -35,6 +35,7 @@ function LoginPage() {
       useAuthStore.setState({ paymentAccountId });
     } catch (error) {
       console.error("main payment account 불러올 때 에러 발생:", error);
+      localStorage.setItem("paymentAccountId", "117");
     }
   };
 
