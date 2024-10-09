@@ -19,7 +19,7 @@ app.add_middleware(
 
 # Eureka 서버 URL 및 서비스 정보 설정
 EUREKA_SERVER_URL = "http://j11a604.p.ssafy.io:8761/eureka/"
-SERVICE_NAME = "CHATBOT"
+SERVICE_NAME = "chatbot"
 INSTANCE_IP = "0.0.0.0"
 INSTANCE_PORT = 8082
 
@@ -50,12 +50,18 @@ async def register_to_eureka():
             }
         }
         await client.post(f"{EUREKA_SERVER_URL}/apps/{SERVICE_NAME}", json=payload)
+        print("Eureka 등록!")
 
 # lifespan 이벤트 핸들러 사용
-@app.lifespan()
-async def lifespan(app):
+@app.on_event("startup")
+async def startup_event():
     await register_to_eureka()  # Eureka에 등록
-    yield  # 애플리케이션이 시작되고 종료될 때 실행되는 코드
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    print("Eureka 해제!")
+    # 필요한 경우 deregister 로직을 추가할 수 있습니다
+    pass
 
 # 라우터 등록
 app.include_router(router, prefix="/api/chatbot")
