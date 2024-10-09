@@ -361,11 +361,26 @@ public class AccountService {
                 .build();
         UpdateDemandDepositAccountTransferResponseDTO updateDemandDepositAccountTransferResponseDTO = domesticClient.updateDemandDepositAccountTransfer(updateDemandDepositAccountTransferRequestDTO);
 
+        Long withdrawalAccountId = ValidationUtil.validateAccount(accountRepository.findByAccountNo(requestDTO.getWithdrawalAccountNo())).getAccountId();
+        List<UserAccountRelation> userAccountRelationList = ValidationUtil.validateUserAccountRelationList(userAccountRelationRepository.findAllByAccountId(withdrawalAccountId));
+
+        Long userId = userAccountRelationList.stream()
+                .filter(relation -> relation.getUserRole() == UserRole.ADMIN)
+                .map(UserAccountRelation::getUserId)
+                .findFirst()
+                .orElseThrow(UserAccountRelationNotFoundException::getInstance);
+
+        // User 서버에 userKey 조회 요청
+        UserKeyRequestDTO userKeyRequestDTO = UserKeyRequestDTO.builder()
+                .userId(userId)
+                .build();
+        UserKeyResponseDTO userKeyResponseDTO = userClient.getUserKey(userKeyRequestDTO);
+
         // SSAFY 금융 API 거래내역 메모 요청
         TransactionMemoRequestDTO transactionMemoRequestDTO = TransactionMemoRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName("transactionMemo")
-                        .userKey(UserHeaderInterceptor.userKey.get())
+                        .userKey(userKeyResponseDTO.getUserKey())
                         .build())
                 .accountNo(requestDTO.getWithdrawalAccountNo())
                 .transactionUniqueNo(updateDemandDepositAccountTransferResponseDTO.getRec().get(1).getTransactionUniqueNo())
@@ -583,11 +598,26 @@ public class AccountService {
                 .build();
         UpdateDemandDepositAccountTransferResponseDTO updateDemandDepositAccountTransferResponseDTO = domesticClient.updateDemandDepositAccountTransfer(updateDemandDepositAccountTransferRequestDTO);
 
+        Long withdrawalAccountId = ValidationUtil.validateAccount(accountRepository.findByAccountNo(requestDTO.getWithdrawalAccountNo())).getAccountId();
+        List<UserAccountRelation> userAccountRelationList = ValidationUtil.validateUserAccountRelationList(userAccountRelationRepository.findAllByAccountId(withdrawalAccountId));
+
+        Long userId = userAccountRelationList.stream()
+                .filter(relation -> relation.getUserRole() == UserRole.ADMIN)
+                .map(UserAccountRelation::getUserId)
+                .findFirst()
+                .orElseThrow(UserAccountRelationNotFoundException::getInstance);
+
+        // User 서버에 userKey 조회 요청
+        UserKeyRequestDTO userKeyRequestDTO = UserKeyRequestDTO.builder()
+                .userId(userId)
+                .build();
+        UserKeyResponseDTO userKeyResponseDTO = userClient.getUserKey(userKeyRequestDTO);
+
         // SSAFY 금융 API 거래내역 메모 요청
         TransactionMemoRequestDTO transactionMemoRequestDTO = TransactionMemoRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName("transactionMemo")
-                        .userKey(UserHeaderInterceptor.userKey.get())
+                        .userKey(userKeyResponseDTO.getUserKey())
                         .build())
                 .accountNo(requestDTO.getWithdrawalAccountNo())
                 .transactionUniqueNo(updateDemandDepositAccountTransferResponseDTO.getRec().get(1).getTransactionUniqueNo())
