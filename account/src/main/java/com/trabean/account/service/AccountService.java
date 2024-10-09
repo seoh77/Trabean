@@ -398,7 +398,7 @@ public class AccountService {
     public InternalServerSuccessResponseDTO verifyPersonalAccountPassword(Long accountId, VerifyAccountPasswordRequestDTO requestDTO) {
 
         String savedPassword = ValidationUtil.validateInput(ValidateInputDTO.builder()
-                        .account(accountRepository.findById(UserHeaderInterceptor.userId.get()))
+                        .account(accountRepository.findById(accountId))
                         .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(UserHeaderInterceptor.userId.get(), accountId))
                         .accountType(AccountType.PERSONAL)
                         .userRole(UserRole.ADMIN)
