@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AccountAdminUserNameResponseDTO {
 
-    @JsonProperty("userName")
-    private String userName;
+    @JsonProperty("name")
+    private String name;
 }

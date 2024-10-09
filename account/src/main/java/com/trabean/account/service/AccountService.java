@@ -19,6 +19,7 @@ import com.trabean.external.msa.travel.client.TravelClient;
 import com.trabean.external.msa.travel.dto.request.SaveDomesticTravelAccountRequestDTO;
 import com.trabean.external.msa.travel.dto.request.SaveForeignTravelAccountRequestDTO;
 import com.trabean.external.msa.travel.dto.response.DomesticTravelAccountInfoResponseDTO;
+import com.trabean.external.msa.travel.dto.response.ParentAccountIdResponseDTO;
 import com.trabean.external.msa.user.client.UserClient;
 import com.trabean.external.msa.user.dto.request.MainAccountIdRequestDTO;
 import com.trabean.external.msa.user.dto.request.UserKeyRequestDTO;
@@ -38,6 +39,7 @@ import com.trabean.interceptor.UserHeaderInterceptor;
 import com.trabean.util.RequestHeader;
 import com.trabean.util.ValidateInputDTO;
 import com.trabean.util.ValidationUtil;
+import jakarta.ws.rs.InternalServerErrorException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -813,20 +815,47 @@ public class AccountService {
 
     // 통장 주인 이름 조회 서비스 로직
     public AccountAdminUserNameResponseDTO getAccountAdminUserName(String accountNo) {
-        Long accountId = ValidationUtil.validateAccount(accountRepository.findByAccountNo(accountNo)).getAccountId();
-        List<UserAccountRelation> userAccountRelationList = ValidationUtil.validateUserAccountRelationList(userAccountRelationRepository.findAllByAccountId(accountId));
+        Account account = ValidationUtil.validateAccount(accountRepository.findByAccountNo(accountNo));
 
-        Long userId = userAccountRelationList.stream()
-                .filter(relation -> relation.getUserRole() == UserRole.ADMIN)
-                .map(UserAccountRelation::getUserId)
-                .findFirst()
-                .orElseThrow(UserAccountRelationNotFoundException::getInstance);
+        if (account.getAccountType() == AccountType.PERSONAL) {
+            List<UserAccountRelation> userAccountRelationList = ValidationUtil.validateUserAccountRelationList(userAccountRelationRepository.findAllByAccountId(account.getAccountId()));
 
-        // User 서버에 userName 조회 요청
-        String userName = userClient.getUserName(userId).getUserName();
+            Long userId = userAccountRelationList.stream()
+                    .filter(relation -> relation.getUserRole() == UserRole.ADMIN)
+                    .map(UserAccountRelation::getUserId)
+                    .findFirst()
+                    .orElseThrow(UserAccountRelationNotFoundException::getInstance);
 
-        return AccountAdminUserNameResponseDTO.builder()
-                .userName(userName)
-                .build();
+            // User 서버에 userName 조회 요청
+            String name = userClient.getUserName(userId).getUserName();
+
+            return AccountAdminUserNameResponseDTO.builder()
+                    .name(name)
+                    .build();
+        }
+        else if (account.getAccountType() == AccountType.DOMESTIC) {
+            DomesticTravelAccountInfoResponseDTO domesticTravelAccountInfo = travelClient.getDomesticTravelAccountInfo(account.getAccountId());
+
+            String name = domesticTravelAccountInfo.getAccountName();
+
+            return AccountAdminUserNameResponseDTO.builder()
+                    .name(name)
+                    .build();
+        }
+        else if (account.getAccountType() == AccountType.FOREIGN) {
+            ParentAccountIdResponseDTO parentAccountIdResponseDTO = travelClient.getParentAccountId(account.getAccountId());
+
+            DomesticTravelAccountInfoResponseDTO domesticTravelAccountInfo = travelClient.getDomesticTravelAccountInfo(parentAccountIdResponseDTO.getParentAccountId());
+
+            String name = domesticTravelAccountInfo.getAccountName();
+
+            return AccountAdminUserNameResponseDTO.builder()
+                    .name(name)
+                    .build();
+        }
+        else {
+            throw new InternalServerErrorException("API 문제 발생");
+        }
     }
+
 }
