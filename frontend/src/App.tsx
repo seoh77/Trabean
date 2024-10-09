@@ -32,6 +32,8 @@ import CreateForeignTravelAccountPage from "./pages/TravelAccount/page/CreateFor
 import MemberManagementPage from "./pages/TravelAccount/page/MemberManagementPage";
 import InvitePage from "./pages/InvitePage/InvitePage";
 import ProtectedRoute from "./routes/PrivateRoute";
+import ChatbotPage from "./pages/ChatbotPage/ChatbotMainPage";
+import ChatMapPage from "./pages/ChatbotPage/ChatMapPage";
 
 function App() {
   return (
@@ -45,6 +47,8 @@ function App() {
           path="/accounts/travel/domestic/:accountId/invite"
           element={<InvitePage />}
         />
+        <Route path="/chatbot" element={<ChatbotPage />} />
+        <Route path="/chatbot/map" element={<ChatMapPage />} />
 
         {/* ProtectedRoute로 보호되는 라우트 */}
         <Route element={<ProtectedRoute />}>
