@@ -84,6 +84,7 @@ const Chatbot: React.FC = () => {
   const navigate = useNavigate(); // useNavigate 훅 설정
 
   const currencyList = [
+    { id: "KRW", description: "한국 (KRW)" },
     { id: "USD", description: "미국 (USD)" },
     { id: "EUR", description: "유럽 (EUR)" },
     { id: "JPY", description: "일본 (JPY)" },
