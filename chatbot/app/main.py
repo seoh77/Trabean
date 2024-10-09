@@ -7,6 +7,10 @@ from app.api.chatbot import router
 import httpx
 from contextlib import asynccontextmanager
 from py_eureka_client import eureka_client
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Eureka 서버 URL 및 서비스 정보 설정
 EUREKA_SERVER_URL = "http://j11a604.p.ssafy.io:8761/eureka"
@@ -17,18 +21,25 @@ INSTANCE_PORT = 8082
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # CORS 설정은 여기에 포함되지 않음
-    await eureka_client.init_async(
+    try:
+      await eureka_client.init_async(
         eureka_server=EUREKA_SERVER_URL,
         app_name=SERVICE_NAME,
         instance_port=INSTANCE_PORT,
         instance_host=INSTANCE_IP,
         instance_ip=INSTANCE_IP
-    )
-    print("eureka 등록!")
+      )
+      logger.info("Eureka 등록 성공!")
+    except Exception as e:
+      logger.error(f"Eureka 등록 실패: {e}")
+      return  # 등록 실패 시 이후 작업을 중단할 수 있습니다.
     yield
-    # 애플리케이션 종료 시 Eureka에서 해제
-    await eureka_client.stop_async()
+
+    try:
+      await eureka_client.stop_async()
+      logger.info("Eureka 해제 성공!")
+    except Exception as e:
+      logger.error(f"Eureka 해제 실패: {e}")
 
 # FastAPI 인스턴스를 생성할 때 lifespan을 함께 설정
 app = FastAPI(lifespan=lifespan)
@@ -47,4 +58,4 @@ app.include_router(router, prefix="/api/chatbot")
 app.include_router(locationAnswerRouter, prefix="/api/chatbot")
 app.include_router(locationQuestionRouter, prefix="/api/chatbot")
 app.include_router(promptRouter, prefix="/api/chatbot")
-print("chatbot 앱 시작!!!")
+logger.info("chatbot 앱 시작!!!")
