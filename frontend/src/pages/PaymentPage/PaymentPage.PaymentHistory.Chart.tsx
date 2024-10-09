@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { PieChart, Pie, Cell, Legend } from "recharts";
+import { isAxiosError } from "axios";
 import client from "../../client";
 import { formatNumberWithCommas } from "../../utils/formatNumber";
 
@@ -10,6 +11,7 @@ interface ChartProps {
   handleTotalAmount: (amount: string) => void;
   signalFetchChart: boolean;
   handleCategory: (category: string) => void;
+  travelAccountId: string | null;
 }
 
 interface Category {
@@ -25,6 +27,7 @@ const Chart: React.FC<ChartProps> = ({
   handleTotalAmount,
   signalFetchChart,
   handleCategory,
+  travelAccountId,
 }) => {
   const [chartInfo, setCartInfo] = useState<Category[] | null>(null);
 
@@ -55,23 +58,29 @@ const Chart: React.FC<ChartProps> = ({
   };
 
   const fetchChart = async () => {
-    const params = {
-      startdate: startDate ? formatDate(startDate) : null,
-      enddate: endDate ? formatDate(endDate) : null,
-    };
-    const paymentAccountId = localStorage.getItem("paymentAccountId");
-    const response = await client().get(
-      `/api/payments/${paymentAccountId}/chart`,
-      {
-        params,
-      },
-    );
-    console.log(response.data);
-    const price = response.data.totalAmount;
-    const formattedPrice = formatNumberWithCommas(price);
-    handleTotalAmount(formattedPrice);
-    setCartInfo(response.data.category);
-    console.log(chartInfo);
+    if (!travelAccountId) {
+      return;
+    }
+    try {
+      const params = {
+        startdate: startDate ? formatDate(startDate) : null,
+        enddate: endDate ? formatDate(endDate) : null,
+      };
+      const response = await client().get(
+        `/api/payments/${travelAccountId}/chart`,
+        {
+          params,
+        },
+      );
+      const price = response.data.totalAmount;
+      const formattedPrice = formatNumberWithCommas(price);
+      handleTotalAmount(formattedPrice);
+      setCartInfo(response.data.category);
+    } catch (error) {
+      if (isAxiosError(error)) {
+        console.log(error.response?.data.message || "알 수 없는 에러 발생");
+      }
+    }
   };
 
   useEffect(() => {
