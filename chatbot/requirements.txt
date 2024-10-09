@@ -10,6 +10,7 @@ dataclasses-json==0.6.7
 distro==1.9.0
 docx2txt==0.8
 fastapi==0.115.0
+uvicorn==0.30.6
 frozenlist==1.4.1
 geographiclib==2.0
 geopy==2.4.1
