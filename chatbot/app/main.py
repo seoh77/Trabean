@@ -4,9 +4,6 @@ from app.api.location.questionController import locationQuestionRouter # 라우�
 from app.api.prompt.promptController import promptRouter
 from fastapi import FastAPI, Depends
 from starlette.middleware.cors import CORSMiddleware
-from sqlalchemy.orm import Session
-from app.db.database import SessionLocal
-from app.db.models import Chatbot
 from app.api.chatbot import router
 
 app = FastAPI()
