@@ -42,23 +42,25 @@ public class PaymentsController {
 
     // QR 인식 후 결제 정보 업데이트
     @PostMapping("/info")
-    public PaymentUpdateResponse updatePaymentInfo(@RequestBody UpdatePaymentInfoRequest request) {
-
-        return paymentsUpdateInfoService.updatePayment(request);
+    public ResponseEntity<PaymentUpdateResponse> updatePaymentInfo(@RequestBody UpdatePaymentInfoRequest request) {
+        PaymentUpdateResponse response = paymentsUpdateInfoService.updatePayment(request);
+        return ResponseEntity.ok(response);
     }
 
     // 결제 요청
     @PostMapping("/{accountId}")
-    public PaymentResponse requestPayment(@PathVariable Long accountId,
-                                          @RequestBody RequestPaymentRequest request) {
-        return paymentsService.requestPayment(accountId, request);
+    public ResponseEntity<PaymentResponse> requestPayment(@PathVariable Long accountId,
+                                                          @RequestBody RequestPaymentRequest request) {
+        PaymentResponse response = paymentsService.requestPayment(accountId, request);
+        return ResponseEntity.ok(response);
     }
 
     // 재 결제 요청
     @PostMapping("/retry/{accountId}")
-    public PaymentResponse reRequestPayment(@PathVariable Long accountId,
-                                            @RequestBody RequestPaymentRequest request) {
-        return paymentsService.requestPayment(accountId, request);
+    public ResponseEntity<PaymentResponse> reRequestPayment(@PathVariable Long accountId,
+                                                            @RequestBody RequestPaymentRequest request) {
+        PaymentResponse response = paymentsService.requestPayment(accountId, request);
+        return ResponseEntity.ok(response);
     }
 
     // 전체 결제 내역 조회
