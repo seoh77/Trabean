@@ -66,11 +66,11 @@ const DomesticTravelAccountPage: React.FC = () => {
   };
 
   const handlePayment = () => {
-    alert("다함께 결제해요 누름!!!!!!");
+    nav(`/payment/qr/${accountId}`);
   };
 
   const handleExpenseTracker = () => {
-    alert("예산관리 가계부 누름!!!!!!");
+    nav(`/payment/list/${accountId}`);
   };
 
   // const closeSplitModal = () => {

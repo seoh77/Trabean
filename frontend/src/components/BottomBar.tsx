@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import classNames from "classnames";
 
+import client from "../client";
 import Home from "../assets/home.png";
 import PaymentHistory from "../assets/paymentHistory.png";
 import Payment from "../assets/payment.png";
@@ -9,9 +10,41 @@ import ExchangeRate from "../assets/exchangeRate.png";
 import Bell from "../assets/Bell.png";
 
 const BottomBar: React.FC = () => {
+  const [paymentAccountId, setPaymentAccountId] = useState<number | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
 
+  // 메인 결제 계좌 가져오기
+  const getMainPaymentAccount = async () => {
+    try {
+      const response = await client().get("/api/payments/main-account");
+      setPaymentAccountId(response.data.paymentAccountId);
+    } catch (error) {
+      console.error("main payment account 불러올 때 에러 발생:", error);
+    }
+  };
+
+  useEffect(() => {
+    getMainPaymentAccount();
+  }, []);
+
+  // 결제 페이지 이동
+  const goToPaymentPage = () => {
+    if (!paymentAccountId) {
+      alert("메인 결제 계좌가 설정되지 않았습니다.");
+    }
+    navigate(`/payment/qr/${paymentAccountId}`);
+  };
+
+  // 가계부 페이지 이동
+  const goToPaymentListPage = () => {
+    if (!paymentAccountId) {
+      alert("메인 결제 계좌가 설정되지 않았습니다.");
+    }
+    navigate(`/payment/list/${paymentAccountId}`);
+  };
+
+  // 클래스 이름 설정
   const containerClass = classNames(
     "flex flex-col items-center justify-center relative w-full hover:cursor-pointer",
   );
@@ -39,9 +72,7 @@ const BottomBar: React.FC = () => {
               <p className={textClass}>홈</p>
             </div>
             <div
-              onClick={() => {
-                navigate("/payment/list");
-              }}
+              onClick={goToPaymentListPage}
               role="presentation"
               className={containerClass}
             >
@@ -63,9 +94,7 @@ const BottomBar: React.FC = () => {
               <p className={textClass}>환율</p>
             </div>
             <div
-              onClick={() => {
-                navigate("/payment/qr");
-              }}
+              onClick={goToPaymentPage}
               role="presentation"
               className={containerClass}
             >

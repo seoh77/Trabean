@@ -88,16 +88,16 @@ function App() {
             path="/accounts/travel/foreign/:parentAccountId/charge"
             element={<ChargeForeignTravelAccountPage />}
           />
-          <Route path="/payment/qr" element={<PaymentPage />} />
+          <Route path="/payment/qr/:accountId" element={<PaymentPage />} />
           <Route
-            path="/payment/qr/:merchantId/:merchantName/:currency/:amount"
+            path="/payment/qr/:accountId/:merchantId/:merchantName/:currency/:amount"
             element={<PaymentPassword />}
           />
           <Route
             path="/payment/qr/success/:payId"
             element={<PaymentSuccessPage />}
           />
-          <Route path="/payment/list" element={<PaymentHistory />} />
+          <Route path="/payment/list/:accountId" element={<PaymentHistory />} />
           <Route path="/transfer/list/:accountId" element={<TransferLists />} />
           <Route
             path="/accounts/travel/domestic/:accountId/detail/transfer/:targetaccount"
