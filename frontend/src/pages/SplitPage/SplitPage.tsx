@@ -42,6 +42,7 @@ const ExchangeSplit: React.FC<SplitProps> = ({
   }, [totalAmount, totalNo]);
 
   const toggleMemberSelection = (member: TravelAccountMember) => {
+    console.log(member);
     setSelectedMembers((prevSelected) => {
       if (prevSelected.some((selected) => selected.userId === member.userId)) {
         return prevSelected.filter(
