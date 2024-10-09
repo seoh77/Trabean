@@ -88,7 +88,7 @@ public class AccountController {
                                                                                                  @RequestParam(defaultValue = "19000101") String startDate,
                                                                                                  @RequestParam(defaultValue = "21000101") String endDate,
                                                                                                  @RequestParam(defaultValue = "A") String transactionType,
-                                                                                                 @RequestParam(defaultValue = "-1") Long selectedUserId) {
+                                                                                                 @RequestParam(defaultValue = "-1") String selectedUserId) {
         DomesticTravelAccountDetailResponseDTO responseDTO = accountService.getDomesticTravelAccountDetail(accountId, startDate, endDate, transactionType, selectedUserId);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
