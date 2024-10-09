@@ -6,6 +6,7 @@ import React, {
   useMemo,
 } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import client from "../../client";
 import ChatLoading from "./ChatLoading";
 import TopBar from "../../components/TopBar";
 import Card from "./ChatCard";
@@ -419,29 +420,23 @@ const ChatMap: React.FC = () => {
     requestData: RequestData,
   ): Promise<ResponseData | null> => {
     try {
-      const response = await fetch(
-        "http://localhost:8082/api/chatbot/recommendLocation",
+      const response = await client().post(
+        "/api/chatbot/recommendLocation",
+        requestData,
         {
-          method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(requestData),
         },
       );
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log("추천 결과:", data);
-        return data as ResponseData;
-      }
-
-      console.error("Error:", response.statusText);
-      return null; // void 반환
+      // 요청이 성공한 경우
+      console.log("추천 결과:", response.data);
+      return response.data as ResponseData;
     } catch (error) {
-      console.error("Error:", error);
-      return null;
+      console.error("챗봇 데이터 가져오기 오류:", error);
     }
+    return null; // void 반환
   };
 
   // API를 통해 travel route 받아오기
