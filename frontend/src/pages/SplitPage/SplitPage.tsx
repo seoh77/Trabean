@@ -54,11 +54,12 @@ const ExchangeSplit: React.FC<SplitProps> = ({
   };
 
   // N빵 진행 확인 버튼 클릭 시
+  console.log(selectedMembers);
   const handleSplit = async () => {
     const invalidMembers = selectedMembers.filter(
       (member) => member.mainAccountId === null,
     );
-
+    console.log(invalidMembers);
     if (invalidMembers.length > 0) {
       setIsErrorModalVisible(true); // 메인 계좌가 없는 멤버가 있으면 오류 모달을 띄움
     } else {
@@ -165,7 +166,7 @@ const ExchangeSplit: React.FC<SplitProps> = ({
                       <img
                         src={
                           // eslint-disable-next-line eqeqeq
-                          member.role == "admin" ? kingBeanProfile : beanProfile
+                          member.role == "ADMIN" ? kingBeanProfile : beanProfile
                         }
                         alt="profile"
                         className="w-8 h-8 object-cover rounded-full"
