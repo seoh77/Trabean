@@ -321,6 +321,31 @@ public class AccountService {
                 .build();
     }
 
+    // 개인 통장 생성일 조회 서비스 로직
+    public PersonalAccountCreatedDateResponseDTO getPersonalAccountCreatedDate(Long accountId) {
+
+        String accountNo = ValidationUtil.validateInput(ValidateInputDTO.builder()
+                        .account(accountRepository.findById(accountId))
+                        .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(UserHeaderInterceptor.userId.get(), accountId))
+                        .accountType(AccountType.PERSONAL)
+                        .build())
+                .getAccountNo();
+
+        // SSAFY 금융 API 계좌 조회 (단건) 요청
+        InquireDemandDepositAccountRequestDTO inquireDemandDepositAccountRequestDTO = InquireDemandDepositAccountRequestDTO.builder()
+                .header(RequestHeader.builder()
+                        .apiName("inquireDemandDepositAccount")
+                        .userKey(UserHeaderInterceptor.userKey.get())
+                        .build())
+                .accountNo(accountNo)
+                .build();
+        InquireDemandDepositAccountResponseDTO inquireDemandDepositAccountResponseDTO = domesticClient.inquireDemandDepositAccount(inquireDemandDepositAccountRequestDTO);
+
+        return PersonalAccountCreatedDateResponseDTO.builder()
+                .accountCreatedDate(inquireDemandDepositAccountResponseDTO.getRec().getAccountCreatedDate())
+                .build();
+    }
+
     // SSAFY 금융 API 계좌 거래 내역 responseDTO -> 개인 통장 거래 내역 리스트
     private List<PersonalAccountDetailResponseDTO.Transaction> getPersonalAccountTransactionList(InquireTransactionHistoryListResponseDTO inquireTransactionHistoryListResponseDTO) {
         return inquireTransactionHistoryListResponseDTO.getRec().getList().stream()

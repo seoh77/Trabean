@@ -59,6 +59,13 @@ public class AccountController {
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
+    // 개인 통장 생성일 조회 API
+    @GetMapping("personal/{accountId}/created")
+    public ResponseEntity<PersonalAccountCreatedDateResponseDTO> getPersonalAccountCreatedDate(@PathVariable Long accountId) {
+        PersonalAccountCreatedDateResponseDTO responseDTO = accountService.getPersonalAccountCreatedDate(accountId);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
+
     // 개인 통장 계좌 이체 API
     @PostMapping("/personal/{accountId}/transfer")
     public ResponseEntity<SsafySuccessResponseDTO> transferPersonalAccount(@PathVariable Long accountId,
