@@ -25,7 +25,7 @@ export interface TravelAccountMember {
   role: string;
   amount?: number;
   mainAccountId?: number | null;
-  mainAccountNo: string;
+  mainAccountNumber: string;
 }
 
 export interface TravelAccountMemberAmountData {

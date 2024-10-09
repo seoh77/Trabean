@@ -72,7 +72,7 @@ const ExchangeSplit: React.FC<SplitProps> = ({
           withdrawalAccountNo,
           depositAccountList: selectedMembers.map((member) => ({
             userId: member.userId,
-            accountNumber: member.mainAccountNo,
+            accountNumber: member.mainAccountNumber,
           })),
         };
 
@@ -164,9 +164,8 @@ const ExchangeSplit: React.FC<SplitProps> = ({
                       {/* role이 admin이면 kingbean 이미지로, 아니라면 일반 bean 이미지로 설정 */}
                       <img
                         src={
-                          member.role === "admin"
-                            ? kingBeanProfile
-                            : beanProfile
+                          // eslint-disable-next-line eqeqeq
+                          member.role == "admin" ? kingBeanProfile : beanProfile
                         }
                         alt="profile"
                         className="w-8 h-8 object-cover rounded-full"
@@ -175,7 +174,7 @@ const ExchangeSplit: React.FC<SplitProps> = ({
                     <div className="flex flex-col">
                       <p className="text-sm text-gray-800">{member.userName}</p>
                       <p className="text-xs text-gray-500">
-                        {member.mainAccountNo || "계좌번호 없음"}
+                        {member.mainAccountNumber || "계좌번호 없음"}
                       </p>
                     </div>
                   </div>
