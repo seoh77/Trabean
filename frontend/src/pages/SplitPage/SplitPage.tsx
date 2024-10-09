@@ -54,8 +54,8 @@ const ExchangeSplit: React.FC<SplitProps> = ({
   };
 
   // N빵 진행 확인 버튼 클릭 시
-  console.log(selectedMembers);
   const handleSplit = async () => {
+    console.log(selectedMembers);
     const invalidMembers = selectedMembers.filter(
       (member) => member.mainAccountId === null,
     );
