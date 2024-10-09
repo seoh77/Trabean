@@ -60,7 +60,7 @@ public class AccountController {
     }
 
     // 개인 통장 생성일 조회 API
-    @GetMapping("personal/{accountId}/created")
+    @GetMapping("/personal/{accountId}/created")
     public ResponseEntity<PersonalAccountCreatedDateResponseDTO> getPersonalAccountCreatedDate(@PathVariable Long accountId) {
         PersonalAccountCreatedDateResponseDTO responseDTO = accountService.getPersonalAccountCreatedDate(accountId);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
@@ -101,14 +101,14 @@ public class AccountController {
     }
 
     // 한화 여행통장 생성일 조회 API
-    @GetMapping("travel/domestic/{accountId}/created")
+    @GetMapping("/travel/domestic/{accountId}/created")
     public ResponseEntity<DomesticTravelAccountCreatedDateResponseDTO> getDomesticTravelAccountCreatedDate(@PathVariable Long accountId) {
         DomesticTravelAccountCreatedDateResponseDTO responseDTO = accountService.getDomesticTravelAccountCreatedDate(accountId);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
     // 한화 여행통장 잔액 조회 API
-    @GetMapping("travel/domestic/{accountId}/accountBalance")
+    @GetMapping("/travel/domestic/{accountId}/accountBalance")
     public ResponseEntity<DomesticTravelAccountBalanceResponseDTO> getDomesticTravelAccountBalance(@PathVariable Long accountId) {
         DomesticTravelAccountBalanceResponseDTO responseDTO = accountService.getDomesticTravelAccountBalance(accountId);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
@@ -133,8 +133,15 @@ public class AccountController {
     // 한화 여행통장 멤버 목록 조회 API (민채)
     @GetMapping("/travel/domestic/{accountId}/members")
     public ResponseEntity<DomesticTravelAccountMemberListResponseDTO> getDomesticTravelAccountMemberList(@PathVariable Long accountId) {
-        DomesticTravelAccountMemberListResponseDTO response = accountService.getDomesticTravelAccountMemberList(accountId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        DomesticTravelAccountMemberListResponseDTO responseDTO = accountService.getDomesticTravelAccountMemberList(accountId);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
+
+    // 통장 권한 조회 API
+    @GetMapping("/travel/domestic/{accountId}/userRole")
+    public ResponseEntity<DomesticTravelAccountUserRoleResponseDTO> getDomesticTravelAccountUserRole(@PathVariable Long accountId) {
+        DomesticTravelAccountUserRoleResponseDTO responseDTO = accountService.getDomesticTravelAccountUserRole(accountId);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
     // 외화 여행통장 생성 API
@@ -145,7 +152,7 @@ public class AccountController {
     }
 
     // 외화 여행통장 생성일 조회 API
-    @GetMapping("travel/foreign/{accountId}/created")
+    @GetMapping("/travel/foreign/{accountId}/created")
     public ResponseEntity<ForeignTravelAccountCreatedDateResponseDTO> getForeignTravelAccountCreatedDate(@PathVariable Long accountId) {
         ForeignTravelAccountCreatedDateResponseDTO responseDTO = accountService.getForeignTravelAccountCreatedDate(accountId);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);

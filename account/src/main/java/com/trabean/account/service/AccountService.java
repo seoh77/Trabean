@@ -754,6 +754,16 @@ public class AccountService {
                 .members(members).build();
     }
 
+    // 통장 권한 조회 서비스 로직
+    public DomesticTravelAccountUserRoleResponseDTO getDomesticTravelAccountUserRole(Long accountId) {
+
+        UserRole userRole = ValidationUtil.validateUserAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(UserHeaderInterceptor.userId.get(), accountId)).getUserRole();
+
+        return DomesticTravelAccountUserRoleResponseDTO.builder()
+                .userRole(userRole)
+                .build();
+    }
+    
     // 외화 여행통장 생성 서비스 로직
     public CreateForeignTravelAccountResponseDTO createForeignTravelAccount(CreateForeignTravelAccountRequestDTO requestDTO) {
 
