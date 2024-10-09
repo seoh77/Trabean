@@ -179,8 +179,8 @@ const Password: React.FC = () => {
         // 에러 메시지 설정
         setErrorMessage(error.response?.data.message || "알 수 없는 에러 발생");
         setIsFail(true);
-        setPassword("");
       }
+      setPassword("");
     }
   };
 
