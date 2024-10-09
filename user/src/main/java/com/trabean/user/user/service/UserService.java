@@ -1,5 +1,6 @@
 package com.trabean.user.user.service;
 
+import jakarta.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.trabean.user.config.jwt.TokenProvider;
@@ -9,6 +10,7 @@ import com.trabean.user.user.dto.UserNameResponse;
 import com.trabean.user.user.dto.UserPaymentAccountIdResponse;
 import com.trabean.user.user.entity.RefreshToken;
 import com.trabean.user.user.repository.RefreshTokenRepository;
+import jakarta.servlet.http.Cookie;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -21,16 +23,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import com.trabean.user.user.controller.UserApiController;
 import com.trabean.user.user.dto.AddUserRequest;
 import com.trabean.user.user.entity.User;
 import com.trabean.user.user.repository.UserRepository;
 
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import lombok.RequiredArgsConstructor;
 
 import java.time.Duration;
@@ -47,7 +43,6 @@ public class UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ExternalApiService externalApiService; // 외부 API 호출을 위한 서비스 주입
     private final ObjectMapper objectMapper = new ObjectMapper(); // JSON 파싱을 위한 ObjectMapper
-    private static final Logger logger = LoggerFactory.getLogger(UserApiController.class); // 로그를 위한 Logger 추가
 
     private final RefreshTokenRepository refreshTokenRepository;
     private final TokenProvider tokenProvider;
@@ -116,7 +111,8 @@ public class UserService {
             );
         }
 
-		response.addCookie(createCookie("refreshToken", refreshToken));
+        // Refresh Token을 쿠키로 추가
+        response.addCookie(createCookie("refreshToken", refreshToken));
 
         return accessToken;
     }
@@ -173,10 +169,6 @@ public class UserService {
         // 내부 DB에서 이메일 중복 확인
         boolean isEmailInDb = userRepository.existsByEmail(email);
 
-        // 외부 API에서 이메일 중복 확인
-//        boolean isEmailInExternalApi = checkEmailWithExternalApi(email);
-
-        // 두 조건을 모두 만족해야 중복이 아닌 것으로 처리
         return isEmailInDb;
     }
 
@@ -186,11 +178,9 @@ public class UserService {
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            // User 객체를 UserResponse로 변환
             return new UserPaymentAccountIdResponse(user.getPayment_account_id());
         }
 
-        // 사용자를 찾지 못한 경우 기본값을 반환
         return new UserPaymentAccountIdResponse(null);
     }
 
@@ -199,26 +189,22 @@ public class UserService {
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            // User 객체를 UserResponse로 변환
             return new UserNameResponse(user.getUsername());
         }
 
-        // 사용자를 찾지 못한 경우 기본값을 반환
         return new UserNameResponse(null);
     }
+
     public UserEmailResponse getUserEmail(Long userId) {
         Optional<User> userOptional = userRepository.findById(userId);
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            // User 객체를 UserResponse로 변환
             return new UserEmailResponse(user.getUserEmail());
         }
 
-        // 사용자를 찾지 못한 경우 기본값을 반환
         return new UserEmailResponse(null);
     }
-
 
     public boolean updateMainAccountId(Long userId, String mainAccountId) {
         Optional<User> userOptional = userRepository.findById(userId);
@@ -244,10 +230,11 @@ public class UserService {
     public User findByUserId(Long userId) {
         return userRepository.findById(userId).orElse(null);
     }
-	private Cookie createCookie(String key, String value) {
-		Cookie cookie = new Cookie(key, value);
-		cookie.setMaxAge(24*60*60);
-		cookie.setHttpOnly(true);
-		return cookie;
-	}
+
+    private Cookie createCookie(String key, String value) {
+        Cookie cookie = new Cookie(key, value);
+        cookie.setMaxAge(24 * 60 * 60);
+        cookie.setHttpOnly(true);
+        return cookie;
+    }
 }
