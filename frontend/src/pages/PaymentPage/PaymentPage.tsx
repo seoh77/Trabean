@@ -12,7 +12,9 @@ const PaymentPage: React.FC = () => {
 
       // 스캔된 URL로 리다이렉트
       if (parsedData && parsedData.url) {
-        window.location.href = parsedData.url;
+        // 현재 경로에 QR 코드에서 나온 경로를 추가하여 상대 경로로 이동
+        const newUrl = `${window.location.origin}${window.location.pathname}${parsedData.url}`;
+        window.location.href = newUrl;
       }
     } catch (error) {
       console.error("Error parsing QR code data:", error);
@@ -20,6 +22,10 @@ const PaymentPage: React.FC = () => {
       // URL 형태의 QR 코드일 경우 바로 리다이렉트
       if (result.data.startsWith("http")) {
         window.location.href = result.data;
+      } else {
+        // QR 코드 데이터가 URL이 아니면 상대 경로처럼 처리
+        const newUrl = `${window.location.origin}${window.location.pathname}${result.data}`;
+        window.location.href = newUrl;
       }
     }
   };
