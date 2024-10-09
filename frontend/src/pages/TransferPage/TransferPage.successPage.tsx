@@ -7,7 +7,7 @@ const SuccessPage: React.FC = () => {
 
   // 확인 버튼 클릭 시 홈으로 이동
   const handleConfirm = () => {
-    navigate("/transfer/list"); // 홈 페이지나 원하는 경로로 이동
+    navigate("/"); // 홈 페이지나 원하는 경로로 이동
   };
 
   return (

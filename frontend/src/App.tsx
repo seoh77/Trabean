@@ -84,8 +84,11 @@ function App() {
             element={<PaymentSuccessPage />}
           />
           <Route path="/payment/list" element={<PaymentHistory />} />
-          <Route path="/transfer/list" element={<TransferLists />} />
-          <Route path="/transfer/list/:account" element={<TransferList />} />
+          <Route path="/transfer/list/:accountId" element={<TransferLists />} />
+          <Route
+            path="/transfer/list/:accountId/:targetaccount"
+            element={<TransferList />}
+          />
 
           <Route
             path="/creation/*"
@@ -106,8 +109,11 @@ function App() {
           <Route path="/chatbot/map" element={<MapTestPage />} />
           <Route path="/exchange" element={<ExchangeRates />} />
           {/* <Route path="/travel/split" element={<ExchangeSplit />} /> */}
-          <Route path="/transfer/list" element={<TransferList />} />
-          <Route path="/transfer/password" element={<PasswordPage />} />
+          {/* <Route path="/transfer/list" element={<TransferList />} /> */}
+          <Route
+            path="/transfer/password/:accountId"
+            element={<PasswordPage />}
+          />
           <Route path="/transfer/success" element={<SuccessPage />} />
           <Route path="/notification" element={<Notification />} />
         </Route>

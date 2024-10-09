@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import beanProfile from "../../assets/bean_profile.png";
-// import CustomKeypad from "../AccountCreationPage/Keypad";
+
 interface Transfer {
   id: number;
   name: string;
@@ -51,6 +51,7 @@ const transfers: Transfer[] = [
 const TransferLists: React.FC = () => {
   const [selectedAccount, setSelectedAccount] = useState<Transfer | null>(null);
   const [manualInput, setManualInput] = useState<string>("");
+  const { accountId } = useParams<{ accountId: string }>();
   const navigate = useNavigate();
 
   // 계좌 선택
@@ -69,12 +70,23 @@ const TransferLists: React.FC = () => {
   const handleConfirm = () => {
     if (selectedAccount) {
       // 선택된 계좌가 있을 경우 그 계좌 정보를 전송
-      navigate(`/transfer/list/${selectedAccount.account}`, {
-        state: selectedAccount,
+      navigate(`/transfer/list/${accountId}/${selectedAccount.account}`, {
+        state: {
+          account: selectedAccount.account,
+          name: selectedAccount.name,
+          bank: selectedAccount.bank,
+          accountId,
+        },
       });
     } else if (manualInput) {
       // 수동 입력된 계좌번호만 전송
-      navigate(`/transfer/list/${manualInput}`);
+      navigate(`/transfer/list/${accountId}/${manualInput}`, {
+        state: {
+          account: manualInput,
+          bank: "트래빈뱅크",
+          accountId,
+        },
+      });
     } else {
       alert("계좌 번호를 선택하거나 입력해 주세요.");
     }
