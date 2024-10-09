@@ -19,7 +19,8 @@ import AccountSetupPage from "./pages/AccountCreationPage/AccountSetupPage";
 import CurrencyAddPage from "./pages/AccountCreationPage/CurrencyAddPage";
 import MapTestPage from "./pages/AccountCreationPage/MapTestPage";
 import ExchangeRates from "./pages/Exchange/ExchangePage";
-// import ExchangeSplit from "./pages/SplitPage/SplitPage";
+import DTransferLists from "./pages/DomesticTransferPage/DTransferPage.DTransferLists";
+import DTransferList from "./pages/DomesticTransferPage/DTransferPage.DTransferList";
 import PasswordPage from "./pages/AccountCreationPage/PasswordPage";
 import SuccessPage from "./pages/TransferPage/TransferPage.successPage";
 import BottomBar from "./components/BottomBar";
@@ -34,6 +35,8 @@ import InvitePage from "./pages/InvitePage/InvitePage";
 import ProtectedRoute from "./routes/PrivateRoute";
 import ChatbotPage from "./pages/ChatbotPage/ChatbotMainPage";
 import ChatMapPage from "./pages/ChatbotPage/ChatMapPage";
+import DPassword from "./pages/AccountCreationPage/DPasswordPage";
+import DSuccessPage from "./pages/DomesticTransferPage/DTransferPage.DsuccessPage";
 
 function App() {
   return (
@@ -58,6 +61,14 @@ function App() {
             element={<DomesticTravelAccountPage />}
           />
           <Route
+            path="/accounts/travel/domestic/:accountId/detail/transfer"
+            element={<DTransferLists />}
+          />
+          <Route
+            path="/accounts/travel/domestic/:accountId/detail/transfer/password"
+            element={<DPassword />}
+          />
+          <Route
             path="/accounts/travel/domestic/:accountId/detail"
             element={<DomesticTravelAccountDetailPage />}
           />
@@ -77,7 +88,6 @@ function App() {
             path="/accounts/travel/foreign/:parentAccountId/charge"
             element={<ChargeForeignTravelAccountPage />}
           />
-
           <Route path="/payment/qr" element={<PaymentPage />} />
           <Route
             path="/payment/qr/:merchantId/:merchantName/:currency/:amount"
@@ -90,10 +100,13 @@ function App() {
           <Route path="/payment/list" element={<PaymentHistory />} />
           <Route path="/transfer/list/:accountId" element={<TransferLists />} />
           <Route
+            path="/accounts/travel/domestic/:accountId/detail/transfer/:targetaccount"
+            element={<DTransferList />}
+          />
+          <Route
             path="/transfer/list/:accountId/:targetaccount"
             element={<TransferList />}
           />
-
           <Route
             path="/creation/*"
             element={
@@ -109,7 +122,6 @@ function App() {
               </AccountTypeProvider>
             }
           />
-
           <Route path="/chatbot/map" element={<MapTestPage />} />
           <Route path="/exchange" element={<ExchangeRates />} />
           {/* <Route path="/travel/split" element={<ExchangeSplit />} /> */}
@@ -119,6 +131,7 @@ function App() {
             element={<PasswordPage />}
           />
           <Route path="/transfer/success" element={<SuccessPage />} />
+          <Route path="/transfer/success/domestic" element={<DSuccessPage />} />
           <Route path="/notification" element={<Notification />} />
         </Route>
       </Routes>

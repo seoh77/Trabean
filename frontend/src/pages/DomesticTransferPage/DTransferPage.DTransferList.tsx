@@ -1,7 +1,10 @@
 import React, { useState } from "react";
-import { useParams, useLocation, useNavigate } from "react-router-dom"; // useNavigate 추가
+import { useLocation, useNavigate } from "react-router-dom"; // useNavigate 추가
 import beanProfile from "../../assets/bean_profile.png";
 import trabeanLogo from "../../assets/logo.png";
+import { formatNumberWithCommas } from "../../utils/formatNumber";
+import TopBar from "../../components/TopBar";
+import deleteIcon from "../../assets/deleteIcon.png";
 
 interface TransferDetails {
   id?: number;
@@ -11,13 +14,13 @@ interface TransferDetails {
 }
 
 const TransferList: React.FC = () => {
-  const { account } = useParams<{ account: string }>(); // URL에서 계좌 번호 받기
   const location = useLocation();
+  const { account } = location.state || {}; // URL에서 계좌 번호 받기
   const navigate = useNavigate(); // useNavigate 훅
   const transferDetails = location.state as TransferDetails; // 이전 페이지에서 전달된 state 받기
   const [amount, setAmount] = useState<string>(""); // 송금 금액 관리
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태 관리
-
+  const { accountId } = location.state || {};
   // 숫자 클릭 처리
   const handleNumberClick = (value: string) => {
     setAmount((prev) => prev + value);
@@ -40,78 +43,97 @@ const TransferList: React.FC = () => {
 
   // 비밀번호 입력 페이지로 이동
   const handleConfirm = () => {
-    navigate("/transfer/password"); // 비밀번호 입력 페이지로 이동
+    navigate(
+      `/accounts/travel/domestic/${accountId}/detail/transfer/password`,
+      {
+        state: {
+          amount,
+          accountId,
+        },
+      },
+    ); // 비밀번호 입력 페이지로 이동
   };
 
   return (
-    <div className="relative p-4 flex flex-col items-center justify-center min-h-screen bg-gray-50">
-      <img
-        src={trabeanLogo}
-        alt="로고"
-        className="max-w-xs max-h-xs object-cover"
-      />
+    <div className="relative flex flex-col justify-center min-h-screen bg-gray-50">
+      <TopBar isLogo={trabeanLogo} page="계좌 이체" isWhite />
 
       {/* 프로필 및 계좌 정보 */}
-      <div className="flex items-center mb-6">
-        <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
+      <div className="flex items-center mb-6 justify-start">
+        <div className="w-12 h-12 rounded-full bg-green-100 flex items-center ml-8">
           <img
             src={beanProfile}
             alt="profile"
-            className="w-full h-full object-cover rounded-full"
+            className="w-full h-full m-0 object-cover rounded-full"
           />
         </div>
-        <div className="ml-4">
+        <div className="ml-5 text-left">
           <p className="text-lg font-semibold">
             {transferDetails?.name || "직접 입력된 계좌"}
           </p>
           <p className="text-sm text-gray-600">
-            {transferDetails?.bank || "정보 없음"}
+            {transferDetails?.bank || "정보없음"} {account}
           </p>
-          <p className="text-sm text-gray-600">계좌 번호: {account}</p>
         </div>
       </div>
 
       {/* 금액 입력 */}
-      <div className="w-full flex justify-center items-center mb-6">
-        <span className="text-2xl font-bold">{amount || "0"} 원</span>
-        <button type="button" onClick={handleClear} className="ml-2">
-          <img src="/assets/clear-icon.png" alt="clear" className="w-6 h-6" />
+      <div className="w-full flex justify-between text-center items-center">
+        <span className="ml-10 mb-0 text-2xl flex font-bold items-center justify-center">
+          {formatNumberWithCommas(parseInt(amount, 10)) || "0"} 원
+        </span>
+        <button type="button" onClick={handleClear} className="mr-2">
+          <img src={deleteIcon} alt="clear" className="w-6 h-6" />
         </button>
       </div>
 
       {/* 입력 밑줄 */}
-      <div className="border-b-2 border-gray-300 w-full mb-6"> </div>
-
-      {/* 숫자 패드 */}
-      <div className="w-full max-w-md">
-        <div className="grid grid-cols-3 gap-4">
-          {["1", "2", "3", "4", "5", "6", "7", "8", "9", "00", "0", "⌫"].map(
-            (number) => (
-              <button
-                key={number}
-                type="button"
-                className="py-4 text-xl font-semibold bg-gray-200 rounded-lg"
-                onClick={() =>
-                  number === "⌫"
-                    ? setAmount(amount.slice(0, -1))
-                    : handleNumberClick(number)
-                }
-              >
-                {number}
-              </button>
-            ),
-          )}
-        </div>
-      </div>
+      <div className="border-b-2 border-gray-300 w-full mb-10"> </div>
 
       {/* 송금 버튼 */}
       <button
         type="button"
-        className="w-full max-w-md bg-green-500 text-white py-3 mt-4 rounded-lg text-lg font-semibold"
+        className="w-full max-w-md bg-primary text-white py-3 mt-4 text-lg font-semibold"
         onClick={handleSend}
+        disabled={!amount || parseInt(amount, 10) === 0}
       >
         송금
       </button>
+      {/* 숫자 키패드 그리드 */}
+      <div className="grid grid-cols-3 gap-4">
+        {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((number) => (
+          <button
+            type="button"
+            key={number}
+            onClick={() => handleNumberClick(number.toString())}
+            className="w- h-16 text-md"
+          >
+            {number}
+          </button>
+        ))}
+        {/* 특수 버튼 (00, 0, 삭제) */}
+        <button
+          type="button"
+          onClick={() => handleNumberClick("00")}
+          className="w-24 h-16 text-md rounded-full"
+        >
+          00
+        </button>
+        <button
+          type="button"
+          onClick={() => handleNumberClick("0")}
+          className="w-24 h-16 text-md rounded-full"
+        >
+          0
+        </button>
+        <button
+          type="button"
+          onClick={() => handleClear}
+          className="w-24 h-16 text-md rounded-full"
+        >
+          ⌫
+        </button>
+      </div>
 
       {/* 모달 */}
       {isModalOpen && (
@@ -120,7 +142,7 @@ const TransferList: React.FC = () => {
             {/* 모달의 너비를 적절히 조정 */}
             <div className="mb-4 text-center">
               <div className="font-semibold text-lg">
-                {transferDetails?.name}
+                {transferDetails?.name || "익명"}
                 님께
               </div>
               <div>송금하시겠습니까?</div>

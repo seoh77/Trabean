@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import filter from "../../../assets/filter.png";
 import client from "../../../client";
 import {
@@ -16,6 +16,7 @@ const DomesticTravelAccountDetailPage: React.FC = () => {
   const startDate = queryParams.get("startDate");
   const endDate = queryParams.get("endDate");
   const selectedUserId = queryParams.get("selectedUserId");
+  const navigate = useNavigate();
   const { accountId } = useParams(); // Path Variable
 
   const [loading, setLoading] = useState(true); // 서버에서 데이터 수신 여부 체크
@@ -30,7 +31,7 @@ const DomesticTravelAccountDetailPage: React.FC = () => {
   const closeChangeFilterModal = () => setIsChangeFilterModalOpen(false);
 
   const handleTransferBalance = () => {
-    alert("이체 하기 누름!!!!!!");
+    navigate(`/accounts/travel/domestic/${accountId}/detail/transfer`);
   };
 
   // Account 서버 한화 여행통장 상세 조회 API fetch 요청
