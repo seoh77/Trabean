@@ -21,7 +21,7 @@ import MapTestPage from "./pages/AccountCreationPage/MapTestPage";
 import ExchangeRates from "./pages/Exchange/ExchangePage";
 import DTransferLists from "./pages/DomesticTransferPage/DTransferPage.DTransferLists";
 import DTransferList from "./pages/DomesticTransferPage/DTransferPage.DTransferList";
-import PasswordPage from "./pages/AccountCreationPage/PasswordPage";
+import PasswordPage from "./pages/TransferPage/PasswordPage";
 import SuccessPage from "./pages/TransferPage/TransferPage.successPage";
 import BottomBar from "./components/BottomBar";
 import Notification from "./pages/NotificationPage/NotificationPage";
@@ -35,7 +35,7 @@ import InvitePage from "./pages/InvitePage/InvitePage";
 import ProtectedRoute from "./routes/PrivateRoute";
 import ChatbotPage from "./pages/ChatbotPage/ChatbotMainPage";
 import ChatMapPage from "./pages/ChatbotPage/ChatMapPage";
-import DPassword from "./pages/AccountCreationPage/DPasswordPage";
+import DPassword from "./pages/DomesticTransferPage/DPasswordPage";
 import DSuccessPage from "./pages/DomesticTransferPage/DTransferPage.DsuccessPage";
 
 function App() {

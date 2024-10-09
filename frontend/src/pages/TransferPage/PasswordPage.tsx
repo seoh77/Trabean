@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
-import CustomKeypad from "./Keypad"; // 비밀번호 입력 키패드 컴포넌트
-import Modal from "./Modal"; // 모달 컴포넌트
+import CustomKeypad from "../AccountCreationPage/Keypad"; // 비밀번호 입력 키패드 컴포넌트
+import Modal from "../AccountCreationPage/Modal"; // 모달 컴포넌트
+import client from "../../client";
 
 const PasswordPage: React.FC = () => {
   const location = useLocation();
@@ -20,29 +20,23 @@ const PasswordPage: React.FC = () => {
   };
 
   // 완료 버튼 클릭 시 처리
-  const handleComplete = () => {
+  const handleComplete = async () => {
     // 비밀번호 검증 API 요청
-    axios
-      .post(
-        `https://j11a604.p.ssafy.io/api/accounts/travel/domestic/${accountId}/verify`,
-        {
-          password,
-        },
-      )
+    await client()
+      .post(`/api/accounts/personal/${accountId}/verify`, {
+        password,
+      })
       .then((response) => {
         if (response.status === 200) {
           // 비밀번호 검증 성공 시 송금 요청
-          axios
-            .post(
-              `https://j11a604.p.ssafy.io/api/accounts/travel/domestic/${accountId}/transfer`,
-              {
-                amount, // 송금 금액을 전송
-              },
-            )
+          client()
+            .post(`/api/accounts/personal/${accountId}/transfer`, {
+              amount, // 송금 금액을 전송
+            })
             .then((transferResponse) => {
               if (transferResponse.status === 200) {
                 // 송금 성공 시 성공 페이지로 이동
-                navigate("/transfer/success/domestic");
+                navigate("/transfer/success");
               } else {
                 // 송금 실패 시 모달 메시지 출력
                 setModalMessage("이체 실패하였습니다.");

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
 import beanProfile from "../../assets/bean_profile.png";
+import client from "../../client";
 
 interface Transfer {
   accountId: number; // 계좌 식별자
@@ -21,9 +21,7 @@ const TransferLists: React.FC = () => {
   useEffect(() => {
     const fetchTransferList = async () => {
       try {
-        const response = await axios.get(
-          "https://j11a604.p.ssafy.io/api/transfer/accounts",
-        ); // 여기서 API URL을 수정하세요.
+        const response = await client().get("/api/transfer/accounts"); // 여기서 API URL을 수정하세요.
         if (response.data && response.data.accountList) {
           setTransfers(response.data.accountList); // 응답 데이터에서 accountList를 상태에 저장
         }
