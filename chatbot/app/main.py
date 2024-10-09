@@ -20,7 +20,7 @@ app.add_middleware(
 
 # Eureka 서버 URL 및 서비스 정보 설정
 EUREKA_SERVER_URL = "http://j11a604.p.ssafy.io:8761/eureka/"
-SERVICE_NAME = "CHATBOT"
+SERVICE_NAME = "chatbot"
 INSTANCE_IP = "0.0.0.0"
 INSTANCE_PORT = 8082
 
