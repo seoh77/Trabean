@@ -59,7 +59,7 @@ const ExchangeSplit: React.FC<SplitProps> = ({
     const invalidMembers = selectedMembers.filter(
       (member) => member.mainAccountId === null,
     );
-    console.log(invalidMembers);
+    console.log(invalidMembers.length);
     if (invalidMembers.length > 0) {
       setIsErrorModalVisible(true); // 메인 계좌가 없는 멤버가 있으면 오류 모달을 띄움
     } else {
