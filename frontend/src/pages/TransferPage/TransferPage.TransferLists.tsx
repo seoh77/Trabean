@@ -1,58 +1,39 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 import beanProfile from "../../assets/bean_profile.png";
 
 interface Transfer {
-  id: number;
-  name: string;
-  bank: string;
-  account: string;
+  accountId: number; // 계좌 식별자
+  accountNo: string; // 계좌번호
+  adminName: string; // 예금주
+  bankName: string; // 은행이름
 }
 
-const transfers: Transfer[] = [
-  {
-    id: 1,
-    name: "김민채",
-    bank: "농협은행",
-    account: "356-0630-5770-33",
-  },
-  {
-    id: 2,
-    name: "서희",
-    bank: "국민은행",
-    account: "123-4567-8901-23",
-  },
-  {
-    id: 3,
-    name: "김인실",
-    bank: "신한은행",
-    account: "110-2345-6789-00",
-  },
-  {
-    id: 4,
-    name: "남윤희",
-    bank: "우리은행",
-    account: "1002-345-678901",
-  },
-  {
-    id: 5,
-    name: "육민우",
-    bank: "하나은행",
-    account: "620-1234-5678-90",
-  },
-  {
-    id: 6,
-    name: "박세건",
-    bank: "카카오뱅크",
-    account: "3333-09-1234567",
-  },
-];
-
 const TransferLists: React.FC = () => {
+  const [transfers, setTransfers] = useState<Transfer[]>([]); // API 응답으로 받아온 계좌 목록 상태
   const [selectedAccount, setSelectedAccount] = useState<Transfer | null>(null);
   const [manualInput, setManualInput] = useState<string>("");
   const { accountId } = useParams<{ accountId: string }>();
   const navigate = useNavigate();
+
+  // API로부터 계좌 목록 받아오기
+  useEffect(() => {
+    const fetchTransferList = async () => {
+      try {
+        const response = await axios.get(
+          "https://j11a604.p.ssafy.io/api/transfer/accounts",
+        ); // 여기서 API URL을 수정하세요.
+        if (response.data && response.data.accountList) {
+          setTransfers(response.data.accountList); // 응답 데이터에서 accountList를 상태에 저장
+        }
+      } catch (error) {
+        console.error("Error fetching transfer list:", error);
+      }
+    };
+
+    fetchTransferList();
+  }, []);
 
   // 계좌 선택
   const handleAccountSelect = (transfer: Transfer) => {
@@ -70,11 +51,11 @@ const TransferLists: React.FC = () => {
   const handleConfirm = () => {
     if (selectedAccount) {
       // 선택된 계좌가 있을 경우 그 계좌 정보를 전송
-      navigate(`/transfer/list/${accountId}/${selectedAccount.account}`, {
+      navigate(`/transfer/list/${accountId}/${selectedAccount.accountNo}`, {
         state: {
-          account: selectedAccount.account,
-          name: selectedAccount.name,
-          bank: selectedAccount.bank,
+          account: selectedAccount.accountNo,
+          name: selectedAccount.adminName,
+          bank: selectedAccount.bankName,
           accountId,
         },
       });
@@ -117,9 +98,9 @@ const TransferLists: React.FC = () => {
       <ul className="space-y-3 mb-4">
         {transfers.map((transfer) => (
           <li
-            key={transfer.id}
+            key={transfer.accountId}
             className={`flex items-center p-3 rounded-lg shadow-sm cursor-pointer ${
-              selectedAccount?.account === transfer.account
+              selectedAccount?.accountId === transfer.accountId
                 ? "bg-green-100"
                 : "bg-gray-50"
             }`}
@@ -134,9 +115,11 @@ const TransferLists: React.FC = () => {
               />
             </div>
             <div className="ml-3">
-              <div className="font-semibold text-gray-800">{transfer.name}</div>
+              <div className="font-semibold text-gray-800">
+                {transfer.adminName}
+              </div>
               <div className="text-gray-600">
-                {transfer.bank} {transfer.account}
+                {transfer.bankName} {transfer.accountNo}
               </div>
             </div>
           </li>
