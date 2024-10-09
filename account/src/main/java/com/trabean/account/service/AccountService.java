@@ -505,7 +505,7 @@ public class AccountService {
                 .accountNo(accountNo)
                 .accountBalance(inquireDemandDepositAccountResponseDTO.getRec().getAccountBalance())
                 .bankName(inquireDemandDepositAccountResponseDTO.getRec().getBankName())
-                .transactionList(getDomesticTravelAccountTransactionList(inquireTransactionHistoryListResponseDTO), selectedUserId)
+                .transactionList(getDomesticTravelAccountTransactionList(inquireTransactionHistoryListResponseDTO, selectedUserId))
                 .build();
     }
 
