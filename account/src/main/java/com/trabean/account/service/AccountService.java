@@ -462,7 +462,7 @@ public class AccountService {
     }
 
     // 한화 여행통장 상세 조회 서비스 로직
-    public DomesticTravelAccountDetailResponseDTO getDomesticTravelAccountDetail(Long accountId, String startDate, String endDate, String transactionType) {
+    public DomesticTravelAccountDetailResponseDTO getDomesticTravelAccountDetail(Long accountId, String startDate, String endDate, String transactionType, Long selectedUserId) {
 
         String accountNo = ValidationUtil.validateInput(ValidateInputDTO.builder()
                         .account(accountRepository.findById(accountId))
@@ -505,13 +505,44 @@ public class AccountService {
                 .accountNo(accountNo)
                 .accountBalance(inquireDemandDepositAccountResponseDTO.getRec().getAccountBalance())
                 .bankName(inquireDemandDepositAccountResponseDTO.getRec().getBankName())
-                .transactionList(getDomesticTravelAccountTransactionList(inquireTransactionHistoryListResponseDTO))
+                .transactionList(getDomesticTravelAccountTransactionList(inquireTransactionHistoryListResponseDTO), selectedUserId)
                 .build();
     }
 
-    // SSAFY 금융 API 계좌 거래 내역 responseDTO -> 한화 여행 통장 거래 내역 리스트
-    private List<DomesticTravelAccountDetailResponseDTO.Transaction> getDomesticTravelAccountTransactionList(InquireTransactionHistoryListResponseDTO inquireTransactionHistoryListResponseDTO) {
+//    // SSAFY 금융 API 계좌 거래 내역 responseDTO -> 한화 여행 통장 거래 내역 리스트
+//    private List<DomesticTravelAccountDetailResponseDTO.Transaction> getDomesticTravelAccountTransactionList(InquireTransactionHistoryListResponseDTO inquireTransactionHistoryListResponseDTO, Long selectedUserId) {
+//        return inquireTransactionHistoryListResponseDTO.getRec().getList().stream()
+//                .map(transaction -> DomesticTravelAccountDetailResponseDTO.Transaction.builder()
+//                        .transactionType(transaction.getTransactionType())
+//                        .transactionSummary(transaction.getTransactionSummary())
+//                        .transactionDate(transaction.getTransactionDate())
+//                        .transactionTime(transaction.getTransactionTime())
+//                        .transactionBalance(transaction.getTransactionBalance())
+//                        .transactionAfterBalance(transaction.getTransactionAfterBalance())
+//                        .transactionMemo(transaction.getTransactionMemo())
+//                        .build())
+//                .collect(Collectors.toList());
+//    }
+
+    private List<DomesticTravelAccountDetailResponseDTO.Transaction> getDomesticTravelAccountTransactionList(InquireTransactionHistoryListResponseDTO inquireTransactionHistoryListResponseDTO, Long selectedUserId) {
         return inquireTransactionHistoryListResponseDTO.getRec().getList().stream()
+                .filter(transaction -> {
+                    // selectedUserId가 -1이면 모든 transaction을 포함
+                    if (selectedUserId == -1) {
+                        return true;
+                    }
+                    // transactionMemo가 Long으로 변환 가능한지 체크
+                    String transactionMemo = transaction.getTransactionMemo();
+                    if (transactionMemo != null && !transactionMemo.isEmpty()) {
+                        try {
+                            Long memoAsLong = Long.parseLong(transactionMemo);
+                            return memoAsLong.equals(selectedUserId); // selectedUserId와 일치하는 경우만 필터링
+                        } catch (NumberFormatException e) {
+                            return false; // Long 변환 실패시 필터 제외
+                        }
+                    }
+                    return false; // transactionMemo가 비어있거나 변환 불가하면 필터 제외
+                })
                 .map(transaction -> DomesticTravelAccountDetailResponseDTO.Transaction.builder()
                         .transactionType(transaction.getTransactionType())
                         .transactionSummary(transaction.getTransactionSummary())
