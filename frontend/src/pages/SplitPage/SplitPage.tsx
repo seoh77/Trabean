@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios"; // Axios import 추가
 
 import beanProfile from "../../assets/bean_profile.png";
 import kingBeanProfile from "../../assets/bean_admin.png"; // kingbean 이미지 추가
 import checkIcon from "../../assets/successIcon.png"; // 성공 아이콘
 import warningIcon from "../../assets/importantIcon.png"; // 경고 아이콘
 import { TravelAccountMember } from "../TravelAccount/type/type";
+import client from "../../client";
 
 interface SplitProps {
   totalAmount: number;
@@ -84,10 +84,7 @@ const ExchangeSplit: React.FC<SplitProps> = ({
       };
 
       // API로 POST 요청 보내기
-      const response = await axios.post(
-        "https://j11a604.p.ssafy.io/api/travel/split",
-        requestData,
-      );
+      const response = await client().post("/api/travel/split", requestData);
 
       // 요청이 성공하면 N빵 성공 모달을 띄움
       if (response.status === 200) {
