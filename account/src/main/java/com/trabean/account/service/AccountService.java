@@ -14,7 +14,6 @@ import com.trabean.common.InternalServerSuccessResponseDTO;
 import com.trabean.common.SsafySuccessResponseDTO;
 import com.trabean.exception.custom.InvalidPasswordException;
 import com.trabean.exception.custom.UserAccountRelationNotFoundException;
-import com.trabean.external.msa.notification.client.NotificationClient;
 import com.trabean.external.msa.travel.client.TravelClient;
 import com.trabean.external.msa.travel.dto.request.SaveDomesticTravelAccountRequestDTO;
 import com.trabean.external.msa.travel.dto.request.SaveForeignTravelAccountRequestDTO;
@@ -64,7 +63,6 @@ public class AccountService {
 
     private final UserClient userClient;
     private final TravelClient travelClient;
-    private final NotificationClient notificationClient;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -466,6 +464,8 @@ public class AccountService {
     // 한화 여행통장 상세 조회 서비스 로직
     public DomesticTravelAccountDetailResponseDTO getDomesticTravelAccountDetail(Long accountId, String startDate, String endDate, String transactionType, String selectedUserId) {
 
+        UserRole userRole = ValidationUtil.validateUserAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(UserHeaderInterceptor.userId.get(), accountId)).getUserRole();
+
         String accountNo = ValidationUtil.validateInput(ValidateInputDTO.builder()
                         .account(accountRepository.findById(accountId))
                         .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(UserHeaderInterceptor.userId.get(), accountId))
@@ -476,11 +476,34 @@ public class AccountService {
         // Travel 서버에 한화 여행통장 ID로 이름과 목표금액 반환 요청
         DomesticTravelAccountInfoResponseDTO domesticTravelAccountInfo = travelClient.getDomesticTravelAccountInfo(accountId);
 
+        String ssafyUserKey;
+
+        if (userRole == UserRole.ADMIN) {
+            ssafyUserKey = UserHeaderInterceptor.userKey.get();
+        }
+        else {
+            List<UserAccountRelation> userAccountRelationList = ValidationUtil.validateUserAccountRelationList(userAccountRelationRepository.findAllByAccountId(accountId));
+
+            Long userId = userAccountRelationList.stream()
+                    .filter(relation -> relation.getUserRole() == UserRole.ADMIN)
+                    .map(UserAccountRelation::getUserId)
+                    .findFirst()
+                    .orElseThrow(UserAccountRelationNotFoundException::getInstance);
+
+            // User 서버에 userKey 조회 요청
+            UserKeyRequestDTO userKeyRequestDTO = UserKeyRequestDTO.builder()
+                    .userId(userId)
+                    .build();
+            UserKeyResponseDTO userKeyResponseDTO = userClient.getUserKey(userKeyRequestDTO);
+
+            ssafyUserKey = userKeyResponseDTO.getUserKey();
+        }
+
         // SSAFY 금융 API 계좌 조회 (단건) 요청
         InquireDemandDepositAccountRequestDTO inquireDemandDepositAccountRequestDTO = InquireDemandDepositAccountRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName("inquireDemandDepositAccount")
-                        .userKey(UserHeaderInterceptor.userKey.get())
+                        .userKey(ssafyUserKey)
                         .build())
                 .accountNo(accountNo)
                 .build();
@@ -490,7 +513,7 @@ public class AccountService {
         InquireTransactionHistoryListRequestDTO inquireTransactionHistoryListRequestDTO = InquireTransactionHistoryListRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName("inquireTransactionHistoryList")
-                        .userKey(UserHeaderInterceptor.userKey.get())
+                        .userKey(ssafyUserKey)
                         .build())
                 .accountNo(accountNo)
                 .startDate(startDate)
@@ -526,6 +549,7 @@ public class AccountService {
 //                .collect(Collectors.toList());
 //    }
 
+    // SSAFY 금융 API 계좌 거래 내역 responseDTO -> 한화 여행 통장 거래 내역 리스트
     private List<DomesticTravelAccountDetailResponseDTO.Transaction> getDomesticTravelAccountTransactionList(InquireTransactionHistoryListResponseDTO inquireTransactionHistoryListResponseDTO, String selectedUserId) {
         return inquireTransactionHistoryListResponseDTO.getRec().getList().stream()
                 .filter(transaction -> {
