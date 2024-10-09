@@ -49,8 +49,17 @@ async def register_to_eureka():
                 }
             }
         }
-        await client.post(f"{EUREKA_SERVER_URL}/apps/{SERVICE_NAME}", json=payload)
-        print("Eureka 등록!")
+        try:
+            response = await client.post(f"{EUREKA_SERVER_URL}/apps/{SERVICE_NAME}", json=payload)
+            print(f"Eureka 등록 응답 코드: {response.status_code}")
+            print(f"Eureka 등록 응답 내용: {response.text}")
+            if response.status_code == 204:
+                print("Eureka에 성공적으로 등록되었습니다!")
+            else:
+                print("Eureka 등록 실패")
+        except Exception as e:
+            print(f"Eureka 등록 중 오류 발생: {e}")
+
 
 # lifespan 이벤트 핸들러 사용
 @app.on_event("startup")
