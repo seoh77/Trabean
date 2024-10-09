@@ -1,0 +1,17 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                // GitLab에서 FastAPI 프로젝트를 클론
+                git branch: 'chatbot', url: 'https://lab.ssafy.com/s11-fintech-finance-sub1/S11P21A604.git'
+            }
+        }
+    }
+    post {
+        always {
+            echo 'Pipeline complete'
+        }
+    }
+}
