@@ -361,8 +361,8 @@ public class AccountService {
                 .build();
         UpdateDemandDepositAccountTransferResponseDTO updateDemandDepositAccountTransferResponseDTO = domesticClient.updateDemandDepositAccountTransfer(updateDemandDepositAccountTransferRequestDTO);
 
-        Long withdrawalAccountId = ValidationUtil.validateAccount(accountRepository.findByAccountNo(requestDTO.getWithdrawalAccountNo())).getAccountId();
-        List<UserAccountRelation> userAccountRelationList = ValidationUtil.validateUserAccountRelationList(userAccountRelationRepository.findAllByAccountId(withdrawalAccountId));
+        Long depositAccountId = ValidationUtil.validateAccount(accountRepository.findByAccountNo(requestDTO.getDepositAccountNo())).getAccountId();
+        List<UserAccountRelation> userAccountRelationList = ValidationUtil.validateUserAccountRelationList(userAccountRelationRepository.findAllByAccountId(depositAccountId));
 
         Long userId = userAccountRelationList.stream()
                 .filter(relation -> relation.getUserRole() == UserRole.ADMIN)
@@ -382,7 +382,7 @@ public class AccountService {
                         .apiName("transactionMemo")
                         .userKey(userKeyResponseDTO.getUserKey())
                         .build())
-                .accountNo(requestDTO.getWithdrawalAccountNo())
+                .accountNo(requestDTO.getDepositAccountNo())
                 .transactionUniqueNo(updateDemandDepositAccountTransferResponseDTO.getRec().get(1).getTransactionUniqueNo())
                 .transactionMemo(String.valueOf(UserHeaderInterceptor.userId.get()))
                 .build();
@@ -598,8 +598,8 @@ public class AccountService {
                 .build();
         UpdateDemandDepositAccountTransferResponseDTO updateDemandDepositAccountTransferResponseDTO = domesticClient.updateDemandDepositAccountTransfer(updateDemandDepositAccountTransferRequestDTO);
 
-        Long withdrawalAccountId = ValidationUtil.validateAccount(accountRepository.findByAccountNo(requestDTO.getWithdrawalAccountNo())).getAccountId();
-        List<UserAccountRelation> userAccountRelationList = ValidationUtil.validateUserAccountRelationList(userAccountRelationRepository.findAllByAccountId(withdrawalAccountId));
+        Long depositAccountId = ValidationUtil.validateAccount(accountRepository.findByAccountNo(requestDTO.getDepositAccountNo())).getAccountId();
+        List<UserAccountRelation> userAccountRelationList = ValidationUtil.validateUserAccountRelationList(userAccountRelationRepository.findAllByAccountId(depositAccountId));
 
         Long userId = userAccountRelationList.stream()
                 .filter(relation -> relation.getUserRole() == UserRole.ADMIN)
@@ -619,7 +619,7 @@ public class AccountService {
                         .apiName("transactionMemo")
                         .userKey(userKeyResponseDTO.getUserKey())
                         .build())
-                .accountNo(requestDTO.getWithdrawalAccountNo())
+                .accountNo(requestDTO.getDepositAccountNo())
                 .transactionUniqueNo(updateDemandDepositAccountTransferResponseDTO.getRec().get(1).getTransactionUniqueNo())
                 .transactionMemo(String.valueOf(UserHeaderInterceptor.userId.get()))
                 .build();
