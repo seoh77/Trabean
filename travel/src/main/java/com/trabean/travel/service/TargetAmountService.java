@@ -76,43 +76,50 @@ public class TargetAmountService {
         List<AccountHistoryDetail> depositList = accountHistory.getRec().getList();
 
         HashMap<Long, Double> depositMap = new HashMap<>();
-        Long userId = UserHeaderInterceptor.userId.get();
 
         for (AccountHistoryDetail deposit : depositList) {
-            if (deposit.getTransactionMemo().equals("") || deposit.getTransactionMemo() == null) {
+            String transactionMemo = deposit.getTransactionMemo();
+
+            if (transactionMemo.isEmpty()) {
                 continue;
             }
 
+            Long depositorId = Long.parseLong(transactionMemo);
             Double amount = deposit.getTransactionBalance();
 
-            if (depositMap.containsKey(userId)) {
-                Double prevAmount = depositMap.get(userId);
-                depositMap.replace(userId, prevAmount + amount);
+            if (depositMap.containsKey(depositorId)) {
+                Double prevAmount = depositMap.get(depositorId);
+                depositMap.replace(depositorId, prevAmount + amount);
             } else {
-                depositMap.put(userId, amount);
+                depositMap.put(depositorId, amount);
             }
         }
 
         // 멤버 조회
+        Long userId = UserHeaderInterceptor.userId.get();
+        System.out.println("userId = " + userId);
         List<MemberInfo> memberList = new ArrayList<>();
 
         List<MemberDetail> memberInfoApiResponseDto = accountClient.getMemberInfo(accountId, userId).getMembers();
         for (MemberDetail member : memberInfoApiResponseDto) {
             Long memberId = member.getUserId();
-            System.out.println("member.getUserId(): " + memberId);
             Long mainAccountId = userClient.getMainAccountId(memberId).getMainAccountId();
-            System.out.println("mainAccountId: " + mainAccountId);
             String mainAccountNo = null;
+            Double memberAmount = 0.0;
 
             if(mainAccountId != null) {
                 mainAccountNo = commonAccountService.getAccountNo(mainAccountId);
+            }
+
+            if(depositMap.containsKey(member.getUserId())) {
+                memberAmount = depositMap.get(member.getUserId());
             }
 
             memberList.add(MemberInfo.builder()
                             .userId(member.getUserId())
                             .userName(member.getUserName())
                             .role(member.getRole())
-                            .amount(depositMap.get(member.getUserId()))
+                            .amount(memberAmount)
                             .mainAccountId(mainAccountId)
                             .mainAccountNumber(mainAccountNo)
                     .build());
