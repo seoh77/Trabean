@@ -814,7 +814,7 @@ public class AccountService {
     }
 
     // 통장 주인 이름 조회 서비스 로직
-    public AccountAdminUserNameResponseDTO getAccountAdminUserName(String accountNo) {
+    public AccountAdminNameResponseDTO getAccountName(String accountNo) {
         Account account = ValidationUtil.validateAccount(accountRepository.findByAccountNo(accountNo));
 
         if (account.getAccountType() == AccountType.PERSONAL) {
@@ -829,7 +829,7 @@ public class AccountService {
             // User 서버에 userName 조회 요청
             String name = userClient.getUserName(userId).getUserName();
 
-            return AccountAdminUserNameResponseDTO.builder()
+            return AccountAdminNameResponseDTO.builder()
                     .name(name)
                     .build();
         }
@@ -838,7 +838,7 @@ public class AccountService {
 
             String name = domesticTravelAccountInfo.getAccountName();
 
-            return AccountAdminUserNameResponseDTO.builder()
+            return AccountAdminNameResponseDTO.builder()
                     .name(name)
                     .build();
         }
@@ -849,7 +849,7 @@ public class AccountService {
 
             String name = domesticTravelAccountInfo.getAccountName();
 
-            return AccountAdminUserNameResponseDTO.builder()
+            return AccountAdminNameResponseDTO.builder()
                     .name(name)
                     .build();
         }

@@ -145,9 +145,9 @@ public class AccountController {
     }
 
     // 통장 주인 이름 조회 API
-    @GetMapping("/{accountNo}/userName")
-    public ResponseEntity<AccountAdminUserNameResponseDTO> getAccountAdminUserName(@PathVariable String accountNo) {
-        AccountAdminUserNameResponseDTO responseDTO = accountService.getAccountAdminUserName(accountNo);
+    @GetMapping("/{accountNo}/name")
+    public ResponseEntity<AccountAdminNameResponseDTO> getAccountName(@PathVariable String accountNo) {
+        AccountAdminNameResponseDTO responseDTO = accountService.getAccountName(accountNo);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 }

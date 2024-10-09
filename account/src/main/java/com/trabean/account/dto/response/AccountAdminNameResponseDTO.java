@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AccountAdminUserNameResponseDTO {
+public class AccountAdminNameResponseDTO {
 
     @JsonProperty("name")
     private String name;
