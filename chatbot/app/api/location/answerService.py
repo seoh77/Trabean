@@ -4,7 +4,6 @@ from .answerRepository import PlaceFetcher
 import itertools
 import networkx as nx
 from geopy.distance import geodesic
-import matplotlib.pyplot as plt
 
 
 class ChatBotAnswer:
