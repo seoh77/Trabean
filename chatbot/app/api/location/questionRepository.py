@@ -1,11 +1,9 @@
 # 국가, 도시, 스타일, 예산, 우선순위 등을 정의하는 파일
 # 환경 변수 로드
 from typing import List, Dict
-from dotenv import load_dotenv
 from .googleRepository import GoogleAPI
 import os
 import json
-import httpx 
 
 # json 읽어오기
 current_directory = os.path.dirname(os.path.abspath(__file__))  # 현재 파일 위치
