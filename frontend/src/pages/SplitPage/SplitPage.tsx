@@ -59,42 +59,47 @@ const ExchangeSplit: React.FC<SplitProps> = ({
     const invalidMembers = selectedMembers.filter(
       (member) => member.mainAccountId === null,
     );
-    console.log(invalidMembers.length);
+    console.log(invalidMembers.length > 0);
     if (invalidMembers.length > 0) {
       setIsErrorModalVisible(true); // 메인 계좌가 없는 멤버가 있으면 오류 모달을 띄움
     } else {
       // 선택된 멤버들을 서버로 보내는 로직 추가
-      try {
-        // POST 요청을 위한 데이터 구조 생성
-        const requestData = {
-          totalAmount,
-          totalNo,
-          withdrawalAccountId,
-          withdrawalAccountNo,
-          depositAccountList: selectedMembers.map((member) => ({
-            userId: member.userId,
-            accountNumber: member.mainAccountNumber,
-          })),
-        };
+      setIsConfirmModalVisible(true);
+    }
+  };
 
-        // API로 POST 요청 보내기
-        const response = await axios.post(
-          "https://j11a604.p.ssafy.io/api/travel/split",
-          requestData,
-        );
+  // N빵 진행 확인 버튼 클릭 시
+  const handleSplit2 = async () => {
+    try {
+      // POST 요청을 위한 데이터 구조 생성
+      const requestData = {
+        totalAmount,
+        totalNo,
+        withdrawalAccountId,
+        withdrawalAccountNo,
+        depositAccountList: selectedMembers.map((member) => ({
+          userId: member.userId,
+          accountNumber: member.mainAccountNumber,
+        })),
+      };
 
-        // 요청이 성공하면 N빵 성공 모달을 띄움
-        if (response.status === 200) {
-          setIsConfirmModalVisible(false);
-          setIsSuccessModalVisible(true); // N빵 성공 모달 띄우기
-        } else {
-          // 상태 코드가 200이 아닌 경우에는 실패로 간주
-          setIsErrorModalVisible(true); // N빵 실패 모달 띄우기
-        }
-      } catch (error) {
-        console.error("N빵 처리 중 오류 발생", error);
-        setIsErrorModalVisible(true); // 오류 모달을 띄움
+      // API로 POST 요청 보내기
+      const response = await axios.post(
+        "https://j11a604.p.ssafy.io/api/travel/split",
+        requestData,
+      );
+
+      // 요청이 성공하면 N빵 성공 모달을 띄움
+      if (response.status === 200) {
+        setIsConfirmModalVisible(false);
+        setIsSuccessModalVisible(true); // N빵 성공 모달 띄우기
+      } else {
+        // 상태 코드가 200이 아닌 경우에는 실패로 간주
+        setIsErrorModalVisible(true); // N빵 실패 모달 띄우기
       }
+    } catch (error) {
+      console.error("N빵 처리 중 오류 발생", error);
+      setIsErrorModalVisible(true); // 오류 모달을 띄움
     }
   };
 
@@ -110,7 +115,7 @@ const ExchangeSplit: React.FC<SplitProps> = ({
 
   const confirmNBbang = () => {
     setIsConfirmModalVisible(false);
-    handleSplit(); // N빵 진행
+    handleSplit2(); // N빵 진행
   };
 
   const closeSuccessModal = () => {
