@@ -144,10 +144,10 @@ public class AccountController {
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
-    // 외화 여행통장 및 연결된 한화 여행통장 식별자와 계좌번호 조회 API
-    @GetMapping("/travel/foreign/{accountId}/couple")
-    public ResponseEntity<TravelAccountCoupleResponseDTO> getTravelAccountCoupleResponseDTO(@PathVariable Long accountId) {
-        TravelAccountCoupleResponseDTO responseDTO = accountService.getTravelAccountCoupleResponseDTO(accountId);
+    // 통장 주인 이름 조회 API
+    @GetMapping("/{accountNo}/userName")
+    public ResponseEntity<AccountAdminUserNameResponseDTO> getAccountAdminUserName(@PathVariable String accountNo) {
+        AccountAdminUserNameResponseDTO responseDTO = accountService.getAccountAdminUserName(accountNo);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 }

@@ -810,4 +810,23 @@ public class AccountService {
                 .foreignAccountNo(foreignAccountNo)
                 .build();
     }
+
+    // 통장 주인 이름 조회 서비스 로직
+    public AccountAdminUserNameResponseDTO getAccountAdminUserName(String accountNo) {
+        Long accountId = ValidationUtil.validateAccount(accountRepository.findByAccountNo(accountNo)).getAccountId();
+        List<UserAccountRelation> userAccountRelationList = ValidationUtil.validateUserAccountRelationList(userAccountRelationRepository.findAllByAccountId(accountId));
+
+        Long userId = userAccountRelationList.stream()
+                .filter(relation -> relation.getUserRole() == UserRole.ADMIN)
+                .map(UserAccountRelation::getUserId)
+                .findFirst()
+                .orElseThrow(UserAccountRelationNotFoundException::getInstance);
+
+        // User 서버에 userName 조회 요청
+        String userName = userClient.getUserName(userId).getUserName();
+
+        return AccountAdminUserNameResponseDTO.builder()
+                .userName(userName)
+                .build();
+    }
 }
