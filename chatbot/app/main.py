@@ -64,13 +64,14 @@ async def register_to_eureka():
 # lifespan 이벤트 핸들러 사용
 @app.on_event("startup")
 async def startup_event():
-    await register_to_eureka()  # Eureka에 등록
+  print("Eureka 연결 시도...")
+  await register_to_eureka()  # Eureka에 등록
 
 @app.on_event("shutdown")
 async def shutdown_event():
-    print("Eureka 해제!")
-    # 필요한 경우 deregister 로직을 추가할 수 있습니다
-    pass
+  print("Eureka 해제!")
+  # 필요한 경우 deregister 로직을 추가할 수 있습니다
+  pass
 
 # 라우터 등록
 app.include_router(router, prefix="/api/chatbot")
