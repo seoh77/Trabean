@@ -140,6 +140,10 @@ const Chatbot: React.FC = () => {
     try {
       // 요청 URL 및 Body 설정
       const url = "/api/travel/exchange/estimate";
+      const convertedNumber = parseInt(
+        String(inputValue).replace(/,/g, ""),
+        10,
+      );
       if (baseCurrency && targetCurrency) {
         const requestBody: {
           currency: string;
@@ -148,9 +152,10 @@ const Chatbot: React.FC = () => {
         } = {
           currency: String(targetCurrency),
           exchangeCurrency: String(baseCurrency),
-          amount: Number(inputValue),
+          amount: convertedNumber,
         };
         const response = await client().post(url, requestBody);
+        console.log("환전 결과 : ", response.data);
         return response.data;
       }
       // 계좌 개설 요청 전송

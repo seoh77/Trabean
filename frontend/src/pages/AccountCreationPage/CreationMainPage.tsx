@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useAccountType } from "./AccountTypeContext";
+import TopBar from "../../components/TopBar";
 import CreationMain from "./CreationMain";
 import beans from "../../assets/beans.png";
 import bean from "../../assets/bean_personal.png";
@@ -17,6 +18,7 @@ const CreationMainPage: React.FC = () => {
   if (!isSelectedType) {
     return (
       <div className="flex flex-col justify-center items-center h-screen space-y-6">
+        <TopBar isLogo={false} page="통장 개설" isWhite />
         <div className="text-xl font-semibold">
           개설할 통장의 유형을 선택해 주세요
         </div>
