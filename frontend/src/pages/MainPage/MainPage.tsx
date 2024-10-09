@@ -50,7 +50,9 @@ function MainPage() {
             type="button"
             className="btn-lg"
             onClick={() => {
-              navigate(`/transfer/list/${mainAccount}`);
+              navigate(`/transfer/list/${mainAccount.accountId}`, {
+                state: { accountId: mainAccount.accountId },
+              });
             }}
           >
             이체하기

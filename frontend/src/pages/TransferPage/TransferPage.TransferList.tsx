@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams, useLocation, useNavigate } from "react-router-dom"; // useNavigate 추가
+import { useLocation, useNavigate } from "react-router-dom"; // useNavigate 추가
 import beanProfile from "../../assets/bean_profile.png";
 import trabeanLogo from "../../assets/logo.png";
 import { formatNumberWithCommas } from "../../utils/formatNumber";
@@ -14,13 +14,13 @@ interface TransferDetails {
 }
 
 const TransferList: React.FC = () => {
-  const { account } = useParams<{ account: string }>(); // URL에서 계좌 번호 받기
   const location = useLocation();
+  const { account } = location.state || {}; // URL에서 계좌 번호 받기
   const navigate = useNavigate(); // useNavigate 훅
   const transferDetails = location.state as TransferDetails; // 이전 페이지에서 전달된 state 받기
   const [amount, setAmount] = useState<string>(""); // 송금 금액 관리
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태 관리
-
+  const { accountId } = location.state || {};
   // 숫자 클릭 처리
   const handleNumberClick = (value: string) => {
     setAmount((prev) => prev + value);
@@ -43,11 +43,16 @@ const TransferList: React.FC = () => {
 
   // 비밀번호 입력 페이지로 이동
   const handleConfirm = () => {
-    navigate("/transfer/password"); // 비밀번호 입력 페이지로 이동
+    navigate(`/transfer/password/${accountId}`, {
+      state: {
+        amount,
+        accountId,
+      },
+    }); // 비밀번호 입력 페이지로 이동
   };
 
   return (
-    <div className="flex flex-col justify-center min-h-screen bg-gray-50">
+    <div className="relative flex flex-col justify-center min-h-screen bg-gray-50">
       <TopBar isLogo={trabeanLogo} page="계좌 이체" isWhite />
 
       {/* 프로필 및 계좌 정보 */}
@@ -87,6 +92,7 @@ const TransferList: React.FC = () => {
         type="button"
         className="w-full max-w-md bg-primary text-white py-3 mt-4 text-lg font-semibold"
         onClick={handleSend}
+        disabled={!amount || parseInt(amount, 10) === 0}
       >
         송금
       </button>
@@ -133,7 +139,7 @@ const TransferList: React.FC = () => {
             {/* 모달의 너비를 적절히 조정 */}
             <div className="mb-4 text-center">
               <div className="font-semibold text-lg">
-                {transferDetails?.name}
+                {transferDetails?.name || "익명"}
                 님께
               </div>
               <div>송금하시겠습니까?</div>

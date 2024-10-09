@@ -1,17 +1,18 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 import CustomKeypad from "./Keypad"; // 비밀번호 입력 키패드 컴포넌트
 import Modal from "./Modal"; // 모달 컴포넌트
 
 const PasswordPage: React.FC = () => {
+  const location = useLocation();
+  const { accountId } = useParams<{ accountId: string }>();
+  const { amount } = location.state || { amount: 0 };
   const [password, setPassword] = useState(""); // 입력된 비밀번호 상태
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태 관리
   const [modalMessage, setModalMessage] = useState(""); // 모달 메시지
   const [subMessage, setSubMessage] = useState<string | null>(null); // 모달 서브 메시지
   const navigate = useNavigate(); // 페이지 이동을 위한 navigate 훅
-
-  // 가상의 잔액 정보
-  const accountBalance = 5000; // 예를 들어 잔액이 5000원이라고 가정
 
   // 비밀번호 변경 핸들러
   const handlePasswordChange = (newPassword: string) => {
@@ -20,18 +21,58 @@ const PasswordPage: React.FC = () => {
 
   // 완료 버튼 클릭 시 처리
   const handleComplete = () => {
-    // 가상의 송금 금액 설정
-    const transferAmount = 0; // 송금하려는 금액이 10000원이라고 가정
-
-    if (accountBalance >= transferAmount) {
-      // 잔액이 충분한 경우 성공 페이지로 이동
-      navigate("/transfer/success"); // 송금 성공 페이지로 이동
-    } else {
-      // 잔액이 부족한 경우 모달 창 띄우기
-      setModalMessage("이체 실패하였습니다");
-      setSubMessage("사유: 잔액 부족");
-      setIsModalOpen(true); // 모달을 열기
-    }
+    // 비밀번호 검증 API 요청
+    axios
+      .post(
+        `https://j11a604.p.ssafy.io/api/accounts/personal/${accountId}/verify`,
+        {
+          password,
+        },
+      )
+      .then((response) => {
+        if (response.status === 200) {
+          // 비밀번호 검증 성공 시 송금 요청
+          axios
+            .post(
+              `https://j11a604.p.ssafy.io/api/accounts/personal/${accountId}/transfer`,
+              {
+                amount, // 송금 금액을 전송
+              },
+            )
+            .then((transferResponse) => {
+              if (transferResponse.status === 200) {
+                // 송금 성공 시 성공 페이지로 이동
+                navigate("/transfer/success");
+              } else {
+                // 송금 실패 시 모달 메시지 출력
+                setModalMessage("이체 실패하였습니다.");
+                setSubMessage("사유: 잔액 부족 또는 기타 문제");
+                setIsModalOpen(true);
+              }
+            })
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            .catch((error) => {
+              // 송금 요청 중 오류 발생 시 처리
+              setModalMessage("송금 중 오류가 발생했습니다.");
+              setSubMessage("사유: 서버 문제 또는 네트워크 오류");
+              setIsModalOpen(true);
+            });
+        }
+      })
+      .catch((error) => {
+        // 비밀번호 검증 실패 또는 기타 오류 처리
+        if (error.response && error.response.status === 400) {
+          setModalMessage("비밀번호가 틀렸습니다.");
+          setSubMessage("사유: 잘못된 비밀번호");
+        } else if (error.response && error.response.status === 500) {
+          setModalMessage("서버 오류가 발생했습니다.");
+          setSubMessage("사유: 서버 문제");
+        } else {
+          setModalMessage("알 수 없는 오류가 발생했습니다.");
+          setSubMessage(null);
+        }
+        setIsModalOpen(true);
+      });
   };
 
   // 모달 닫기
