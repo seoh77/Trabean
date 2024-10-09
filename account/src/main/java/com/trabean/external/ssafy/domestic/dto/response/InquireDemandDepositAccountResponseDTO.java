@@ -23,7 +23,7 @@ public class InquireDemandDepositAccountResponseDTO {
     private REC rec;
 
     @Getter
-    public static class REC {
+    public static class REC extends InquireDemandDepositAccountListResponseDTO.REC {
         private String bankCode;
         private String bankName;
         private String userName;

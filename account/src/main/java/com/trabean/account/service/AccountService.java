@@ -66,8 +66,71 @@ public class AccountService {
 
     private final PasswordEncoder passwordEncoder;
 
+//    // 통장 목록 조회 서비스 로직
+//    public AccountListResponseDTO getAccountList() {
+//
+//        // SSAFY 금융 API 계좌 목록 조회 요청
+//        InquireDemandDepositAccountListRequestDTO inquireDemandDepositAccountListRequestDTO = InquireDemandDepositAccountListRequestDTO.builder()
+//                .header(RequestHeader.builder()
+//                        .apiName("inquireDemandDepositAccountList")
+//                        .userKey(UserHeaderInterceptor.userKey.get())
+//                        .build())
+//                .build();
+//        InquireDemandDepositAccountListResponseDTO inquireDemandDepositAccountListResponseDTO = domesticClient.inquireDemandDepositAccountList(inquireDemandDepositAccountListRequestDTO);
+//
+//        if (inquireDemandDepositAccountListResponseDTO.getRec() == null) {
+//            return AccountListResponseDTO.builder()
+//                    .mainAccount(null)
+//                    .accountList(new ArrayList<>())
+//                    .build();
+//        }
+//        return getAccountList(inquireDemandDepositAccountListResponseDTO);
+//    }
+//
+//    // SSAFY 금융 API 게좌 목록 responseDTO -> 통장 목록 조회 responseDTO
+//    private AccountListResponseDTO getAccountList(InquireDemandDepositAccountListResponseDTO inquireDemandDepositAccountListResponseDTO) {
+//        AccountListResponseDTO.Account mainAccount = null;
+//        List<AccountListResponseDTO.Account> accountList = new ArrayList<>();
+//
+//        // User 서버에 userId로 mainAccountId 반환 요청
+//        Long mainAccountId = userClient.getMainAccountId(UserHeaderInterceptor.userId.get()).getMainAccountId();
+//
+//        // Travel 서버에 한화 여행통장이름 이름 반환 요청
+//        for (InquireDemandDepositAccountListResponseDTO.REC account : inquireDemandDepositAccountListResponseDTO.getRec()) {
+//            Account savedAccount = ValidationUtil.validateAccount(accountRepository.findByAccountNo(account.getAccountNo()));
+//            String savedAccountName = savedAccount.getAccountType() == AccountType.DOMESTIC
+//                    ? travelClient.getDomesticTravelAccountInfo(savedAccount.getAccountId()).getAccountName()
+//                    : "개인 입출금 통장";
+//
+//            AccountListResponseDTO.Account dtoAccount = AccountListResponseDTO.Account.builder()
+//                    .accountId(savedAccount.getAccountId())
+//                    .accountNo(account.getAccountNo())
+//                    .accountName(savedAccountName)
+//                    .bankName(account.getBankName())
+//                    .accountBalance(account.getAccountBalance())
+//                    .accountType(savedAccount.getAccountType())
+//                    .build();
+//
+//            if (savedAccount.getAccountId().equals(mainAccountId)) {
+//                mainAccount = dtoAccount;
+//            } else {
+//                accountList.add(dtoAccount);
+//            }
+//        }
+//
+//        return AccountListResponseDTO.builder()
+//                .mainAccount(mainAccount)
+//                .accountList(accountList)
+//                .build();
+//    }
+
     // 통장 목록 조회 서비스 로직
     public AccountListResponseDTO getAccountList() {
+
+//        System.out.println(UserHeaderInterceptor.userId.get());
+//        System.out.println(UserHeaderInterceptor.userKey.get());
+
+//        System.out.println("계좌 목록 조회 시작");
 
         // SSAFY 금융 API 계좌 목록 조회 요청
         InquireDemandDepositAccountListRequestDTO inquireDemandDepositAccountListRequestDTO = InquireDemandDepositAccountListRequestDTO.builder()
@@ -77,6 +140,44 @@ public class AccountService {
                         .build())
                 .build();
         InquireDemandDepositAccountListResponseDTO inquireDemandDepositAccountListResponseDTO = domesticClient.inquireDemandDepositAccountList(inquireDemandDepositAccountListRequestDTO);
+
+//        System.out.println("계좌 목록 조회 끝");
+
+        // 본인이 여행통장 주인이 아닌 통장들에 대한 로직
+        List<UserAccountRelation> userAccountRelation = ValidationUtil.validateUserAccountRelationList(userAccountRelationRepository.findAllByUserId(UserHeaderInterceptor.userId.get()));
+
+        // 한화 여행통장(멤버)
+        List<UserAccountRelation> adminRelationsForDomesticNonAdminAccounts = userAccountRelation.stream()
+                .filter(relation -> relation.getAccount().getAccountType() == Account.AccountType.DOMESTIC &&
+                        relation.getUserRole() != UserAccountRelation.UserRole.ADMIN)
+                .map(relation -> userAccountRelationRepository.findByAccount_AccountIdAndUserRole(relation.getAccount().getAccountId(), UserAccountRelation.UserRole.ADMIN))
+                .flatMap(List::stream)
+                .toList();
+
+        for (UserAccountRelation u : adminRelationsForDomesticNonAdminAccounts) {
+
+//            System.out.println("API 요청한 사람 : " + UserHeaderInterceptor.userId.get());
+//            System.out.println("여행통장 주인 : " + u.getUserId());
+//            System.out.println(u.getUserRole());
+            UserKeyRequestDTO userKeyRequestDTO = UserKeyRequestDTO.builder()
+                    .userId(u.getUserId())
+                    .build();
+            UserKeyResponseDTO userKeyResponseDTO = userClient.getUserKey(userKeyRequestDTO);
+
+            String accountNo = ValidationUtil.validateAccount(accountRepository.findById(u.getAccount().getAccountId())).getAccountNo();
+
+            // SSAFY 금융 API 계좌 조회 (단건) 요청
+            InquireDemandDepositAccountRequestDTO inquireDemandDepositAccountRequestDTO = InquireDemandDepositAccountRequestDTO.builder()
+                    .header(RequestHeader.builder()
+                            .apiName("inquireDemandDepositAccount")
+                            .userKey(userKeyResponseDTO.getUserKey())
+                            .build())
+                    .accountNo(accountNo)
+                    .build();
+            InquireDemandDepositAccountResponseDTO inquireDemandDepositAccountResponseDTO = domesticClient.inquireDemandDepositAccount(inquireDemandDepositAccountRequestDTO);
+
+            inquireDemandDepositAccountListResponseDTO.getRec().add((inquireDemandDepositAccountResponseDTO.getRec()));
+        }
 
         if (inquireDemandDepositAccountListResponseDTO.getRec() == null) {
             return AccountListResponseDTO.builder()
@@ -372,6 +473,9 @@ public class AccountService {
                 .isPayable(true)
                 .build());
 
+        String depositTransactionSummary = getAccountName(requestDTO.getWithdrawalAccountNo()).getName();
+        String withdrawalTransactionSummary = getAccountName(requestDTO.getDepositAccountNo()).getName();
+
         // SSAFY 금융 API 계좌 이체 요청
         UpdateDemandDepositAccountTransferRequestDTO updateDemandDepositAccountTransferRequestDTO = UpdateDemandDepositAccountTransferRequestDTO.builder()
                 .header(RequestHeader.builder()
@@ -379,10 +483,10 @@ public class AccountService {
                         .userKey(UserHeaderInterceptor.userKey.get())
                         .build())
                 .depositAccountNo(requestDTO.getDepositAccountNo())
-                .depositTransactionSummary(requestDTO.getDepositTransactionSummary())
+                .depositTransactionSummary(depositTransactionSummary)
                 .transactionBalance(requestDTO.getTransactionBalance())
                 .withdrawalAccountNo(requestDTO.getWithdrawalAccountNo())
-                .withdrawalTransactionSummary(requestDTO.getWithdrawalTransactionSummary())
+                .withdrawalTransactionSummary(withdrawalTransactionSummary)
                 .build();
         UpdateDemandDepositAccountTransferResponseDTO updateDemandDepositAccountTransferResponseDTO = domesticClient.updateDemandDepositAccountTransfer(updateDemandDepositAccountTransferRequestDTO);
 
@@ -658,6 +762,9 @@ public class AccountService {
                 .isPayable(true)
                 .build());
 
+        String depositTransactionSummary = getAccountName(requestDTO.getWithdrawalAccountNo()).getName();
+        String withdrawalTransactionSummary = getAccountName(requestDTO.getDepositAccountNo()).getName();
+
         // SSAFY 금융 API 계좌 이체 요청
         UpdateDemandDepositAccountTransferRequestDTO updateDemandDepositAccountTransferRequestDTO = UpdateDemandDepositAccountTransferRequestDTO.builder()
                 .header(RequestHeader.builder()
@@ -665,10 +772,10 @@ public class AccountService {
                         .userKey(UserHeaderInterceptor.userKey.get())
                         .build())
                 .depositAccountNo(requestDTO.getDepositAccountNo())
-                .depositTransactionSummary(requestDTO.getDepositTransactionSummary())
+                .depositTransactionSummary(depositTransactionSummary)
                 .transactionBalance(requestDTO.getTransactionBalance())
                 .withdrawalAccountNo(requestDTO.getWithdrawalAccountNo())
-                .withdrawalTransactionSummary(requestDTO.getWithdrawalTransactionSummary())
+                .withdrawalTransactionSummary(withdrawalTransactionSummary)
                 .build();
         UpdateDemandDepositAccountTransferResponseDTO updateDemandDepositAccountTransferResponseDTO = domesticClient.updateDemandDepositAccountTransfer(updateDemandDepositAccountTransferRequestDTO);
 
@@ -763,7 +870,7 @@ public class AccountService {
                 .userRole(userRole)
                 .build();
     }
-    
+
     // 외화 여행통장 생성 서비스 로직
     public CreateForeignTravelAccountResponseDTO createForeignTravelAccount(CreateForeignTravelAccountRequestDTO requestDTO) {
 

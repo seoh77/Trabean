@@ -16,10 +16,16 @@ public interface UserAccountRelationRepository extends JpaRepository<UserAccount
     @Query("SELECT u FROM UserAccountRelation u WHERE u.userId = :userId AND u.account.accountId = :accountId")
     Optional<UserAccountRelation> findByUserIdAndAccountId(Long userId, Long accountId);
 
+    @Query("SELECT u FROM UserAccountRelation u WHERE u.userId = :userId")
+    Optional<List<UserAccountRelation>> findAllByUserId(Long userId);
+
     @Query("SELECT u FROM UserAccountRelation u WHERE u.account.accountId = :accountId")
     Optional<List<UserAccountRelation>> findAllByAccountId(Long accountId);
 
     @Modifying
     @Query("UPDATE UserAccountRelation u SET u.userRole = :userRole WHERE u.userId = :userId AND u.account.accountId = :accountId")
     void updateUserRoleByUserIdAndAccountId(Long userId, Long accountId, UserRole userRole);
+
+    List<UserAccountRelation> findByAccount_AccountIdAndUserRole(Long accountId, UserRole userRole);
+
 }
