@@ -85,7 +85,7 @@ const PasswordPage: React.FC = () => {
     <div>
       <TopBar isLogo={trabeanLogo} page="비밀번호 입력" isWhite />
       <div className="px-6 py-20 bg-white">
-        {/* <h1 className="text-xl font-bold mb-6">비밀번호 입력</h1> */}
+        <h1 className="text-xl font-bold mb-6">비밀번호 입력</h1>
 
         {/* CustomKeypad 컴포넌트 사용 */}
         <CustomKeypad
