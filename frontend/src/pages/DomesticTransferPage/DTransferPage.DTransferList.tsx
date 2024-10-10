@@ -24,9 +24,9 @@ const TransferList: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태 관리
   const { accountId } = location.state || {};
   // const [depositAccountNo, setDepositAccountNo] = useState<string | null>(null);
-  // const [withdrawalAccountNo, setWithdrawalAccountNo] = useState<string | null>(
-  // null,
-  // );
+  const [withdrawalAccountNo, setWithdrawalAccountNo] = useState<string | null>(
+    null,
+  );
   // 숫자 클릭 처리
   const handleNumberClick = (value: string) => {
     setAmount((prev) => prev + value);
@@ -72,7 +72,8 @@ const TransferList: React.FC = () => {
       "/api/accounts/internal/get-accountNo",
       body,
     );
-    return response.data.accountNo;
+    setWithdrawalAccountNo(response.data.accountNo);
+    // return response.data.accountNo;
   };
   // 모달 닫기
   const handleCloseModal = () => {
@@ -82,7 +83,7 @@ const TransferList: React.FC = () => {
   // 비밀번호 입력 페이지로 이동
   const handleConfirm = () => {
     // getDepositAccountNo();
-    // getWithdrawalAccountNo();
+    getWithdrawalAccountNo();
     navigate(
       `/accounts/travel/domestic/${accountId}/detail/transfer/password`,
       {
@@ -90,13 +91,18 @@ const TransferList: React.FC = () => {
           amount,
           accountId,
           depositAccountNo: account,
-          withdrawalAccountNo: getWithdrawalAccountNo(),
+          withdrawalAccountNo,
         },
       },
     ); // 비밀번호 입력 페이지로 이동
   };
-  // eslint-disable-next-line consistent-return
 
+  // eslint-disable-next-line consistent-return
+  useEffect(() => {
+    getWithdrawalAccountNo();
+    getAccountName();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <div className="relative flex flex-col justify-center min-h-screen bg-gray-50">
       <TopBar isLogo={trabeanLogo} page="계좌 이체" isWhite />
