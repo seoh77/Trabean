@@ -67,6 +67,8 @@ const TransferList: React.FC = () => {
   const handleConfirm = () => {
     getDepositAccountNo();
     getWithdrawalAccountNo();
+    console.log(depositAccountNo);
+    console.log(withdrwalAccountNo);
     navigate(`/transfer/password/${accountId}`, {
       state: {
         amount,
