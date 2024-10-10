@@ -23,7 +23,7 @@ public class FeignClientErrorDecoder implements ErrorDecoder {
                 FeignErrorResponse errorResponse = objectMapper.readValue(response.body().asInputStream(),
                         FeignErrorResponse.class);
                 log.info(errorResponse + "@@@@@@@@@@@@@@@");
-                return new PaymentsException(errorResponse.getMessage(), HttpStatus.BAD_GATEWAY);
+                return new PaymentsException(errorResponse.getMessage() + methodKey, HttpStatus.BAD_GATEWAY);
             }
 
             if (methodKey.startsWith("DemandDepositClient") || methodKey.startsWith("ExchangeClient")) {
@@ -33,7 +33,7 @@ public class FeignClientErrorDecoder implements ErrorDecoder {
             }
             FeignErrorResponse errorResponse = objectMapper.readValue(response.body().asInputStream(),
                     FeignErrorResponse.class);
-            return new PaymentsException(errorResponse.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new PaymentsException(errorResponse.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IOException e) {
             return new RuntimeException(e.getMessage());
         }
