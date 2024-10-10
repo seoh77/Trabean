@@ -73,29 +73,20 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
                 String encryptedUserKey = Encryption.encrypt(userKey);
 
 //             헤더에 암호화된 userId와 userKey 추가
-//                exchange.getRequest().mutate()
-//                        .header("userId", encryptedUserId)
-//                        .header("userKey", encryptedUserKey)
-//                        .build();
                 exchange.getRequest().mutate()
-                        .header("userId", userId.toString())
-                        .header("userKey", userKey)
+                        .header("userId", encryptedUserId)
+                        .header("userKey", encryptedUserKey)
                         .build();
+//                exchange.getRequest().mutate()
+//                        .header("userId", userId.toString())
+//                        .header("userKey", userKey)
+//                        .build();
             } catch (Exception e) {
                 logger.error("Encryption error: ", e);
                 exchange.getResponse().setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
                 return exchange.getResponse().setComplete();
             }
 
-
-
-            /*
-             *   account id=59를 갖고있는 유저 아이디=15 로 테스트
-             * */
-//            exchange.getRequest().mutate()
-//                    .header("userId", "31")
-//                    .header("userKey", "9c9f889b-5509-41a7-b6af-b4e83602aeb4")
-//                    .build();
             // 요청 정보를 JSON 형태로 로그에 출력
             logger.info("gateway에서 요청 전달: method={}, uri={}, headers={}",
                     exchange.getRequest().getMethod(),
