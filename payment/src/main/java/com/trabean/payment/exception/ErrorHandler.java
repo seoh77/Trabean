@@ -23,6 +23,13 @@ public class ErrorHandler {
         return new ResponseEntity<>(errorResponse, ex.getStatus());
     }
 
+    @ExceptionHandler(SsafyException.class)
+    public ResponseEntity<ErrorResponse> handleSsafyException(SsafyException ex) {
+        // 사용자에게 보여줄 커스텀 응답 객체 생성
+        ErrorResponse errorResponse = new ErrorResponse(ex.getResponseMessage(), 500, 0L);
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     /**
      * 그 외 발생할 수 있는 일반적인 RuntimeException 처리
      */

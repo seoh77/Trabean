@@ -2,6 +2,7 @@ package com.trabean.payment.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.trabean.payment.dto.response.FeignErrorResponse;
+import com.trabean.payment.dto.response.SsafyErrorResponse;
 import feign.Response;
 import feign.codec.ErrorDecoder;
 import java.io.IOException;
@@ -22,10 +23,13 @@ public class FeignClientErrorDecoder implements ErrorDecoder {
                 FeignErrorResponse errorResponse = objectMapper.readValue(response.body().asInputStream(),
                         FeignErrorResponse.class);
                 log.info(errorResponse + "@@@@@@@@@@@@@@@");
-                if (errorResponse.getMessage().equals("비밀번호가 틀렸습니다.")) {
-
-                }
                 return new PaymentsException(errorResponse.getMessage(), HttpStatus.BAD_GATEWAY);
+            }
+
+            if (methodKey.startsWith("DemandDepositClient") || methodKey.startsWith("ExchangeClient")) {
+                SsafyErrorResponse errorResponse = objectMapper.readValue(response.body().asInputStream(),
+                        SsafyErrorResponse.class);
+                return new SsafyException(errorResponse.getResponseMessage(), errorResponse.getResponseCode());
             }
             FeignErrorResponse errorResponse = objectMapper.readValue(response.body().asInputStream(),
                     FeignErrorResponse.class);

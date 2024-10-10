@@ -5,6 +5,7 @@ import com.trabean.payment.dto.request.ExchangeRateRequest;
 import com.trabean.payment.dto.request.Header;
 import com.trabean.payment.dto.response.ExchangeRateResponse;
 import com.trabean.payment.exception.PaymentsException;
+import com.trabean.payment.util.ApiName;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -28,10 +29,10 @@ public class ExchangeRateService {
 
         // ExchangeRateRequest 생성
         ExchangeRateRequest exchangeRateRequest = new ExchangeRateRequest(
-                Header.builder().apiName("exchangeRate").build(),
+                Header.builder().apiName(ApiName.EXCHANGE_RATE).build(),
                 currency
         );
-
+        logger.info("ExchangeRateRequest: {}", exchangeRateRequest.getHeader().toString());
         try {
             // API 호출: POST 요청으로 데이터 전송
             ExchangeRateResponse response = exchangeClient.getExchangeRate(exchangeRateRequest);
