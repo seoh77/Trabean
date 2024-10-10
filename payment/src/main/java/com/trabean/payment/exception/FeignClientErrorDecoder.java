@@ -27,7 +27,9 @@ public class FeignClientErrorDecoder implements ErrorDecoder {
                 }
                 return new PaymentsException(errorResponse.getMessage(), HttpStatus.BAD_GATEWAY);
             }
-            return new PaymentsException("범인 : 싸피 ", HttpStatus.BAD_GATEWAY);
+            FeignErrorResponse errorResponse = objectMapper.readValue(response.body().asInputStream(),
+                    FeignErrorResponse.class);
+            return new PaymentsException(errorResponse.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IOException e) {
             return new RuntimeException(e.getMessage());
         }
