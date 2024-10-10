@@ -6,6 +6,7 @@ import TopBar from "../../components/TopBar";
 import FailModal from "./PaymentPage.Password.FailModal";
 import Keypad from "../AccountCreationPage/Keypad";
 import client from "../../client";
+import { formatNumberWithCommas } from "../../utils/formatNumber";
 
 const Password: React.FC = () => {
   const { merchantId, merchantName, currency, amount } = useParams();
@@ -15,6 +16,8 @@ const Password: React.FC = () => {
   const [foreignAmount, setForeignAmount] = useState<number | null>(null);
   const [password, setPassword] = useState<string>("");
   const [payId, setPayId] = useState<number | null>(null);
+  const [isRetry, setIsRetry] = useState<boolean>(false);
+  const [transId, setTransId] = useState<string | null>(null);
 
   // 계좌번호 가져오기
   const location = useLocation();
@@ -137,8 +140,32 @@ const Password: React.FC = () => {
       }
 
       if (isAxiosError(error)) {
+        // 외화 계좌 없을 때
+        if (error.response?.data.message === "FOREIGN_ACCOUNT_NOT_FOUND") {
+          setErrorMessage(
+            `해당 통화의 계좌를 찾을 수 없습니다. 한화로 ${formatNumberWithCommas(error.response?.data.krwPrice)} 원을 결제하시겠습니까?`,
+          );
+          setTransId(transactionId);
+          setKrwAmount(error.response?.data.krwPrice);
+          setIsFail(true);
+          setIsRetry(true);
+          return;
+        }
+        // 외화 계좌 잔액 부족
+        if (error.response?.data.message === "FOREIGN_ACCOUNT_BALANCE_ERROR") {
+          setErrorMessage(
+            `해당 통화 잔액이 부족합니다. 한화로 ${formatNumberWithCommas(error.response?.data.krwPrice)} 원을 결제하시겠습니까?`,
+          );
+          setTransId(transactionId);
+          setKrwAmount(error.response?.data.krwPrice);
+          setIsFail(true);
+          setIsRetry(true);
+          return;
+        }
+
         // 에러 메시지 설정
         setErrorMessage(error.response?.data.message || "알 수 없는 에러 발생");
+
         setIsFail(true);
       }
     }
@@ -184,6 +211,42 @@ const Password: React.FC = () => {
     }
   };
 
+  // 재결제 로직 작성
+  const retryPaymentRequest = async () => {
+    try {
+      // 요청 바디 생성
+      const requestBody = {
+        transId,
+        payId,
+        merchantId,
+        krwAmount: krwAmount ?? null,
+      };
+      // API 요청 전송
+      const response = await client().post(
+        `/api/payments/retry/${accountId}`,
+        requestBody,
+      );
+      console.log(response.data);
+      // 성공시 성공 url 로 이동
+      if (response.data.status === "SUCCESS") {
+        navigate(`/payment/qr/success/${payId}`);
+      }
+    } catch (error) {
+      if (payId == null) {
+        // payId가 null일 때
+        setErrorMessage("결제 ID를 가져오는 데 실패했습니다.");
+        setIsFail(true);
+        return;
+      }
+      if (isAxiosError(error)) {
+        // 에러 메시지 설정
+        setErrorMessage(error.response?.data.message || "알 수 없는 에러 발생");
+        setIsFail(true);
+      }
+      setPassword("");
+    }
+  };
+
   // 화폐 이름 매핑
   const currencyNameMap: { [key: string]: string } = {
     CAD: "$ ",
@@ -198,7 +261,14 @@ const Password: React.FC = () => {
 
   return (
     <div className="flex w-full h-dvh flex-col items-center relative">
-      {isFail && <FailModal message={errorMessage} handleModal={handleModal} />}
+      {isFail && (
+        <FailModal
+          message={errorMessage}
+          handleModal={handleModal}
+          isRetry={isRetry}
+          retryPaymentRequest={retryPaymentRequest}
+        />
+      )}
       <TopBar isLogo={false} isWhite page="QR 결제" />
 
       <p className="text-lg pt-[100px]">{merchantName}</p>
