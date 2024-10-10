@@ -70,10 +70,6 @@ const BottomBar: React.FC = () => {
     };
   }, [token]);
 
-  const token = useAuthStore.getState().accessToken;
-
-  const [hasNotification, setHasNotification] = useState(false);
-
   useEffect(() => {
     if (!token) return;
 
