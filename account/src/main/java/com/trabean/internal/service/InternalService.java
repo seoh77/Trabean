@@ -11,9 +11,13 @@ import com.trabean.exception.custom.UserAccountRelationNotFoundException;
 import com.trabean.external.msa.user.client.UserClient;
 import com.trabean.external.msa.user.dto.request.UserKeyRequestDTO;
 import com.trabean.external.msa.user.dto.response.UserKeyResponseDTO;
+import com.trabean.external.msa.user.dto.response.UserNameResponseDTO;
+import com.trabean.interceptor.UserHeaderInterceptor;
 import com.trabean.internal.dto.request.*;
 import com.trabean.internal.dto.response.AccountNoResponseDTO;
 import com.trabean.internal.dto.response.AdminUserKeyResponseDTO;
+import com.trabean.internal.dto.response.TravelAccountMembersResponseDTO;
+import com.trabean.internal.dto.response.TravelAccountMembersResponseDTO.Member;
 import com.trabean.internal.dto.response.UserRoleResponseDTO;
 import com.trabean.util.ValidateInputDTO;
 import com.trabean.util.ValidationUtil;
@@ -22,6 +26,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.trabean.constant.Constant.PEPPER;
@@ -161,5 +166,35 @@ public class InternalService {
         return InternalServerSuccessResponseDTO.builder()
                 .message("비밀번호 변경 성공")
                 .build();
+    }
+
+    // 한화 여행통장 멤버 목록 조회 API
+    public TravelAccountMembersResponseDTO getTravelAccountMembers(TravelAccountMembersRequestDTO requestDTO) {
+
+        ValidationUtil.validateInput(ValidateInputDTO.builder()
+                .account(accountRepository.findById(requestDTO.getAccountId()))
+                .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(requestDTO.getUserId(), requestDTO.getAccountId()))
+                .accountType(Account.AccountType.DOMESTIC)
+                .build());
+
+        List<UserAccountRelation> userAccountRelations = ValidationUtil.validateUserAccountRelationList(userAccountRelationRepository.findAllByAccountId(requestDTO.getAccountId()));
+
+        List<Member> members = new ArrayList<>();
+
+        // User 서버에 userId로 userName 조회하는 요청을 모든 멤버에 대해 보냄
+        for (UserAccountRelation member : userAccountRelations) {
+            UserNameResponseDTO userNameResponseDTO = userClient.getUserName(member.getUserId());
+
+            members.add(Member.builder()
+                    .userId(member.getUserId())
+                    .userName(userNameResponseDTO.getUserName())
+                    .role(member.getUserRole())
+                    .build());
+        }
+
+        return TravelAccountMembersResponseDTO.builder()
+                .userId(UserHeaderInterceptor.userId.get())
+                .memberCount((long) members.size())
+                .members(members).build();
     }
 }

@@ -4,6 +4,7 @@ import com.trabean.common.InternalServerSuccessResponseDTO;
 import com.trabean.internal.dto.request.*;
 import com.trabean.internal.dto.response.AccountNoResponseDTO;
 import com.trabean.internal.dto.response.AdminUserKeyResponseDTO;
+import com.trabean.internal.dto.response.TravelAccountMembersResponseDTO;
 import com.trabean.internal.dto.response.UserRoleResponseDTO;
 import com.trabean.internal.service.InternalService;
 import lombok.RequiredArgsConstructor;
@@ -65,6 +66,13 @@ public class InternalController {
     @PutMapping("/update-travel-account-password")
     public ResponseEntity<InternalServerSuccessResponseDTO> updateTravelAccountPassword(@RequestBody UpdateTravelAccountPasswordRequestDTO requestDTO) {
         InternalServerSuccessResponseDTO responseDTO = internalService.updateTravelAccountPassword(requestDTO);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
+
+    // 한화 여행통장 멤버 목록 조회 API
+    @PostMapping("/get-travel-account-members")
+    public ResponseEntity<TravelAccountMembersResponseDTO> getTravelAccountMembers(@RequestBody TravelAccountMembersRequestDTO requestDTO) {
+        TravelAccountMembersResponseDTO responseDTO = internalService.getTravelAccountMembers(requestDTO);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 }
