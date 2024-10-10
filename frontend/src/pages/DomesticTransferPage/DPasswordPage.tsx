@@ -80,24 +80,25 @@ const PasswordPage: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-50">
       <TopBar isLogo={trabeanLogo} page="비밀번호 입력" isWhite />
+      <div>
+        <h1 className="text-xl font-bold mb-6">비밀번호 입력</h1>
 
-      <h1 className="text-xl font-bold mb-6">비밀번호 입력</h1>
-
-      {/* CustomKeypad 컴포넌트 사용 */}
-      <CustomKeypad
-        password={password}
-        onChange={handlePasswordChange}
-        onComplete={handleComplete}
-      />
-
-      {/* 모달 */}
-      {isModalOpen && (
-        <Modal
-          message={modalMessage}
-          subMessage={[{ key: 1, text: subMessage || "" }]}
-          onClose={handleCloseModal}
+        {/* CustomKeypad 컴포넌트 사용 */}
+        <CustomKeypad
+          password={password}
+          onChange={handlePasswordChange}
+          onComplete={handleComplete}
         />
-      )}
+
+        {/* 모달 */}
+        {isModalOpen && (
+          <Modal
+            message={modalMessage}
+            subMessage={[{ key: 1, text: subMessage || "" }]}
+            onClose={handleCloseModal}
+          />
+        )}
+      </div>
     </div>
   );
 };
