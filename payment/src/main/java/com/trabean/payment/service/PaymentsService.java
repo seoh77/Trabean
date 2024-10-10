@@ -107,7 +107,7 @@ public class PaymentsService {
 
         // 여행통장 멤버 조회
         TravelAccountMemberListResponse memberListResponse = paymentsAccountService.validateTravelAccountMembers(
-                paymentAccountId);
+                accountId);
 
         // 여행 통장 멤버 list 에 담기
         List<Long> membersId = new ArrayList<>();
