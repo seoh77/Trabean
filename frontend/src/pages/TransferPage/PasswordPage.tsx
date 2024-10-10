@@ -55,7 +55,7 @@ const PasswordPage: React.FC = () => {
       })
       .catch((error) => {
         // 비밀번호 검증 실패 또는 기타 오류 처리
-        if (error.response && error.response.status === 400) {
+        if (error.response && error.response.status === 403) {
           setModalMessage("비밀번호가 틀렸습니다.");
           setSubMessage("사유: 잘못된 비밀번호");
         } else if (error.response && error.response.status === 500) {
