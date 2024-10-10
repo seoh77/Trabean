@@ -14,26 +14,38 @@ public class Encryption {
     // 16바이트 비밀 키 (AES-128 사용 시)
     private static final String SECRET_KEY = "your-16-byte-key"; // 실제 비밀 키로 대체해야 함
 
-    /**
-     * 주어진 문자열을 AES로 암호화합니다.
-     *
-     * @param value 암호화할 문자열
-     * @return 암호화된 문자열 (Base64 인코딩)
-     * @throws Exception 암호화 도중 발생할 수 있는 예외
-     */
-    public static String encrypt(String value) throws Exception {
-        // 비밀 키를 사용하여 SecretKeySpec 객체 생성
-        SecretKeySpec secretKey = new SecretKeySpec(SECRET_KEY.getBytes(), ALGORITHM);
-        // 지정된 알고리즘과 변환 방식으로 Cipher 객체 생성
-        //Cipher는 암호화 및 복호화 작업을 수행하는 클래스나 객체
-        Cipher cipher = Cipher.getInstance(TRANSFORMATION);
-        // 암호화 모드로 초기화 (IV가 필요함)
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey, generateIv());
-        // 주어진 문자열을 암호화
-        byte[] encrypted = cipher.doFinal(value.getBytes());
-        // 암호화된 바이트 배열을 Base64로 인코딩하여 문자열로 반환
-        return Base64.getEncoder().encodeToString(encrypted);
+
+    public static String encrypt(String data) {
+        try {
+            SecretKeySpec key = new SecretKeySpec(SECRET_KEY.getBytes(), ALGORITHM);
+            Cipher cipher = Cipher.getInstance(ALGORITHM);
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+            byte[] encryptedData = cipher.doFinal(data.getBytes());
+            return Base64.getEncoder().encodeToString(encryptedData);
+        } catch (Exception e) {
+            throw new RuntimeException("Encryption error", e);
+        }
     }
+//    /**
+//     * 주어진 문자열을 AES로 암호화합니다.
+//     *
+//     * @param value 암호화할 문자열
+//     * @return 암호화된 문자열 (Base64 인코딩)
+//     * @throws Exception 암호화 도중 발생할 수 있는 예외
+//     */
+//    public static String encrypt(String value) throws Exception {
+//        // 비밀 키를 사용하여 SecretKeySpec 객체 생성
+//        SecretKeySpec secretKey = new SecretKeySpec(SECRET_KEY.getBytes(), ALGORITHM);
+//        // 지정된 알고리즘과 변환 방식으로 Cipher 객체 생성
+//        //Cipher는 암호화 및 복호화 작업을 수행하는 클래스나 객체
+//        Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+//        // 암호화 모드로 초기화 (IV가 필요함)
+//        cipher.init(Cipher.ENCRYPT_MODE, secretKey, generateIv());
+//        // 주어진 문자열을 암호화
+//        byte[] encrypted = cipher.doFinal(value.getBytes());
+//        // 암호화된 바이트 배열을 Base64로 인코딩하여 문자열로 반환
+//        return Base64.getEncoder().encodeToString(encrypted);
+//    }
 
     /**
      * 랜덤 IV(Initialization Vector)를 생성합니다.
