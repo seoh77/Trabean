@@ -6,10 +6,10 @@ type Notification = {
   notificationId: number;
   senderId: number;
   accountId: number;
-  isRead: boolean;
   notificationType: string;
   amount: number;
   createTime: string;
+  read: boolean;
 };
 
 interface NotificationProps {
@@ -20,11 +20,13 @@ function Item({ item }: NotificationProps) {
   const [accountName, setAccountName] = useState<string>();
   const [sender, setSender] = useState<string>();
   const [infoText, setInfoText] = useState<string>();
+  const [isRead, setIsRead] = useState<boolean>(item.read);
 
   const date = item.createTime.split("T")[0].split("-");
 
   const onClickNoti = () => {
     client().patch(`/api/notifications/${item.notificationId}`);
+    setIsRead(true);
   };
 
   useEffect(() => {
@@ -66,7 +68,7 @@ function Item({ item }: NotificationProps) {
 
   return (
     <div
-      className={`flex px-2 py-3 ${item.isRead ? "" : "bg-primary-light"} rounded-lg mb-2`}
+      className={`flex px-2 py-3 ${isRead ? "bg-white" : "bg-primary-light"} rounded-lg mb-2`}
       onClick={onClickNoti}
       role="presentation"
     >

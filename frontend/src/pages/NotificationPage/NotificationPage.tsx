@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-import client from "../../client";
 import Item from "./NotificationPage.Item";
 
 import xIcon from "../../assets/icon/xIcon.png";
@@ -8,29 +6,23 @@ type NotificationType = {
   notificationId: number;
   senderId: number;
   accountId: number;
-  isRead: boolean;
   notificationType: string;
   amount: number;
   createTime: string;
+  read: boolean;
 };
 
 interface NotificationModalProps {
   hidden: boolean;
   changeNotiHidden: (hidden: boolean) => void;
+  notiList: Array<NotificationType>;
 }
 
-function Notification({ hidden, changeNotiHidden }: NotificationModalProps) {
-  const [notiList, setNotiList] = useState<Array<NotificationType>>();
-
-  useEffect(() => {
-    const getNotification = async () => {
-      const response = await client().get(`/api/notifications`);
-      setNotiList(response.data);
-    };
-
-    getNotification();
-  }, []);
-
+function Notification({
+  hidden,
+  changeNotiHidden,
+  notiList,
+}: NotificationModalProps) {
   return (
     <div
       className={`font-bold absolute w-[360px] h-[350px] bottom-[60px] bg-gray-100 bg-opacity-90 px-2 py-5 rounded-t-2xl ${hidden ? "hidden" : ""}`}
