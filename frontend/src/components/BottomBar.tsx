@@ -11,6 +11,7 @@ import Bell from "../assets/Bell.png";
 
 const BottomBar: React.FC = () => {
   const [paymentAccountId, setPaymentAccountId] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -19,21 +20,30 @@ const BottomBar: React.FC = () => {
     try {
       const response = await client().get("/api/payments/main-account");
       setPaymentAccountId(response.data.paymentAccountId);
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.error("main payment account 불러올 때 에러 발생:", error);
     }
   };
 
   useEffect(() => {
+    if (loading) {
+      return;
+    }
     getMainPaymentAccount();
-  }, []);
+  }, [loading]);
 
   // 결제 페이지 이동
   const goToPaymentPage = () => {
-    if (!paymentAccountId) {
-      alert("메인 결제 계좌가 설정되지 않았습니다.");
+    if (loading) {
+      return;
     }
-    navigate(`/payment/qr/${paymentAccountId}`);
+    if (!loading && !paymentAccountId) {
+      alert("메인 결제 계좌가 설정되지 않았습니다.");
+    } else {
+      navigate(`/payment/qr/${paymentAccountId}`);
+    }
   };
 
   // 가계부 페이지 이동
