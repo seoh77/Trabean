@@ -57,7 +57,7 @@ public class NotificationController {
     public SseEmitter handleSse() {
         Long userId = UserHeaderInterceptor.userId.get();
         // 무제한 타임아웃 설정을 가진 SseEmitter 객체 생성
-        SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
+        SseEmitter sseEmitter = new SseEmitter();
 
         // 단일 스레드로 작업을 스케줄링 할 수 있는 ScheduledExecutorService 생성
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
@@ -66,35 +66,22 @@ public class NotificationController {
         executor.scheduleAtFixedRate(() -> {
             try {
                 // 사용자 상태를 가져와서 "1" 또는 "0"으로 변환
-                log.info("1111111111111111111111111111111111");
                 String result = notificationService.getStatus(userId) ? "1" : "0";
-                log.info("2222222222222222222222222222222");
-
                 // 클라이언트에 결과 전송
                 sseEmitter.send(result);
-                log.info("33333333333333333333333333333");
-
                 // 로그에 전송된 정보 기록
                 log.info("정보를 한번 보내볼게요 : " + result);
             } catch (IOException e) {
-                log.info("4444444444444444444444444444444");
-
                 // IOException 발생 시, SSE 연결 종료 처리
                 log.info("정보 보내는 거 종료1");
                 sseEmitter.completeWithError(e); // 오류와 함께 SSE 완료
                 executor.shutdown(); // 스케줄러 종료
             }
         }, 0, 5, TimeUnit.SECONDS); // 0초 후 시작하고, 5초 간격으로 반복
-        log.info("555555555555555555555555555");
-
         // SSE가 완료되면 스케줄러 종료
         sseEmitter.onCompletion(executor::shutdown);
-        log.info("6666666666666666666666666");
-
         // SSE가 타임아웃되면 스케줄러 종료
         sseEmitter.onTimeout(executor::shutdown);
-        log.info("777777777777777777777777777777777");
-
         // 로그에 SSE 시작 메시지 기록
         log.info("정보 보내는 거 종료2");
 
