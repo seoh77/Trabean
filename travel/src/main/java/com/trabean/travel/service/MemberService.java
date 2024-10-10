@@ -55,7 +55,7 @@ public class MemberService {
         // 우리 회원이라면 알림을 추가로 발송
         Long receiverId = userClient.isMember(email);
 
-        if(receiverId != null) {
+        if(receiverId != -1) {
             List<Long> receiverList = new ArrayList<>();
             receiverList.add(receiverId);
 
