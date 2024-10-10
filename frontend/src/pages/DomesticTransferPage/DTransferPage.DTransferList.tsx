@@ -44,6 +44,9 @@ const TransferList: React.FC = () => {
   const handleClear = () => {
     setAmount("");
   };
+  const handleDelete = () => {
+    setAmount(amount.slice(0, -1));
+  };
 
   // 모달 열기
   const handleSend = () => {
@@ -143,7 +146,7 @@ const TransferList: React.FC = () => {
         </button>
         <button
           type="button"
-          onClick={() => handleClear}
+          onClick={() => handleDelete()}
           className="w-24 h-16 text-md rounded-full"
         >
           ⌫
@@ -157,7 +160,7 @@ const TransferList: React.FC = () => {
             {/* 모달의 너비를 적절히 조정 */}
             <div className="mb-4 text-center">
               <div className="font-semibold text-lg">
-                {transferDetails?.name || accountName}
+                {transferDetails?.name || `${accountName} `}
                 님께
               </div>
               <div>송금하시겠습니까?</div>
