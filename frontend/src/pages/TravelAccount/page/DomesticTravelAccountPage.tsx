@@ -18,11 +18,14 @@ import ChatBot from "../component/ChatBot";
 import Loading from "../component/Loading";
 import ChangeAccountNameModal from "../modal/ChangeAccountName";
 import ChangeTargetAmountModal from "../modal/ChangeTargetAmountModal";
+import SplitPage from "../../SplitPage/SplitPage";
 
 const DomesticTravelAccountPage: React.FC = () => {
   const { accountId } = useParams(); // Path Variable
 
   const nav = useNavigate();
+
+  const [userRole, setUserRole] = useState<string>("");
 
   const [loading1, setLoading1] = useState(true); // 서버에서 데이터 수신 여부 체크
   const [loading2, setLoading2] = useState(true); // 서버에서 데이터 수신 여부 체크
@@ -30,13 +33,15 @@ const DomesticTravelAccountPage: React.FC = () => {
   const [travelAccountData, setTravelAccountData] =
     useState<TravelAccountData>(); // 한화 여행통장 + 외화 여행통장 상태관리
 
+  // const [TravelAccount, setTravelAccount] =
+  // useState<TravelAccount>(); //한화 여행통장
   const [travelAccountMemberAmountData, setTravelAccountMemberAmountData] =
     useState<TravelAccountMemberAmountData>(); // 여행통장 멤버 상태관리
 
   const [accountName, setAccountName] = useState<string>(); // 여행통장 이름 상태관리
   const [targetAmount, setargetAmount] = useState<number>(0); // 목표 금액 상태 상태관리
   const [collectedAmount, setCollectedAmount] = useState<number>(0); // 현재 모인 금액 상태 상태관리
-
+  const [isSplitModalOpen, setIsSplitModalOpen] = useState(false);
   // 여행통장 이름 변경 모달
   const [isChangeAccountNameModalOpen, setIsChangeAccountNameModalOpen] =
     useState(false);
@@ -58,16 +63,37 @@ const DomesticTravelAccountPage: React.FC = () => {
   // 함수 모음
   const handleNBbang = () => {
     // alert("친구들과 N빵하기 누름!!!!!!");
-    nav("/travel/split"); // 비밀번호 입력 페이지로 이동
+    // nav("/travel/split"); // 비밀번호 입력 페이지로 이동
+    setIsSplitModalOpen(true);
   };
 
   const handlePayment = () => {
-    alert("다함께 결제해요 누름!!!!!!");
+    nav(`/payment/qr/${accountId}`);
   };
 
   const handleExpenseTracker = () => {
-    alert("예산관리 가계부 누름!!!!!!");
+    nav(`/payment/list/${accountId}`);
   };
+
+  // const closeSplitModal = () => {
+  //   setIsSplitModalOpen(false);
+  // };
+
+  // Acount 서버 통장 권한 조회 API fetch 요청
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      try {
+        const response = await client().get(
+          `api/accounts/travel/domestic/${accountId}/userRole`,
+        );
+        setUserRole(response.data.role);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchUserRole();
+  }, [accountId, userRole]);
 
   // Travel 서버 여행통장 조회 API fetch 요청
   useEffect(() => {
@@ -134,7 +160,11 @@ const DomesticTravelAccountPage: React.FC = () => {
           <div className="flex justify-between p-2">
             <div className="text-lg font-bold">{accountName}</div>
             <div>
-              <button type="button" onClick={openChangeAccountNameModal}>
+              <button
+                type="button"
+                onClick={openChangeAccountNameModal}
+                disabled={userRole !== "ADMIN"}
+              >
                 <img src={settings} alt={settings} className="w-6 h-6" />
               </button>
             </div>
@@ -213,7 +243,8 @@ const DomesticTravelAccountPage: React.FC = () => {
               onClick={() => {
                 nav(`/accounts/travel/foreign/${accountId}/create`);
               }}
-              className="btn-lg w-[90%] mx-auto block"
+              className={`w-[90%] mx-auto block ${userRole === "ADMIN" ? "btn-lg" : "btn-gray-lg"}`}
+              disabled={userRole !== "ADMIN"}
             >
               외화 추가하기
             </button>
@@ -226,7 +257,11 @@ const DomesticTravelAccountPage: React.FC = () => {
         <div className="rounded-2xl p-4 bg-white">
           <div className="flex justify-end">
             <div className="text-right text-xs mr-2">
-              <button type="button" onClick={openChangeTargetAmountModal}>
+              <button
+                type="button"
+                onClick={openChangeTargetAmountModal}
+                disabled={userRole !== "ADMIN"}
+              >
                 목표관리
               </button>
             </div>
@@ -236,6 +271,7 @@ const DomesticTravelAccountPage: React.FC = () => {
                 onClick={() =>
                   nav(`/accounts/travel/domestic/${accountId}/members`)
                 }
+                disabled={userRole !== "ADMIN"}
               >
                 멤버관리
               </button>
@@ -281,6 +317,7 @@ const DomesticTravelAccountPage: React.FC = () => {
               type="button"
               onClick={handleNBbang}
               className="flex flex-col items-center bg-white rounded-3xl px-6 py-2"
+              disabled={userRole !== "ADMIN"}
             >
               <div>
                 <img src={dollarCoin} alt="dollarCoin" className="w-10 h-10" />
@@ -337,6 +374,21 @@ const DomesticTravelAccountPage: React.FC = () => {
         </div>
       ) : null}
 
+      {/* 유저 권한 변경 모달 */}
+      {isSplitModalOpen ? (
+        <div className="absolute inset-0 flex items-end py-8 bg-gray-900 bg-opacity-50">
+          <div className="w-full">
+            <SplitPage
+              totalAmount={collectedAmount}
+              // totalNo={travelAccountMemberAmountData?.memberList.length}
+              withdrawalAccountId={accountId}
+              withdrawalAccountNo={travelAccountData?.accountNo}
+              depositAccountList={travelAccountMemberAmountData?.memberList}
+              onClose={() => setIsSplitModalOpen(false)}
+            />
+          </div>
+        </div>
+      ) : null}
       {/* 목표 관리 모달 */}
       {isChangeTargetAmountModalOpen ? (
         <div className="absolute inset-0 flex items-end py-8 bg-gray-900 bg-opacity-50">

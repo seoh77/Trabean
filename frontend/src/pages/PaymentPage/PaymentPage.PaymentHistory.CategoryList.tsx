@@ -69,6 +69,7 @@ const CategoryList: React.FC<ListProps> = ({
     async (reset = false) => {
       if (
         isLoading ||
+        !travelAccountId ||
         (totalPage !== null && page > totalPage) ||
         categoryName === "ALL"
       ) {

@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
+
 import Search from "./PaymentPage.PaymentHistory.Search";
 import Chart from "./PaymentPage.PaymentHistory.Chart";
 import List from "./PaymentPage.PaymentHistory.List";
@@ -11,6 +13,10 @@ const PaymentHistory: React.FC = () => {
   const [showDate, setShowDate] = useState<boolean>(false);
   const [signalFetchChart, setSignalFetchChart] = useState<boolean>(false);
   const [totalAmount, setTotalAmount] = useState<string | null>(null);
+
+  // 계좌번호 가져오기
+  const location = useLocation();
+  const accountId = location.pathname.split("/")[3];
 
   // 카테고리 선택
   const [category, setCategory] = useState<string>("ALL");
@@ -26,6 +32,7 @@ const PaymentHistory: React.FC = () => {
     }
   };
 
+  // 날짜 형식 변경
   const formatDate = (date: string) => {
     const year = new Date(date).getFullYear().toString().slice(2);
     const month = (new Date(date).getMonth() + 1).toString().padStart(2, "0");
@@ -88,6 +95,7 @@ const PaymentHistory: React.FC = () => {
               handleTotalAmount={handleTotalAmount}
               startDate={startDate}
               endDate={endDate}
+              travelAccountId={accountId}
               formatDate={formatDate}
               signalFetchChart={signalFetchChart}
               handleCategory={handleCategory}
@@ -97,6 +105,7 @@ const PaymentHistory: React.FC = () => {
                 startDate={startDate}
                 endDate={endDate}
                 formatDate={formatDate}
+                travelAccountId={accountId}
                 categoryName={category}
               />
             )}
@@ -106,7 +115,7 @@ const PaymentHistory: React.FC = () => {
                 endDate={endDate}
                 formatDate={formatDate}
                 categoryName={category}
-                travelAccountId={localStorage.getItem("paymentAccountId")}
+                travelAccountId={accountId}
                 handleTotalAmount={handleTotalAmount}
               />
             )}

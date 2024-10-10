@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import filter from "../../../assets/filter.png";
 import client from "../../../client";
 import {
@@ -15,7 +15,11 @@ const DomesticTravelAccountDetailPage: React.FC = () => {
   const queryParams = new URLSearchParams(location.search);
   const startDate = queryParams.get("startDate");
   const endDate = queryParams.get("endDate");
+  const selectedUserId = queryParams.get("selectedUserId");
+  const navigate = useNavigate();
   const { accountId } = useParams(); // Path Variable
+
+  const [userRole, setUserRole] = useState<string>("");
 
   const [loading, setLoading] = useState(true); // 서버에서 데이터 수신 여부 체크
 
@@ -29,8 +33,24 @@ const DomesticTravelAccountDetailPage: React.FC = () => {
   const closeChangeFilterModal = () => setIsChangeFilterModalOpen(false);
 
   const handleTransferBalance = () => {
-    alert("이체 하기 누름!!!!!!");
+    navigate(`/accounts/travel/domestic/${accountId}/detail/transfer`);
   };
+
+  // Acount 서버 통장 권한 조회 API fetch 요청
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      try {
+        const response = await client().get(
+          `api/accounts/travel/domestic/${accountId}/userRole`,
+        );
+        setUserRole(response.data.userRole);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchUserRole();
+  }, [accountId, userRole]);
 
   // Account 서버 한화 여행통장 상세 조회 API fetch 요청
   useEffect(() => {
@@ -38,7 +58,7 @@ const DomesticTravelAccountDetailPage: React.FC = () => {
       try {
         const response = await client().get(
           `/api/accounts/travel/domestic/${accountId}`,
-          { params: { startDate, endDate } },
+          { params: { startDate, endDate, selectedUserId } },
         );
         setDomesticTravelAccountDetailData(response.data);
       } catch (error) {
@@ -51,7 +71,7 @@ const DomesticTravelAccountDetailPage: React.FC = () => {
     if (accountId) {
       getDomesticTravelAccountDetailData();
     }
-  }, [accountId, startDate, endDate]);
+  }, [accountId, startDate, endDate, selectedUserId]);
 
   // 입금은 초록색, 출금은 빨간색으로 표시
   const getBalanceColor = (transactionType: string) => {
@@ -167,7 +187,8 @@ const DomesticTravelAccountDetailPage: React.FC = () => {
           <button
             type="button"
             onClick={handleTransferBalance}
-            className="btn-md w-1/2 mx-auto block"
+            className={`w-1/2 mx-auto block ${userRole === "NONE_PAYER" ? "btn-gray-md" : "btn-md"}`}
+            disabled={userRole === "NONE_PAYER"}
           >
             이체 하기
           </button>

@@ -6,7 +6,7 @@ import bean from "../../assets/bean.png";
 import userIcon from "../../assets/icon/userIcon.png";
 import keyIcon from "../../assets/icon/keyIcon.png";
 import useAuthStore from "../../store/useAuthStore";
-import client from "../../client";
+// import client from "../../client";
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -24,21 +24,6 @@ function LoginPage() {
     setPassword(e.target.value);
   };
 
-  const getMainPaymentAccount = async () => {
-    try {
-      // API 요청을 통해 결제 계좌 ID 가져오기
-      const response = await client().get("/api/payments/main-account");
-      const { paymentAccountId } = response.data;
-      console.log(response.data);
-      localStorage.setItem("paymentAccountId", paymentAccountId);
-      // Store에 paymentAccountId 저장
-      useAuthStore.setState({ paymentAccountId });
-    } catch (error) {
-      console.error("main payment account 불러올 때 에러 발생:", error);
-      localStorage.setItem("paymentAccountId", "117");
-    }
-  };
-
   const onClickLogin = async () => {
     try {
       const response = await axios.post(
@@ -51,7 +36,6 @@ function LoginPage() {
         const token = response.data.split(" ")[1];
         localStorage.setItem("accessToken", token);
         setAccessToken(token);
-        getMainPaymentAccount();
         navigate("/");
       }
     } catch (error) {

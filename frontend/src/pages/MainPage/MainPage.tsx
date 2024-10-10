@@ -14,6 +14,7 @@ type AccountType = {
   accountName: string;
   bankName: string;
   accountBalance: number;
+  accountType: string;
 };
 
 function MainPage() {
@@ -39,18 +40,26 @@ function MainPage() {
       <img src={logo} alt="로고" className="h-5 mb-3" />
       {mainAccount && (
         <div className="bg-primary-light h-56 rounded-2xl py-5 px-6 flex flex-col justify-between">
-          <div>
+          <div
+            onClick={() =>
+              navigate(`/accounts/personal/${mainAccount.accountId}/detail`)
+            }
+            role="presentation"
+          >
             <h4 className="text-lg font-bold">{mainAccount.accountName}</h4>
             <span className="text-sm">{mainAccount.accountNo}</span>
           </div>
           <div className="text-3xl font-bold">
-            {formatNumberWithCommas(mainAccount.accountBalance)}
+            <span>{formatNumberWithCommas(mainAccount.accountBalance)}</span>
+            <span className="ml-1">원</span>
           </div>
           <button
             type="button"
             className="btn-lg"
             onClick={() => {
-              navigate(`/transfer/list/${mainAccount}`);
+              navigate(`/transfer/list/${mainAccount.accountId}`, {
+                state: { accountId: mainAccount.accountId },
+              });
             }}
           >
             이체하기

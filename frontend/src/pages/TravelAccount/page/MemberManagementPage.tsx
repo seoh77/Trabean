@@ -128,8 +128,10 @@ const MemberManagementPage: React.FC = () => {
           <div className="flex items-center mb-4">
             <img src={account} alt="account" className="w-12 h-12 mr-2" />
             <div>
-              <div className="text-xl">{travelAccountData?.accountName}</div>
-              <div className="text-sm">
+              <div className="text-xl text-left">
+                {travelAccountData?.accountName}
+              </div>
+              <div className="text-sm text-left">
                 {travelAccountData?.bankName} {travelAccountData?.accountNo}
               </div>
             </div>

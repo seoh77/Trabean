@@ -1,9 +1,11 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import bean from "../../../assets/bean.png";
 
 const ChatBot: React.FC = () => {
+  const navigate = useNavigate();
   const handleChatBotClick = () => {
-    alert("챗봇 누름!!!!!!");
+    navigate("/chatbot");
   };
 
   return (

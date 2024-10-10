@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { isAxiosError } from "axios";
 
 import TopBar from "../../components/TopBar";
 import FailModal from "./PaymentPage.Password.FailModal";
 import Keypad from "../AccountCreationPage/Keypad";
 import client from "../../client";
-import useAuthStore from "../../store/useAuthStore";
+import { formatNumberWithCommas } from "../../utils/formatNumber";
 
 const Password: React.FC = () => {
   const { merchantId, merchantName, currency, amount } = useParams();
@@ -15,6 +16,12 @@ const Password: React.FC = () => {
   const [foreignAmount, setForeignAmount] = useState<number | null>(null);
   const [password, setPassword] = useState<string>("");
   const [payId, setPayId] = useState<number | null>(null);
+  const [isRetry, setIsRetry] = useState<boolean>(false);
+  const [transId, setTransId] = useState<string | null>(null);
+
+  // 계좌번호 가져오기
+  const location = useLocation();
+  const accountId = location.pathname.split("/")[3];
 
   useEffect(() => {
     if (!amount || !currency) {
@@ -58,12 +65,10 @@ const Password: React.FC = () => {
 
   // qr 읽어온 직후 정보 업데이트 api 호출
   const updatePaymentInfo = async () => {
-    const { paymentAccountId } = useAuthStore.getState();
-    const accountId = paymentAccountId ? parseInt(paymentAccountId, 10) : 115;
     try {
       validateInfo();
       const requestBody: {
-        accountId: number | null;
+        accountId: string | null;
         merchantId?: string;
         krwAmount?: number;
         foreignAmount?: number;
@@ -92,26 +97,22 @@ const Password: React.FC = () => {
   };
 
   useEffect(() => {
-    console.log("useEffect triggered", {
-      merchantId,
-      currency,
-      krwAmount,
-      foreignAmount,
-    });
-
-    if (!merchantId || !currency || (!krwAmount && !foreignAmount)) {
+    if (
+      !merchantId ||
+      !currency ||
+      !accountId ||
+      (!krwAmount && !foreignAmount) ||
+      payId
+    ) {
       return;
     }
 
     updatePaymentInfo();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [merchantId, currency, krwAmount, foreignAmount]);
+  }, [merchantId, currency, krwAmount, foreignAmount, accountId]);
 
   // 결제 요청 api 호출
-  const requestPayment = async (
-    accountId: number | null,
-    transactionId: string,
-  ) => {
+  const requestPayment = async (transactionId: string) => {
     try {
       // 요청 바디 생성
       const requestBody = {
@@ -139,9 +140,33 @@ const Password: React.FC = () => {
         return;
       }
 
-      if (error instanceof Error) {
+      if (isAxiosError(error)) {
+        // 외화 계좌 없을 때
+        if (error.response?.data.message === "FOREIGN_ACCOUNT_NOT_FOUND") {
+          setErrorMessage(
+            `해당 통화의 계좌를 찾을 수 없습니다. 한화로 ${formatNumberWithCommas(error.response?.data.krwPrice)} 원을 결제하시겠습니까?`,
+          );
+          setTransId(transactionId);
+          setKrwAmount(error.response?.data.krwPrice);
+          setIsFail(true);
+          setIsRetry(true);
+          return;
+        }
+        // 외화 계좌 잔액 부족
+        if (error.response?.data.message === "FOREIGN_ACCOUNT_BALANCE_ERROR") {
+          setErrorMessage(
+            `해당 통화 잔액이 부족합니다. 한화로 ${formatNumberWithCommas(error.response?.data.krwPrice)} 원을 결제하시겠습니까?`,
+          );
+          setTransId(transactionId);
+          setKrwAmount(error.response?.data.krwPrice);
+          setIsFail(true);
+          setIsRetry(true);
+          return;
+        }
+
         // 에러 메시지 설정
-        setErrorMessage(error.message || "알 수 없는 에러 발생");
+        setErrorMessage(error.response?.data.message || "알 수 없는 에러 발생");
+
         setIsFail(true);
       }
     }
@@ -154,9 +179,6 @@ const Password: React.FC = () => {
   // 비밀번호 입력 완료
   const submitPassword = async () => {
     try {
-      const { paymentAccountId } = useAuthStore.getState();
-      const accountId = paymentAccountId ? parseInt(paymentAccountId, 10) : 115;
-
       // 요청 바디 생성
       const requestBody = {
         payId,
@@ -172,7 +194,44 @@ const Password: React.FC = () => {
       console.log(response.data);
 
       // 발급된 transactionId 로 결제요청
-      requestPayment(accountId, response.data.transactionId);
+      requestPayment(response.data.transactionId);
+    } catch (error) {
+      if (payId == null) {
+        // payId가 null일 때
+        setErrorMessage("결제 ID를 가져오는 데 실패했습니다.");
+        setIsFail(true);
+        setPassword("");
+        return;
+      }
+      if (isAxiosError(error)) {
+        // 에러 메시지 설정
+        setErrorMessage(error.response?.data.message || "알 수 없는 에러 발생");
+        setIsFail(true);
+      }
+      setPassword("");
+    }
+  };
+
+  // 재결제 로직 작성
+  const retryPaymentRequest = async () => {
+    try {
+      // 요청 바디 생성
+      const requestBody = {
+        transactionId: transId,
+        payId,
+        merchantId,
+        krwAmount: krwAmount ?? null,
+      };
+      // API 요청 전송
+      const response = await client().post(
+        `/api/payments/retry/${accountId}`,
+        requestBody,
+      );
+      console.log(response.data);
+      // 성공시 성공 url 로 이동
+      if (response.data.status === "SUCCESS") {
+        navigate(`/payment/qr/success/${payId}`);
+      }
     } catch (error) {
       if (payId == null) {
         // payId가 null일 때
@@ -180,11 +239,12 @@ const Password: React.FC = () => {
         setIsFail(true);
         return;
       }
-      if (error instanceof Error) {
+      if (isAxiosError(error)) {
         // 에러 메시지 설정
-        setErrorMessage(error.message || "알 수 없는 에러가 발생했습니다.");
+        setErrorMessage(error.response?.data.message || "알 수 없는 에러 발생");
         setIsFail(true);
       }
+      setPassword("");
     }
   };
 
@@ -202,7 +262,14 @@ const Password: React.FC = () => {
 
   return (
     <div className="flex w-full h-dvh flex-col items-center relative">
-      {isFail && <FailModal message={errorMessage} handleModal={handleModal} />}
+      {isFail && (
+        <FailModal
+          message={errorMessage}
+          handleModal={handleModal}
+          isRetry={isRetry}
+          retryPaymentRequest={retryPaymentRequest}
+        />
+      )}
       <TopBar isLogo={false} isWhite page="QR 결제" />
 
       <p className="text-lg pt-[100px]">{merchantName}</p>

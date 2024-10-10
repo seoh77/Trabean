@@ -17,6 +17,7 @@ interface ListProps {
   endDate: string | null;
   formatDate: (date: string) => string;
   categoryName: string | null;
+  travelAccountId: string | null;
 }
 
 interface PaymentItem {
@@ -35,6 +36,7 @@ const List: React.FC<ListProps> = ({
   endDate,
   formatDate,
   categoryName,
+  travelAccountId,
 }) => {
   const [payments, setPayments] = useState<PaymentItem[]>([]);
   const [page, setPage] = useState<number>(1);
@@ -66,6 +68,7 @@ const List: React.FC<ListProps> = ({
     async (reset = false) => {
       if (
         isLoading ||
+        !travelAccountId ||
         (totalPage !== null && page > totalPage) ||
         categoryName !== "ALL"
       ) {
@@ -79,9 +82,8 @@ const List: React.FC<ListProps> = ({
           enddate: endDate ? formatDate(endDate) : null,
           page: reset ? 1 : page,
         };
-        const paymentAccountId = localStorage.getItem("paymentAccountId");
         const response = await client().get(
-          `/api/payments/${paymentAccountId}`,
+          `/api/payments/${travelAccountId}`,
           {
             params,
           },
@@ -92,7 +94,6 @@ const List: React.FC<ListProps> = ({
         } else {
           setPayments((prev) => [...prev, ...response.data.payments]);
         }
-
         setPage(response.data.pagination.currentPage + 1);
         setTotalPage(response.data.pagination.totalPages);
       } catch (error) {
@@ -112,7 +113,7 @@ const List: React.FC<ListProps> = ({
     setPayments([]);
     fetchPaymentList(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [startDate, endDate, categoryName]);
+  }, [startDate, endDate, categoryName, travelAccountId]);
 
   // 스크롤 이벤트를 감지하여 무한 스크롤 구현
   useEffect(() => {

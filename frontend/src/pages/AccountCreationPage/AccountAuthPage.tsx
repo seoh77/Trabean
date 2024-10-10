@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { isAxiosError } from "axios";
 import client from "../../client";
 // import NavBar from "./NavBar";
 import TopBar from "../../components/TopBar";
@@ -88,20 +89,46 @@ const AccountVerificationPage: React.FC = () => {
       }
       console.log(response.data.responseMessage);
       return 2; // 인증번호 불일치
-    } catch (error: unknown) {
-      console.error("1원인증 - 서버 오류 발생:", error);
-      let errorMessage = "";
-      if (error instanceof Error) {
-        errorMessage = error.message;
-      } else {
-        errorMessage = "알 수 없는 문제가 발생했습니다.";
+    } catch (error) {
+      console.error("1원인증 - 오류 발생:", error);
+      if (isAxiosError(error)) {
+        const statusCode = error.response?.status;
+        if (statusCode !== undefined && statusCode >= 400 && statusCode < 500) {
+          setModalMessage("인증에 실패하였습니다");
+          const errorMessage =
+            error.response?.data?.responseMessage ?? "잘못된 요청입니다";
+          setSubMessage([
+            {
+              key: 1,
+              text: errorMessage,
+              className: "text-xs text-gray-500",
+            },
+          ]);
+          return 2;
+        }
+        setModalMessage("서버에 문제가 발생했습니다");
+        const errorMessage =
+          error.response?.data?.responseMessage ?? "잘못된 요청입니다";
+        setModalMessage("서버에 문제가 발생했습니다");
+        setSubMessage([
+          {
+            key: 1,
+            text: errorMessage,
+            className: "text-xs text-gray-500",
+          },
+        ]);
+        setIsModalOpen(true);
+        setTimeout(() => {
+          setIsModalOpen(false);
+          navigate("/creation");
+        }, 2000);
+        return 3; // 오류 발생 시 false 반환
       }
-
-      setModalMessage("서버에 문제가 발생했습니다");
+      setModalMessage("알 수 없는 문제가 발생했습니다");
       setSubMessage([
         {
           key: 1,
-          text: errorMessage,
+          text: "잠시 후 다시 시도해주세요",
           className: "text-xs text-gray-500",
         },
       ]);
@@ -129,31 +156,57 @@ const AccountVerificationPage: React.FC = () => {
         setTimeout(() => {
           setStep(4); // 2초 후 인증번호 입력 화면으로 이동
         }, 2000);
-      } else {
-        setModalMessage(response.data.responseMessage);
+        return 1;
+      }
+      setModalMessage(response.data.responseMessage);
+      setSubMessage([
+        {
+          key: 1,
+          text: "다시 시도해주세요.",
+          className: "text-xs text-gray-500",
+        },
+      ]);
+      setIsModalOpen(true);
+      return 2;
+    } catch (error) {
+      if (isAxiosError(error)) {
+        const statusCode = error.response?.status;
+        if (statusCode !== undefined && statusCode >= 400 && statusCode < 500) {
+          setModalMessage("정보가 유효하지 않습니다");
+          const errorMessage =
+            error.response?.data?.responseMessage ?? "잘못된 요청입니다";
+          setSubMessage([
+            {
+              key: 1,
+              text: errorMessage,
+              className: "text-xs text-gray-500",
+            },
+          ]);
+          return 2;
+        }
+        setModalMessage("서버에 문제가 발생했습니다");
+        const errorMessage =
+          error.response?.data?.responseMessage ?? "잘못된 요청입니다";
+        setModalMessage("서버에 문제가 발생했습니다");
         setSubMessage([
           {
             key: 1,
-            text: "다시 시도해주세요.",
+            text: errorMessage,
             className: "text-xs text-gray-500",
           },
         ]);
         setIsModalOpen(true);
+        setTimeout(() => {
+          setIsModalOpen(false);
+          navigate("/creation");
+        }, 2000);
+        return 3; // 오류 발생 시 false 반환
       }
-    } catch (error: unknown) {
-      console.error("1원송금 - 서버 오류 발생:", error);
-      let errorMessage = "";
-      if (error instanceof Error) {
-        errorMessage = error.message;
-      } else {
-        errorMessage = "알 수 없는 문제가 발생했습니다.";
-      }
-
-      setModalMessage("서버에 문제가 발생했습니다");
+      setModalMessage("알 수 없는 문제가 발생했습니다");
       setSubMessage([
         {
           key: 1,
-          text: errorMessage,
+          text: "잠시 후 다시 시도해주세요",
           className: "text-xs text-gray-500",
         },
       ]);
@@ -162,6 +215,7 @@ const AccountVerificationPage: React.FC = () => {
         setIsModalOpen(false);
         navigate("/creation");
       }, 2000);
+      return 3; // 오류 발생 시 false 반환
     }
   };
 
