@@ -59,6 +59,7 @@ const TransferLists: React.FC = () => {
             name: selectedAccount.adminName,
             bank: selectedAccount.bankName,
             accountId,
+            withdrawalAccountNo: selectedAccount.accountNo,
           },
         },
       );
