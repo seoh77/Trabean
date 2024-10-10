@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom"; // useNavigate 추가
 import beanProfile from "../../assets/bean_profile.png";
@@ -24,9 +25,9 @@ const TransferList: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태 관리
   const { accountId } = location.state || {};
   // const [depositAccountNo, setDepositAccountNo] = useState<string | null>(null);
-  // const [withdrawalAccountNo, setWithdrawalAccountNo] = useState<string | null>(
-  // null,
-  // );
+  const [withdrawalAccountNo, setWithdrawalAccountNo] = useState<string | null>(
+    null,
+  );
   // 숫자 클릭 처리
   const handleNumberClick = (value: string) => {
     setAmount((prev) => prev + value);
@@ -59,7 +60,8 @@ const TransferList: React.FC = () => {
     );
     // console.log(response.data.accountNo, 2);
     // console.log(response.data["accountNo"], 2);
-    return response.data.accountNo;
+    setWithdrawalAccountNo(response.data.accountNo);
+    console.log(response.data.accountNo);
   };
   // 모달 닫기
   const handleCloseModal = () => {
@@ -75,7 +77,7 @@ const TransferList: React.FC = () => {
         amount,
         accountId,
         depositAccountNo: account,
-        withdrawalAccountNo: getWithdrawalAccountNo(),
+        withdrawalAccountNo,
       },
     }); // 비밀번호 입력 페이지로 이동
   };
@@ -93,6 +95,7 @@ const TransferList: React.FC = () => {
   };
 
   useEffect(() => {
+    getWithdrawalAccountNo();
     getAccountName();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
