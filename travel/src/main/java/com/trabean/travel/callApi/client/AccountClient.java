@@ -2,6 +2,7 @@ package com.trabean.travel.callApi.client;
 
 import com.trabean.travel.callApi.dto.request.AccountNumberApiRequestDto;
 import com.trabean.travel.callApi.dto.request.AdminUserKeyApiRequestDto;
+import com.trabean.travel.callApi.dto.request.MemberInfoApiRequestDto;
 import com.trabean.travel.callApi.dto.request.MemberJoinApiRequestDto;
 import com.trabean.travel.callApi.dto.request.MemberRoleUpdateApiRequestDto;
 import com.trabean.travel.callApi.dto.response.AccountNumberApiResponseDto;
@@ -49,8 +50,6 @@ public interface AccountClient {
     /**
      * Account API : 멤버 목록 조회
      */
-    @GetMapping("/travel/domestic/{accountId}/members")
-    MemberInfoApiResponseDto getMemberInfo(
-            @PathVariable("accountId") Long accountId,
-            @RequestHeader("userId") Long userId);
+    @GetMapping("/internal/get-travel-account-members")
+    MemberInfoApiResponseDto getMemberInfo(@RequestBody MemberInfoApiRequestDto memberInfoApiRequestDto);
 }

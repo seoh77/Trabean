@@ -5,6 +5,7 @@ import com.trabean.travel.callApi.client.AccountClient;
 import com.trabean.travel.callApi.client.DemandDepositClient;
 import com.trabean.travel.callApi.client.UserClient;
 import com.trabean.travel.callApi.dto.request.AccountHistoryApiRequestDto;
+import com.trabean.travel.callApi.dto.request.MemberInfoApiRequestDto;
 import com.trabean.travel.callApi.dto.response.AccountHistoryApiResponseDto;
 import com.trabean.travel.callApi.dto.response.MemberInfoApiResponseDto;
 import com.trabean.travel.callApi.dto.response.MemberInfoApiResponseDto.MemberDetail;
@@ -48,7 +49,7 @@ public class TargetAmountService {
     public TargetAmountListResponseDto getTargetAmountList(Long accountId) {
         KrwTravelAccount account = krwTravelAccountRepository.findByAccountId(accountId);
         String accountNo = commonAccountService.getAccountNo(accountId);
-
+        
         // 목표금액 조회
         Long targetAmount = account.getTargetAmount();
 
@@ -99,7 +100,10 @@ public class TargetAmountService {
         Long userId = UserHeaderInterceptor.userId.get();
         List<MemberInfo> memberList = new ArrayList<>();
 
-        List<MemberDetail> memberInfoApiResponseDto = accountClient.getMemberInfo(accountId, userId).getMembers();
+        MemberInfoApiRequestDto memberInfoApiRequestDto = new MemberInfoApiRequestDto(userId, accountId);
+
+        List<MemberDetail> memberInfoApiResponseDto = accountClient.getMemberInfo(memberInfoApiRequestDto).getMembers();
+
         for (MemberDetail member : memberInfoApiResponseDto) {
             Long memberId = member.getUserId();
             Long mainAccountId = userClient.getMainAccountId(memberId).getMainAccountId();

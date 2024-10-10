@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MemberInfoApiResponseDto {
 
+    private Long userId;
     private Long memberCount;
     private List<MemberDetail> members;
 
