@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 // 국기 이미지 파일 import
@@ -10,6 +10,7 @@ import chfFlag from "../../assets/flagIcon/chf.png";
 import cnyFlag from "../../assets/flagIcon/cny.png";
 import jpyFlag from "../../assets/flagIcon/jpy.png";
 import TopBar from "../../components/TopBar";
+import client from "../../client";
 
 interface CurrencyData {
   id: number; // 나라 ID
@@ -21,72 +22,29 @@ interface CurrencyData {
 }
 
 const ExchangeRates = () => {
-  // 하드코딩된 데이터
   const { accountId } = useParams(); // Path Variable
+  const [currencies, setCurrencies] = useState<CurrencyData[]>([]);
 
-  const currencies: CurrencyData[] = [
-    {
-      id: 1,
-      country: "미국",
-      currency: "USD",
-      exchangeRate: 1239.72,
-      pastExchangeRate: 1238.82,
-      changeRate: "0.90",
-    },
-    {
-      id: 2,
-      country: "유럽",
-      currency: "EUR",
-      exchangeRate: 1351.98,
-      pastExchangeRate: 1317.98,
-      changeRate: "34.00",
-    },
-    {
-      id: 3,
-      country: "일본",
-      currency: "JPY",
-      exchangeRate: 1000.06,
-      pastExchangeRate: 999.91,
-      changeRate: "0.05",
-    },
-    {
-      id: 4,
-      country: "중국",
-      currency: "CNY",
-      exchangeRate: 200.72,
-      pastExchangeRate: 166.72,
-      changeRate: "34.00",
-    },
-    {
-      id: 5,
-      country: "영국",
-      currency: "GBP",
-      exchangeRate: 1622.69,
-      pastExchangeRate: 1588.69,
-      changeRate: "34.00",
-    },
-    {
-      id: 6,
-      country: "스위스",
-      currency: "CHF",
-      exchangeRate: 1332.03,
-      pastExchangeRate: 1298.03,
-      changeRate: "34.00",
-    },
-    {
-      id: 7,
-      country: "캐나다",
-      currency: "CAD",
-      exchangeRate: 993.28,
-      pastExchangeRate: 959.28,
-      changeRate: "34.00",
-    },
-  ];
+  useEffect(() => {
+    // API에서 데이터를 불러오는 함수
+    const fetchData = async () => {
+      try {
+        const response = await client().get("/api/travel/exchangeRate");
+        setCurrencies(response.data); // 데이터를 상태에 저장
+      } catch (error) {
+        console.error("데이터를 불러오는데 실패했습니다.", error);
+      }
+    };
 
+    fetchData();
+  }, []);
+
+  // 주요 통화 필터링
   const mainCurrencies = currencies.filter((currency) =>
     ["미국", "유럽", "일본"].includes(currency.country),
   );
 
+  // 기타 통화 필터링
   const otherCurrencies = currencies.filter((currency) =>
     ["중국", "영국", "스위스", "캐나다"].includes(currency.country),
   );
@@ -138,7 +96,11 @@ const ExchangeRates = () => {
             <div className="text-right">
               <p>{currency.exchangeRate.toLocaleString()} KRW</p>
               <p
-                className={`text-sm ${parseFloat(currency.changeRate) > 0 ? "text-red-500" : "text-blue-500"}`}
+                className={`text-sm ${
+                  parseFloat(currency.changeRate) > 0
+                    ? "text-red-500"
+                    : "text-blue-500"
+                }`}
               >
                 {parseFloat(currency.changeRate) > 0 ? "▲" : "▼"}{" "}
                 {currency.changeRate}
@@ -170,7 +132,11 @@ const ExchangeRates = () => {
             <div className="text-right">
               <p>{currency.exchangeRate.toLocaleString()} KRW</p>
               <p
-                className={`text-sm ${parseFloat(currency.changeRate) > 0 ? "text-red-500" : "text-blue-500"}`}
+                className={`text-sm ${
+                  parseFloat(currency.changeRate) > 0
+                    ? "text-red-500"
+                    : "text-blue-500"
+                }`}
               >
                 {parseFloat(currency.changeRate) > 0 ? "▲" : "▼"}{" "}
                 {currency.changeRate}
