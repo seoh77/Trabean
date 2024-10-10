@@ -150,9 +150,6 @@ const AccountVerificationPage: React.FC = () => {
           accountNo: accountNumber, // 요청 본문
         },
       );
-      console.log("1원 송금 요청 반환값 response data : ", response.data);
-      console.log("1원 송금 요청 response : ", response);
-      console.log("1원 송금 요청 반환값 response status : ", response.status);
       if (response.status === 200) {
         setStep(3);
         setTimeout(() => {
@@ -171,22 +168,25 @@ const AccountVerificationPage: React.FC = () => {
       setIsModalOpen(true);
       return 2;
     } catch (error) {
+      console.log("1원 송금 요청 반환값 response data : ", error);
       if (isAxiosError(error)) {
         const statusCode = error.response?.status;
         if (statusCode !== undefined && statusCode >= 400 && statusCode < 500) {
-          setModalMessage("정보가 유효하지 않습니다");
+          // 입력 정보 오류
           const errorMessage =
             error.response?.data?.responseMessage ?? "잘못된 요청입니다";
+          setModalMessage(errorMessage);
           setSubMessage([
             {
               key: 1,
-              text: errorMessage,
+              text: "다시 시도해주세요",
               className: "text-xs text-gray-500",
             },
           ]);
           return 2;
         }
         setModalMessage("서버에 문제가 발생했습니다");
+        // 서버 오류
         const errorMessage =
           error.response?.data?.responseMessage ?? "잘못된 요청입니다";
         setModalMessage("서버에 문제가 발생했습니다");
