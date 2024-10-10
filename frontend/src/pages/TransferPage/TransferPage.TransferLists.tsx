@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import beanProfile from "../../assets/bean_profile.png";
 import client from "../../client";
+import TopBar from "../../components/TopBar";
+import trabeanLogo from "../../assets/logo.png";
 
 interface Transfer {
   accountId: number; // 계좌 식별자
@@ -55,6 +57,7 @@ const TransferLists: React.FC = () => {
           name: selectedAccount.adminName,
           bank: selectedAccount.bankName,
           accountId,
+          withdrawalAccountNo: selectedAccount.accountNo,
         },
       });
     } else if (manualInput) {
@@ -72,57 +75,59 @@ const TransferLists: React.FC = () => {
   };
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-6">이체</h1>
-      {/* 직접 입력 */}
-      <input
-        type="text"
-        placeholder="계좌 번호 직접 입력"
-        value={manualInput}
-        onChange={handleManualInput}
-        className="w-full px-3 py-2 border rounded-lg mb-4"
-      />
+    <div>
+      <TopBar isLogo={trabeanLogo} page="계좌 이체" isWhite />
+      <div className="px-6 py-20 bg-white">
+        {/* 직접 입력 */}
+        <input
+          type="text"
+          placeholder="계좌 번호 직접 입력"
+          value={manualInput}
+          onChange={handleManualInput}
+          className="w-full px-3 py-2 border rounded-lg mb-4"
+        />
 
-      {/* 확인 버튼 */}
-      <button
-        type="button"
-        onClick={handleConfirm}
-        className="mb-6 w-full bg-primary text-white py-3 text-lg font-semibold"
-      >
-        확인
-      </button>
+        {/* 확인 버튼 */}
+        <button
+          type="button"
+          onClick={handleConfirm}
+          className="mb-6 w-full bg-primary text-white py-3 text-lg font-semibold"
+        >
+          확인
+        </button>
 
-      {/* 계좌 목록 */}
-      <ul className="space-y-3 mb-4">
-        {transfers.map((transfer) => (
-          <li
-            key={transfer.accountId}
-            className={`flex items-center p-3 rounded-lg shadow-sm cursor-pointer ${
-              selectedAccount?.accountId === transfer.accountId
-                ? "bg-green-100"
-                : "bg-gray-50"
-            }`}
-            role="presentation"
-            onClick={() => handleAccountSelect(transfer)}
-          >
-            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-              <img
-                src={beanProfile}
-                alt="profile"
-                className="w-full h-full object-cover rounded-full"
-              />
-            </div>
-            <div className="ml-3">
-              <div className="font-semibold text-gray-800">
-                {transfer.adminName}
+        {/* 계좌 목록 */}
+        <ul className="space-y-3 mb-4">
+          {transfers.map((transfer) => (
+            <li
+              key={transfer.accountId}
+              className={`flex items-center p-3 rounded-lg shadow-sm cursor-pointer ${
+                selectedAccount?.accountId === transfer.accountId
+                  ? "bg-green-100"
+                  : "bg-gray-50"
+              }`}
+              role="presentation"
+              onClick={() => handleAccountSelect(transfer)}
+            >
+              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                <img
+                  src={beanProfile}
+                  alt="profile"
+                  className="w-full h-full object-cover rounded-full"
+                />
               </div>
-              <div className="text-gray-600">
-                {transfer.bankName} {transfer.accountNo}
+              <div className="ml-3">
+                <div className="font-semibold text-gray-800">
+                  {transfer.adminName}
+                </div>
+                <div className="text-gray-600">
+                  {transfer.bankName} {transfer.accountNo}
+                </div>
               </div>
-            </div>
-          </li>
-        ))}
-      </ul>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 };

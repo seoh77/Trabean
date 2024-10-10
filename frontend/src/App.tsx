@@ -62,14 +62,6 @@ function App() {
             element={<DomesticTravelAccountPage />}
           />
           <Route
-            path="/accounts/travel/domestic/:accountId/detail/transfer"
-            element={<DTransferLists />}
-          />
-          <Route
-            path="/accounts/travel/domestic/:accountId/detail/transfer/password"
-            element={<DPassword />}
-          />
-          <Route
             path="/accounts/personal/:accountId/detail"
             element={<PersonalAccountDetailPage />}
           />
@@ -134,6 +126,14 @@ function App() {
           <Route
             path="/transfer/password/:accountId"
             element={<PasswordPage />}
+          />
+          <Route
+            path="/accounts/travel/domestic/:accountId/detail/transfer"
+            element={<DTransferLists />}
+          />
+          <Route
+            path="/accounts/travel/domestic/:accountId/detail/transfer/password"
+            element={<DPassword />}
           />
           <Route path="/transfer/success" element={<SuccessPage />} />
           <Route path="/transfer/success/domestic" element={<DSuccessPage />} />

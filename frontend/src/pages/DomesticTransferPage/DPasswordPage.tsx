@@ -3,11 +3,15 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import CustomKeypad from "../AccountCreationPage/Keypad"; // 비밀번호 입력 키패드 컴포넌트
 import Modal from "../AccountCreationPage/Modal"; // 모달 컴포넌트
 import client from "../../client";
+import trabeanLogo from "../../assets/logo.png";
+import TopBar from "../../components/TopBar";
 
 const PasswordPage: React.FC = () => {
   const location = useLocation();
   const { accountId } = useParams<{ accountId: string }>();
   const { amount } = location.state || { amount: 0 };
+  const { depositAccountNo } = location.state || { depositAccountNo: 0 };
+  const { withdrawalAccountNo } = location.state || { withdrawalAccountNo: 0 };
   const [password, setPassword] = useState(""); // 입력된 비밀번호 상태
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태 관리
   const [modalMessage, setModalMessage] = useState(""); // 모달 메시지
@@ -31,6 +35,8 @@ const PasswordPage: React.FC = () => {
           // 비밀번호 검증 성공 시 송금 요청
           client()
             .post(`/api/accounts/travel/domestic/${accountId}/transfer`, {
+              depositAccountNo,
+              withdrawalAccountNo,
               amount, // 송금 금액을 전송
             })
             .then((transferResponse) => {
@@ -55,7 +61,7 @@ const PasswordPage: React.FC = () => {
       })
       .catch((error) => {
         // 비밀번호 검증 실패 또는 기타 오류 처리
-        if (error.response && error.response.status === 400) {
+        if (error.response && error.response.status === 403) {
           setModalMessage("비밀번호가 틀렸습니다.");
           setSubMessage("사유: 잘못된 비밀번호");
         } else if (error.response && error.response.status === 500) {
@@ -67,6 +73,7 @@ const PasswordPage: React.FC = () => {
         }
         setIsModalOpen(true);
       });
+    setPassword("");
   };
 
   // 모달 닫기
@@ -75,24 +82,27 @@ const PasswordPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-50">
-      <h1 className="text-xl font-bold mb-6">비밀번호 입력</h1>
+    <div>
+      <TopBar isLogo={trabeanLogo} page="비밀번호 입력" isWhite />
+      <div className="px-6 py-20 bg-white">
+        {/* <h1 className="text-xl font-bold mb-6">비밀번호 입력</h1> */}
 
-      {/* CustomKeypad 컴포넌트 사용 */}
-      <CustomKeypad
-        password={password}
-        onChange={handlePasswordChange}
-        onComplete={handleComplete}
-      />
-
-      {/* 모달 */}
-      {isModalOpen && (
-        <Modal
-          message={modalMessage}
-          subMessage={[{ key: 1, text: subMessage || "" }]}
-          onClose={handleCloseModal}
+        {/* CustomKeypad 컴포넌트 사용 */}
+        <CustomKeypad
+          password={password}
+          onChange={handlePasswordChange}
+          onComplete={handleComplete}
         />
-      )}
+
+        {/* 모달 */}
+        {isModalOpen && (
+          <Modal
+            message={modalMessage}
+            subMessage={[{ key: 1, text: subMessage || "" }]}
+            onClose={handleCloseModal}
+          />
+        )}
+      </div>
     </div>
   );
 };
