@@ -156,6 +156,7 @@ public class PaymentsAccountService {
     }
 
     public Long getFORAccount(Long merchantId, Long accountId) {
+        // merchantId에 대한 유효성 검사
         Merchants merchant = merchantsRepository.findById(merchantId)
                 .orElseThrow(() -> new PaymentsException("잘못된 merchantId값 입니다.", HttpStatus.BAD_REQUEST)); // 400
 
@@ -163,10 +164,19 @@ public class PaymentsAccountService {
         if (merchant.getExchangeCurrency().equals("KRW")) {
             return accountId;
         }
+
+        // travelClient에서 반환된 response가 null인지 확인
         Map<String, Long> response = travelClient.getFORAccount(accountId, merchant.getExchangeCurrency());
+
+        // response가 null일 경우 처리
+        if (response == null) {
+            // null을 반환하거나, 적절한 예외를 던질 수 있음
+            throw new PaymentsException("FOREIGN_ACCOUNT_NOT_FOUND.", HttpStatus.NOT_FOUND);
+        }
 
         return response.getOrDefault("foreignTravelAccountId", null);
     }
+
 
     // 메인 여행통장 (한화) 불러오기
     public Long getMainAccount(Long userId) {

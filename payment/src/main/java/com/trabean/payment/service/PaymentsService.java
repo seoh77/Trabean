@@ -72,8 +72,10 @@ public class PaymentsService {
         // 외화 계좌 조회
         Long paymentAccountId = paymentsAccountService.getFORAccount(request.getMerchantId(), accountId);
         if (paymentAccountId == null) {
+            log.info(request.getPayId() + "결제 id 찾았나???@@@@@@@@");
             Payments payment = paymentsRepository.findById(request.getPayId())
                     .orElseThrow(() -> new PaymentsException("결제 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
+            log.info("결제정보는 찾았네");
             throw new PaymentsException("FOREIGN_ACCOUNT_NOT_FOUND", payment.getKrwAmount(), HttpStatus.NOT_FOUND);
         }
 
