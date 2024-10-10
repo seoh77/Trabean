@@ -178,7 +178,7 @@ const ExchangeSplit: React.FC<SplitProps> = ({
                     </div>
                   </div>
                   <p className="font-bold text-sm text-[#2F8F4E]">
-                    ₩ {dividedAmount.toLocaleString()}
+                    {/* ₩ {dividedAmount.toLocaleString()} */}
                   </p>
                 </div>
               ))}
