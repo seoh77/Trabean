@@ -105,9 +105,13 @@ public class PaymentsService {
         // 결제 상태를 성공으로 업데이트
         paymentsUpdateInfoService.updateSuccess(request.getPayId());
 
+        // 결제정보
+        Payments payments = paymentsRepository.findById(request.getPayId())
+                .orElseThrow(() -> new PaymentsException("결제정보 받아올수없습니다.", HttpStatus.INTERNAL_SERVER_ERROR));
+
         // 여행통장 멤버 조회
         TravelAccountMemberListResponse memberListResponse = paymentsAccountService.validateTravelAccountMembers(
-                accountId);
+                payments.getAccountId());
 
         // 여행 통장 멤버 list 에 담기
         List<Long> membersId = new ArrayList<>();
