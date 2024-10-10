@@ -217,7 +217,7 @@ const Password: React.FC = () => {
     try {
       // 요청 바디 생성
       const requestBody = {
-        transId,
+        transactionId: transId,
         payId,
         merchantId,
         krwAmount: krwAmount ?? null,
