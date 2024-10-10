@@ -22,7 +22,7 @@ public class UserHeaderInterceptor implements HandlerInterceptor {
 
         if (userIdHeader != null) {
             try {
-                userId.set(Long.parseLong(userIdHeader));
+                userId.set(Long.parseLong(Decryption.decrypt(userIdHeader)));
             } catch (RuntimeException e) {
                 throw new PaymentsException(
                         "유저 ID 값을 long으로 변환할 수 없습니다. 헤더 id값: " + request.getHeader("userID") + "헤더 key값"
@@ -34,7 +34,7 @@ public class UserHeaderInterceptor implements HandlerInterceptor {
         log.info("유저 아이디 가져오기 (인터셉터): ", userId.get());
 
         if (userKeyHeader != null) {
-            userKey.set(userKeyHeader);
+            userKey.set(Decryption.decrypt(userKeyHeader));
         }
 
         return true;
