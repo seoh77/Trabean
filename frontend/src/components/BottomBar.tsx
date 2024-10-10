@@ -6,7 +6,7 @@ import NotificationModal from "../pages/NotificationPage/NotificationPage";
 
 import client from "../client";
 import Home from "../assets/home.png";
-import PaymentHistory from "../assets/paymentHistory.png";
+import PaymentHistory from "../assets/ChatBot.png";
 import Payment from "../assets/payment.png";
 import ExchangeRate from "../assets/exchangeRate.png";
 import Bell from "../assets/Bell.png";
@@ -56,11 +56,8 @@ const BottomBar: React.FC = () => {
   };
 
   useEffect(() => {
-    if (loading) {
-      return;
-    }
     getMainPaymentAccount();
-  }, [loading]);
+  }, []);
 
   // 결제 페이지 이동
   const goToPaymentPage = () => {
@@ -76,10 +73,7 @@ const BottomBar: React.FC = () => {
 
   // 가계부 페이지 이동
   const goToPaymentListPage = () => {
-    if (!paymentAccountId) {
-      alert("메인 결제 계좌가 설정되지 않았습니다.");
-    }
-    navigate(`/payment/list/${paymentAccountId}`);
+    navigate(`/chatbot`);
   };
 
   // 클래스 이름 설정
@@ -124,7 +118,7 @@ const BottomBar: React.FC = () => {
                 alt="PaymentHistory"
                 className={imgClass}
               />
-              <p className={textClass}>가계부</p>
+              <p className={textClass}>챗봇</p>
             </div>
             <div
               onClick={() => {
