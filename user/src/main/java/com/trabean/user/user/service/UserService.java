@@ -168,10 +168,8 @@ public class UserService {
 
     // 내부 DB와 외부 API를 모두 확인하여 이메일 중복 체크
     public boolean checkEmailDBDuplication(String email) {
-        // 내부 DB에서 이메일 중복 확인
-        boolean isEmailInDb = !userRepository.existsByEmail(email);
-
-        return isEmailInDb;
+        // 이메일 중복 확인 (존재하면 true 반환, 존재하지 않으면 false 반환)
+        return userRepository.existsByEmail(email);
     }
 
     // userId로 사용자 조회 및 payment_account_id 반환

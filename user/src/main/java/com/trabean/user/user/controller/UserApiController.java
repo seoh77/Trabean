@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
 @RestController
@@ -25,7 +24,6 @@ public class UserApiController {
 	private final UserService userService;
 	private final ExternalApiService externalApiService;
 	private final ObjectMapper objectMapper = new ObjectMapper(); // JSON 파서
-
 
 	@PostMapping("/signup")
 	public ResponseEntity<String> signup(@RequestBody AddUserRequest request) {
@@ -63,14 +61,15 @@ public class UserApiController {
 	public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
 		try {
 			// 로그인 로직 호출 및 Access Token 반환
-			String accessToken = userService.login(loginRequest,response);
+			String accessToken = userService.login(loginRequest, response);
 			logger.info("여기왔지롱 userapicontroller");
-			response.addHeader("Authorization","Bearer "+ accessToken);
+			response.addHeader("Authorization", "Bearer " + accessToken);
 			return ResponseEntity.ok().body("Bearer " + accessToken);
 		} catch (RuntimeException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	}
+
 	// 사용자 정보 조회 및 payment_account_id 반환
 	@GetMapping("/paymentaccount/{userId}")
 	public ResponseEntity<UserPaymentAccountIdResponse> getUserPaymentAccount(@PathVariable Long userId) {
@@ -83,6 +82,7 @@ public class UserApiController {
 
 		return ResponseEntity.ok(userPaymentAccountIdResponse);
 	}
+
 	// 사용자 정보 조회 및 name 반환
 	@GetMapping("/name/{userId}")
 	public ResponseEntity<UserNameResponse> getUserName(@PathVariable Long userId) {
@@ -96,6 +96,7 @@ public class UserApiController {
 
 		return ResponseEntity.ok(userNameResponse);
 	}
+
 	@GetMapping("/useremail/{userId}")
 	public ResponseEntity<UserEmailResponse> getUserEmail(@PathVariable Long userId) {
 		// logger.info("여기왔지롱");
@@ -121,8 +122,6 @@ public class UserApiController {
 		return ResponseEntity.ok(response);
 	}
 
-
-
 	@PostMapping("/mainAccountId")
 	public ResponseEntity<String> updateMainAccountId(@RequestBody MainAccountIdRequest request) {
 		boolean isUpdated = userService.updateMainAccountId(request.getUserId(), request.getMainAccountId());
@@ -135,13 +134,16 @@ public class UserApiController {
 	}
 
 	@GetMapping("/emailDB/{email}")
-	public ResponseEntity<Long> checkEmailDBDuplication(@PathVariable String email) {
-		if (userService.checkEmailDBDuplication(email)){
+	public ResponseEntity<?> checkEmailDBDuplication(@PathVariable String email) {
+		// 이메일 중복 여부 체크
+		if (userService.checkEmailDBDuplication(email)) {
+			// 이메일이 존재하는 경우, 해당 이메일의 ID를 반환
 			return ResponseEntity.ok(userService.findByEmail(email).getUser_id());
-		};
-		return ResponseEntity.ok(null);
+		} else {
+			// 이메일이 존재하지 않는 경우, false를 반환
+			return ResponseEntity.ok(false);
+		}
 	}
-
 
 	@GetMapping("/email/{email}")
 	public ResponseEntity<Boolean> checkEmailDuplication(@PathVariable String email) {
@@ -155,9 +157,10 @@ public class UserApiController {
 		return ResponseEntity.ok(response);
 
 	}
+
 	private Cookie createCookie(String key, String value) {
 		Cookie cookie = new Cookie(key, value);
-		cookie.setMaxAge(24*60*60);
+		cookie.setMaxAge(24 * 60 * 60);
 		cookie.setHttpOnly(true);
 		return cookie;
 	}
