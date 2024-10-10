@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import beanProfile from "../../assets/bean_profile.png";
 import client from "../../client";
+import TopBar from "../../components/TopBar";
+import trabeanLogo from "../../assets/logo.png";
 
 interface Transfer {
   accountId: number; // 계좌 식별자
@@ -73,7 +75,8 @@ const TransferLists: React.FC = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-6">이체</h1>
+      <TopBar isLogo={trabeanLogo} page="계좌 이체" isWhite />
+
       {/* 직접 입력 */}
       <input
         type="text"

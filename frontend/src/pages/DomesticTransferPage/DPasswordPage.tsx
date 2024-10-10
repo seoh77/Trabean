@@ -3,6 +3,8 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import CustomKeypad from "../AccountCreationPage/Keypad"; // 비밀번호 입력 키패드 컴포넌트
 import Modal from "../AccountCreationPage/Modal"; // 모달 컴포넌트
 import client from "../../client";
+import trabeanLogo from "../../assets/logo.png";
+import TopBar from "../../components/TopBar";
 
 const PasswordPage: React.FC = () => {
   const location = useLocation();
@@ -77,6 +79,8 @@ const PasswordPage: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-50">
+      <TopBar isLogo={trabeanLogo} page="비밀번호 입력" isWhite />
+
       <h1 className="text-xl font-bold mb-6">비밀번호 입력</h1>
 
       {/* CustomKeypad 컴포넌트 사용 */}
