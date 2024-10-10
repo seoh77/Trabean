@@ -31,7 +31,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public List<NotificationReadRes> findByUserId(Long userId) {
-        List<Notification> notificationList = notificationRepository.findByReceiverId(userId);
+        List<Notification> notificationList = notificationRepository.findByReceiverIdOrderByCreateTimeDesc(userId);
         return notificationList.stream().map(Notification::toReadDto).toList();
     }
 
