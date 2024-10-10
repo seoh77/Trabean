@@ -154,16 +154,16 @@ public class UserService {
     }
 
     // 내부 DB와 외부 API를 모두 확인하여 이메일 중복 체크
-    public boolean checkEmailDuplication(String email) {
+    public Map<String, Object> checkEmailDuplication(String email) {
         // 내부 DB에서 이메일 중복 확인
         boolean isEmailInDb = userRepository.existsByEmail(email);
 
         // 외부 API에서 이메일 중복 확인
-        // boolean isEmailInExternalApi = checkEmailWithExternalApi(email);
+        Map<String, Object> isEmailInExternalApi = checkEmailWithExternalApi(email);
 
         // 두 조건을 모두 만족해야 중복이 아닌 것으로 처리
         // return isEmailInDb && isEmailInExternalApi;
-        return isEmailInDb;
+        return isEmailInExternalApi;
     }
 
     // 내부 DB와 외부 API를 모두 확인하여 이메일 중복 체크
