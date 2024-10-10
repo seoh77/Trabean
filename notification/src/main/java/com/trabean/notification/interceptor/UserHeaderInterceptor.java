@@ -1,12 +1,16 @@
 package com.trabean.notification.interceptor;
 
+import com.trabean.notification.util.Decryption;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+@Slf4j
 @Component
 public class UserHeaderInterceptor implements HandlerInterceptor {
+
     public static ThreadLocal<Long> userId = new ThreadLocal<>();
     public static ThreadLocal<String> userKey = new ThreadLocal<>();
 
@@ -18,27 +22,27 @@ public class UserHeaderInterceptor implements HandlerInterceptor {
 
         if (userIdHeader != null) {
             try {
-                userId.set(Long.parseLong(userIdHeader));
+                log.info("userIdHeader: {}", userIdHeader);
+                userId.set(Long.parseLong(Decryption.decrypt(userIdHeader)));
+                log.info("userId: {}", userId.get());
             } catch (RuntimeException e) {
-                throw new IllegalArgumentException(
-                        "유저 ID 값을 long으로 변환할 수 없습니다. 헤더 id값: " + request.getHeader("userID") + "헤더 key값"
-                                + request.getHeader("userKey"));
+                throw new IllegalArgumentException();
             }
-        } else {
-            userId.set(31L); // userId가 null일 경우 31으로 설정
         }
 
         if (userKeyHeader != null) {
-            userKey.set(userKeyHeader);
+            log.info("userKeyHeader: {}", userKeyHeader);
+            userKey.set(Decryption.decrypt(userKeyHeader));
+            log.info("userKey: {}", userKey.get());
         }
 
         return true;
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler,
-                                Exception ex) {
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         userId.remove();
         userKey.remove();
     }
+
 }
