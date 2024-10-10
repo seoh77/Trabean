@@ -134,14 +134,14 @@ public class UserApiController {
 	}
 
 	@GetMapping("/emailDB/{email}")
-	public ResponseEntity<?> checkEmailDBDuplication(@PathVariable String email) {
+	public ResponseEntity<Long> checkEmailDBDuplication(@PathVariable String email) {
 		// 이메일 중복 여부 체크
 		if (userService.checkEmailDBDuplication(email)) {
 			// 이메일이 존재하는 경우, 해당 이메일의 ID를 반환
 			return ResponseEntity.ok(userService.findByEmail(email).getUser_id());
 		} else {
-			// 이메일이 존재하지 않는 경우, false를 반환
-			return ResponseEntity.ok(false);
+			// 이메일이 존재하지 않는 경우, -1을 반환
+			return ResponseEntity.ok(-1L);
 		}
 	}
 
