@@ -14,7 +14,7 @@ import {
 import TopBar from "../../../components/TopBar";
 // import Alarm from "../component/Alarm";
 import TargetAmountProgressBar from "../component/TargetAmountProgressBar";
-import ChatBot from "../component/ChatBot";
+// import ChatBot from "../component/ChatBot";
 import Loading from "../component/Loading";
 import ChangeAccountNameModal from "../modal/ChangeAccountName";
 import ChangeTargetAmountModal from "../modal/ChangeTargetAmountModal";
@@ -358,9 +358,9 @@ const DomesticTravelAccountPage: React.FC = () => {
       </div>
 
       {/* 챗봇 */}
-      <div className="px-4 py-2 bg-zinc-100">
+      {/* <div className="px-4 py-2 bg-zinc-100">
         <ChatBot />
-      </div>
+      </div> */}
 
       {/* 여행통장 이름 변경 모달 */}
       {isChangeAccountNameModalOpen ? (
