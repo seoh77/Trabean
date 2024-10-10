@@ -57,7 +57,7 @@ const TransferList: React.FC = () => {
       "/api/accounts/internal/get-accountNo",
       body,
     );
-    console.log(response, 2);
+    console.log(response.data, 2);
     setWithdrawalAccountNo(response.data.accountNo);
   };
   // 모달 닫기
