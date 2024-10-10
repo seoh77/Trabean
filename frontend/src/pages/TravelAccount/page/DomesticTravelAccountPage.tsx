@@ -380,7 +380,7 @@ const DomesticTravelAccountPage: React.FC = () => {
           <div className="w-full">
             <SplitPage
               totalAmount={collectedAmount}
-              totalNo={travelAccountMemberAmountData?.memberList.length}
+              // totalNo={travelAccountMemberAmountData?.memberList.length}
               withdrawalAccountId={accountId}
               withdrawalAccountNo={travelAccountData?.accountNo}
               depositAccountList={travelAccountMemberAmountData?.memberList}

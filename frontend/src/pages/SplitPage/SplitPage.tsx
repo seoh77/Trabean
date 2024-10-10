@@ -9,7 +9,6 @@ import client from "../../client";
 
 interface SplitProps {
   totalAmount: number;
-  totalNo: number | undefined;
   withdrawalAccountNo: string | undefined;
   withdrawalAccountId: string | undefined; // 출금계좌ID 추가
   depositAccountList: TravelAccountMember[] | undefined;
@@ -18,7 +17,6 @@ interface SplitProps {
 
 const ExchangeSplit: React.FC<SplitProps> = ({
   totalAmount,
-  totalNo,
   withdrawalAccountNo,
   withdrawalAccountId, // 출금계좌ID 추가
   depositAccountList,
@@ -35,14 +33,14 @@ const ExchangeSplit: React.FC<SplitProps> = ({
   ); // 선택된 멤버 목록
 
   useEffect(() => {
-    // eslint-disable-next-line eqeqeq
-    if (totalNo && totalNo > 0) {
+    // selectedMembers의 길이로 totalNo를 대체하고, 그에 따라 dividedAmount 계산
+    const totalNo = selectedMembers.length;
+    if (totalNo > 0) {
       setDividedAmount(Math.floor(totalAmount / totalNo));
     }
-  }, [totalAmount, totalNo]);
+  }, [totalAmount, selectedMembers]);
 
   const toggleMemberSelection = (member: TravelAccountMember) => {
-    console.log(member);
     setSelectedMembers((prevSelected) => {
       if (prevSelected.some((selected) => selected.userId === member.userId)) {
         return prevSelected.filter(
@@ -55,26 +53,22 @@ const ExchangeSplit: React.FC<SplitProps> = ({
 
   // N빵 진행 확인 버튼 클릭 시
   const handleSplit = async () => {
-    console.log(selectedMembers);
     const invalidMembers = selectedMembers.filter(
       (member) => member.mainAccountId === null,
     );
-    console.log(invalidMembers.length > 0);
     if (invalidMembers.length > 0) {
       setIsErrorModalVisible(true); // 메인 계좌가 없는 멤버가 있으면 오류 모달을 띄움
     } else {
-      // 선택된 멤버들을 서버로 보내는 로직 추가
-      setIsConfirmModalVisible(true);
+      setIsConfirmModalVisible(true); // N빵 확인 모달 띄우기
     }
   };
 
-  // N빵 진행 확인 버튼 클릭 시
   const handleSplit2 = async () => {
     try {
       // POST 요청을 위한 데이터 구조 생성
       const requestData = {
         totalAmount,
-        totalNo,
+        totalNo: selectedMembers.length, // 선택된 멤버 수
         withdrawalAccountId,
         withdrawalAccountNo,
         depositAccountList: selectedMembers.map((member) => ({
@@ -86,12 +80,10 @@ const ExchangeSplit: React.FC<SplitProps> = ({
       // API로 POST 요청 보내기
       const response = await client().post("/api/travel/split", requestData);
 
-      // 요청이 성공하면 N빵 성공 모달을 띄움
       if (response.status === 200) {
         setIsConfirmModalVisible(false);
         setIsSuccessModalVisible(true); // N빵 성공 모달 띄우기
       } else {
-        // 상태 코드가 200이 아닌 경우에는 실패로 간주
         setIsErrorModalVisible(true); // N빵 실패 모달 띄우기
       }
     } catch (error) {
@@ -167,8 +159,9 @@ const ExchangeSplit: React.FC<SplitProps> = ({
                       {/* role이 admin이면 kingbean 이미지로, 아니라면 일반 bean 이미지로 설정 */}
                       <img
                         src={
-                          // eslint-disable-next-line eqeqeq
-                          member.role == "ADMIN" ? kingBeanProfile : beanProfile
+                          member.role === "ADMIN"
+                            ? kingBeanProfile
+                            : beanProfile
                         }
                         alt="profile"
                         className="w-8 h-8 object-cover rounded-full"
@@ -200,7 +193,7 @@ const ExchangeSplit: React.FC<SplitProps> = ({
                 type="button"
                 onClick={handleSplit}
                 className="btn-lg text-white hover:bg-green-600 w-[115px]"
-                disabled={totalNo === 0 || totalNo === undefined} // totalNo가 0이거나 undefined일 때 비활성화
+                disabled={selectedMembers.length === 0} // 멤버가 선택되지 않으면 비활성화
               >
                 확인
               </button>
@@ -219,6 +212,7 @@ const ExchangeSplit: React.FC<SplitProps> = ({
             <h1 className="text-xl font-bold text-center mb-4">
               진짜 N빵 하시나요?
             </h1>
+            <h2>₩ {dividedAmount.toLocaleString()}씩 나누기</h2>
             <div className="flex justify-between w-full mt-4">
               <button
                 type="button"
@@ -252,7 +246,7 @@ const ExchangeSplit: React.FC<SplitProps> = ({
             <img
               src={checkIcon}
               alt="success"
-              className="w-16 h-16 mb-6 m-auto" // 더 크게 조정
+              className="w-16 h-16 mb-6 m-auto"
             />
             <button
               type="button"
@@ -275,11 +269,7 @@ const ExchangeSplit: React.FC<SplitProps> = ({
             <h1 className="text-xl font-bold text-center mb-4">
               N빵에 실패하였습니다!
             </h1>
-            <img
-              src={warningIcon}
-              alt="fail"
-              className="w-16 h-16 m-auto" // 더 크게 조정
-            />
+            <img src={warningIcon} alt="fail" className="w-16 h-16 m-auto" />
             <p className="text-gray-800 text-center mb-4">
               선택된 멤버 중 메인 계좌가 설정되지 않은 사람이 있습니다. 설정 후
               다시 시도해주세요.
