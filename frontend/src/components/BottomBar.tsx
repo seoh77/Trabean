@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import classNames from "classnames";
 
+import NotificationModal from "../pages/NotificationPage/NotificationPage";
+
 import client from "../client";
 import Home from "../assets/home.png";
 import PaymentHistory from "../assets/paymentHistory.png";
@@ -10,9 +12,14 @@ import ExchangeRate from "../assets/exchangeRate.png";
 import Bell from "../assets/Bell.png";
 
 const BottomBar: React.FC = () => {
+  const [notiHidden, setNotiHidden] = useState<boolean>(true);
   const [paymentAccountId, setPaymentAccountId] = useState<number | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
+
+  const changeNotiHidden = (hidden: boolean) => {
+    setNotiHidden(!hidden);
+  };
 
   // 메인 결제 계좌 가져오기
   const getMainPaymentAccount = async () => {
@@ -59,6 +66,10 @@ const BottomBar: React.FC = () => {
     <>
       {isShowBottom && (
         <>
+          <NotificationModal
+            hidden={notiHidden}
+            changeNotiHidden={changeNotiHidden}
+          />
           <div className="pt-[60px]" />
           <div className="w-[360px] h-[60px] flex items-center fixed bottom-0 text-[#999999] shadow-2xl justify-around bg-white">
             <div
@@ -102,9 +113,7 @@ const BottomBar: React.FC = () => {
               <p className={textClass}>결제</p>
             </div>
             <div
-              onClick={() => {
-                navigate("/notification");
-              }}
+              onClick={() => changeNotiHidden(notiHidden)}
               role="presentation"
               className={containerClass}
             >
