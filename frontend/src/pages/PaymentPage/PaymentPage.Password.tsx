@@ -101,7 +101,8 @@ const Password: React.FC = () => {
       !merchantId ||
       !currency ||
       !accountId ||
-      (!krwAmount && !foreignAmount)
+      (!krwAmount && !foreignAmount) ||
+      payId
     ) {
       return;
     }
