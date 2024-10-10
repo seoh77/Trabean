@@ -37,7 +37,7 @@ const PasswordPage: React.FC = () => {
             .post(`/api/accounts/travel/domestic/${accountId}/transfer`, {
               depositAccountNo,
               withdrawalAccountNo,
-              amount, // 송금 금액을 전송
+              transactionBalance: amount, // 송금 금액을 전송
             })
             .then((transferResponse) => {
               if (transferResponse.status === 200) {
