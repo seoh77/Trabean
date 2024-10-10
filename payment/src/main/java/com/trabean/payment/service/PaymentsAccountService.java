@@ -170,8 +170,7 @@ public class PaymentsAccountService {
 
         // response가 null일 경우 처리
         if (response == null) {
-            // null을 반환하거나, 적절한 예외를 던질 수 있음
-            throw new PaymentsException("FOREIGN_ACCOUNT_NOT_FOUND.", HttpStatus.NOT_FOUND);
+            return null;
         }
 
         return response.getOrDefault("foreignTravelAccountId", null);
