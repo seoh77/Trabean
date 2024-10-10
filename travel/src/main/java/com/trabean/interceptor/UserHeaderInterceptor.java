@@ -1,5 +1,6 @@
 package com.trabean.interceptor;
 
+import com.trabean.util.Decryption;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
@@ -19,14 +20,14 @@ public class UserHeaderInterceptor implements HandlerInterceptor {
 
         if (userIdHeader != null) {
             try {
-                userId.set(Long.parseLong(userIdHeader));
+                userId.set(Long.parseLong(Decryption.decrypt(userIdHeader)));
             } catch (RuntimeException e) {
                 throw new IllegalArgumentException();
             }
         }
 
         if (userKeyHeader != null) {
-            userKey.set(userKeyHeader);
+            userKey.set(Decryption.decrypt(userKeyHeader));
         }
 
         return true;
