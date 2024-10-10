@@ -1,12 +1,14 @@
 package com.trabean.payment.exception;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @Getter
+@NoArgsConstructor
 public class PaymentsException extends RuntimeException {
-
-    private final HttpStatus status;  // HTTP 상태 코드
+    
+    private HttpStatus status;  // HTTP 상태 코드
     private Long krwPrice;
 
     // 메시지와 상태 코드를 받는 생성자

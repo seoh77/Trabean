@@ -1,15 +1,16 @@
 package com.trabean.payment.exception;
 
-import feign.FeignException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
  * 전역 예외 처리 핸들러
  */
-@RestControllerAdvice
+@ControllerAdvice
+@Slf4j
 public class ErrorHandler {
 
     /**
@@ -25,12 +26,13 @@ public class ErrorHandler {
     /**
      * FeignClientException 처리 (외부 API 호출 실패 등)
      */
-    @ExceptionHandler(FeignException.class)
-    public ResponseEntity<ErrorResponse> handleFeignClientException(FeignException ex) {
-        // 외부 서버 오류 메시지 처리
-        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), HttpStatus.BAD_GATEWAY.value(), null);
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_GATEWAY);
-    }
+//    @ExceptionHandler(P.class)
+//    public ResponseEntity<ErrorResponse> handleFeignClientException(FeignException ex) {
+//        // 외부 서버 오류 메시지 처리
+//        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), HttpStatus.BAD_GATEWAY.value(), null);
+//        log.info(errorResponse + "@@@@@@@@@@@@@@@@@@@");
+//        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_GATEWAY);
+//    }
 
     /**
      * 그 외 발생할 수 있는 일반적인 RuntimeException 처리
@@ -40,6 +42,7 @@ public class ErrorHandler {
         // 서버 내부 오류 메시지 처리
         ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 null);
+        log.info(errorResponse.toString() + "@@@@@@@@@@@@@@@@@@@");
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

@@ -1,11 +1,11 @@
 package com.trabean.payment.client;
 
+import com.trabean.payment.FeignClientConfig;
 import com.trabean.payment.dto.response.AccountNoResponse;
 import com.trabean.payment.dto.response.TravelAccountMemberListResponse;
 import com.trabean.payment.dto.response.UserRoleResponse;
 import java.util.Map;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.cloud.openfeign.FeignClientProperties.FeignClientConfiguration;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 
-@FeignClient(name = "account", configuration = FeignClientConfiguration.class)
+@FeignClient(name = "account", configuration = FeignClientConfig.class)
 public interface AccountClient {
 
     @PostMapping(value = "/api/accounts/internal/get-userRole", consumes = MediaType.APPLICATION_JSON_VALUE)
