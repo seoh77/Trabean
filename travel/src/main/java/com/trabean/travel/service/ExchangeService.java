@@ -123,35 +123,43 @@ public class ExchangeService {
 
         List<RecDetail> nowExchangeRateList = exchangeRateClient.getExchangeRate(exchangeRateApiRequestDto).getRec();
 
-        // Open API로 영업일 기준 하루 전 환율 조회
-        String[] date = nowExchangeRateList.get(0).getCreated().split(" ");
-        int agoDate = Integer.parseInt(date[0].replace("-", "")) - 1;
+//        // Open API로 영업일 기준 하루 전 환율 조회
+//        String[] date = nowExchangeRateList.get(0).getCreated().split(" ");
+//        int agoDate = Integer.parseInt(date[0].replace("-", "")) - 1;
+//
+//        List<ExchangeRateOpenApiResponseDto> exchangeRateOpenApiResponseDto = null;
+//        int tryTime = 0;
+//
+//        while ((exchangeRateOpenApiResponseDto == null || exchangeRateOpenApiResponseDto.isEmpty()) && tryTime <= 10) {
+//            exchangeRateOpenApiResponseDto = koreaeximClient.getExchangeRateFromOpenApi(authKey, agoDate + "",
+//                    "AP01");
+//            agoDate--;
+//            tryTime++;
+//        }
+//
+//        // 검색을 쉽게 하기 위해 currency(화폐단위)를 key 값으로 HashMap에 저장
+//        HashMap<String, String> agoExchangeRateMap = new HashMap<>();
+//
+//        for (ExchangeRateOpenApiResponseDto data : exchangeRateOpenApiResponseDto) {
+//            String currency = data.getCur_unit();
+//
+//            if (currency.equals("CNH")) {
+//                currency = "CNY";
+//            } else if (currency.equals("JPY(100)")) {
+//                currency = "JPY";
+//            }
+//
+//            agoExchangeRateMap.put(currency, data.getDeal_bas_r());
+//        }
 
-        List<ExchangeRateOpenApiResponseDto> exchangeRateOpenApiResponseDto = null;
-        int tryTime = 0;
-
-        while ((exchangeRateOpenApiResponseDto == null || exchangeRateOpenApiResponseDto.isEmpty()) && tryTime <= 10) {
-            exchangeRateOpenApiResponseDto = koreaeximClient.getExchangeRateFromOpenApi(authKey, agoDate + "",
-                    "AP01");
-            agoDate--;
-            tryTime++;
-        }
-
-
-        // 검색을 쉽게 하기 위해 currency(화폐단위)를 key 값으로 HashMap에 저장
         HashMap<String, String> agoExchangeRateMap = new HashMap<>();
-
-        for (ExchangeRateOpenApiResponseDto data : exchangeRateOpenApiResponseDto) {
-            String currency = data.getCur_unit();
-
-            if (currency.equals("CNH")) {
-                currency = "CNY";
-            } else if (currency.equals("JPY(100)")) {
-                currency = "JPY";
-            }
-
-            agoExchangeRateMap.put(currency, data.getDeal_bas_r());
-        }
+        agoExchangeRateMap.put("CAD", "982.97");
+        agoExchangeRateMap.put("CHF", "1,566.03");
+        agoExchangeRateMap.put("CNY", "190.91");
+        agoExchangeRateMap.put("EUR", "1,474.56");
+        agoExchangeRateMap.put("GBP", "1,760.83");
+        agoExchangeRateMap.put("JPY", "903.08");
+        agoExchangeRateMap.put("USD", "1,347.8");
 
         // return 할 데이터 만들기
         List<ExchangeRateResponseDto> result = new ArrayList<>();
