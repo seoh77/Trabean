@@ -3,9 +3,11 @@ package com.trabean.interceptor;
 import com.trabean.util.Decryption;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+@Slf4j
 @Component
 public class UserHeaderInterceptor implements HandlerInterceptor {
 
@@ -20,14 +22,18 @@ public class UserHeaderInterceptor implements HandlerInterceptor {
 
         if (userIdHeader != null) {
             try {
+                log.info("userIdHeader: {}", userIdHeader);
                 userId.set(Long.parseLong(Decryption.decrypt(userIdHeader)));
+                log.info("userId: {}", userId.get());
             } catch (RuntimeException e) {
                 throw new IllegalArgumentException();
             }
         }
 
         if (userKeyHeader != null) {
+            log.info("userKeyHeader: {}", userKeyHeader);
             userKey.set(Decryption.decrypt(userKeyHeader));
+            log.info("userKey: {}", userKey.get());
         }
 
         return true;
