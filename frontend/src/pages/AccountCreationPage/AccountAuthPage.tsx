@@ -150,7 +150,9 @@ const AccountVerificationPage: React.FC = () => {
           accountNo: accountNumber, // 요청 본문
         },
       );
-
+      console.log("1원 송금 요청 반환값 response data : ", response.data);
+      console.log("1원 송금 요청 response : ", response);
+      console.log("1원 송금 요청 반환값 response status : ", response.status);
       if (response.status === 200) {
         setStep(3);
         setTimeout(() => {
