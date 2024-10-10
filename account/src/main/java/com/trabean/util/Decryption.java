@@ -13,7 +13,6 @@ public class Decryption {
     // 16바이트 비밀 키 (AES-128 사용 시)
     private static final String SECRET_KEY = "your-16-byte-key"; // 실제 비밀 키로 대체해야 함
 
-
     public static String decrypt(String encryptedData) {
         try {
             SecretKeySpec key = new SecretKeySpec(SECRET_KEY.getBytes(), ALGORITHM);
@@ -26,4 +25,5 @@ public class Decryption {
             throw new RuntimeException("Decryption error", e);
         }
     }
+
 }
