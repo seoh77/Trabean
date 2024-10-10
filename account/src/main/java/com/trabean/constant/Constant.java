@@ -25,17 +25,17 @@ public class Constant {
     /**
      * 개인 통장 상품 고유번호
      */
-    public static final String PERSONAL_ACCOUNT_TYPE_UNIQUE_NO = "001-1-45f35a47cc6649";
+    public static final String PERSONAL_ACCOUNT_TYPE_UNIQUE_NO = "999-1-59afd652233549";
 
     /**
      * 한화 여행통장 상품 고유번호
      */
-    public static final String DOMESTIC_TRAVEL_ACCOUNT_TYPE_UNIQUE_NO = "001-1-2e58332128994c";
+    public static final String DOMESTIC_TRAVEL_ACCOUNT_TYPE_UNIQUE_NO = "999-1-1ae0ed02c79c42";
 
     /**
      * 외화 여행통장 상품 고유번호
      */
-    public static final String FOREIGN_TRAVEL_ACCOUNT_TYPE_UNIQUE_NO = "001-1-5c77c5eb5e1642";
+    public static final String FOREIGN_TRAVEL_ACCOUNT_TYPE_UNIQUE_NO = "999-1-8ad0c6211dfa49";
 
     /**
      * 통장 비밀번호 해싱용 pepper
