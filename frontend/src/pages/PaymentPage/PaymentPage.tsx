@@ -1,9 +1,40 @@
 import React, { useRef, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+
 import QrScanner from "qr-scanner";
 import TopBar from "../../components/TopBar";
+import client from "../../client";
 
 const PaymentPage: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const navigate = useNavigate();
+
+  // 계좌번호 가져오기
+  const location = useLocation();
+  const accountId = location.pathname.split("/")[3];
+
+  const paymentRoleValidate = async () => {
+    console.log("권한검증API");
+    if (!accountId) {
+      return;
+    }
+    try {
+      const response = await client().get(
+        `/api/accounts/travel/domestic/${accountId}/userRole`,
+      );
+      if (response.data.userRole === "NONE_PAYER") {
+        navigate(-1);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    console.log("useEffect실행");
+    paymentRoleValidate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accountId]);
 
   const handleScan = (result: QrScanner.ScanResult) => {
     try {
