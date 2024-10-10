@@ -74,7 +74,9 @@ public class UserService {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
     }
+
     public String refreshTokento;
+
     // 로그인 처리 로직
     public String login(LoginRequest loginRequest, HttpServletResponse response) {
         // 사용자 이메일로 데이터베이스에서 사용자 찾기
@@ -107,8 +109,7 @@ public class UserService {
                             .userId(user.getUser_id())
                             .email(user.getEmail())
                             .refreshToken(refreshToken)
-                            .build()
-            );
+                            .build());
         }
 
         // Refresh Token을 쿠키로 추가
@@ -118,12 +119,13 @@ public class UserService {
     }
 
     // 외부 API를 통해 이메일 중복 확인
-    private boolean checkEmailWithExternalApi(String email) {
+    private Map<String, Object> checkEmailWithExternalApi(String email) {
+        Map<String, Object> result = new HashMap<>();
         try {
             // 요청에 포함될 데이터 정의
             Map<String, String> requestBody = new HashMap<>();
             requestBody.put("userId", email);
-            requestBody.put("apiKey", API_KEY);  // 자동으로 apiKey 추가
+            requestBody.put("apiKey", API_KEY); // 자동으로 apiKey 추가
 
             // HttpHeaders 설정
             HttpHeaders headers = new HttpHeaders();
@@ -133,23 +135,22 @@ public class UserService {
             HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(requestBody, headers);
 
             // 외부 API에 POST 요청 보내기
-            ResponseEntity<String> response = restTemplate.exchange(API_URL, HttpMethod.POST, requestEntity, String.class);
+            ResponseEntity<String> response = restTemplate.exchange(API_URL, HttpMethod.POST, requestEntity,
+                    String.class);
 
-            // 200 OK 응답이 오면 인증 실패(즉, 해당 이메일이 이미 존재)
-            return !response.getStatusCode().is2xxSuccessful();
-
+            // 응답 상태와 본문을 함께 result에 저장
+            result.put("success", response.getStatusCode().is2xxSuccessful());
+            result.put("body", response.getBody());
         } catch (HttpClientErrorException e) {
-            // 400 Bad Request 또는 에러가 발생하면 인증 성공 (즉, 해당 이메일이 없음)
-            if (e.getStatusCode().is4xxClientError()) {
-                return true;  // 인증 성공
-            } else {
-                // 그 외의 에러가 발생하면 false로 처리
-                return false;
-            }
+            // 400 Bad Request 또는 에러가 발생하면 에러 메시지와 함께 반환
+            result.put("success", false);
+            result.put("body", e.getResponseBodyAsString());
         } catch (Exception e) {
             // 다른 예외 처리
-            return false;
+            result.put("success", false);
+            result.put("body", "An unexpected error occurred: " + e.getMessage());
         }
+        return result;
     }
 
     // 내부 DB와 외부 API를 모두 확인하여 이메일 중복 체크
@@ -158,10 +159,11 @@ public class UserService {
         boolean isEmailInDb = userRepository.existsByEmail(email);
 
         // 외부 API에서 이메일 중복 확인
-        boolean isEmailInExternalApi = checkEmailWithExternalApi(email);
+        // boolean isEmailInExternalApi = checkEmailWithExternalApi(email);
 
         // 두 조건을 모두 만족해야 중복이 아닌 것으로 처리
-        return isEmailInDb && isEmailInExternalApi;
+        // return isEmailInDb && isEmailInExternalApi;
+        return isEmailInDb;
     }
 
     // 내부 DB와 외부 API를 모두 확인하여 이메일 중복 체크
