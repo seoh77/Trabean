@@ -67,6 +67,8 @@ const PasswordPage: React.FC = () => {
         }
         setIsModalOpen(true);
       });
+
+    setPassword("");
   };
 
   // 모달 닫기
