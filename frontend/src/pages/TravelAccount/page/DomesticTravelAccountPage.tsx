@@ -86,7 +86,7 @@ const DomesticTravelAccountPage: React.FC = () => {
         const response = await client().get(
           `api/accounts/travel/domestic/${accountId}/userRole`,
         );
-        setUserRole(response.data.userRole);
+        setUserRole(response.data.role);
       } catch (error) {
         console.error(error);
       }
