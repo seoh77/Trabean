@@ -168,7 +168,7 @@ public class ExchangeService {
             String currency = data.getCurrency();
             double exchangeRate = Double.parseDouble(data.getExchangeRate().replace(",", ""));
             double pastExchangeRate = Double.parseDouble(agoExchangeRateMap.get(currency).replace(",", ""));
-            double changeRate = ((exchangeRate - pastExchangeRate) / pastExchangeRate) * 100;
+            double changeRate = Math.round(((exchangeRate - pastExchangeRate) / pastExchangeRate) * 100) / 100.0;
 
             ExchangeRateResponseDto exchangeRateResponseDto = ExchangeRateResponseDto.builder()
                     .id(data.getId())
