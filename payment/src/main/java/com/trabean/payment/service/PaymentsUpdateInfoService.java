@@ -92,6 +92,7 @@ public class PaymentsUpdateInfoService {
             Long krwAmount = exchangeRateService.calculateKrw(merchant.getExchangeCurrency(),
                     payment.getForeignAmount());
             payment.updateKrwAmount(krwAmount);
+            paymentsRepository.save(payment);
         }
     }
 }
