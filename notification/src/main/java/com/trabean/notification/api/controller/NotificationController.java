@@ -57,7 +57,7 @@ public class NotificationController {
     public SseEmitter handleSse() {
         Long userId = UserHeaderInterceptor.userId.get();
         // 무제한 타임아웃 설정을 가진 SseEmitter 객체 생성
-        SseEmitter sseEmitter = new SseEmitter();
+        SseEmitter sseEmitter = new SseEmitter(60000L);
 
         // 단일 스레드로 작업을 스케줄링 할 수 있는 ScheduledExecutorService 생성
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
