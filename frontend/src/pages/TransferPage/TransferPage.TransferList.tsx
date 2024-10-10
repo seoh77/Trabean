@@ -43,6 +43,7 @@ const TransferList: React.FC = () => {
   };
 
   const getDepositAccountNo = () => {
+    console.log(account);
     setDepositAccountNo(account);
   };
   const getWithdrawalAccountNo = async () => {
@@ -57,6 +58,7 @@ const TransferList: React.FC = () => {
       "/api/accounts/internal/get-accountNo",
       body,
     );
+    console.log(response, 2);
     setWithdrawalAccountNo(response.data.accountNo);
   };
   // 모달 닫기
@@ -67,7 +69,7 @@ const TransferList: React.FC = () => {
   const handleConfirm = () => {
     getDepositAccountNo();
     getWithdrawalAccountNo();
-    console.log(depositAccountNo);
+    console.log(depositAccountNo, 2);
     console.log(withdrwalAccountNo);
     navigate(`/transfer/password/${accountId}`, {
       state: {
