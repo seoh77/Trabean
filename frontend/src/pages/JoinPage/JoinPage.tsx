@@ -40,11 +40,11 @@ function JoinPage() {
     const response = await client().get(`/api/user/email/${fullEmail}`);
 
     if (response.data) {
-      alert("이미 사용 중인 이메일입니다.");
-      setEmail(null);
-    } else {
       setCheckEmail(1);
       setEmail(fullEmail);
+    } else {
+      alert("이미 사용 중인 이메일입니다.");
+      setEmail(null);
     }
   };
 
