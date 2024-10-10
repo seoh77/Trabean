@@ -1,6 +1,9 @@
 server:
   port: 8083
-
+  #  수정안되면 다시 제거
+  servlet:
+    session:
+      timeout: 30m
 spring:
   datasource:
     url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul
