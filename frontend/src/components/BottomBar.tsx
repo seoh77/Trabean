@@ -11,15 +11,36 @@ import Payment from "../assets/payment.png";
 import ExchangeRate from "../assets/exchangeRate.png";
 import Bell from "../assets/Bell.png";
 
+type NotificationType = {
+  notificationId: number;
+  senderId: number;
+  accountId: number;
+  notificationType: string;
+  amount: number;
+  createTime: string;
+  read: boolean;
+};
+
 const BottomBar: React.FC = () => {
+  const [notiList, setNotiList] = useState<Array<NotificationType>>([]);
   const [notiHidden, setNotiHidden] = useState<boolean>(true);
+
   const [paymentAccountId, setPaymentAccountId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
 
+  const getNotification = async () => {
+    const response = await client().get(`/api/notifications`);
+    setNotiList(response.data);
+  };
+
   const changeNotiHidden = (hidden: boolean) => {
     setNotiHidden(!hidden);
+
+    if (notiHidden) {
+      getNotification();
+    }
   };
 
   // 메인 결제 계좌 가져오기
@@ -79,6 +100,7 @@ const BottomBar: React.FC = () => {
           <NotificationModal
             hidden={notiHidden}
             changeNotiHidden={changeNotiHidden}
+            notiList={notiList}
           />
           <div className="pt-[60px]" />
           <div className="w-[360px] h-[60px] flex items-center fixed bottom-0 text-[#999999] shadow-2xl justify-around bg-white">
