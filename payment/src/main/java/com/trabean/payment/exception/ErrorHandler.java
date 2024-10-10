@@ -1,6 +1,5 @@
 package com.trabean.payment.exception;
 
-import feign.FeignException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -20,16 +19,6 @@ public class ErrorHandler {
         // 사용자에게 보여줄 커스텀 응답 객체 생성
         ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), ex.getStatus().value(), ex.getKrwPrice());
         return new ResponseEntity<>(errorResponse, ex.getStatus());
-    }
-
-    /**
-     * FeignClientException 처리 (외부 API 호출 실패 등)
-     */
-    @ExceptionHandler(FeignException.class)
-    public ResponseEntity<ErrorResponse> handleFeignClientException(FeignException ex) {
-        // 외부 서버 오류 메시지 처리
-        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), HttpStatus.BAD_GATEWAY.value(), null);
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_GATEWAY);
     }
 
     /**
