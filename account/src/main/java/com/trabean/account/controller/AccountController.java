@@ -158,6 +158,13 @@ public class AccountController {
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
+    // 외화 여행통장 및 연결된 한화 여행통장 식별자와 계좌번호 조회 API
+    @GetMapping("/travel/foreign/{accountId}/couple")
+    public ResponseEntity<TravelAccountCoupleResponseDTO> getTravelAccountCoupleResponseDTO(@PathVariable Long accountId) {
+        TravelAccountCoupleResponseDTO responseDTO = accountService.getTravelAccountCoupleResponseDTO(accountId);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
+
     // 통장 주인 이름 조회 API
     @GetMapping("/{accountNo}/name")
     public ResponseEntity<AccountAdminNameResponseDTO> getAccountName(@PathVariable String accountNo) {
