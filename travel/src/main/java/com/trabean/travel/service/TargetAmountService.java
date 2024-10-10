@@ -97,7 +97,6 @@ public class TargetAmountService {
 
         // 멤버 조회
         Long userId = UserHeaderInterceptor.userId.get();
-        System.out.println("userId = " + userId);
         List<MemberInfo> memberList = new ArrayList<>();
 
         List<MemberDetail> memberInfoApiResponseDto = accountClient.getMemberInfo(accountId, userId).getMembers();
