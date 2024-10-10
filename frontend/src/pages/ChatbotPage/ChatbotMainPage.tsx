@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import client from "../../client";
 import TopBar from "../../components/TopBar";
 import CancelButton from "./CancelButton";
@@ -99,9 +98,8 @@ const Chatbot: React.FC = () => {
     setStep(0);
     const fetchChatbotData = async () => {
       try {
-        const newResponse = await axios.get(
-          "http://localhost:8082/api/chatbot/start",
-        );
+        const url = "/api/chatbot/start";
+        const newResponse = await client().get(url);
         setQuestion(newResponse.data.options);
         setOptions(newResponse.data.options);
         setMessages((prev) => [
@@ -479,11 +477,11 @@ const Chatbot: React.FC = () => {
 
   const setLocationOption = async () => {
     let chatMessage = "";
-    let url = `http://localhost:8082/api/chatbot/location/${step}`;
+    let url = `/api/chatbot/location/${step}`;
     switch (step) {
       case 1: {
         url += `?country=${country}`;
-        const responseStep1 = await axios.get(url);
+        const responseStep1 = await client().get(url);
         chatMessage = responseStep1.data.question;
         setOptions(transformOptions(responseStep1.data.options));
         break;
@@ -491,7 +489,7 @@ const Chatbot: React.FC = () => {
 
       case 2:
         {
-          const responseStep2 = await axios.get(url);
+          const responseStep2 = await client().get(url);
           chatMessage = responseStep2.data.question;
           const numberOfDays = responseStep2.data.options;
           const dayOptions = Array.from(
@@ -506,7 +504,7 @@ const Chatbot: React.FC = () => {
         break;
 
       case 6: {
-        const responseStep1 = await axios.get(url);
+        const responseStep1 = await client().get(url);
         chatMessage = responseStep1.data.question;
         setOptions(transformId(responseStep1.data.options));
         console.log("priority!!! : ", transformId(responseStep1.data.options));
@@ -516,7 +514,7 @@ const Chatbot: React.FC = () => {
       case 7: {
         const transformedDataStep7 = transformLocationQuestion();
         try {
-          const responseStep7 = await axios.post(url, transformedDataStep7); // 변환된 데이터 전송
+          const responseStep7 = await client().post(url, transformedDataStep7); // 변환된 데이터 전송
           console.log("서버 응답:", responseStep7.data); // 성공 시 서버 응답 출력
 
           const transformedLocationsStep7 = responseStep7.data.options.map(
@@ -553,7 +551,7 @@ const Chatbot: React.FC = () => {
       }
 
       default: {
-        const responseDefault = await axios.get(url);
+        const responseDefault = await client().get(url);
         chatMessage = responseDefault.data.question;
         setOptions(transformOptions(responseDefault.data.options));
         break;
@@ -668,9 +666,9 @@ const Chatbot: React.FC = () => {
     addMessage(userInput, "user");
     addMessage("· · · ·", "bot");
     setUserInput("");
-    const url = "http://localhost:8082/api/chatbot/question";
+    const url = "/api/chatbot/question";
     const requestBody = { question: String(userInput) };
-    const response = await axios.post(url, requestBody);
+    const response = await client().post(url, requestBody);
     if (response) {
       setInitState();
       setMessages((prevMessages) => [
