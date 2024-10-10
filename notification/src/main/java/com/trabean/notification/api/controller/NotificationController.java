@@ -55,6 +55,7 @@ public class NotificationController {
      */
     @GetMapping(value = "/status", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter handleSse() {
+        Long userId = UserHeaderInterceptor.userId.get();
         // 무제한 타임아웃 설정을 가진 SseEmitter 객체 생성
         SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
 
@@ -66,7 +67,7 @@ public class NotificationController {
             try {
                 // 사용자 상태를 가져와서 "1" 또는 "0"으로 변환
                 log.info("1111111111111111111111111111111111");
-                String result = notificationService.getStatus(UserHeaderInterceptor.userId.get()) ? "1" : "0";
+                String result = notificationService.getStatus(userId) ? "1" : "0";
                 log.info("2222222222222222222222222222222");
 
                 // 클라이언트에 결과 전송
