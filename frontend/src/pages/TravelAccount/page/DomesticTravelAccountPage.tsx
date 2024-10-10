@@ -309,7 +309,7 @@ const DomesticTravelAccountPage: React.FC = () => {
       </div>
 
       {/* 여행통장 기능 목록 */}
-      <div className="px-4 py-2 bg-zinc-100">
+      <div className="px-4 py-2 bg-zinc-100 ">
         <div className="flex justify-between rounded-2xl">
           {/* 친구들과 N빵하기 */}
           <div>
@@ -358,9 +358,7 @@ const DomesticTravelAccountPage: React.FC = () => {
       </div>
 
       {/* 챗봇 */}
-      {/* <div className="px-4 py-2 bg-zinc-100">
-        <ChatBot />
-      </div> */}
+      <div className="px-4 py-2 bg-zinc-100 h-[60px]" />
 
       {/* 여행통장 이름 변경 모달 */}
       {isChangeAccountNameModalOpen ? (
