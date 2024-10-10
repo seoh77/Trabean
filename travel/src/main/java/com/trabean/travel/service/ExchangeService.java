@@ -153,13 +153,13 @@ public class ExchangeService {
 //        }
 
         HashMap<String, String> agoExchangeRateMap = new HashMap<>();
-        agoExchangeRateMap.put("CAD", "982.97");
-        agoExchangeRateMap.put("CHF", "1,566.03");
-        agoExchangeRateMap.put("CNY", "190.91");
-        agoExchangeRateMap.put("EUR", "1,474.56");
-        agoExchangeRateMap.put("GBP", "1,760.83");
-        agoExchangeRateMap.put("JPY", "903.08");
-        agoExchangeRateMap.put("USD", "1,347.8");
+        agoExchangeRateMap.put("CAD", "988.22");
+        agoExchangeRateMap.put("CHF", "1,576.7");
+        agoExchangeRateMap.put("CNY", "190.05");
+        agoExchangeRateMap.put("EUR", "1,478.12");
+        agoExchangeRateMap.put("GBP", "1,762.23");
+        agoExchangeRateMap.put("JPY", "910.26");
+        agoExchangeRateMap.put("USD", "1,346.5");
 
         // return 할 데이터 만들기
         List<ExchangeRateResponseDto> result = new ArrayList<>();
