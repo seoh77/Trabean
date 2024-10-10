@@ -70,11 +70,9 @@ const TransferList: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
-    <div className="relative flex flex-col justify-center min-h-screen bg-gray-50">
-      <div>
-        <TopBar isLogo={trabeanLogo} page="계좌 이체" isWhite />
-      </div>
-      <div>
+    <div>
+      <TopBar isLogo={trabeanLogo} page="계좌 이체" isWhite />
+      <div className="relative flex flex-col justify-center min-h-screen bg-gray-50">
         {/* 프로필 및 계좌 정보 */}
         <div className="flex items-center mb-6 justify-start">
           <div className="w-12 h-12 rounded-full bg-green-100 flex items-center ml-8">
