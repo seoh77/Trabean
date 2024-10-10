@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom"; // useNavigate 추가
 import beanProfile from "../../assets/bean_profile.png";
 import trabeanLogo from "../../assets/logo.png";
 import { formatNumberWithCommas } from "../../utils/formatNumber";
 import TopBar from "../../components/TopBar";
 import deleteIcon from "../../assets/deleteIcon.png";
+import client from "../../client";
 
 interface TransferDetails {
   id?: number;
@@ -15,6 +16,7 @@ interface TransferDetails {
 
 const TransferList: React.FC = () => {
   const location = useLocation();
+  const [accountName, setAccountName] = useState<number | null>(null);
   const { account } = location.state || {}; // URL에서 계좌 번호 받기
   const navigate = useNavigate(); // useNavigate 훅
   const transferDetails = location.state as TransferDetails; // 이전 페이지에서 전달된 state 받기
@@ -26,6 +28,18 @@ const TransferList: React.FC = () => {
     setAmount((prev) => prev + value);
   };
 
+  const getAccountName = async () => {
+    try {
+      const response = await client().get(`/api/accounts/${account}/name`);
+      setAccountName(response.data.name);
+    } catch (error) {
+      console.error("main payment account 불러올 때 에러 발생:", error);
+    }
+  };
+  useEffect(() => {
+    getAccountName();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   // 금액 지우기 처리
   const handleClear = () => {
     setAmount("");
@@ -53,6 +67,7 @@ const TransferList: React.FC = () => {
       },
     ); // 비밀번호 입력 페이지로 이동
   };
+  // eslint-disable-next-line consistent-return
 
   return (
     <div className="relative flex flex-col justify-center min-h-screen bg-gray-50">
@@ -69,10 +84,10 @@ const TransferList: React.FC = () => {
         </div>
         <div className="ml-5 text-left">
           <p className="text-lg font-semibold">
-            {transferDetails?.name || "직접 입력된 계좌"}
+            {transferDetails?.name || accountName}
           </p>
           <p className="text-sm text-gray-600">
-            {transferDetails?.bank || "정보없음"} {account}
+            {transferDetails?.bank || "트래빈뱅크"} {account}
           </p>
         </div>
       </div>
@@ -142,7 +157,7 @@ const TransferList: React.FC = () => {
             {/* 모달의 너비를 적절히 조정 */}
             <div className="mb-4 text-center">
               <div className="font-semibold text-lg">
-                {transferDetails?.name || "익명"}
+                {transferDetails?.name || accountName}
                 님께
               </div>
               <div>송금하시겠습니까?</div>
