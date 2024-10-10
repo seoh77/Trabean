@@ -66,6 +66,7 @@ public class PaymentsAuthService {
             Payments payment = paymentsRepository.findById(request.getPayId())
                     .orElseThrow(() -> new PaymentsException("결제 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
             payment.updateErrorCount();
+            paymentsRepository.save(payment);
             throw new PaymentsException("비밀번호를 잘못 입력하셨습니다. 현재 에러 횟수: " + payment.getPasswordErrorCount() + " / 5",
                     HttpStatus.UNAUTHORIZED);
         } catch (NotFound e) {
