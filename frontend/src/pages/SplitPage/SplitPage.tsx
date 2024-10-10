@@ -56,7 +56,10 @@ const ExchangeSplit: React.FC<SplitProps> = ({
     const invalidMembers = selectedMembers.filter(
       (member) => member.mainAccountId === null,
     );
-    if (invalidMembers.length > 0) {
+    console.log(invalidMembers.length);
+    const result = invalidMembers.length;
+    console.log(result);
+    if (result) {
       setIsErrorModalVisible(true); // 메인 계좌가 없는 멤버가 있으면 오류 모달을 띄움
     } else {
       setIsConfirmModalVisible(true); // N빵 확인 모달 띄우기

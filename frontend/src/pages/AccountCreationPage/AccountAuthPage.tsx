@@ -151,7 +151,7 @@ const AccountVerificationPage: React.FC = () => {
         },
       );
       if (response.status === 200) {
-        setStep(3);
+        setStep(3); // 1원 송금 완료 페이지
         setTimeout(() => {
           setStep(4); // 2초 후 인증번호 입력 화면으로 이동
         }, 2000);
@@ -166,10 +166,15 @@ const AccountVerificationPage: React.FC = () => {
         },
       ]);
       setIsModalOpen(true);
+      setStep(1);
       return 2;
     } catch (error) {
-      console.log("1원 송금 요청 반환값 response data : ", error);
       if (isAxiosError(error)) {
+        console.log("1원 송금 요청 반환값 response data : ", error);
+        console.log(
+          "1원 송금 요청 반환값 response status : ",
+          error.response?.status,
+        );
         const statusCode = error.response?.status;
         if (statusCode !== undefined && statusCode >= 400 && statusCode < 500) {
           // 입력 정보 오류
@@ -183,6 +188,7 @@ const AccountVerificationPage: React.FC = () => {
               className: "text-xs text-gray-500",
             },
           ]);
+          setIsModalOpen(true);
           return 2;
         }
         setModalMessage("서버에 문제가 발생했습니다");
@@ -237,7 +243,7 @@ const AccountVerificationPage: React.FC = () => {
           ]);
           setIsModalOpen(true);
         } else {
-          setStep(2);
+          setStep(2); // 1원 송금 페이지로 전환
           await sendVerifyNumber();
         }
         break;
