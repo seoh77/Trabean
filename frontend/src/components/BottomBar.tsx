@@ -56,11 +56,8 @@ const BottomBar: React.FC = () => {
   };
 
   useEffect(() => {
-    if (loading) {
-      return;
-    }
     getMainPaymentAccount();
-  }, [loading]);
+  }, []);
 
   // 결제 페이지 이동
   const goToPaymentPage = () => {
