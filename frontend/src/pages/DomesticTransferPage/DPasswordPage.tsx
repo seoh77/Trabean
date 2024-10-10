@@ -11,7 +11,7 @@ const PasswordPage: React.FC = () => {
   const { accountId } = useParams<{ accountId: string }>();
   const { amount } = location.state || { amount: 0 };
   const { depositAccountNo } = location.state || { depositAccountNo: 0 };
-  const { withdrwalAccountNo } = location.state || { withdrwalAccountNo: 0 };
+  const { withdrawalAccountNo } = location.state || { withdrawalAccountNo: 0 };
   const [password, setPassword] = useState(""); // 입력된 비밀번호 상태
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태 관리
   const [modalMessage, setModalMessage] = useState(""); // 모달 메시지
@@ -36,7 +36,7 @@ const PasswordPage: React.FC = () => {
           client()
             .post(`/api/accounts/travel/domestic/${accountId}/transfer`, {
               depositAccountNo,
-              withdrwalAccountNo,
+              withdrawalAccountNo,
               amount, // 송금 금액을 전송
             })
             .then((transferResponse) => {

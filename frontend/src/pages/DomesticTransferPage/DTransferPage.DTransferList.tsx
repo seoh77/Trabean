@@ -23,10 +23,10 @@ const TransferList: React.FC = () => {
   const [amount, setAmount] = useState<string>(""); // 송금 금액 관리
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태 관리
   const { accountId } = location.state || {};
-  const [depositAccountNo, setDepositAccountNo] = useState<string | null>(null);
-  const [withdrwalAccountNo, setWithdrawalAccountNo] = useState<string | null>(
-    null,
-  );
+  // const [depositAccountNo, setDepositAccountNo] = useState<string | null>(null);
+  // const [withdrawalAccountNo, setWithdrawalAccountNo] = useState<string | null>(
+  // null,
+  // );
   // 숫자 클릭 처리
   const handleNumberClick = (value: string) => {
     setAmount((prev) => prev + value);
@@ -57,9 +57,9 @@ const TransferList: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const getDepositAccountNo = () => {
-    setDepositAccountNo(account);
-  };
+  // const getDepositAccountNo = () => {
+  //   setDepositAccountNo(account);
+  // };
   const getWithdrawalAccountNo = async () => {
     const body = JSON.stringify({
       accountId,
@@ -72,7 +72,7 @@ const TransferList: React.FC = () => {
       "/api/accounts/internal/get-accountNo",
       body,
     );
-    setWithdrawalAccountNo(response.data.accountNo);
+    return response.data.accountNo;
   };
   // 모달 닫기
   const handleCloseModal = () => {
@@ -81,16 +81,16 @@ const TransferList: React.FC = () => {
 
   // 비밀번호 입력 페이지로 이동
   const handleConfirm = () => {
-    getDepositAccountNo();
-    getWithdrawalAccountNo();
+    // getDepositAccountNo();
+    // getWithdrawalAccountNo();
     navigate(
       `/accounts/travel/domestic/${accountId}/detail/transfer/password`,
       {
         state: {
           amount,
           accountId,
-          depositAccountNo,
-          withdrwalAccountNo,
+          depositAccountNo: account,
+          withdrawalAccountNo: getWithdrawalAccountNo(),
         },
       },
     ); // 비밀번호 입력 페이지로 이동
