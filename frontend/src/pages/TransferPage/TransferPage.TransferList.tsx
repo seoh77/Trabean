@@ -71,7 +71,9 @@ const TransferList: React.FC = () => {
   }, []);
   return (
     <div className="relative flex flex-col justify-center min-h-screen bg-gray-50">
-      <TopBar isLogo={trabeanLogo} page="계좌 이체" isWhite />
+      <div>
+        <TopBar isLogo={trabeanLogo} page="계좌 이체" isWhite />
+      </div>
       <div>
         {/* 프로필 및 계좌 정보 */}
         <div className="flex items-center mb-6 justify-start">

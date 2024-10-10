@@ -75,7 +75,9 @@ const TransferLists: React.FC = () => {
 
   return (
     <div className="p-4">
-      <TopBar isLogo={trabeanLogo} page="계좌 이체" isWhite />
+      <div>
+        <TopBar isLogo={trabeanLogo} page="계좌 이체" isWhite />
+      </div>
       <div>
         {/* 직접 입력 */}
         <input
