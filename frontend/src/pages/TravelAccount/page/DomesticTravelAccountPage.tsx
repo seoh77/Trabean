@@ -86,14 +86,14 @@ const DomesticTravelAccountPage: React.FC = () => {
         const response = await client().get(
           `api/accounts/travel/domestic/${accountId}/userRole`,
         );
-        setUserRole(response.data.role);
+        setUserRole(response.data.userRole);
       } catch (error) {
         console.error(error);
       }
     };
 
     fetchUserRole();
-  }, [accountId, userRole]);
+  }, [accountId]);
 
   // Travel 서버 여행통장 조회 API fetch 요청
   useEffect(() => {
