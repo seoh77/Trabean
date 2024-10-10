@@ -1,6 +1,7 @@
 package com.trabean.internal.service;
 
 import com.trabean.account.domain.Account;
+import com.trabean.account.domain.Account.AccountType;
 import com.trabean.account.domain.UserAccountRelation;
 import com.trabean.account.domain.UserAccountRelation.UserRole;
 import com.trabean.account.repository.AccountRepository;
@@ -174,7 +175,7 @@ public class InternalService {
         ValidationUtil.validateInput(ValidateInputDTO.builder()
                 .account(accountRepository.findById(requestDTO.getAccountId()))
                 .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(requestDTO.getUserId(), requestDTO.getAccountId()))
-                .accountType(Account.AccountType.DOMESTIC)
+                .accountType(AccountType.DOMESTIC)
                 .build());
 
         List<UserAccountRelation> userAccountRelations = ValidationUtil.validateUserAccountRelationList(userAccountRelationRepository.findAllByAccountId(requestDTO.getAccountId()));
@@ -193,7 +194,7 @@ public class InternalService {
         }
 
         return TravelAccountMembersResponseDTO.builder()
-                .userId(UserHeaderInterceptor.userId.get())
+                .userId(requestDTO.getUserId())
                 .memberCount((long) members.size())
                 .members(members).build();
     }
