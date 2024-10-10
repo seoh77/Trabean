@@ -165,8 +165,9 @@ const AccountVerificationPage: React.FC = () => {
           className: "text-xs text-gray-500",
         },
       ]);
-      setIsModalOpen(true);
       setStep(1);
+      console.log("step : ", step);
+      setIsModalOpen(true);
       return 2;
     } catch (error) {
       if (isAxiosError(error)) {
