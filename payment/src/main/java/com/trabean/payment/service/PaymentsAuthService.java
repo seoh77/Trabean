@@ -10,7 +10,6 @@ import com.trabean.payment.interceptor.UserHeaderInterceptor;
 import com.trabean.payment.repository.PaymentsRepository;
 import feign.FeignException;
 import feign.FeignException.NotFound;
-import feign.FeignException.Unauthorized;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -56,7 +55,7 @@ public class PaymentsAuthService {
                     .orElseThrow(() -> new PaymentsException("결제 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
             // 트랜잭션 id 발급
             return payment.getTransactionId();
-        } catch (Unauthorized e) {
+        } catch (PaymentsException e) {
             if (request.getPayId() == null) {
                 throw new PaymentsException("payID 를 가져오는데 실패했습니다.", HttpStatus.BAD_REQUEST);
             }

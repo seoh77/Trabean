@@ -22,6 +22,9 @@ public class FeignClientErrorDecoder implements ErrorDecoder {
                 FeignErrorResponse errorResponse = objectMapper.readValue(response.body().asInputStream(),
                         FeignErrorResponse.class);
                 log.info(errorResponse + "@@@@@@@@@@@@@@@");
+                if (errorResponse.getMessage().equals("비밀번호가 틀렸습니다.")) {
+
+                }
                 return new PaymentsException(errorResponse.getMessage(), HttpStatus.BAD_GATEWAY);
             }
             return new PaymentsException("범인 : 싸피 ", HttpStatus.BAD_GATEWAY);
