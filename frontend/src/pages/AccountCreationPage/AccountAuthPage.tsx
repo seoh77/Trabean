@@ -18,13 +18,19 @@ const AccountVerificationPage: React.FC = () => {
   const bankName = query.get("bank") || "은행";
   const [accountNumber, setAccountNumber] = useState<string>("");
   const [verificationCode, setVerificationCode] = useState<string>("");
-  const [step, setStep] = useState<number>(1); // 현재 단계 관리
+  // const [step, setStep] = useState<number>(1); // 현재 단계 관리
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalMessage, setModalMessage] = useState<string>("");
   const [subMessage, setSubMessage] = useState<SubMessage[]>([]);
   const [attemptCount, setAttemptCount] = useState(0); // 현재 시도 횟수 상태
   const maxAttempts = 5; // 최대 시도 횟수
   const navigate = useNavigate(); // 화면 이동을 위한 네비게이션 hook
+
+  let step = 1;
+
+  const setStep = (newStep: number) => {
+    step = newStep;
+  };
 
   useEffect(() => {
     if (attemptCount >= maxAttempts) {
