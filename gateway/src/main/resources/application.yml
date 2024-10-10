@@ -43,6 +43,7 @@ spring:
               - POST
               - DELETE
               - OPTIONS
+              - PATCH
 
       routes: # ??? ?? ??아
         - id: accountRoute
@@ -85,11 +86,6 @@ spring:
           uri: lb://USER
           predicates:
             - Path=/api/user/**
-
-
-
-
-
 
 
 logging:

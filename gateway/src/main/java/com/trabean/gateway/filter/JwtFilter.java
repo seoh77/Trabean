@@ -1,6 +1,7 @@
 package com.trabean.gateway.filter;
 
 import com.trabean.gateway.client.feign.UserFeign;
+import com.trabean.gateway.util.Encryption;
 import com.trabean.gateway.util.JwtManger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,14 +41,6 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
             logger.info("@@@@@@@@@@jwt filter!"); // 필터가 실행됨을 알림
-//
-//            String requestURI = exchange.getRequest().getURI().getPath();
-//            if (requestURI.equals("/api/user/login") || requestURI.equals("/api/user/signup")) {
-//                // 특정 URI일 경우 바로 응답을 완료
-//                logger.info(requestURI + " -> 해당 요청은 필터를 사용하지 않음!"); // 필터가 실행됨을 알림
-//                return exchange.getResponse().setComplete();
-//            }
-//            logger.info(requestURI + " -> 해당 요청은 필터를 사용함!"); // 필터가 실행됨을 알림
 
             HttpHeaders headers = exchange.getRequest().getHeaders(); // 요청의 HTTP 헤더를 가져옴
             String accessToken = "";
@@ -69,18 +62,15 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
 
             logger.info("accessToken has been validated."); // 유효한 토큰 로그 출력
 
-            // JWT에서 userId 추출
+            // JWT에서 추출
             Long userId = jwtManger.getUserId(accessToken);
-            //feign을 사용해서 userKey 추출방법
-//            UserKeyRes userKeyRes = userFeign.getUserKey(new UserIdReq(userId));
-            //토큰에 있는 userKey 추출
             String userKey = jwtManger.getUserKey(accessToken);
 
 
             try {
                 // userId와 userKey를 암호화
-//                String encryptedUserId = Encryption.encrypt(String.valueOf(userId));
-//                String encryptedUserKey = Encryption.encrypt(userKey);
+                String encryptedUserId = Encryption.encrypt(String.valueOf(userId));
+                String encryptedUserKey = Encryption.encrypt(userKey);
 
 //             헤더에 암호화된 userId와 userKey 추가
 //                exchange.getRequest().mutate()
