@@ -1,22 +1,22 @@
 package com.trabean.payment.dto.response;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class PaymentUpdateResponse {
+@Builder
+public class PaymentResponse {
     private String status;
     private String message;
-    private PaymentData data;
+    private PaymentInfo paymentInfo;
 
     @Getter
     @AllArgsConstructor
-    public static class PaymentData {
-        private Long payId;
-        private Long accountId;
-        private Double foreignAmount;
+    @Builder
+    public static class PaymentInfo {
         private Long krwAmount;
-        private String merchantName;
+        private Double foreignAmount;
     }
 }

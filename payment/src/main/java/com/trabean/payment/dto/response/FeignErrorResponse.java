@@ -2,10 +2,11 @@ package com.trabean.payment.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
-public class AccountNoResponse {
+@NoArgsConstructor
+public class FeignErrorResponse {
     private String message;
-    private String accountNo;
 }

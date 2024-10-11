@@ -8,7 +8,7 @@ public class ApiName {
     public static final String KRW_WITHDRAW = "updateDemandDepositAccountWithdrawal";
     public static final String FOREIGN_DEPOSIT = "updateForeignCurrencyDemandDepositAccountDeposit";
     public static final String KRW_DEPOSIT = "updateDemandDepositAccountDeposit";
-    public static final String EXCHANGE_RATE = "exchangeRateSearch";
+    public static final String EXCHANGE_RATE = "search";
 
     // 생성자를 private 으로 정의하여 객체 생성을 방지
     private ApiName() {
