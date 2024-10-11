@@ -1,12 +1,16 @@
-# 1. 기획서
+# <img src="./exec/img/beans.png" width="50"> Trabean
 
-### 📌 프로젝트 개요
+## <img src="./exec/img/beanbag.png" width="25"> 프로젝트 소개
 
 함께하는 여행을 위한 공금 관리 및 결제 솔루션
 
+### 1. 프로젝트 목표
+
+- 사용자가 공금 관리의 어려움을 해소하고 온전히 여행의 즐거움을 즐길 수 있도록 함
+
 <br>
 
-### 📌 프로젝트 배경/근거
+### 2. 프로젝트를 하게 된 배경 또는 근거
 
 - 최근 해외 여행 수요 급증
 - 여행 중 공금 관리의 어려움
@@ -17,10 +21,9 @@
 
 <br>
 
-### 📌 주요 기능
+### 3. 주요 기능
 
 - **공금 모으기:** 여행을 함께하는 친구들을 초대해 여행 비용을 모을 수 있는 기능
-
 - **투명한 자금 관리:** 공금의 입출금 내역을 모든 참여자가 실시간으로 확인 가능
 - **가계부:** 일 별 사용 금액 조회, 카테고리 별 사용 금액 조회
 - **공금 결제 및 이체:** 여행 중 발생하는 비용을 공금에서 바로 결제
@@ -28,7 +31,7 @@
 
 <br>
 
-### 📌 프로젝트를 통한 기대효과
+### 4. 프로젝트를 통한 기대효과
 
 - **여행 중 공금 관리의 편리성 증대**
   - 여러 명이 함께 여행을 할 때 발생하는 공금 관리의 번거로움을 줄여줌
@@ -48,290 +51,119 @@
 <br>
 <br>
 
-# 2. 요구사항 정의서
+## 🖥 기술스택
 
-### 1. 회원
+### 1. 아키텍처
 
-1. 회원 가입 (0순위)
+<img src="./exec/img/아키텍처.png">
 
-   - 사용자는 회원가입을 진행한 후 서비스를 이용할 수 있다.
-   - 회원가입 시 아이디(이메일), 비밀번호, 이름, 전화번호, 생년월일을 입력받는다.
-   - 아이디는 중복을 허용하지 않는다.
-   - 회원가입 시 본인 인증을 진행해야 하며, 전화번호로 본인 인증을 진행할 수 있다.
+<br>
 
-2. 로그인 (0순위)
+### 2. 기술스택
 
-   - 사용자는 아이디(이메일), 비밀번호를 사용하여 로그인을 진행할 수 있다.
+[![My Skills](https://skillicons.dev/icons?i=spring,react,ts,tailwind,mysql)](https://skillicons.dev)
+<br>
+[![My Skills](https://skillicons.dev/icons?i=docker,jenkins,idea,vscode,postman,git,gitlab,notion,figma)](https://skillicons.dev)
 
-3. 로그아웃 (1순위)
+<br>
+<br>
 
-   - 사용자는 로그아웃을 진행할 수 있다.
+## 📱시연 움짤
 
-4. 회원 탈퇴 (5순위)
+### 1. 통장
 
-   - 사용자는 회원탈퇴를 진행할 수 있다.
-   - 회원 탈퇴시 비밀번호를 재입력하여 비밀번호가 일치할 시 탈퇴가 가능하다.
+|                                                          |                                                      |                                                      |
+| -------------------------------------------------------- | ---------------------------------------------------- | ---------------------------------------------------- |
+| ![Description of the image](./exec/gif/여행통장개설.gif) | ![Description of the image](./exec/gif/계좌이체.gif) | ![Description of the image](./exec/gif/통장필터.gif) |
+| ✨ 통장 개설                                             | 📌 계좌이체                                          | ✔ 통장 필터                                          |
 
-5. 비밀번호 찾기 (5순위)
-   - 사용자는 가입한 이메일로 비밀번호 찾기 링크를 전달받을 수 있다.
+<br>
 
-### 2. 전체 통장
+### 2. 여행통장
 
-1. 계좌 목록 조회 (0순위)
-   - 사용자는 자신의 계좌 목록을 조회할 수 있다.
-   - 전체 계좌를 조회할 시 각 계좌의 계좌종류, 계좌번호, 계좌 잔액이 표시된다.
+|                                                          |                                                          |
+| -------------------------------------------------------- | -------------------------------------------------------- |
+| ![Description of the image](./exec/gif/외화통장개설.gif) | ![Description of the image](./exec/gif/외화충전.gif)     |
+| ✨ 외화통장 개설                                         | 💰 외화충전                                              |
+| ![Description of the image](./exec/gif/목표설정.gif)     | ![Description of the image](./exec/gif/n빵.gif)          |
+| 🎯 목표 설정                                             | 👨‍👧‍👦 N빵                                                   |
+| ![Description of the image](./exec/gif/가계부.gif)       | ![Description of the image](./exec/gif/여행통장초대.gif) |
+| 📜 가계부                                                | 📢 여행통장 초대                                         |
 
-### 3. 개인 통장
+|                                                      |
+| ---------------------------------------------------- |
+| ![Description of the image](./exec/gif/멤버가입.gif) |
+| 🎇 멤버 가입                                         |
 
-1. 계좌 개설 (2순위)
+<br>
 
-   - 사용자는 개인 입출금통장을 개설할 수 있다.
-   - 개인 통장은 N개까지 만들 수 있다.
-   - 계좌 개설시 계좌의 비밀번호를 등록해야 한다.
+### 3. 결제
 
-2. 특정 계좌 조회 (2순위)
+|                                                       |                                                         |
+| ----------------------------------------------------- | ------------------------------------------------------- |
+| <img src="./exec/gif/권한관리.gif" width="400"/>      | ![Description of the image](./exec/gif/결제%20기능.gif) |
+| 👐 권한관리                                           | 💳 결제기능                                             |
+| ![Description of the image](./exec/gif/결제-외화.gif) | <img src="./exec/gif/결제_자동환전.gif" width="400"/>   |
+| 💵 결제 외화                                          | 💸 자동환전                                             |
 
-   - 사용자는 자신의 특정 계좌를 조회할 수 있다.
-   - 특정 1개의 계좌를 조회할 시 계좌종류, 계좌번호, 계좌 잔액, 계좌 내역이 표시된다.
+<br>
 
-3. 계좌 이체 (3순위)
+### 4. 챗봇
 
-   - 사용자는 타행 계좌로 이체가 가능하다.
-   - 이체시 비밀번호를 입력하여 해당 계좌의 비밀번호와 일치할 경우에만 이체가 가능하다.
+|                                                       |                                                       |                                                       |
+| ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- |
+| ![Description of the image](./exec/gif/chat-저축.gif) | ![Description of the image](./exec/gif/chat-채팅.gif) | ![Description of the image](./exec/gif/chat-환전.gif) |
+| 💰 저축                                               | 🗨 채팅                                                | 💴 환전                                               |
 
-4. 계좌 해지 (5순위)
+|                                                                    |                                                                    |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------ |
+| ![Description of the image](./exec/gif/챗봇%20여행장소%20설문.gif) | ![Description of the image](./exec/gif/챗봇%20여행장소%20지도.gif) |
+| 📃 여행장소 설문                                                   | 🗺 여행장소 지도                                                    |
 
-   - 사용자는 자신의 계좌를 해지할 수 있다.
-   - 계좌에 잔액이 남아있는 경우 계좌 해지가 불가능하다. (타 계좌로 잔액 이체 후 해지 가능)
+<br>
+<br>
 
-5. 메인 통장 선택 기능 (5순위)
-   - 선택하지 않을 시 가장 오래 된 통장으로 자동 선택 된다.
-   - 자신이 가지고 있는 계좌 중 메인 계좌를 선택할 수 있다.
+## 🔧 ERD
 
-### 4. 여행통장 (한국돈)
+<img src="./exec/img/erd.png" />
 
-1. 통장 생성 (0순위)
+<br>
+<br>
 
-   - 여행통장은 관리자(유저)와 사용자(유저)로 나뉜다.
-   - 여행통장에 참가하거나 개설하려는 자는 계좌가 없다면 계좌를 개설해야 한다.
-   - 여행통장을 개설한 유저가 관리자의 권한을 부여받는다.
-   - 여행통장 개설 시 여행통장 비밀번호, 여행통장 별명 입력한다.
-   - 여행통장 관리자는 통장 수정(이름 변경), 삭제 및 사용자 초대 권한을 부여받는다.
-   - 여행통장 관리자가 통장 수정, 삭제 및 사용자 초대를 할 경우 대상 사용자에게 알림 or 메일 or 참여코드를 보낸다.
-   - 계좌는 N개까지 만들 수 있다.
-
-2. 통장 조회 (0순위)
-   - 여행통장에 참여한 모든 유저는 여행통장을 조회할 수 있다.
-   - 여행통장에서 조회 가능한 정보
-     - 여행통장 관리자
-     - 여행통장 별명
-     - 여행통장 계좌번호
-     - 여행통장 잔액
-     - 여행통장 입출금내역
-3. 통장 수정 (3순위)
-
-   - 여행통장 관리자는 여행통장의 별명을 수정할 수 있다.
-
-4. N빵 나누기 기능 (3순위)
-
-   - 메인 계좌로 자동으로 들어간다 (선택을 안 하면 제일 처음에 만든게 메인)
-
-5. 통장 삭제 (4순위)
-
-   - 여행통장 관리자는 여행통장의 잔액이 0원이면 여행통장을 해지할 수 있다.
-
-6. 회비 설정 (2순위)
-
-   - 여행통장 관리자가 목표일, 목표금액을 설정한다.
-
-7. 회비 수정 (2순위)
-   - 여행통장 관리자가 목표일, 목표금액을 수정할 수 있다.
-
-### 5. 여행통장 (외국돈)
-
-1. 통장 생성 (0순위)
-
-   - 여행통장(한국돈)에서 여행통장(외국돈) 통장 생성 기능을 제공한다.
-   - 사용할 화폐 종류를 고른다.
-   - 여행통장(한국돈) 별로 하나의 여행통장(외국돈)만 생성할 수 있다.
-   - 여행통장(한국돈) 개설 시 입력된 정보를 기반으로 개설된다.
-
-2. 통장 조회 (2순위)
-
-   - 여행통장(한국돈)과 동일
-
-3. 통장 수정 (2순위)
-
-   - 여행통장(한국돈)과 동일
-
-4. 통장 삭제 (5순위)
-   - 여행통장 관리자는 여행통장의 잔액이 0원이면 여행통장을 해지할 수 있다.
-   - 여행통장(외국돈)의 잔액이 0원이 아닌데 해지를 하고 싶을 경우 여행통장(한국돈)으로 전액 환전하도록 권장한다.
-
-### 6. 환전
-
-1. 환전 기능 (2순위)
-
-   - 여행통장 관리자는 여행통장(한국돈)에서 여행통장(외국돈), 혹은 반대로 환전을 할 수 있다.
-   - 여행통장 관리자가 환전을 시도할 경우 환전될 통장이 존재해야 한다.
-   - (?) 환전이 가능한 계좌는 여행통장과 관련이 있는 계좌여야 한다.
-   - 여행통장 관리자가 환전을 시도할 경우 환전 후 금액, 잔액 및 환전 수수료를 고지한다.
-   - 환율 및 환전은 시중은행의 환전 방식과 동일 or 유사하게 구현한다.
-   - 환전시 예상 금액을 보여준다.
-
-2. 환율 조회 (4순위)
-   - 메인 페이지 or 환전 페이지에서 실시간 환율에 대한 표 or 차트를 제공한다.
-   - 특정 기간 대비 현재 환율이 싼지 비싼지 알려준다.
-
-### 7. 결제 및 이체
-
-1. 한도 설정 (5순위)
-
-   - 관리자는 결제 및 이체가 가능한 금액의 한도를 설정할 수 있다.
-   - 일일, 주간, 월간 한도를 설정 가능
-   - 한도를 수정할 수 있는 기능
-
-2. 결제 (1순위)
-
-   - 여행 통장에서 자동으로 나간다.
-   - 여행 통장 내의 카메라를 켜서 QR 인식을 한다.
-   - 가게의 QR을 통해서 결제정보를 확인
-   - 확인 후에 결제를 진행
-   - 결제 결과를 확인할 수 있다.
-   - 실패, 완료, 영수증 등
-
-3. 이체 (2순위)
-
-   - 사용자는 이체할 계좌를 선택한다. (한국통장만)
-   - 비밀번호를 이체 전 물어본다.
-   - 사용자는 이체 관련 정보(이체 금액, 사용자 이름, 계좌 번호, 은행 이름 등)를 통해 이체를 진행한다.
-   - 올바른 계좌번호인지 검증한다.
-   - 이체가 불가능한 이체 관련 정보는 진행하지 못하도록 한다.
-
-4. 승인 (1순위)
-
-   - 사용자는 결제 및 이체를 진행하기 전에 승인을 진행한다.
-   - 보안을 강화하기 위해 생체 인식, 비밀번호 등의 인증을 통해 진행한다.
-
-5. 알림 (3순위)
-
-   - 결제 및 이체가 완료되었음을 알리는 알림
-   - 한도 관련한 알림을 제공하는 기능
-   - 결제 및 이체 승인, 결제 실패, 결제 취소, 한도 초과 등
-
-6. 결제 취소 (5순위)
-
-   - 사용자는 결제 완료 후, 결제 취소를 원할 경우 취소를 진행한다.
-   - 사용자가 결제 취소를 요청할 수 있다.
-   - 취소 요청 후 환불 절차 및 소요 시간을 안내한다.
-
-7. 내역 조회 (1순위)
-   - 사용자에게 결제 및 이체의 모든 거래 내역을 조회할 수 있는 기능
-   - 결제, 이체, 결제 취소 등
-   - 필터링 기능(입금, 출금, 날짜별) 을 통해 편리한 조회 기능
-   - 각 거래의 상세 정보를 확인할 수 있는 기능
-
-### 8. 가계부
-
-1. 일별 사용 금액 조회 (2순위)
-
-   - 일별 사용금액을 한 눈에 볼 수있다.
-
-2. 사용 내역 분류 (3순위)
-
-   - 사용 내역을 카테고리별로 분류하여 볼 수 있다. (교통비, 식비, 등등)
-
-# 3. ERD
-
-![alt text](readme/ERD.png)
-
-```SQL
-
-CREATE TABLE `users` (
-    `userId` BIGINT NOT NULL,
-    `userKey` VARCHAR(255) NOT NULL,
-    `email` VARCHAR(255) NOT NULL,
-    `password` VARCHAR(255) NOT NULL,
-    `name` VARCHAR(255) NOT NULL,
-    `paymentAccountId` INT NULL,
-    `mainAccountId` INT NULL,
-    PRIMARY KEY (`userId`)
-);
-
-CREATE TABLE `accounts` (
-    `accountId` BIGINT NOT NULL,
-    `accountNo` VARCHAR(255) NOT NULL,
-    `password` VARCHAR(255) NOT NULL,
-    `userId` BIGINT NOT NULL,
-    PRIMARY KEY (`accountId`),
-    FOREIGN KEY (`userId`) REFERENCES `users`(`userId`)
-);
-
-CREATE TABLE `userAccounts` (
-    `userAccountId` BIGINT NOT NULL,
-    `userId` BIGINT NOT NULL,
-    `accountId` BIGINT NOT NULL,
-    `role` ENUM('admin', 'user') NOT NULL,
-    PRIMARY KEY (`userAccountId`),
-    FOREIGN KEY (`userId`) REFERENCES `users`(`userId`),
-    FOREIGN KEY (`accountId`) REFERENCES `accounts`(`accountId`)
-);
-
-CREATE TABLE `travelAccounts` (
-    `accountId` BIGINT NOT NULL,
-    `accountName` VARCHAR(255) NOT NULL,
-    `exchangeCurrency` VARCHAR(10) NOT NULL,
-    `parentAccountId` BIGINT NOT NULL,
-    `targetAmount` BIGINT NOT NULL,
-    PRIMARY KEY (`accountId`)
-);
-
-CREATE TABLE `merchants` (
-    `merchantId` BIGINT NOT NULL,
-    `accountNo` VARCHAR(255) NOT NULL,
-    `name` VARCHAR(255) NOT NULL,
-    `category` VARCHAR(255) NOT NULL,
-    `exchangeCurrency` VARCHAR(10) NOT NULL,
-    PRIMARY KEY (`merchantId`)
-);
-
-CREATE TABLE `pays` (
-    `payId` BIGINT NOT NULL,
-    `accountId` BIGINT NOT NULL,
-    `merchantId` BIGINT NOT NULL,
-    `paymentDate` TIMESTAMP NOT NULL,
-    `krwAmount` BIGINT NOT NULL,
-    `foreignAmount` DOUBLE NOT NULL,
-    PRIMARY KEY (`payId`),
-    FOREIGN KEY (`accountId`) REFERENCES `accounts`(`accountId`),
-    FOREIGN KEY (`merchantId`) REFERENCES `merchants`(`merchantId`)
-);
-
-CREATE TABLE `invitations` (
-    `invitationId` BIGINT NOT NULL,
-    `email` VARCHAR(255) NOT NULL,
-    `isAccepted` BOOL NOT NULL DEFAULT false,
-    `accountId` BIGINT NOT NULL,
-    `inviteDate` TIMESTAMP NOT NULL,
-    PRIMARY KEY (`invitationId`),
-    FOREIGN KEY (`accountId`) REFERENCES `accounts`(`accountId`)
-);
-
-CREATE TABLE `notifications` (
-    `notificationId` BIGINT NOT NULL,
-    `senderId` BIGINT NOT NULL,
-    `receiverId` BIGINT NOT NULL,
-    `type` ENUM('message', 'alert') NOT NULL,
-    `createTime` TIMESTAMP NOT NULL,
-    `isRead` BOOL NOT NULL DEFAULT false,
-    `amount` BIGINT NULL,
-    `accountId` BIGINT NOT NULL,
-    PRIMARY KEY (`notificationId`),
-    FOREIGN KEY (`senderId`) REFERENCES `users`(`userId`),
-    FOREIGN KEY (`receiverId`) REFERENCES `users`(`userId`),
-    FOREIGN KEY (`accountId`) REFERENCES `accounts`(`accountId`)
-);
-
-
+## 📁 프론트 폴더구조
 
 ```
+📦src
+ ┣ 📂assets
+ ┣ 📂components
+ ┣ 📂pages
+ ┃ ┣ 📂AccountCreationPage
+ ┃ ┣ 📂Exchange
+ ┃ ┣ 📂ForeignTransferPage
+ ┃ ┣ 📂InvitePage
+ ┃ ┣ 📂JoinPage
+ ┃ ┣ 📂LoginPage
+ ┃ ┣ 📂MainPage
+ ┃ ┣ 📂NotificationPage
+ ┃ ┣ 📂PaymentPage
+ ┃ ┣ 📂SplitPage
+ ┃ ┣ 📂TransferPage
+ ┃ ┣ 📂TravelAccount
+ ┣ 📂routes
+ ┣ 📂store
+ ┣ 📂utils
+
+```
+
+## 🔎 백엔드 구조
+
+<br>
+<br>
+
+## 😶 팀원소개
+
+|                          <img src="./exec/img/민채.png" width="100%" height="100">                          |                              <img src="./exec/img/인실.png" width="100%" height="100">                              |                                         <img src="./exec/img/윤희.png" width="100%" height="100">                                         |     <img src="./exec/img/세건.jpg" width="100%" height="100">     |                                    <img src="./exec/img/서희.jpg" width="100%" height="100">                                    |                          <img src="./exec/img/민우.png" width="100%" height="100">                          |
+| :---------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------: |
+|                                                   김민채                                                    |                                                       김인실                                                        |                                                                  남윤희                                                                   |                              박세건                               |                                                              서희                                                               |                                                   육민우                                                    |
+|                                              Backend, Frontend                                              |                                                  Backend, Frontend                                                  |                                                             Backend, Frontend                                                             |                          Backend, Infra                           |                                                        Backend, Frontend                                                        |                                              Backend, Frontend                                              |
+| 기획, DB설계, <br> 화면 디자인 <br> 결제 로직 구현 (payment) <br> 화면 구현 및 API 연동 <br> (결제, 가계부) | 기획, DB설계, <br> 캐릭터 및 화면 디자인 <br> 챗봇 구현 (chatbot) <br> 화면 구현 및 API 연동 <br> (통장 개설, 챗봇) | 기획, DB설계, <br> 화면 디자인 <br> Security 로그인, <br> 회원 관련 API 구현 (user) <br> 화면 구현 및 API 연동 <br> (계좌이체, N빵, 환율) | 기획, DB설계 <br> Infra, CI/CD <br> 알림 기능 구현 (notification) | 기획, DB설계, <br> 화면 디자인 <br> 여행통장 및 환율 API 구현 (travel) <br> 화면 구현 및 API 연동 <br> (회원, 메인페이지, 알림) | 기획, DB설계, <br> 화면 디자인 <br> 통장 공통 기능 API 구현 (account) <br> 화면 구현 및 API 연동 (여행통장) |
