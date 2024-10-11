@@ -87,6 +87,7 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
                 return exchange.getResponse().setComplete();
             }
 
+
             // 요청 정보를 JSON 형태로 로그에 출력
             logger.info("gateway에서 요청 전달: method={}, uri={}, headers={}",
                     exchange.getRequest().getMethod(),
