@@ -1,29 +1,35 @@
 package com.trabean.user.user.controller;
 
-import com.trabean.user.user.dto.*;
 import com.fasterxml.jackson.databind.ObjectMapper; // JSON 파싱을 위한 라이브러리
-import com.trabean.user.user.entity.User;
+import com.trabean.user.user.dto.AddUserRequest;
 import com.trabean.user.user.service.ExternalApiService;
 import com.trabean.user.user.service.UserService;
-import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import com.trabean.user.user.dto.LoginRequest;
 
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
 @RestController
-@CrossOrigin
 public class UserApiController {
 
 	private static final Logger logger = LoggerFactory.getLogger(UserApiController.class); // 로그를 위한 Logger 추가
 	private final UserService userService;
 	private final ExternalApiService externalApiService;
 	private final ObjectMapper objectMapper = new ObjectMapper(); // JSON 파서
+
 
 	@PostMapping("/signup")
 	public ResponseEntity<String> signup(@RequestBody AddUserRequest request) {
@@ -56,112 +62,15 @@ public class UserApiController {
 	}
 
 	// 로그인 요청 처리
-	@CrossOrigin(origins = "http://localhost:3000")
 	@PostMapping("/login")
-	public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
+	public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
 		try {
 			// 로그인 로직 호출 및 Access Token 반환
-			String accessToken = userService.login(loginRequest, response);
-			logger.info("여기왔지롱 userapicontroller");
-			response.addHeader("Authorization", "Bearer " + accessToken);
+			String accessToken = userService.login(loginRequest);
 			return ResponseEntity.ok().body("Bearer " + accessToken);
 		} catch (RuntimeException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	}
 
-	// 사용자 정보 조회 및 payment_account_id 반환
-	@GetMapping("/paymentaccount/{userId}")
-	public ResponseEntity<UserPaymentAccountIdResponse> getUserPaymentAccount(@PathVariable Long userId) {
-		UserPaymentAccountIdResponse userPaymentAccountIdResponse = userService.getUserPaymentAccount(userId);
-
-		// 만약 payment_account_id가 null이면, null로 설정
-		if (userPaymentAccountIdResponse.getPaymentAccountId() == null) {
-			userPaymentAccountIdResponse.setPaymentAccountId(null);
-		}
-
-		return ResponseEntity.ok(userPaymentAccountIdResponse);
-	}
-
-	// 사용자 정보 조회 및 name 반환
-	@GetMapping("/name/{userId}")
-	public ResponseEntity<UserNameResponse> getUserName(@PathVariable Long userId) {
-		// logger.info("여기왔지롱");
-		UserNameResponse userNameResponse = userService.getUserName(userId);
-
-		// 만약 name가 null이면, null로 설정
-		if (userNameResponse.getUserName() == null) {
-			userNameResponse.setUserName(null);
-		}
-
-		return ResponseEntity.ok(userNameResponse);
-	}
-
-	@GetMapping("/useremail/{userId}")
-	public ResponseEntity<UserEmailResponse> getUserEmail(@PathVariable Long userId) {
-		// logger.info("여기왔지롱");
-		UserEmailResponse userEmailResponse = userService.getUserEmail(userId);
-
-		// 만약 name가 null이면, null로 설정
-		if (userEmailResponse.getUserEmail() == null) {
-			userEmailResponse.setUserEmail(null);
-		}
-
-		return ResponseEntity.ok(userEmailResponse);
-	}
-
-	@PostMapping("/getuserkey")
-	public ResponseEntity<GetUserKeyResponse> getUserKey(@RequestBody GetUserKeyRequest request) {
-		User user = userService.findByUserId(request.getUserId());
-
-		if (user == null) {
-			return ResponseEntity.notFound().build();
-		}
-
-		GetUserKeyResponse response = new GetUserKeyResponse(user.getUser_key());
-		return ResponseEntity.ok(response);
-	}
-
-	@PostMapping("/mainAccountId")
-	public ResponseEntity<String> updateMainAccountId(@RequestBody MainAccountIdRequest request) {
-		boolean isUpdated = userService.updateMainAccountId(request.getUserId(), request.getMainAccountId());
-		if (isUpdated) {
-			return ResponseEntity.ok("저장성공");
-		} else {
-			return ResponseEntity.status(400).body("저장실패");
-
-		}
-	}
-
-	@GetMapping("/emailDB/{email}")
-	public ResponseEntity<Long> checkEmailDBDuplication(@PathVariable String email) {
-		// 이메일 중복 여부 체크
-		if (userService.checkEmailDBDuplication(email)) {
-			// 이메일이 존재하는 경우, 해당 이메일의 ID를 반환
-			return ResponseEntity.ok(userService.findByEmail(email).getUser_id());
-		} else {
-			// 이메일이 존재하지 않는 경우, -1을 반환
-			return ResponseEntity.ok(-1L);
-		}
-	}
-
-	@GetMapping("/email/{email}")
-	public ResponseEntity<Boolean> checkEmailDuplication(@PathVariable String email) {
-		return ResponseEntity.ok(userService.checkEmailDuplication(email));
-	}
-
-	@GetMapping("/mainAccountId/{userId}")
-	public ResponseEntity<UserMainAccountIdResponse> getMainAccountIdByUserId(@PathVariable Long userId) {
-		String mainAccountId = userService.getMainAccountIdByUserId(userId);
-		UserMainAccountIdResponse response = new UserMainAccountIdResponse(mainAccountId);
-		return ResponseEntity.ok(response);
-
-	}
-
-	private Cookie createCookie(String key, String value) {
-		Cookie cookie = new Cookie(key, value);
-		cookie.setMaxAge(24 * 60 * 60);
-		cookie.setHttpOnly(true);
-		return cookie;
-	}
 }

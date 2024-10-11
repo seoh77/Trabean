@@ -66,12 +66,6 @@ public class User implements UserDetails {
 		return name;
 	}
 
-	
-	public String getUserEmail() {
-		// name 필드를 username으로 사용
-		return email;
-	}
-
 	@Override
 	public boolean isCredentialsNonExpired() {
 		return true; // 패스워드가 만료되지 않았음을 반환
@@ -91,9 +85,4 @@ public class User implements UserDetails {
 	public boolean isAccountNonExpired() {
 		return true; // 계정이 만료되지 않았음을 반환
 	}
-
-	public void setMainAccountId(String main_account_id) {
-		this.main_account_id = main_account_id;
-	}
-
 }

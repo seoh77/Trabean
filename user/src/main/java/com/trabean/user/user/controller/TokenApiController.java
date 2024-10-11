@@ -1,7 +1,5 @@
 package com.trabean.user.user.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,11 +17,9 @@ import lombok.RequiredArgsConstructor;
 public class TokenApiController {
 	private final TokenService tokenService;
 
-
 	@PostMapping("/api/token")
 	public ResponseEntity<CreateAccessTokenResponse> createNewAccessToken(@RequestBody CreateAccessTokenRequest request) {
 		String newAccessToken = tokenService.createNewAccessToken(request.refreshToken());
-
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(new CreateAccessTokenResponse(newAccessToken));
 	}
