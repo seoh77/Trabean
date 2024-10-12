@@ -11,7 +11,6 @@ import com.trabean.account.dto.response.DomesticTravelAccountMemberListResponseD
 import com.trabean.account.repository.AccountRepository;
 import com.trabean.account.repository.UserAccountRelationRepository;
 import com.trabean.common.InternalServerSuccessResponseDTO;
-import com.trabean.common.SsafySuccessResponseDTO;
 import com.trabean.exception.custom.InvalidPasswordException;
 import com.trabean.exception.custom.UserAccountRelationNotFoundException;
 import com.trabean.external.msa.travel.client.TravelClient;
@@ -24,18 +23,19 @@ import com.trabean.external.msa.user.dto.request.MainAccountIdRequestDTO;
 import com.trabean.external.msa.user.dto.request.UserKeyRequestDTO;
 import com.trabean.external.msa.user.dto.response.UserKeyResponseDTO;
 import com.trabean.external.msa.user.dto.response.UserNameResponseDTO;
-import com.trabean.external.ssafy.domestic.client.DomesticClient;
-import com.trabean.external.ssafy.domestic.dto.request.*;
-import com.trabean.external.ssafy.domestic.dto.response.*;
-import com.trabean.external.ssafy.foriegn.client.ForeignClient;
-import com.trabean.external.ssafy.foriegn.dto.request.CreateForeignCurrencyDemandDepositAccountRequestDTO;
-import com.trabean.external.ssafy.foriegn.dto.request.InquireForeignCurrencyDemandDepositAccountRequestDTO;
-import com.trabean.external.ssafy.foriegn.dto.response.CreateForeignCurrencyDemandDepositAccountResponseDTO;
-import com.trabean.external.ssafy.foriegn.dto.response.InquireForeignCurrencyDemandDepositAccountResponseDTO;
-import com.trabean.external.ssafy.memo.client.MemoClient;
-import com.trabean.external.ssafy.memo.dto.request.TransactionMemoRequestDTO;
+import com.trabean.external.ssafy.api.domestic.client.DomesticClient;
+import com.trabean.external.ssafy.api.domestic.dto.request.*;
+import com.trabean.external.ssafy.api.domestic.dto.response.*;
+import com.trabean.external.ssafy.api.foriegn.client.ForeignClient;
+import com.trabean.external.ssafy.api.foriegn.dto.request.CreateForeignCurrencyDemandDepositAccountRequestDTO;
+import com.trabean.external.ssafy.api.foriegn.dto.request.InquireForeignCurrencyDemandDepositAccountRequestDTO;
+import com.trabean.external.ssafy.api.foriegn.dto.response.CreateForeignCurrencyDemandDepositAccountResponseDTO;
+import com.trabean.external.ssafy.api.foriegn.dto.response.InquireForeignCurrencyDemandDepositAccountResponseDTO;
+import com.trabean.external.ssafy.api.memo.client.MemoClient;
+import com.trabean.external.ssafy.api.memo.dto.request.TransactionMemoRequestDTO;
+import com.trabean.external.ssafy.common.SsafyApiResponseDTO;
 import com.trabean.interceptor.UserHeaderInterceptor;
-import com.trabean.util.RequestHeader;
+import com.trabean.external.ssafy.util.RequestHeader;
 import com.trabean.util.ValidateInputDTO;
 import com.trabean.util.ValidationUtil;
 import jakarta.ws.rs.InternalServerErrorException;
@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.trabean.constant.Constant.*;
+import static com.trabean.external.ssafy.constant.ApiName.*;
 
 @Service
 //@Transactional
@@ -135,7 +136,7 @@ public class AccountService {
         // SSAFY 금융 API 계좌 목록 조회 요청
         InquireDemandDepositAccountListRequestDTO inquireDemandDepositAccountListRequestDTO = InquireDemandDepositAccountListRequestDTO.builder()
                 .header(RequestHeader.builder()
-                        .apiName("inquireDemandDepositAccountList")
+                        .apiName(inquireDemandDepositAccountList)
                         .userKey(UserHeaderInterceptor.userKey.get())
                         .build())
                 .build();
@@ -169,7 +170,7 @@ public class AccountService {
             // SSAFY 금융 API 계좌 조회 (단건) 요청
             InquireDemandDepositAccountRequestDTO inquireDemandDepositAccountRequestDTO = InquireDemandDepositAccountRequestDTO.builder()
                     .header(RequestHeader.builder()
-                            .apiName("inquireDemandDepositAccount")
+                            .apiName(inquireDemandDepositAccount)
                             .userKey(userKeyResponseDTO.getUserKey())
                             .build())
                     .accountNo(accountNo)
@@ -238,7 +239,7 @@ public class AccountService {
         // SSAFY 금융 API 계좌 거래 내역 조회 요청
         InquireTransactionHistoryListRequestDTO inquireTransactionHistoryListRequestDTO = InquireTransactionHistoryListRequestDTO.builder()
                 .header(RequestHeader.builder()
-                        .apiName("inquireTransactionHistoryList")
+                        .apiName(inquireTransactionHistoryList)
                         .userKey(UserHeaderInterceptor.userKey.get())
                         .build())
                 .accountNo(accountNo)
@@ -279,7 +280,7 @@ public class AccountService {
                     // SSAFY 금융 API 계좌 조회 (단건) 요청
                     InquireDemandDepositAccountRequestDTO inquireDemandDepositAccountRequestDTO = InquireDemandDepositAccountRequestDTO.builder()
                             .header(RequestHeader.builder()
-                                    .apiName("inquireDemandDepositAccount")
+                                    .apiName(inquireDemandDepositAccount)
                                     .userKey(userKeyResponseDTO.getUserKey())
                                     .build())
                             .accountNo(account.getAccountNo())
@@ -303,7 +304,7 @@ public class AccountService {
     }
 
     // 계좌 이체 한도 변경 서비스 로직
-    public SsafySuccessResponseDTO updateTransferLimit(Long accountId, UpdateAccountTransferLimitRequestDTO requestDTO) {
+    public SsafyApiResponseDTO updateTransferLimit(Long accountId, UpdateAccountTransferLimitRequestDTO requestDTO) {
 
         String accountNo = ValidationUtil.validateInput(ValidateInputDTO.builder()
                         .account(accountRepository.findById(accountId))
@@ -315,7 +316,7 @@ public class AccountService {
         // SSAFY 금융 API 계좌 이체 한도 변경 요청
         UpdateTransferLimitRequestDTO updateTransferLimitRequestDTO = UpdateTransferLimitRequestDTO.builder()
                 .header(RequestHeader.builder()
-                        .apiName("updateTransferLimit")
+                        .apiName(updateTransferLimit)
                         .userKey(UserHeaderInterceptor.userKey.get())
                         .build())
                 .accountNo(accountNo)
@@ -324,19 +325,19 @@ public class AccountService {
                 .build();
         UpdateTransferLimitResponseDTO updateTransferLimitResponseDTO = domesticClient.updateTransferLimit(updateTransferLimitRequestDTO);
 
-        return SsafySuccessResponseDTO.builder()
+        return SsafyApiResponseDTO.builder()
                 .responseCode(updateTransferLimitResponseDTO.getHeader().getResponseCode())
                 .responseMessage(updateTransferLimitResponseDTO.getHeader().getResponseMessage())
                 .build();
     }
 
     // 개인 통장 생성 서비스 로직
-    public SsafySuccessResponseDTO createPersonalAccount(CreatePersonalAccountRequestDTO requestDTO) {
+    public SsafyApiResponseDTO createPersonalAccount(CreatePersonalAccountRequestDTO requestDTO) {
 
         // SSAFY 금융 API 계좌 생성 요청
         CreateDemandDepositAccountRequestDTO createDemandDepositAccountRequestDTO = CreateDemandDepositAccountRequestDTO.builder()
                 .header(RequestHeader.builder()
-                        .apiName("createDemandDepositAccount")
+                        .apiName(createDemandDepositAccount)
                         .userKey(UserHeaderInterceptor.userKey.get())
                         .build())
                 .accountTypeUniqueNo(PERSONAL_ACCOUNT_TYPE_UNIQUE_NO)
@@ -371,7 +372,7 @@ public class AccountService {
             userClient.updateMainAccountId(mainAccountIdRequestDTO);
         }
 
-        return SsafySuccessResponseDTO.builder()
+        return SsafyApiResponseDTO.builder()
                 .responseCode(createDemandDepositAccountResponseDTO.getHeader().getResponseCode())
                 .responseMessage(createDemandDepositAccountResponseDTO.getHeader().getResponseMessage())
                 .build();
@@ -391,7 +392,7 @@ public class AccountService {
         // SSAFY 금융 API 계좌 조회 (단건) 요청
         InquireDemandDepositAccountRequestDTO inquireDemandDepositAccountRequestDTO = InquireDemandDepositAccountRequestDTO.builder()
                 .header(RequestHeader.builder()
-                        .apiName("inquireDemandDepositAccount")
+                        .apiName(inquireDemandDepositAccount)
                         .userKey(UserHeaderInterceptor.userKey.get())
                         .build())
                 .accountNo(accountNo)
@@ -401,7 +402,7 @@ public class AccountService {
         // SSAFY 금융 API 계좌 거래 내역 조회 요청
         InquireTransactionHistoryListRequestDTO inquireTransactionHistoryListRequestDTO = InquireTransactionHistoryListRequestDTO.builder()
                 .header(RequestHeader.builder()
-                        .apiName("inquireTransactionHistoryList")
+                        .apiName(inquireTransactionHistoryList)
                         .userKey(UserHeaderInterceptor.userKey.get())
                         .build())
                 .accountNo(accountNo)
@@ -435,7 +436,7 @@ public class AccountService {
         // SSAFY 금융 API 계좌 조회 (단건) 요청
         InquireDemandDepositAccountRequestDTO inquireDemandDepositAccountRequestDTO = InquireDemandDepositAccountRequestDTO.builder()
                 .header(RequestHeader.builder()
-                        .apiName("inquireDemandDepositAccount")
+                        .apiName(inquireDemandDepositAccount)
                         .userKey(UserHeaderInterceptor.userKey.get())
                         .build())
                 .accountNo(accountNo)
@@ -463,7 +464,7 @@ public class AccountService {
     }
 
     // 개인 통장 계좌 이체 서비스 로직
-    public SsafySuccessResponseDTO transferPersonalAccount(Long accountId, TransferPersonalAccountRequestDTO requestDTO) {
+    public SsafyApiResponseDTO transferPersonalAccount(Long accountId, TransferPersonalAccountRequestDTO requestDTO) {
 
         ValidationUtil.validateInput(ValidateInputDTO.builder()
                 .account(accountRepository.findById(accountId))
@@ -479,7 +480,7 @@ public class AccountService {
         // SSAFY 금융 API 계좌 이체 요청
         UpdateDemandDepositAccountTransferRequestDTO updateDemandDepositAccountTransferRequestDTO = UpdateDemandDepositAccountTransferRequestDTO.builder()
                 .header(RequestHeader.builder()
-                        .apiName("updateDemandDepositAccountTransfer")
+                        .apiName(updateDemandDepositAccountTransfer)
                         .userKey(UserHeaderInterceptor.userKey.get())
                         .build())
                 .depositAccountNo(requestDTO.getDepositAccountNo())
@@ -508,7 +509,7 @@ public class AccountService {
         // SSAFY 금융 API 거래내역 메모 요청
         TransactionMemoRequestDTO transactionMemoRequestDTO = TransactionMemoRequestDTO.builder()
                 .header(RequestHeader.builder()
-                        .apiName("transactionMemo")
+                        .apiName(transactionMemo)
                         .userKey(userKeyResponseDTO.getUserKey())
                         .build())
                 .accountNo(requestDTO.getDepositAccountNo())
@@ -517,7 +518,7 @@ public class AccountService {
                 .build();
         memoClient.transactionMeno(transactionMemoRequestDTO);
 
-        return SsafySuccessResponseDTO.builder()
+        return SsafyApiResponseDTO.builder()
                 .responseCode(updateDemandDepositAccountTransferResponseDTO.getHeader().getResponseCode())
                 .responseMessage(updateDemandDepositAccountTransferResponseDTO.getHeader().getResponseMessage())
                 .build();
@@ -545,12 +546,12 @@ public class AccountService {
     }
 
     // 한화 여행통장 생성 서비스 로직
-    public SsafySuccessResponseDTO createDomesticTravelAccount(CreateDomesticTravelAccountRequestDTO requestDTO) {
+    public SsafyApiResponseDTO createDomesticTravelAccount(CreateDomesticTravelAccountRequestDTO requestDTO) {
 
         // SSAFY 금융 API 계좌 생성 요청
         CreateDemandDepositAccountRequestDTO createDemandDepositAccountRequestDTO = CreateDemandDepositAccountRequestDTO.builder()
                 .header(RequestHeader.builder()
-                        .apiName("createDemandDepositAccount")
+                        .apiName(createDemandDepositAccount)
                         .userKey(UserHeaderInterceptor.userKey.get())
                         .build())
                 .accountTypeUniqueNo(DOMESTIC_TRAVEL_ACCOUNT_TYPE_UNIQUE_NO)
@@ -584,7 +585,7 @@ public class AccountService {
                 .build();
         travelClient.saveDomesticTravelAccount(saveDomesticTravelAccountRequestDTO);
 
-        return SsafySuccessResponseDTO.builder()
+        return SsafyApiResponseDTO.builder()
                 .responseCode(createDemandDepositAccountResponseDTO.getHeader().getResponseCode())
                 .responseMessage(createDemandDepositAccountResponseDTO.getHeader().getResponseMessage())
                 .build();
@@ -631,7 +632,7 @@ public class AccountService {
         // SSAFY 금융 API 계좌 조회 (단건) 요청
         InquireDemandDepositAccountRequestDTO inquireDemandDepositAccountRequestDTO = InquireDemandDepositAccountRequestDTO.builder()
                 .header(RequestHeader.builder()
-                        .apiName("inquireDemandDepositAccount")
+                        .apiName(inquireDemandDepositAccount)
                         .userKey(ssafyUserKey)
                         .build())
                 .accountNo(accountNo)
@@ -641,7 +642,7 @@ public class AccountService {
         // SSAFY 금융 API 계좌 거래 내역 조회 요청
         InquireTransactionHistoryListRequestDTO inquireTransactionHistoryListRequestDTO = InquireTransactionHistoryListRequestDTO.builder()
                 .header(RequestHeader.builder()
-                        .apiName("inquireTransactionHistoryList")
+                        .apiName(inquireTransactionHistoryList)
                         .userKey(ssafyUserKey)
                         .build())
                 .accountNo(accountNo)
@@ -715,7 +716,7 @@ public class AccountService {
         // SSAFY 금융 API 계좌 조회 (단건) 요청
         InquireDemandDepositAccountRequestDTO inquireDemandDepositAccountRequestDTO = InquireDemandDepositAccountRequestDTO.builder()
                 .header(RequestHeader.builder()
-                        .apiName("inquireDemandDepositAccount")
+                        .apiName(inquireDemandDepositAccount)
                         .userKey(UserHeaderInterceptor.userKey.get())
                         .build())
                 .accountNo(accountNo)
@@ -740,7 +741,7 @@ public class AccountService {
         // SSAFY 금융 API 계좌 잔액 조회 요청
         InquireDemandDepositAccountBalanceRequestDTO inquireDemandDepositAccountBalanceRequestDTO = InquireDemandDepositAccountBalanceRequestDTO.builder()
                 .header(RequestHeader.builder()
-                        .apiName("inquireDemandDepositAccountBalance")
+                        .apiName(inquireDemandDepositAccountBalance)
                         .userKey(UserHeaderInterceptor.userKey.get())
                         .build())
                 .accountNo(accountNo)
@@ -753,7 +754,7 @@ public class AccountService {
     }
 
     // 한화 여행통장 계좌 이체 서비스 로직
-    public SsafySuccessResponseDTO transferDomesticTravelAccount(Long accountId, TransferDomesticTravelAccountRequestDTO requestDTO) {
+    public SsafyApiResponseDTO transferDomesticTravelAccount(Long accountId, TransferDomesticTravelAccountRequestDTO requestDTO) {
 
         ValidationUtil.validateInput(ValidateInputDTO.builder()
                 .account(accountRepository.findById(accountId))
@@ -768,7 +769,7 @@ public class AccountService {
         // SSAFY 금융 API 계좌 이체 요청
         UpdateDemandDepositAccountTransferRequestDTO updateDemandDepositAccountTransferRequestDTO = UpdateDemandDepositAccountTransferRequestDTO.builder()
                 .header(RequestHeader.builder()
-                        .apiName("updateDemandDepositAccountTransfer")
+                        .apiName(updateDemandDepositAccountTransfer)
                         .userKey(UserHeaderInterceptor.userKey.get())
                         .build())
                 .depositAccountNo(requestDTO.getDepositAccountNo())
@@ -797,7 +798,7 @@ public class AccountService {
         // SSAFY 금융 API 거래내역 메모 요청
         TransactionMemoRequestDTO transactionMemoRequestDTO = TransactionMemoRequestDTO.builder()
                 .header(RequestHeader.builder()
-                        .apiName("transactionMemo")
+                        .apiName(transactionMemo)
                         .userKey(userKeyResponseDTO.getUserKey())
                         .build())
                 .accountNo(requestDTO.getDepositAccountNo())
@@ -806,7 +807,7 @@ public class AccountService {
                 .build();
         memoClient.transactionMeno(transactionMemoRequestDTO);
 
-        return SsafySuccessResponseDTO.builder()
+        return SsafyApiResponseDTO.builder()
                 .responseCode(updateDemandDepositAccountTransferResponseDTO.getHeader().getResponseCode())
                 .responseMessage(updateDemandDepositAccountTransferResponseDTO.getHeader().getResponseMessage())
                 .build();
@@ -888,7 +889,7 @@ public class AccountService {
         // SSAFY 금융 API 계좌 생성 요청
         CreateForeignCurrencyDemandDepositAccountRequestDTO createForeignCurrencyDemandDepositAccountRequestDTO = CreateForeignCurrencyDemandDepositAccountRequestDTO.builder()
                 .header(RequestHeader.builder()
-                        .apiName("createForeignCurrencyDemandDepositAccount")
+                        .apiName(createForeignCurrencyDemandDepositAccount)
                         .userKey(UserHeaderInterceptor.userKey.get())
                         .build())
                 .accountTypeUniqueNo(FOREIGN_TRAVEL_ACCOUNT_TYPE_UNIQUE_NO)
@@ -944,7 +945,7 @@ public class AccountService {
         // SSAFY 금융 API 외화 계좌 조회 (단건) 요청
         InquireForeignCurrencyDemandDepositAccountRequestDTO inquireForeignCurrencyDemandDepositAccountRequestDTO = InquireForeignCurrencyDemandDepositAccountRequestDTO.builder()
                 .header(RequestHeader.builder()
-                        .apiName("inquireForeignCurrencyDemandDepositAccount")
+                        .apiName(inquireForeignCurrencyDemandDepositAccount)
                         .userKey(UserHeaderInterceptor.userKey.get())
                         .build())
                 .accountNo(accountNo)

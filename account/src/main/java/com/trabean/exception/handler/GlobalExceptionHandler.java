@@ -2,15 +2,15 @@ package com.trabean.exception.handler;
 
 import com.trabean.common.ExternalServerErrorResponseDTO;
 import com.trabean.common.InternalServerErrorResponseDTO;
-import com.trabean.common.ResponseCode;
-import com.trabean.common.SsafyErrorResponseDTO;
+import com.trabean.external.ssafy.constant.ResponseCode;
+import com.trabean.external.ssafy.common.SsafyApiResponseDTO;
 import com.trabean.exception.custom.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import static com.trabean.common.ResponseCode.H0000;
+import static com.trabean.external.ssafy.constant.ResponseCode.H0000;
 
 /**
  * 전역 예외 처리 핸들러
@@ -73,8 +73,8 @@ public class GlobalExceptionHandler {
      * SSAFY 금융 API 에서 에러 응답을 보내는 상황
      */
     @ExceptionHandler(SsafyErrorException.class)
-    public ResponseEntity<SsafyErrorResponseDTO> handleCustomFeignClientException(SsafyErrorException e) {
-        SsafyErrorResponseDTO responseDTO = SsafyErrorResponseDTO.builder()
+    public ResponseEntity<SsafyApiResponseDTO> handleCustomFeignClientException(SsafyErrorException e) {
+        SsafyApiResponseDTO responseDTO = SsafyApiResponseDTO.builder()
                 .responseCode(e.getErrorResponse().getResponseCode())
                 .responseMessage(e.getErrorResponse().getResponseMessage())
                 .build();

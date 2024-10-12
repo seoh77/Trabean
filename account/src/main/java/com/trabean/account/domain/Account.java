@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
+@AllArgsConstructor // 달면 안됨?
 public class Account {
 
     @Id

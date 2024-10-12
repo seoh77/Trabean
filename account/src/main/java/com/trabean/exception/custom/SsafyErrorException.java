@@ -1,6 +1,6 @@
 package com.trabean.exception.custom;
 
-import com.trabean.common.SsafyErrorResponseDTO;
+import com.trabean.external.ssafy.common.SsafyApiResponseDTO;
 import lombok.Getter;
 
 /**
@@ -9,9 +9,9 @@ import lombok.Getter;
 @Getter
 public class SsafyErrorException extends RuntimeException {
 
-    private final SsafyErrorResponseDTO errorResponse;
+    private final SsafyApiResponseDTO errorResponse;
 
-    public SsafyErrorException(SsafyErrorResponseDTO errorResponse) {
+    public SsafyErrorException(SsafyApiResponseDTO errorResponse) {
         this.errorResponse = errorResponse;
     }
 
