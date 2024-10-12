@@ -1,10 +1,10 @@
 package com.trabean.account.service;
 
 import com.trabean.account.domain.Account;
+import com.trabean.account.domain.Account.AccountType;
 import com.trabean.account.domain.UserAccountRelation;
 import com.trabean.account.domain.UserAccountRelation.UserRole;
 import com.trabean.account.dto.request.*;
-import com.trabean.account.dto.request.UpdateAccountTransferLimitRequestDTO;
 import com.trabean.account.dto.response.*;
 import com.trabean.account.dto.response.DomesticTravelAccountMemberListResponseDTO.Member;
 import com.trabean.account.repository.AccountRepository;
@@ -19,7 +19,6 @@ import com.trabean.external.msa.travel.dto.response.DomesticTravelAccountInfoRes
 import com.trabean.external.msa.user.client.UserClient;
 import com.trabean.external.msa.user.dto.request.UpdateMainAccountIdRequestDTO;
 import com.trabean.external.msa.user.dto.request.UserKeyRequestDTO;
-import com.trabean.external.msa.user.dto.response.UserKeyResponseDTO;
 import com.trabean.external.msa.user.dto.response.UserNameResponseDTO;
 import com.trabean.external.ssafy.api.domestic.client.DomesticClient;
 import com.trabean.external.ssafy.api.domestic.dto.request.*;
@@ -33,8 +32,8 @@ import com.trabean.external.ssafy.api.memo.client.MemoClient;
 import com.trabean.external.ssafy.api.memo.dto.request.TransactionMemoRequestDTO;
 import com.trabean.external.ssafy.common.SsafyApiResponseDTO;
 import com.trabean.external.ssafy.common.SsafyApiResponseDTOFactory;
-import com.trabean.interceptor.UserHeaderInterceptor;
 import com.trabean.external.ssafy.util.RequestHeader;
+import com.trabean.interceptor.UserHeaderInterceptor;
 import com.trabean.util.ValidateInputDTO;
 import com.trabean.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +46,6 @@ import java.util.stream.Collectors;
 
 import static com.trabean.account.domain.Account.AccountType.*;
 import static com.trabean.account.domain.UserAccountRelation.UserRole.ADMIN;
-import static com.trabean.account.domain.UserAccountRelation.UserRole.NONE_PAYER;
 import static com.trabean.constant.Constant.*;
 import static com.trabean.external.ssafy.constant.ApiName.*;
 
@@ -196,12 +194,6 @@ public class AccountService {
 
                     // User 서버에 userName 반환 요청
                     UserNameResponseDTO userNameResponseDTO = userClient.getUserName(userId);
-
-                    // User 서버에 userKey 반환 요청
-                    UserKeyRequestDTO userKeyRequestDTO = UserKeyRequestDTO.builder()
-                            .userId(userId)
-                            .build();
-                    UserKeyResponseDTO userKeyResponseDTO = userClient.getUserKey(userKeyRequestDTO);
 
                     // SSAFY 금융 API 계좌 조회 (단건) 요청
                     InquireDemandDepositAccountRequestDTO inquireDemandDepositAccountRequestDTO = InquireDemandDepositAccountRequestDTO.builder()
@@ -769,7 +761,7 @@ public class AccountService {
                             .userRole(u.getUserRole())
                     .build());
         }
-        
+
         // Travel 서버에 외화계좌 생성시 외화여행계좌 테이블에 정보 저장 요청
         SaveForeignTravelAccountRequestDTO saveForeignTravelAccountRequestDTO = SaveForeignTravelAccountRequestDTO.builder()
                 .foreignAccountId(savedAccount.getAccountId())
@@ -836,6 +828,7 @@ public class AccountService {
 
     // 통장 주인 이름 조회 서비스 로직
     public AccountAdminNameResponseDTO getAccountName(String accountNo) {
+
         Long accountId = ValidationUtil.validateAccount(accountRepository.findByAccountNo(accountNo)).getAccountId();
 
         List<UserAccountRelation> userAccountRelationList = ValidationUtil.validateUserAccountRelationList(userAccountRelationRepository.findAllByAccountId(accountId));
@@ -846,9 +839,25 @@ public class AccountService {
                 .findFirst()
                 .orElseThrow(UserAccountRelationNotFoundException::getInstance);
 
-        return AccountAdminNameResponseDTO.builder()
-                .name(userClient.getUserName(userId).getUserName())
-                .build();
+        AccountType accountType = ValidationUtil.validateAccount(accountRepository.findById(accountId)).getAccountType();
+
+        if (accountType == PERSONAL) {
+            return AccountAdminNameResponseDTO.builder()
+                    .name(userClient.getUserName(userId).getUserName())
+                    .build();
+        } else if (accountType == DOMESTIC) {
+            return AccountAdminNameResponseDTO.builder()
+                    .name(travelClient.getDomesticTravelAccountInfo(accountId).getAccountName())
+                    .build();
+        } else if (accountType == FOREIGN) {
+            Long parentAccountId = travelClient.getParentAccountId(userId).getParentAccountId();
+
+            return AccountAdminNameResponseDTO.builder()
+                    .name(travelClient.getDomesticTravelAccountInfo(parentAccountId).getAccountName())
+                    .build();
+        } else {
+            throw UserAccountRelationNotFoundException.getInstance();
+        }
     }
 
     // 통장 주인의 userKey 조회 메서드
