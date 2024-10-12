@@ -464,7 +464,7 @@ public class AccountService {
         return SsafyApiResponseDTOFactory.create(updateDemandDepositAccountTransferResponseDTO.getHeader());
     }
 
-    // 개인 통장 계좌 이체 비밀번호 검증 API
+    // 개인 통장 계좌 이체 비밀번호 검증 서비스 로직
     public InternalServerSuccessResponseDTO verifyPersonalAccountPassword(Long accountId, VerifyAccountPasswordRequestDTO requestDTO) {
 
         String savedPassword = ValidationUtil.validateInput(ValidateInputDTO.builder()
@@ -744,7 +744,7 @@ public class AccountService {
         return SsafyApiResponseDTOFactory.create(updateDemandDepositAccountTransferResponseDTO.getHeader());
     }
 
-    // 한화 여행통장 계좌 이체 비밀번호 검증 API
+    // 한화 여행통장 계좌 이체 비밀번호 검증 서비스 로직
     public InternalServerSuccessResponseDTO verifyDomesticTravelAccountPassword(Long accountId, VerifyAccountPasswordRequestDTO requestDTO) {
 
         String savedPassword = ValidationUtil.validateInput(ValidateInputDTO.builder()
