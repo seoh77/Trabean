@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class MainAccountIdRequestDTO {
+public class UpdateMainAccountIdRequestDTO {
 
     @JsonProperty("userId")
     private Long userId;

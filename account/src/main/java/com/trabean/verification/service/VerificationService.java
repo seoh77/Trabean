@@ -12,6 +12,7 @@ import com.trabean.external.ssafy.api.verification.dto.request.OpenAccountAuthRe
 import com.trabean.external.ssafy.api.verification.dto.response.CheckAuthCodeResponseDTO;
 import com.trabean.external.ssafy.api.verification.dto.response.OpenAccountAuthResponseDTO;
 import com.trabean.external.ssafy.common.SsafyApiResponseDTO;
+import com.trabean.external.ssafy.common.SsafyApiResponseDTOFactory;
 import com.trabean.interceptor.UserHeaderInterceptor;
 import com.trabean.external.ssafy.util.RequestHeader;
 import com.trabean.util.ValidationUtil;
@@ -70,10 +71,7 @@ public class VerificationService {
                 .build();
         notificationClient.sendNotification(notificationRequestDTO);
 
-        return SsafyApiResponseDTO.builder()
-                .responseCode(openAccountAuthResponseDTO.getHeader().getResponseCode())
-                .responseMessage(openAccountAuthResponseDTO.getHeader().getResponseMessage())
-                .build();
+        return SsafyApiResponseDTOFactory.create(openAccountAuthResponseDTO.getHeader());
     }
 
     // 1원 인증(인증번호검증) 서비스 로직
@@ -90,10 +88,7 @@ public class VerificationService {
                 .build();
         CheckAuthCodeResponseDTO checkAuthCodeResponseDTO = verificationClient.checkAuthCode(checkAuthCodeRequestDTO);
 
-        return SsafyApiResponseDTO.builder()
-                .responseCode(checkAuthCodeResponseDTO.getHeader().getResponseCode())
-                .responseMessage(checkAuthCodeResponseDTO.getHeader().getResponseMessage())
-                .build();
+        return SsafyApiResponseDTOFactory.create(checkAuthCodeResponseDTO.getHeader());
     }
 
 }

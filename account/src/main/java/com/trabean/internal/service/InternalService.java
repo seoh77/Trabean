@@ -1,7 +1,6 @@
 package com.trabean.internal.service;
 
 import com.trabean.account.domain.Account;
-import com.trabean.account.domain.Account.AccountType;
 import com.trabean.account.domain.UserAccountRelation;
 import com.trabean.account.domain.UserAccountRelation.UserRole;
 import com.trabean.account.repository.AccountRepository;
@@ -12,8 +11,6 @@ import com.trabean.exception.custom.UserAccountRelationNotFoundException;
 import com.trabean.external.msa.user.client.UserClient;
 import com.trabean.external.msa.user.dto.request.UserKeyRequestDTO;
 import com.trabean.external.msa.user.dto.response.UserKeyResponseDTO;
-import com.trabean.external.msa.user.dto.response.UserNameResponseDTO;
-import com.trabean.interceptor.UserHeaderInterceptor;
 import com.trabean.internal.dto.request.*;
 import com.trabean.internal.dto.response.AccountNoResponseDTO;
 import com.trabean.internal.dto.response.AdminUserKeyResponseDTO;
@@ -30,6 +27,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.trabean.account.domain.Account.AccountType.DOMESTIC;
+import static com.trabean.account.domain.UserAccountRelation.UserRole.ADMIN;
+import static com.trabean.account.domain.UserAccountRelation.UserRole.NONE_PAYER;
 import static com.trabean.constant.Constant.PEPPER;
 
 @Service
@@ -110,7 +110,7 @@ public class InternalService {
                 .account(Account.builder()
                         .accountId(requestDTO.getDomesticAccountId())
                         .build())
-                .userRole(UserRole.NONE_PAYER)
+                .userRole(NONE_PAYER)
                 .build();
         userAccountRelationRepository.save(domesticUserAccountRelation);
 
@@ -121,7 +121,7 @@ public class InternalService {
                     .account(Account.builder()
                             .accountId(foreignAccountId)
                             .build())
-                    .userRole(UserRole.NONE_PAYER)
+                    .userRole(NONE_PAYER)
                     .build();
             userAccountRelationRepository.save(foreignUserAccountRelation);
         }
@@ -137,7 +137,7 @@ public class InternalService {
         List<UserAccountRelation> userAccountRelationList = ValidationUtil.validateUserAccountRelationList(userAccountRelationRepository.findAllByAccountId(requestDTO.getAccountId()));
 
         Long userId = userAccountRelationList.stream()
-                .filter(relation -> relation.getUserRole() == UserRole.ADMIN)
+                .filter(relation -> relation.getUserRole() == ADMIN)
                 .map(UserAccountRelation::getUserId)
                 .findFirst()
                 .orElseThrow(UserAccountRelationNotFoundException::getInstance);
@@ -175,20 +175,17 @@ public class InternalService {
         ValidationUtil.validateInput(ValidateInputDTO.builder()
                 .account(accountRepository.findById(requestDTO.getAccountId()))
                 .userAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(requestDTO.getUserId(), requestDTO.getAccountId()))
-                .accountType(AccountType.DOMESTIC)
+                .accountType(DOMESTIC)
                 .build());
 
-        List<UserAccountRelation> userAccountRelations = ValidationUtil.validateUserAccountRelationList(userAccountRelationRepository.findAllByAccountId(requestDTO.getAccountId()));
-
+        List<UserAccountRelation> userAccountRelationList = ValidationUtil.validateUserAccountRelationList(userAccountRelationRepository.findAllByAccountId(requestDTO.getAccountId()));
         List<Member> members = new ArrayList<>();
 
         // User 서버에 userId로 userName 조회하는 요청을 모든 멤버에 대해 보냄
-        for (UserAccountRelation member : userAccountRelations) {
-            UserNameResponseDTO userNameResponseDTO = userClient.getUserName(member.getUserId());
-
+        for (UserAccountRelation member : userAccountRelationList) {
             members.add(Member.builder()
                     .userId(member.getUserId())
-                    .userName(userNameResponseDTO.getUserName())
+                    .userName(userClient.getUserName(member.getUserId()).getUserName())
                     .role(member.getUserRole())
                     .build());
         }
@@ -198,4 +195,5 @@ public class InternalService {
                 .memberCount((long) members.size())
                 .members(members).build();
     }
+
 }

@@ -69,7 +69,7 @@ public class AccountController {
     // 개인 통장 계좌 이체 API
     @PostMapping("/personal/{accountId}/transfer")
     public ResponseEntity<SsafyApiResponseDTO> transferPersonalAccount(@PathVariable Long accountId,
-                                                                           @RequestBody TransferPersonalAccountRequestDTO requestDTO) {
+                                                                       @RequestBody TransferPersonalAccountRequestDTO requestDTO) {
         SsafyApiResponseDTO responseDTO = accountService.transferPersonalAccount(accountId, requestDTO);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
@@ -117,7 +117,7 @@ public class AccountController {
     // 한화 여행통장 계좌 이체 API
     @PostMapping("/travel/domestic/{accountId}/transfer")
     public ResponseEntity<SsafyApiResponseDTO> transferDomesticTravelAccount(@PathVariable Long accountId,
-                                                                                 @RequestBody TransferDomesticTravelAccountRequestDTO requestDTO) {
+                                                                             @RequestBody TransferDomesticTravelAccountRequestDTO requestDTO) {
         SsafyApiResponseDTO responseDTO = accountService.transferDomesticTravelAccount(accountId, requestDTO);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
