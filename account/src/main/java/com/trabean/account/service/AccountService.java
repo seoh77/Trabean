@@ -631,7 +631,7 @@ public class AccountService {
         UpdateDemandDepositAccountTransferRequestDTO updateDemandDepositAccountTransferRequestDTO = UpdateDemandDepositAccountTransferRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName(updateDemandDepositAccountTransfer)
-                        .userKey(UserHeaderInterceptor.userKey.get())
+                        .userKey(getAdminUserKeyByAccountId(accountId))
                         .build())
                 .depositAccountNo(requestDTO.getDepositAccountNo())
                 .depositTransactionSummary(depositTransactionSummary)
