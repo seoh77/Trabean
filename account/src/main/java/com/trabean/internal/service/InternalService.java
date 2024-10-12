@@ -33,7 +33,7 @@ import static com.trabean.account.domain.UserAccountRelation.UserRole.NONE_PAYER
 import static com.trabean.constant.Constant.PEPPER;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class InternalService {
 
@@ -69,6 +69,7 @@ public class InternalService {
     }
 
     // 여행통장 결제 권한 변경 서비스 로직
+    @Transactional
     public InternalServerSuccessResponseDTO updateUserRole(UpdateUserRoleRequestDTO requestDTO) {
 
         userAccountRelationRepository.updateUserRoleByUserIdAndAccountId(requestDTO.getUserId(), requestDTO.getDomesticAccountId(), requestDTO.getUserRole());
@@ -102,6 +103,7 @@ public class InternalService {
     }
 
     // 여행통장 가입 서비스 로직
+    @Transactional
     public InternalServerSuccessResponseDTO joinTravelAccount(JoinTravelAccountRequestDTO requestDTO) {
 
         // 한화 여행통장에 가입
@@ -154,6 +156,7 @@ public class InternalService {
     }
 
     // 여행통장 비밀번호 변경 서비스 로직
+    @Transactional
     public InternalServerSuccessResponseDTO updateTravelAccountPassword(UpdateTravelAccountPasswordRequestDTO requestDTO) {
 
         String hashedPassword = passwordEncoder.encode(requestDTO.getPassword() + PEPPER);

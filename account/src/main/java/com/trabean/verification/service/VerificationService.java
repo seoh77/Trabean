@@ -20,6 +20,7 @@ import com.trabean.verification.dto.request.AccountVerificationRequestDTO;
 import com.trabean.verification.dto.request.OneWonVerificationRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -27,6 +28,7 @@ import static com.trabean.external.msa.notification.dto.request.NotificationRequ
 import static com.trabean.external.ssafy.constant.ApiName.*;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class VerificationService {
 
