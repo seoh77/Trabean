@@ -1,4 +1,4 @@
-package com.trabean.internal.dto.request;
+package com.trabean.account.dto.request.internal;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.trabean.account.domain.UserAccountRelation.UserRole;

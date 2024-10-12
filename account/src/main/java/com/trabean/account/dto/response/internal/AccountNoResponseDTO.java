@@ -1,4 +1,4 @@
-package com.trabean.internal.dto.response;
+package com.trabean.account.dto.response.internal;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
