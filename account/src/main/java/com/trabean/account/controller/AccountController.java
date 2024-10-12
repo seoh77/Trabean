@@ -1,9 +1,9 @@
 package com.trabean.account.controller;
 
-import com.trabean.account.dto.request.UpdateAccountTransferLimitRequestDTO;
-import com.trabean.account.dto.response.AccountAdminNameResponseDTO;
-import com.trabean.account.dto.response.AccountListResponseDTO;
-import com.trabean.account.dto.response.RecentTransactionListResponseDTO;
+import com.trabean.account.dto.request.account.UpdateAccountTransferLimitRequestDTO;
+import com.trabean.account.dto.response.account.AccountAdminNameResponseDTO;
+import com.trabean.account.dto.response.account.AccountListResponseDTO;
+import com.trabean.account.dto.response.account.RecentTransactionListResponseDTO;
 import com.trabean.account.service.AccountService;
 import com.trabean.external.ssafy.common.SsafyApiResponseDTO;
 import lombok.RequiredArgsConstructor;

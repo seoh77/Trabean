@@ -1,4 +1,4 @@
-package com.trabean.account.dto.response;
+package com.trabean.account.dto.response.account;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class DomesticTravelAccountCreatedDateResponseDTO {
+public class AccountAdminNameResponseDTO {
 
-    @JsonProperty("accountCreatedDate")
-    private String accountCreatedDate;
+    @JsonProperty("name")
+    private String name;
 }

@@ -1,4 +1,4 @@
-package com.trabean.account.dto.response;
+package com.trabean.account.dto.response.foreignTravelAccount;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

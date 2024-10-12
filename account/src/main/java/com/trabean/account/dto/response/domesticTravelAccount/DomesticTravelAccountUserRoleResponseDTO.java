@@ -1,4 +1,4 @@
-package com.trabean.account.dto.response;
+package com.trabean.account.dto.response.domesticTravelAccount;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.trabean.account.domain.UserAccountRelation.UserRole;

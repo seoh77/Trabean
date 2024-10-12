@@ -1,9 +1,9 @@
 package com.trabean.account.controller;
 
-import com.trabean.account.dto.request.CreateForeignTravelAccountRequestDTO;
-import com.trabean.account.dto.response.CreateForeignTravelAccountResponseDTO;
-import com.trabean.account.dto.response.ForeignTravelAccountCreatedDateResponseDTO;
-import com.trabean.account.dto.response.TravelAccountCoupleResponseDTO;
+import com.trabean.account.dto.request.foreignTravelAccount.CreateForeignTravelAccountRequestDTO;
+import com.trabean.account.dto.response.foreignTravelAccount.CreateForeignTravelAccountResponseDTO;
+import com.trabean.account.dto.response.foreignTravelAccount.ForeignTravelAccountCreatedDateResponseDTO;
+import com.trabean.account.dto.response.foreignTravelAccount.TravelAccountCoupleResponseDTO;
 import com.trabean.account.service.ForeignTravelAccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

@@ -1,9 +1,9 @@
 package com.trabean.account.controller;
 
-import com.trabean.account.dto.request.CreateDomesticTravelAccountRequestDTO;
-import com.trabean.account.dto.request.TransferDomesticTravelAccountRequestDTO;
-import com.trabean.account.dto.request.VerifyAccountPasswordRequestDTO;
-import com.trabean.account.dto.response.*;
+import com.trabean.account.dto.request.domesticTravelAccount.CreateDomesticTravelAccountRequestDTO;
+import com.trabean.account.dto.request.domesticTravelAccount.TransferDomesticTravelAccountRequestDTO;
+import com.trabean.account.dto.request.common.VerifyAccountPasswordRequestDTO;
+import com.trabean.account.dto.response.domesticTravelAccount.*;
 import com.trabean.account.service.DomesticTravelAccountService;
 import com.trabean.common.InternalServerSuccessResponseDTO;
 import com.trabean.external.ssafy.common.SsafyApiResponseDTO;

@@ -2,10 +2,10 @@ package com.trabean.account.service;
 
 import com.trabean.account.domain.Account;
 import com.trabean.account.domain.UserAccountRelation;
-import com.trabean.account.dto.request.UpdateAccountTransferLimitRequestDTO;
-import com.trabean.account.dto.response.AccountAdminNameResponseDTO;
-import com.trabean.account.dto.response.AccountListResponseDTO;
-import com.trabean.account.dto.response.RecentTransactionListResponseDTO;
+import com.trabean.account.dto.request.account.UpdateAccountTransferLimitRequestDTO;
+import com.trabean.account.dto.response.account.AccountAdminNameResponseDTO;
+import com.trabean.account.dto.response.account.AccountListResponseDTO;
+import com.trabean.account.dto.response.account.RecentTransactionListResponseDTO;
 import com.trabean.account.repository.AccountRepository;
 import com.trabean.account.repository.UserAccountRelationRepository;
 import com.trabean.exception.custom.UserAccountRelationNotFoundException;

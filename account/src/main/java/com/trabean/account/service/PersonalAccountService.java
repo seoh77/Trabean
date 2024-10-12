@@ -2,11 +2,11 @@ package com.trabean.account.service;
 
 import com.trabean.account.domain.Account;
 import com.trabean.account.domain.UserAccountRelation;
-import com.trabean.account.dto.request.CreatePersonalAccountRequestDTO;
-import com.trabean.account.dto.request.TransferPersonalAccountRequestDTO;
-import com.trabean.account.dto.request.VerifyAccountPasswordRequestDTO;
-import com.trabean.account.dto.response.PersonalAccountCreatedDateResponseDTO;
-import com.trabean.account.dto.response.PersonalAccountDetailResponseDTO;
+import com.trabean.account.dto.request.personalAccount.CreatePersonalAccountRequestDTO;
+import com.trabean.account.dto.request.personalAccount.TransferPersonalAccountRequestDTO;
+import com.trabean.account.dto.request.common.VerifyAccountPasswordRequestDTO;
+import com.trabean.account.dto.response.personalAccount.PersonalAccountCreatedDateResponseDTO;
+import com.trabean.account.dto.response.personalAccount.PersonalAccountDetailResponseDTO;
 import com.trabean.account.repository.AccountRepository;
 import com.trabean.account.repository.UserAccountRelationRepository;
 import com.trabean.common.InternalServerSuccessResponseDTO;
