@@ -12,6 +12,8 @@ import com.trabean.account.repository.UserAccountRelationRepository;
 import com.trabean.common.InternalServerSuccessResponseDTO;
 import com.trabean.exception.custom.InvalidPasswordException;
 import com.trabean.exception.custom.UserAccountRelationNotFoundException;
+import com.trabean.external.msa.notification.client.NotificationClient;
+import com.trabean.external.msa.notification.dto.request.NotificationRequestDTO;
 import com.trabean.external.msa.travel.client.TravelClient;
 import com.trabean.external.msa.travel.dto.request.SaveDomesticTravelAccountRequestDTO;
 import com.trabean.external.msa.travel.dto.request.SaveForeignTravelAccountRequestDTO;
@@ -47,6 +49,8 @@ import java.util.stream.Collectors;
 import static com.trabean.account.domain.Account.AccountType.*;
 import static com.trabean.account.domain.UserAccountRelation.UserRole.ADMIN;
 import static com.trabean.constant.Constant.*;
+import static com.trabean.external.msa.notification.dto.request.NotificationRequestDTO.Type.DEPOSIT;
+import static com.trabean.external.msa.notification.dto.request.NotificationRequestDTO.Type.WITHDRAW;
 import static com.trabean.external.ssafy.constant.ApiName.*;
 
 @Service
@@ -63,6 +67,7 @@ public class AccountService {
 
     private final UserClient userClient;
     private final TravelClient travelClient;
+    private final NotificationClient notificationClient;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -431,6 +436,26 @@ public class AccountService {
                 .build();
         memoClient.transactionMemo(transactionDepositMemoRequestDTO);
 
+        // Notification 서버 입출금 시 알림 생성 요청
+        NotificationRequestDTO notificationWithdrawalRequestDTO = NotificationRequestDTO.builder()
+                .senderId(UserHeaderInterceptor.userId.get())
+                .receiverIdList(List.of(UserHeaderInterceptor.userId.get()))
+                .accountId(withdrawalAccountId)
+                .notificationType(WITHDRAW)
+                .amount(requestDTO.getTransactionBalance())
+                .build();
+        notificationClient.sendNotification(notificationWithdrawalRequestDTO);
+
+        // Notification 서버 입출금 시 알림 생성 요청
+        NotificationRequestDTO notificationDepositRequestDTO = NotificationRequestDTO.builder()
+                .senderId(UserHeaderInterceptor.userId.get())
+                .receiverIdList(getAccountMemberIdList(depositAccountId))
+                .accountId(depositAccountId)
+                .notificationType(DEPOSIT)
+                .amount(requestDTO.getTransactionBalance())
+                .build();
+        notificationClient.sendNotification(notificationDepositRequestDTO);
+
         return SsafyApiResponseDTOFactory.create(updateDemandDepositAccountTransferResponseDTO.getHeader());
     }
 
@@ -674,6 +699,26 @@ public class AccountService {
                 .build();
         memoClient.transactionMemo(transactionDepositMemoRequestDTO);
 
+        // Notification 서버 입출금 시 알림 생성 요청
+        NotificationRequestDTO notificationWithdrawalRequestDTO = NotificationRequestDTO.builder()
+                .senderId(UserHeaderInterceptor.userId.get())
+                .receiverIdList(List.of(UserHeaderInterceptor.userId.get()))
+                .accountId(withdrawalAccountId)
+                .notificationType(WITHDRAW)
+                .amount(requestDTO.getTransactionBalance())
+                .build();
+        notificationClient.sendNotification(notificationWithdrawalRequestDTO);
+
+        // Notification 서버 입출금 시 알림 생성 요청
+        NotificationRequestDTO notificationDepositRequestDTO = NotificationRequestDTO.builder()
+                .senderId(UserHeaderInterceptor.userId.get())
+                .receiverIdList(getAccountMemberIdList(depositAccountId))
+                .accountId(depositAccountId)
+                .notificationType(DEPOSIT)
+                .amount(requestDTO.getTransactionBalance())
+                .build();
+        notificationClient.sendNotification(notificationDepositRequestDTO);
+        
         return SsafyApiResponseDTOFactory.create(updateDemandDepositAccountTransferResponseDTO.getHeader());
     }
 
@@ -901,6 +946,18 @@ public class AccountService {
                 .userId(userId)
                 .build();
         return userClient.getUserKey(userKeyRequestDTO).getUserKey();
+    }
+
+    // 개인 통장 or 한화 여행통장에 가입된 userId 조회 메서드
+    private List<Long> getAccountMemberIdList(Long accountId) {
+        List<UserAccountRelation> userAccountRelationList = ValidationUtil.validateUserAccountRelationList(userAccountRelationRepository.findAllByAccountId(accountId));
+        List<Long> userIdList = new ArrayList<>();
+
+        for (UserAccountRelation userAccountRelation : userAccountRelationList) {
+            userIdList.add(userAccountRelation.getUserId());
+        }
+
+        return userIdList;
     }
 
 }

@@ -61,7 +61,7 @@ public class VerificationService {
                 .build();
         InquireTransactionHistoryResponseDTO inquireTransactionHistoryResponseDTO = domesticClient.inquireTransactionHistory(inquireTransactionHistoryRequestDTO);
 
-        // Notification 서버 입출금 시 알림 생성 요청
+        // Notification 서버 인증 번호 알림 생성 요청
         NotificationRequestDTO notificationRequestDTO = NotificationRequestDTO.builder()
                     .senderId(-1L)
                     .receiverIdList(List.of(UserHeaderInterceptor.userId.get()))

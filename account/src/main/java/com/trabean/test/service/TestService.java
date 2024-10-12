@@ -1,5 +1,7 @@
 package com.trabean.test.service;
 
+import com.trabean.external.msa.notification.client.NotificationClient;
+import com.trabean.external.msa.notification.dto.request.NotificationRequestDTO;
 import com.trabean.external.ssafy.api.domestic.client.DomesticClient;
 import com.trabean.external.ssafy.api.domestic.dto.request.UpdateDemandDepositAccountDepositRequestDTO;
 import com.trabean.external.ssafy.api.domestic.dto.request.UpdateDemandDepositAccountWithdrawalRequestDTO;
@@ -16,6 +18,10 @@ import com.trabean.external.ssafy.util.RequestHeader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
+import static com.trabean.external.msa.notification.dto.request.NotificationRequestDTO.Type.DEPOSIT;
+import static com.trabean.external.msa.notification.dto.request.NotificationRequestDTO.Type.WITHDRAW;
 import static com.trabean.external.ssafy.constant.ApiName.*;
 
 @Service
@@ -24,6 +30,8 @@ public class TestService {
 
     private final DomesticClient domesticClient;
     private final MemoClient memoClient;
+
+    private final NotificationClient notificationClient;
 
     // 계좌 입금(테스트용) 서비스 로직
     public SsafyApiResponseDTO depositTest(DepositRequestDTO requestDTO) {
@@ -51,6 +59,16 @@ public class TestService {
                 .transactionMemo("-1")
                 .build();
         memoClient.transactionMemo(transactionMemoRequestDTO);
+
+        // Notification 서버 입출금 시 알림 생성 요청
+        NotificationRequestDTO notificationRequestDTO = NotificationRequestDTO.builder()
+                    .senderId(-1L)
+                    .receiverIdList(List.of(UserHeaderInterceptor.userId.get()))
+                    .accountId(requestDTO.getAccountId())
+                    .notificationType(DEPOSIT)
+                    .amount(requestDTO.getTransactionBalance())
+                .build();
+        notificationClient.sendNotification(notificationRequestDTO);
 
         return SsafyApiResponseDTOFactory.create(updateDemandDepositAccountDepositResponseDTO.getHeader());
     }
@@ -81,6 +99,16 @@ public class TestService {
                 .transactionMemo(String.valueOf(UserHeaderInterceptor.userId.get()))
                 .build();
         memoClient.transactionMemo(transactionMemoRequestDTO);
+
+        // Notification 서버 입출금 시 알림 생성 요청
+        NotificationRequestDTO notificationRequestDTO = NotificationRequestDTO.builder()
+                .senderId(-1L)
+                .receiverIdList(List.of(UserHeaderInterceptor.userId.get()))
+                .accountId(requestDTO.getAccountId())
+                .notificationType(WITHDRAW)
+                .amount(requestDTO.getTransactionBalance())
+                .build();
+        notificationClient.sendNotification(notificationRequestDTO);
 
         return SsafyApiResponseDTOFactory.create(updateDemandDepositAccountWithdrawalResponseDTO.getHeader());
     }
