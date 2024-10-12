@@ -718,7 +718,7 @@ public class AccountService {
                 .amount(requestDTO.getTransactionBalance())
                 .build();
         notificationClient.sendNotification(notificationDepositRequestDTO);
-        
+
         return SsafyApiResponseDTOFactory.create(updateDemandDepositAccountTransferResponseDTO.getHeader());
     }
 
