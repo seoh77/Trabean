@@ -1,6 +1,6 @@
 package com.trabean.test.controller;
 
-import com.trabean.common.SsafySuccessResponseDTO;
+import com.trabean.external.ssafy.common.SsafyApiResponseDTO;
 import com.trabean.test.dto.request.DepositRequestDTO;
 import com.trabean.test.dto.request.WithdrawalRequestDTO;
 import com.trabean.test.service.TestService;
@@ -19,15 +19,15 @@ public class TestController {
 
     // 계좌 입금(테스트용) API
     @PostMapping("/deposit")
-    ResponseEntity<SsafySuccessResponseDTO> depositTest(@RequestBody DepositRequestDTO requestDTO) {
-        SsafySuccessResponseDTO responseDTO = testService.depositTest(requestDTO);
+    ResponseEntity<SsafyApiResponseDTO> depositTest(@RequestBody DepositRequestDTO requestDTO) {
+        SsafyApiResponseDTO responseDTO = testService.depositTest(requestDTO);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
     // 계좌 출금(테스트용) API
     @PostMapping("/withdrawal")
-    ResponseEntity<SsafySuccessResponseDTO> withdrawalTest(@RequestBody WithdrawalRequestDTO requestDTO) {
-        SsafySuccessResponseDTO responseDTO = testService.withdrawalTest(requestDTO);
+    ResponseEntity<SsafyApiResponseDTO> withdrawalTest(@RequestBody WithdrawalRequestDTO requestDTO) {
+        SsafyApiResponseDTO responseDTO = testService.withdrawalTest(requestDTO);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 }

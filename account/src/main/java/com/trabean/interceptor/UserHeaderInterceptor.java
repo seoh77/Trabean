@@ -20,16 +20,16 @@ public class UserHeaderInterceptor implements HandlerInterceptor {
 
         if (userIdHeader != null) {
             try {
-                userId.set(Long.parseLong(Decryption.decrypt(userIdHeader)));
 //                userId.set(Long.parseLong(userIdHeader));
+                userId.set(Long.parseLong(Decryption.decrypt(userIdHeader)));
             } catch (RuntimeException e) {
                 throw new IllegalArgumentException();
             }
         }
 
         if (userKeyHeader != null) {
-            userKey.set(Decryption.decrypt(userKeyHeader));
 //            userKey.set(userKeyHeader);
+            userKey.set(Decryption.decrypt(userKeyHeader));
         }
 
         return true;

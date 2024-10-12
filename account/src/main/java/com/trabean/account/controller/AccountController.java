@@ -4,7 +4,7 @@ import com.trabean.account.dto.request.*;
 import com.trabean.account.dto.response.*;
 import com.trabean.account.service.AccountService;
 import com.trabean.common.InternalServerSuccessResponseDTO;
-import com.trabean.common.SsafySuccessResponseDTO;
+import com.trabean.external.ssafy.common.SsafyApiResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,16 +36,16 @@ public class AccountController {
 
     // 계좌 이체 한도 변경 API
     @PutMapping("/{accountId}/transfer")
-    public ResponseEntity<SsafySuccessResponseDTO> updateTransferLimit(@PathVariable Long accountId,
-                                                                       @RequestBody UpdateAccountTransferLimitRequestDTO requestDTO) {
-        SsafySuccessResponseDTO responseDTO = accountService.updateTransferLimit(accountId, requestDTO);
+    public ResponseEntity<SsafyApiResponseDTO> updateTransferLimit(@PathVariable Long accountId,
+                                                                   @RequestBody UpdateAccountTransferLimitRequestDTO requestDTO) {
+        SsafyApiResponseDTO responseDTO = accountService.updateTransferLimit(accountId, requestDTO);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
     // 개인 통장 생성 API
     @PostMapping("/personal")
-    public ResponseEntity<SsafySuccessResponseDTO> createPersonalAccount(@RequestBody CreatePersonalAccountRequestDTO requestDTO) {
-        SsafySuccessResponseDTO responseDTO = accountService.createPersonalAccount(requestDTO);
+    public ResponseEntity<SsafyApiResponseDTO> createPersonalAccount(@RequestBody CreatePersonalAccountRequestDTO requestDTO) {
+        SsafyApiResponseDTO responseDTO = accountService.createPersonalAccount(requestDTO);
         return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
     }
 
@@ -68,9 +68,9 @@ public class AccountController {
 
     // 개인 통장 계좌 이체 API
     @PostMapping("/personal/{accountId}/transfer")
-    public ResponseEntity<SsafySuccessResponseDTO> transferPersonalAccount(@PathVariable Long accountId,
+    public ResponseEntity<SsafyApiResponseDTO> transferPersonalAccount(@PathVariable Long accountId,
                                                                            @RequestBody TransferPersonalAccountRequestDTO requestDTO) {
-        SsafySuccessResponseDTO responseDTO = accountService.transferPersonalAccount(accountId, requestDTO);
+        SsafyApiResponseDTO responseDTO = accountService.transferPersonalAccount(accountId, requestDTO);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
@@ -84,8 +84,8 @@ public class AccountController {
 
     // 한화 여행통장 생성 API
     @PostMapping("/travel/domestic")
-    public ResponseEntity<SsafySuccessResponseDTO> createDomesticTravelAccount(@RequestBody CreateDomesticTravelAccountRequestDTO requestDTO) {
-        SsafySuccessResponseDTO responseDTO = accountService.createDomesticTravelAccount(requestDTO);
+    public ResponseEntity<SsafyApiResponseDTO> createDomesticTravelAccount(@RequestBody CreateDomesticTravelAccountRequestDTO requestDTO) {
+        SsafyApiResponseDTO responseDTO = accountService.createDomesticTravelAccount(requestDTO);
         return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
     }
 
@@ -116,9 +116,9 @@ public class AccountController {
 
     // 한화 여행통장 계좌 이체 API
     @PostMapping("/travel/domestic/{accountId}/transfer")
-    public ResponseEntity<SsafySuccessResponseDTO> transferDomesticTravelAccount(@PathVariable Long accountId,
+    public ResponseEntity<SsafyApiResponseDTO> transferDomesticTravelAccount(@PathVariable Long accountId,
                                                                                  @RequestBody TransferDomesticTravelAccountRequestDTO requestDTO) {
-        SsafySuccessResponseDTO responseDTO = accountService.transferDomesticTravelAccount(accountId, requestDTO);
+        SsafyApiResponseDTO responseDTO = accountService.transferDomesticTravelAccount(accountId, requestDTO);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
