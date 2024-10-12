@@ -416,7 +416,7 @@ public class AccountService {
                 .transactionUniqueNo(updateDemandDepositAccountTransferResponseDTO.getRec().get(1).getTransactionUniqueNo())
                 .transactionMemo(String.valueOf(UserHeaderInterceptor.userId.get()))
                 .build();
-        memoClient.transactionMeno(transactionMemoRequestDTO);
+        memoClient.transactionMemo(transactionMemoRequestDTO);
 
         return SsafyApiResponseDTOFactory.create(updateDemandDepositAccountTransferResponseDTO.getHeader());
     }
@@ -646,7 +646,7 @@ public class AccountService {
                 .transactionUniqueNo(updateDemandDepositAccountTransferResponseDTO.getRec().get(1).getTransactionUniqueNo())
                 .transactionMemo(String.valueOf(UserHeaderInterceptor.userId.get()))
                 .build();
-        memoClient.transactionMeno(transactionMemoRequestDTO);
+        memoClient.transactionMemo(transactionMemoRequestDTO);
 
         return SsafyApiResponseDTOFactory.create(updateDemandDepositAccountTransferResponseDTO.getHeader());
     }
