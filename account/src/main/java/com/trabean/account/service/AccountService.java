@@ -47,6 +47,7 @@ import java.util.stream.Collectors;
 
 import static com.trabean.account.domain.Account.AccountType.*;
 import static com.trabean.account.domain.UserAccountRelation.UserRole.ADMIN;
+import static com.trabean.account.domain.UserAccountRelation.UserRole.NONE_PAYER;
 import static com.trabean.constant.Constant.*;
 import static com.trabean.external.ssafy.constant.ApiName.*;
 
@@ -755,6 +756,20 @@ public class AccountService {
                 .build();
         userAccountRelationRepository.save(userAccountRelation);
 
+        List<UserAccountRelation> userAccountRelationList = ValidationUtil.validateUserAccountRelationList(userAccountRelationRepository.findAllByAccountId(requestDTO.getDomesticAccountId()));
+
+        for (UserAccountRelation u : userAccountRelationList) {
+
+            if (u.getUserRole() == ADMIN) continue;
+
+            // UserAccountRelation 테이블에 저장
+            userAccountRelationRepository.save(UserAccountRelation.builder()
+                            .userId(u.getUserId())
+                            .account(savedAccount)
+                            .userRole(u.getUserRole())
+                    .build());
+        }
+        
         // Travel 서버에 외화계좌 생성시 외화여행계좌 테이블에 정보 저장 요청
         SaveForeignTravelAccountRequestDTO saveForeignTravelAccountRequestDTO = SaveForeignTravelAccountRequestDTO.builder()
                 .foreignAccountId(savedAccount.getAccountId())
