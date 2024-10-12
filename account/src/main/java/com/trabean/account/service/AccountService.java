@@ -405,9 +405,22 @@ public class AccountService {
         UpdateDemandDepositAccountTransferResponseDTO updateDemandDepositAccountTransferResponseDTO = domesticClient.updateDemandDepositAccountTransfer(updateDemandDepositAccountTransferRequestDTO);
 
         Long depositAccountId = ValidationUtil.validateAccount(accountRepository.findByAccountNo(requestDTO.getDepositAccountNo())).getAccountId();
+        Long withdrawalAccountId = ValidationUtil.validateAccount(accountRepository.findByAccountNo(requestDTO.getWithdrawalAccountNo())).getAccountId();
 
-        // SSAFY 금융 API 거래내역 메모 요청
-        TransactionMemoRequestDTO transactionMemoRequestDTO = TransactionMemoRequestDTO.builder()
+        // SSAFY 금융 API 거래내역 메모 요청 (출금 메모)
+        TransactionMemoRequestDTO transactionWithdrawalMemoRequestDTO = TransactionMemoRequestDTO.builder()
+                .header(RequestHeader.builder()
+                        .apiName(transactionMemo)
+                        .userKey(getAdminUserKeyByAccountId(withdrawalAccountId))
+                        .build())
+                .accountNo(requestDTO.getWithdrawalAccountNo())
+                .transactionUniqueNo(updateDemandDepositAccountTransferResponseDTO.getRec().get(0).getTransactionUniqueNo())
+                .transactionMemo(String.valueOf(UserHeaderInterceptor.userId.get()))
+                .build();
+        memoClient.transactionMemo(transactionWithdrawalMemoRequestDTO);
+
+        // SSAFY 금융 API 거래내역 메모 요청 (입금 메모)
+        TransactionMemoRequestDTO transactionDepositMemoRequestDTO = TransactionMemoRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName(transactionMemo)
                         .userKey(getAdminUserKeyByAccountId(depositAccountId))
@@ -416,7 +429,7 @@ public class AccountService {
                 .transactionUniqueNo(updateDemandDepositAccountTransferResponseDTO.getRec().get(1).getTransactionUniqueNo())
                 .transactionMemo(String.valueOf(UserHeaderInterceptor.userId.get()))
                 .build();
-        memoClient.transactionMemo(transactionMemoRequestDTO);
+        memoClient.transactionMemo(transactionDepositMemoRequestDTO);
 
         return SsafyApiResponseDTOFactory.create(updateDemandDepositAccountTransferResponseDTO.getHeader());
     }
@@ -635,9 +648,22 @@ public class AccountService {
         UpdateDemandDepositAccountTransferResponseDTO updateDemandDepositAccountTransferResponseDTO = domesticClient.updateDemandDepositAccountTransfer(updateDemandDepositAccountTransferRequestDTO);
 
         Long depositAccountId = ValidationUtil.validateAccount(accountRepository.findByAccountNo(requestDTO.getDepositAccountNo())).getAccountId();
+        Long withdrawalAccountId = ValidationUtil.validateAccount(accountRepository.findByAccountNo(requestDTO.getWithdrawalAccountNo())).getAccountId();
 
-        // SSAFY 금융 API 거래내역 메모 요청
-        TransactionMemoRequestDTO transactionMemoRequestDTO = TransactionMemoRequestDTO.builder()
+        // SSAFY 금융 API 거래내역 메모 요청 (출금 메모)
+        TransactionMemoRequestDTO transactionWithdrawalMemoRequestDTO = TransactionMemoRequestDTO.builder()
+                .header(RequestHeader.builder()
+                        .apiName(transactionMemo)
+                        .userKey(getAdminUserKeyByAccountId(withdrawalAccountId))
+                        .build())
+                .accountNo(requestDTO.getWithdrawalAccountNo())
+                .transactionUniqueNo(updateDemandDepositAccountTransferResponseDTO.getRec().get(0).getTransactionUniqueNo())
+                .transactionMemo(String.valueOf(UserHeaderInterceptor.userId.get()))
+                .build();
+        memoClient.transactionMemo(transactionWithdrawalMemoRequestDTO);
+
+        // SSAFY 금융 API 거래내역 메모 요청 (입금 메모)
+        TransactionMemoRequestDTO transactionDepositMemoRequestDTO = TransactionMemoRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName(transactionMemo)
                         .userKey(getAdminUserKeyByAccountId(depositAccountId))
@@ -646,7 +672,7 @@ public class AccountService {
                 .transactionUniqueNo(updateDemandDepositAccountTransferResponseDTO.getRec().get(1).getTransactionUniqueNo())
                 .transactionMemo(String.valueOf(UserHeaderInterceptor.userId.get()))
                 .build();
-        memoClient.transactionMemo(transactionMemoRequestDTO);
+        memoClient.transactionMemo(transactionDepositMemoRequestDTO);
 
         return SsafyApiResponseDTOFactory.create(updateDemandDepositAccountTransferResponseDTO.getHeader());
     }
