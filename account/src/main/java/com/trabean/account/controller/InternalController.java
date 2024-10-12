@@ -1,12 +1,12 @@
-package com.trabean.internal.controller;
+package com.trabean.account.controller;
 
+import com.trabean.account.dto.request.internal.*;
 import com.trabean.common.InternalServerSuccessResponseDTO;
-import com.trabean.internal.dto.request.*;
-import com.trabean.internal.dto.response.AccountNoResponseDTO;
-import com.trabean.internal.dto.response.AdminUserKeyResponseDTO;
-import com.trabean.internal.dto.response.TravelAccountMembersResponseDTO;
-import com.trabean.internal.dto.response.UserRoleResponseDTO;
-import com.trabean.internal.service.InternalService;
+import com.trabean.account.dto.response.internal.AccountNoResponseDTO;
+import com.trabean.account.dto.response.internal.AdminUserKeyResponseDTO;
+import com.trabean.account.dto.response.internal.TravelAccountMembersResponseDTO;
+import com.trabean.account.dto.response.internal.UserRoleResponseDTO;
+import com.trabean.account.service.InternalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
