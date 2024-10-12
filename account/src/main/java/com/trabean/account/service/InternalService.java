@@ -1,22 +1,17 @@
-package com.trabean.internal.service;
+package com.trabean.account.service;
 
 import com.trabean.account.domain.Account;
 import com.trabean.account.domain.UserAccountRelation;
-import com.trabean.account.domain.UserAccountRelation.UserRole;
+import com.trabean.account.dto.request.internal.*;
 import com.trabean.account.repository.AccountRepository;
 import com.trabean.account.repository.UserAccountRelationRepository;
 import com.trabean.common.InternalServerSuccessResponseDTO;
-import com.trabean.exception.custom.InvalidPasswordException;
-import com.trabean.exception.custom.UserAccountRelationNotFoundException;
 import com.trabean.external.msa.user.client.UserClient;
-import com.trabean.external.msa.user.dto.request.UserKeyRequestDTO;
-import com.trabean.external.msa.user.dto.response.UserKeyResponseDTO;
-import com.trabean.internal.dto.request.*;
-import com.trabean.internal.dto.response.AccountNoResponseDTO;
-import com.trabean.internal.dto.response.AdminUserKeyResponseDTO;
-import com.trabean.internal.dto.response.TravelAccountMembersResponseDTO;
-import com.trabean.internal.dto.response.TravelAccountMembersResponseDTO.Member;
-import com.trabean.internal.dto.response.UserRoleResponseDTO;
+import com.trabean.account.dto.response.internal.AccountNoResponseDTO;
+import com.trabean.account.dto.response.internal.AdminUserKeyResponseDTO;
+import com.trabean.account.dto.response.internal.TravelAccountMembersResponseDTO;
+import com.trabean.account.dto.response.internal.TravelAccountMembersResponseDTO.Member;
+import com.trabean.account.dto.response.internal.UserRoleResponseDTO;
 import com.trabean.util.ValidateInputDTO;
 import com.trabean.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
@@ -24,11 +19,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.trabean.account.domain.Account.AccountType.DOMESTIC;
-import static com.trabean.account.domain.UserAccountRelation.UserRole.ADMIN;
 import static com.trabean.account.domain.UserAccountRelation.UserRole.NONE_PAYER;
 import static com.trabean.constant.Constant.PEPPER;
 
@@ -36,6 +30,8 @@ import static com.trabean.constant.Constant.PEPPER;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class InternalService {
+
+    private final AccountHelperService accountHelperService;
 
     private final AccountRepository accountRepository;
     private final UserAccountRelationRepository userAccountRelationRepository;
@@ -46,25 +42,19 @@ public class InternalService {
 
     // 통장 계좌번호 조회 서비스 로직
     public AccountNoResponseDTO getAccountNo(AccountNoRequestDTO requestDTO) {
-
-        String accountNo = ValidationUtil.validateAccount(accountRepository.findById(requestDTO.getAccountId()))
-                .getAccountNo();
-
         return AccountNoResponseDTO.builder()
                 .message("통장 계좌번호 조회 성공")
-                .accountNo(accountNo)
+                .accountNo(ValidationUtil.validateAccount(accountRepository.findById(requestDTO.getAccountId()))
+                        .getAccountNo())
                 .build();
     }
 
     // 통장 권한 조회 서비스 로직
     public UserRoleResponseDTO getUserRole(UserRoleRequestDTO requestDTO) {
-
-        UserRole userRole = ValidationUtil.validateUserAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(requestDTO.getUserId(), requestDTO.getAccountId()))
-                .getUserRole();
-
         return UserRoleResponseDTO.builder()
                 .message("통장 권한 조회 성공")
-                .userRole(userRole)
+                .userRole(ValidationUtil.validateUserAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(requestDTO.getUserId(), requestDTO.getAccountId()))
+                        .getUserRole())
                 .build();
     }
 
@@ -93,12 +83,8 @@ public class InternalService {
                         .build())
                 .getPassword();
 
-        if (!passwordEncoder.matches(requestDTO.getPassword() + PEPPER, savedPassword)) {
-            throw InvalidPasswordException.getInstance();
-        }
-
         return InternalServerSuccessResponseDTO.builder()
-                .message("결제 비밀번호 검증 성공")
+                .message(accountHelperService.verifyAccountPassword(requestDTO.getPassword(), savedPassword))
                 .build();
     }
 
@@ -135,23 +121,8 @@ public class InternalService {
 
     // 통장 주인의 userKey 조회 서비스 로직
     public AdminUserKeyResponseDTO getAdminUserKey(AdminUserKeyRequestDTO requestDTO) {
-
-        List<UserAccountRelation> userAccountRelationList = ValidationUtil.validateUserAccountRelationList(userAccountRelationRepository.findAllByAccountId(requestDTO.getAccountId()));
-
-        Long userId = userAccountRelationList.stream()
-                .filter(relation -> relation.getUserRole() == ADMIN)
-                .map(UserAccountRelation::getUserId)
-                .findFirst()
-                .orElseThrow(UserAccountRelationNotFoundException::getInstance);
-
-        // User 서버에 userKey 조회 요청
-        UserKeyRequestDTO userKeyRequestDTO = UserKeyRequestDTO.builder()
-                .userId(userId)
-                .build();
-        UserKeyResponseDTO userKeyResponseDTO = userClient.getUserKey(userKeyRequestDTO);
-
         return AdminUserKeyResponseDTO.builder()
-                .userKey(userKeyResponseDTO.getUserKey())
+                .userKey(accountHelperService.getAdminUserKey(requestDTO.getAccountId()))
                 .build();
     }
 
@@ -163,7 +134,7 @@ public class InternalService {
 
         accountRepository.updatePasswordById(requestDTO.getDomesticAccountId(), hashedPassword);
 
-        for(Long foreignAccountId : requestDTO.getForeignAccountIdList()) {
+        for (Long foreignAccountId : requestDTO.getForeignAccountIdList()) {
             accountRepository.updatePasswordById(foreignAccountId, hashedPassword);
         }
 
@@ -181,17 +152,14 @@ public class InternalService {
                 .accountType(DOMESTIC)
                 .build());
 
-        List<UserAccountRelation> userAccountRelationList = ValidationUtil.validateUserAccountRelationList(userAccountRelationRepository.findAllByAccountId(requestDTO.getAccountId()));
-        List<Member> members = new ArrayList<>();
-
-        // User 서버에 userId로 userName 조회하는 요청을 모든 멤버에 대해 보냄
-        for (UserAccountRelation member : userAccountRelationList) {
-            members.add(Member.builder()
-                    .userId(member.getUserId())
-                    .userName(userClient.getUserName(member.getUserId()).getUserName())
-                    .role(member.getUserRole())
-                    .build());
-        }
+        List<Member> members = ValidationUtil.validateUserAccountRelationList(userAccountRelationRepository.findAllByAccountId(requestDTO.getAccountId()))
+                .stream()
+                .map(member -> Member.builder()
+                        .userId(member.getUserId())
+                        .userName(userClient.getUserName(member.getUserId()).getUserName())
+                        .role(member.getUserRole())
+                        .build())
+                .collect(Collectors.toList());
 
         return TravelAccountMembersResponseDTO.builder()
                 .userId(requestDTO.getUserId())
