@@ -8,10 +8,8 @@ import com.trabean.account.dto.response.account.AccountListResponseDTO;
 import com.trabean.account.dto.response.account.RecentTransactionListResponseDTO;
 import com.trabean.account.repository.AccountRepository;
 import com.trabean.account.repository.UserAccountRelationRepository;
-import com.trabean.exception.custom.UserAccountRelationNotFoundException;
 import com.trabean.external.msa.travel.client.TravelClient;
 import com.trabean.external.msa.user.client.UserClient;
-import com.trabean.external.msa.user.dto.response.UserNameResponseDTO;
 import com.trabean.external.ssafy.api.domestic.client.DomesticClient;
 import com.trabean.external.ssafy.api.domestic.dto.request.InquireDemandDepositAccountListRequestDTO;
 import com.trabean.external.ssafy.api.domestic.dto.request.InquireDemandDepositAccountRequestDTO;
@@ -66,13 +64,10 @@ public class AccountService {
                 .build();
         InquireDemandDepositAccountListResponseDTO inquireDemandDepositAccountListResponseDTO = domesticClient.inquireDemandDepositAccountList(inquireDemandDepositAccountListRequestDTO);
 
-        // 본인이 여행통장 주인이 아닌 통장들에 대한 로직
-        List<UserAccountRelation> userAccountRelationList = ValidationUtil.validateUserAccountRelationList(userAccountRelationRepository.findAllByUserId(UserHeaderInterceptor.userId.get()));
-
         // 한화 여행통장(멤버)
-        List<UserAccountRelation> adminRelationsForDomesticNonAdminAccounts = userAccountRelationList.stream()
-                .filter(relation -> relation.getAccount().getAccountType() == DOMESTIC &&
-                        relation.getUserRole() != ADMIN)
+        List<UserAccountRelation> adminRelationsForDomesticNonAdminAccounts = ValidationUtil.validateUserAccountRelationList(userAccountRelationRepository.findAllByUserId(UserHeaderInterceptor.userId.get()))
+                .stream()
+                .filter(relation -> relation.getAccount().getAccountType() == DOMESTIC && relation.getUserRole() != ADMIN)
                 .map(relation -> userAccountRelationRepository.findByAccount_AccountIdAndUserRole(relation.getAccount().getAccountId(), ADMIN))
                 .flatMap(List::stream)
                 .toList();
@@ -83,7 +78,7 @@ public class AccountService {
             InquireDemandDepositAccountRequestDTO inquireDemandDepositAccountRequestDTO = InquireDemandDepositAccountRequestDTO.builder()
                     .header(RequestHeader.builder()
                             .apiName(inquireDemandDepositAccount)
-                            .userKey(accountHelperService.getAdminUserKeyByAccountId(u.getAccount().getAccountId()))
+                            .userKey(accountHelperService.getAdminUserKey(u.getAccount().getAccountId()))
                             .build())
                     .accountNo(ValidationUtil.validateAccount(accountRepository.findById(u.getAccount().getAccountId())).getAccountNo())
                     .build();
@@ -152,7 +147,7 @@ public class AccountService {
         InquireTransactionHistoryListRequestDTO inquireTransactionHistoryListRequestDTO = InquireTransactionHistoryListRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName(inquireTransactionHistoryList)
-                        .userKey(accountHelperService.getAdminUserKeyByAccountId(accountId))
+                        .userKey(accountHelperService.getAdminUserKey(accountId))
                         .build())
                 .accountNo(accountNo)
                 .startDate(startDate)
@@ -167,27 +162,17 @@ public class AccountService {
 
     // SSAFY 금융 API 계좌 거래 내역 responseDTO -> 최근 이체 목록 조회 responseDTO
     public RecentTransactionListResponseDTO getUniqueLastTransactionList(InquireTransactionHistoryListResponseDTO inquireTransactionHistoryListResponseDTO) {
-        List<RecentTransactionListResponseDTO.Info> accountList = inquireTransactionHistoryListResponseDTO.getRec().getList().stream()
-                .filter(transactionHistory -> transactionHistory.getTransactionAccountNo() != null && !transactionHistory.getTransactionAccountNo().trim().isEmpty())
+        List<RecentTransactionListResponseDTO.Info> accountList = inquireTransactionHistoryListResponseDTO.getRec().getList()
+                .stream()
+                .filter(transactionHistory -> !transactionHistory.getTransactionAccountNo().isEmpty())
                 .map(transactionHistory -> {
                     Account account = ValidationUtil.validateAccount(accountRepository.findByAccountNo(transactionHistory.getTransactionAccountNo()));
-
-                    List<UserAccountRelation> userAccountRelationList = ValidationUtil.validateUserAccountRelationList(userAccountRelationRepository.findAllByAccountId(account.getAccountId()));
-
-                    Long userId = userAccountRelationList.stream()
-                            .filter(relation -> relation.getUserRole() == ADMIN)
-                            .map(UserAccountRelation::getUserId)
-                            .findFirst()
-                            .orElseThrow(UserAccountRelationNotFoundException::getInstance);
-
-                    // User 서버에 userName 반환 요청
-                    UserNameResponseDTO userNameResponseDTO = userClient.getUserName(userId);
 
                     // SSAFY 금융 API 계좌 조회 (단건) 요청
                     InquireDemandDepositAccountRequestDTO inquireDemandDepositAccountRequestDTO = InquireDemandDepositAccountRequestDTO.builder()
                             .header(RequestHeader.builder()
                                     .apiName(inquireDemandDepositAccount)
-                                    .userKey(accountHelperService.getAdminUserKeyByAccountId(account.getAccountId()))
+                                    .userKey(accountHelperService.getAdminUserKey(account.getAccountId()))
                                     .build())
                             .accountNo(account.getAccountNo())
                             .build();
@@ -196,7 +181,7 @@ public class AccountService {
                     return RecentTransactionListResponseDTO.Info.builder()
                             .accountId(account.getAccountId())
                             .accountNo(transactionHistory.getTransactionAccountNo())
-                            .adminName(userNameResponseDTO.getUserName())
+                            .adminName(accountHelperService.getAccountName(account.getAccountId()))
                             .bankName(inquireDemandDepositAccountResponseDTO.getRec().getBankName())
                             .build();
                 })

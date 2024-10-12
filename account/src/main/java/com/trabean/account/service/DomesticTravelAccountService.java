@@ -2,7 +2,6 @@ package com.trabean.account.service;
 
 import com.trabean.account.domain.Account;
 import com.trabean.account.domain.UserAccountRelation;
-import com.trabean.account.domain.UserAccountRelation.UserRole;
 import com.trabean.account.dto.request.domesticTravelAccount.CreateDomesticTravelAccountRequestDTO;
 import com.trabean.account.dto.request.domesticTravelAccount.TransferDomesticTravelAccountRequestDTO;
 import com.trabean.account.dto.request.common.VerifyAccountPasswordRequestDTO;
@@ -12,7 +11,6 @@ import com.trabean.account.repository.AccountRepository;
 import com.trabean.account.repository.UserAccountRelationRepository;
 import com.trabean.common.InternalServerSuccessResponseDTO;
 import com.trabean.exception.custom.ExternalServerErrorException;
-import com.trabean.exception.custom.InvalidPasswordException;
 import com.trabean.external.msa.notification.client.NotificationClient;
 import com.trabean.external.msa.notification.dto.request.NotificationRequestDTO;
 import com.trabean.external.msa.travel.client.TravelClient;
@@ -36,7 +34,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -144,7 +141,7 @@ public class DomesticTravelAccountService {
         InquireDemandDepositAccountRequestDTO inquireDemandDepositAccountRequestDTO = InquireDemandDepositAccountRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName(inquireDemandDepositAccount)
-                        .userKey(accountHelperService.getAdminUserKeyByAccountId(accountId))
+                        .userKey(accountHelperService.getAdminUserKey(accountId))
                         .build())
                 .accountNo(accountNo)
                 .build();
@@ -154,7 +151,7 @@ public class DomesticTravelAccountService {
         InquireTransactionHistoryListRequestDTO inquireTransactionHistoryListRequestDTO = InquireTransactionHistoryListRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName(inquireTransactionHistoryList)
-                        .userKey(accountHelperService.getAdminUserKeyByAccountId(accountId))
+                        .userKey(accountHelperService.getAdminUserKey(accountId))
                         .build())
                 .accountNo(accountNo)
                 .startDate(startDate)
@@ -178,15 +175,7 @@ public class DomesticTravelAccountService {
     // SSAFY 금융 API 계좌 거래 내역 responseDTO -> 한화 여행 통장 거래 내역 리스트
     private List<DomesticTravelAccountDetailResponseDTO.Transaction> getDomesticTravelAccountTransactionList(InquireTransactionHistoryListResponseDTO inquireTransactionHistoryListResponseDTO, String selectedUserId) {
         return inquireTransactionHistoryListResponseDTO.getRec().getList().stream()
-                .filter(transaction -> {
-                    String transactionMemo = transaction.getTransactionMemo();
-
-                    if ("-1".equals(selectedUserId)) {
-                        return true;
-                    }
-
-                    return selectedUserId.equals(transactionMemo);
-                })
+                .filter(transaction -> "-1".equals(selectedUserId) || selectedUserId.equals(transaction.getTransactionMemo()))
                 .map(transaction -> DomesticTravelAccountDetailResponseDTO.Transaction.builder()
                         .transactionType(transaction.getTransactionType())
                         .transactionSummary(transaction.getTransactionSummary())
@@ -213,7 +202,7 @@ public class DomesticTravelAccountService {
         InquireDemandDepositAccountRequestDTO inquireDemandDepositAccountRequestDTO = InquireDemandDepositAccountRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName(inquireDemandDepositAccount)
-                        .userKey(accountHelperService.getAdminUserKeyByAccountId(accountId))
+                        .userKey(accountHelperService.getAdminUserKey(accountId))
                         .build())
                 .accountNo(accountNo)
                 .build();
@@ -238,7 +227,7 @@ public class DomesticTravelAccountService {
         InquireDemandDepositAccountBalanceRequestDTO inquireDemandDepositAccountBalanceRequestDTO = InquireDemandDepositAccountBalanceRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName(inquireDemandDepositAccountBalance)
-                        .userKey(accountHelperService.getAdminUserKeyByAccountId(accountId))
+                        .userKey(accountHelperService.getAdminUserKey(accountId))
                         .build())
                 .accountNo(accountNo)
                 .build();
@@ -266,7 +255,7 @@ public class DomesticTravelAccountService {
         UpdateDemandDepositAccountTransferRequestDTO updateDemandDepositAccountTransferRequestDTO = UpdateDemandDepositAccountTransferRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName(updateDemandDepositAccountTransfer)
-                        .userKey(accountHelperService.getAdminUserKeyByAccountId(accountId))
+                        .userKey(accountHelperService.getAdminUserKey(accountId))
                         .build())
                 .depositAccountNo(requestDTO.getDepositAccountNo())
                 .depositTransactionSummary(depositTransactionSummary)
@@ -283,7 +272,7 @@ public class DomesticTravelAccountService {
         TransactionMemoRequestDTO transactionWithdrawalMemoRequestDTO = TransactionMemoRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName(transactionMemo)
-                        .userKey(accountHelperService.getAdminUserKeyByAccountId(withdrawalAccountId))
+                        .userKey(accountHelperService.getAdminUserKey(withdrawalAccountId))
                         .build())
                 .accountNo(requestDTO.getWithdrawalAccountNo())
                 .transactionUniqueNo(updateDemandDepositAccountTransferResponseDTO.getRec().get(0).getTransactionUniqueNo())
@@ -295,7 +284,7 @@ public class DomesticTravelAccountService {
         TransactionMemoRequestDTO transactionDepositMemoRequestDTO = TransactionMemoRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName(transactionMemo)
-                        .userKey(accountHelperService.getAdminUserKeyByAccountId(depositAccountId))
+                        .userKey(accountHelperService.getAdminUserKey(depositAccountId))
                         .build())
                 .accountNo(requestDTO.getDepositAccountNo())
                 .transactionUniqueNo(updateDemandDepositAccountTransferResponseDTO.getRec().get(1).getTransactionUniqueNo())
@@ -337,12 +326,8 @@ public class DomesticTravelAccountService {
                         .build())
                 .getPassword();
 
-        if (!passwordEncoder.matches(requestDTO.getPassword() + PEPPER, savedPassword)) {
-            throw InvalidPasswordException.getInstance();
-        }
-
         return InternalServerSuccessResponseDTO.builder()
-                .message("통장 비밀번호 검증 성공")
+                .message(accountHelperService.verifyAccountPassword(requestDTO.getPassword(), savedPassword))
                 .build();
     }
 
@@ -355,31 +340,27 @@ public class DomesticTravelAccountService {
                 .accountType(DOMESTIC)
                 .build());
 
-        List<UserAccountRelation> userAccountRelationList = ValidationUtil.validateUserAccountRelationList(userAccountRelationRepository.findAllByAccountId(accountId));
-        List<Member> members = new ArrayList<>();
+        List<Member> members = ValidationUtil.validateUserAccountRelationList(userAccountRelationRepository.findAllByAccountId(accountId))
+                .stream()
+                .map(member -> Member.builder()
+                        .userId(member.getUserId())
+                        .userName(userClient.getUserName(member.getUserId()).getUserName())
+                        .role(member.getUserRole())
+                        .build())
+                .collect(Collectors.toList());
 
-        // User 서버에 userId로 userName 조회하는 요청을 모든 멤버에 대해 보냄
-        for (UserAccountRelation member : userAccountRelationList) {
-            members.add(Member.builder()
-                    .userId(member.getUserId())
-                    .userName(userClient.getUserName(member.getUserId()).getUserName())
-                    .role(member.getUserRole())
-                    .build());
-        }
-
+        // 응답 DTO 생성
         return DomesticTravelAccountMemberListResponseDTO.builder()
                 .userId(UserHeaderInterceptor.userId.get())
                 .memberCount((long) members.size())
-                .members(members).build();
+                .members(members)
+                .build();
     }
 
     // 통장 권한 조회 서비스 로직
     public DomesticTravelAccountUserRoleResponseDTO getDomesticTravelAccountUserRole(Long accountId) {
-
-        UserRole userRole = ValidationUtil.validateUserAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(UserHeaderInterceptor.userId.get(), accountId)).getUserRole();
-
         return DomesticTravelAccountUserRoleResponseDTO.builder()
-                .userRole(userRole)
+                .userRole(ValidationUtil.validateUserAccountRelation(userAccountRelationRepository.findByUserIdAndAccountId(UserHeaderInterceptor.userId.get(), accountId)).getUserRole())
                 .build();
     }
 

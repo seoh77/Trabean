@@ -10,7 +10,6 @@ import com.trabean.account.dto.response.personalAccount.PersonalAccountDetailRes
 import com.trabean.account.repository.AccountRepository;
 import com.trabean.account.repository.UserAccountRelationRepository;
 import com.trabean.common.InternalServerSuccessResponseDTO;
-import com.trabean.exception.custom.InvalidPasswordException;
 import com.trabean.external.msa.notification.client.NotificationClient;
 import com.trabean.external.msa.notification.dto.request.NotificationRequestDTO;
 import com.trabean.external.msa.user.client.UserClient;
@@ -232,7 +231,7 @@ public class PersonalAccountService {
         TransactionMemoRequestDTO transactionWithdrawalMemoRequestDTO = TransactionMemoRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName(transactionMemo)
-                        .userKey(accountHelperService.getAdminUserKeyByAccountId(withdrawalAccountId))
+                        .userKey(accountHelperService.getAdminUserKey(withdrawalAccountId))
                         .build())
                 .accountNo(requestDTO.getWithdrawalAccountNo())
                 .transactionUniqueNo(updateDemandDepositAccountTransferResponseDTO.getRec().get(0).getTransactionUniqueNo())
@@ -244,7 +243,7 @@ public class PersonalAccountService {
         TransactionMemoRequestDTO transactionDepositMemoRequestDTO = TransactionMemoRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName(transactionMemo)
-                        .userKey(accountHelperService.getAdminUserKeyByAccountId(depositAccountId))
+                        .userKey(accountHelperService.getAdminUserKey(depositAccountId))
                         .build())
                 .accountNo(requestDTO.getDepositAccountNo())
                 .transactionUniqueNo(updateDemandDepositAccountTransferResponseDTO.getRec().get(1).getTransactionUniqueNo())
@@ -287,12 +286,8 @@ public class PersonalAccountService {
                         .build())
                 .getPassword();
 
-        if (!passwordEncoder.matches(requestDTO.getPassword() + PEPPER, savedPassword)) {
-            throw InvalidPasswordException.getInstance();
-        }
-
         return InternalServerSuccessResponseDTO.builder()
-                .message("통장 비밀번호 검증 성공")
+                .message(accountHelperService.verifyAccountPassword(requestDTO.getPassword(), savedPassword))
                 .build();
     }
 

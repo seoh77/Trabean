@@ -156,7 +156,7 @@ public class ForeignTravelAccountService {
         InquireForeignCurrencyDemandDepositAccountRequestDTO inquireForeignCurrencyDemandDepositAccountRequestDTO = InquireForeignCurrencyDemandDepositAccountRequestDTO.builder()
                 .header(RequestHeader.builder()
                         .apiName(inquireForeignCurrencyDemandDepositAccount)
-                        .userKey(accountHelperService.getAdminUserKeyByAccountId(accountId))
+                        .userKey(accountHelperService.getAdminUserKey(accountId))
                         .build())
                 .accountNo(accountNo)
                 .build();
@@ -179,7 +179,6 @@ public class ForeignTravelAccountService {
 
         // Travel 서버에 외화 여행통장 ID로 한화 여행통장 ID 반환 요청
         Long domesticAccountId = travelClient.getParentAccountId(foreignAccountId).getParentAccountId();
-
         String domesticAccountNo = ValidationUtil.validateAccount(accountRepository.findById(domesticAccountId)).getAccountNo();
 
         return TravelAccountCoupleResponseDTO.builder()
