@@ -202,11 +202,11 @@ public class PaymentsHistoryService {
         );
 
         // 응답 DTO 생성 및 반환
-        return new PaymentsHistoryCategoryResponse(
-                MerchantCategory.valueOf(categoryName),
-                categoryTotalAmount,
-                payments,
-                List.of(pagination)
-        );
+        return PaymentsHistoryCategoryResponse.builder()
+                .categoryName(MerchantCategory.valueOf(categoryName))
+                .categoryTotalAmount(categoryTotalAmount)
+                .payments(payments)
+                .pagination(List.of(pagination))
+                .build();
     }
 }
