@@ -71,6 +71,7 @@ public class PaymentsService {
     public PaymentResponse processForeignPayment(Long accountId, RequestPaymentRequest request) {
         // 외화 계좌 조회
         Long paymentAccountId = paymentsAccountService.getFORAccount(request.getMerchantId(), accountId);
+        log.info("외화계좌조회@@@@@@@@" + paymentAccountId);
         if (paymentAccountId == null) {
             log.info(request.getPayId() + "결제 id 찾았나???@@@@@@@@");
             Payments payment = paymentsRepository.findById(request.getPayId())

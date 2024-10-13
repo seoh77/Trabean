@@ -40,10 +40,6 @@ public class PaymentsAccountService {
     private final UserClient userClient;
     private final PaymentsRepository paymentsRepository;
 
-    // 유저 키 임시 설정
-//    @Value("9e10349e-91e9-474d-afb4-564b24178d9f")
-//    private String userKey;
-
     // 계좌 번호 조회
     public String getAccountNumber(Long accountId) throws PaymentsException {
         String requestBody = String.format("{\"accountId\":\"%s\"}", accountId);
