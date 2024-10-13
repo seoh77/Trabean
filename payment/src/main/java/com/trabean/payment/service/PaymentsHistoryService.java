@@ -82,16 +82,16 @@ public class PaymentsHistoryService {
     // DTO로 변환
     private PaymentsHistoryResponse.Data toPaymentsHistoryData(Payments payment) {
 
-        return new PaymentsHistoryResponse.Data(
-                payment.getPayId(),
-                payment.getMerchant().getExchangeCurrency(),
-                payment.getMerchant().getName(),
-                payment.getPaymentDate().toString(),
-                payment.getKrwAmount(),
-                payment.getForeignAmount(),
-                paymentsUserService.getUserName(payment.getUserId()),
-                payment.getMerchant().getCategory() // 카테고리 필드 예시
-        );
+        return PaymentsHistoryResponse.Data.builder()
+                .payId(payment.getPayId())
+                .currency(payment.getMerchant().getExchangeCurrency())
+                .merchantName(payment.getMerchant().getName())
+                .paymentDate(payment.getPaymentDate().toString())
+                .krwAmount(payment.getKrwAmount())
+                .foreignAmount(payment.getForeignAmount())
+                .userName(paymentsUserService.getUserName(payment.getUserId()))
+                .category(payment.getMerchant().getCategory()) // 카테고리 필드
+                .build();
     }
 
     public ChartResponse getChart(Long travelAccountId, LocalDate startdate, LocalDate enddate) {
@@ -133,7 +133,7 @@ public class PaymentsHistoryService {
                 .collect(Collectors.toList());
 
         // 응답 DTO 생성
-        return new ChartResponse(totalAmount, categoryList);
+        return ChartResponse.builder().totalAmount(totalAmount).category(categoryList).build();
     }
 
     private double calculatePercent(Long categoryAmount, Long totalAmount) {
@@ -143,12 +143,7 @@ public class PaymentsHistoryService {
     public PaymentsHistoryCategoryResponse getPaymentsByCategoryName(Long accountId, String categoryName,
                                                                      LocalDate startDate, LocalDate endDate, int page) {
         if (accountId == null) {
-            return new PaymentsHistoryCategoryResponse(
-                    null,
-                    null,
-                    null,
-                    null
-            );
+            return new PaymentsHistoryCategoryResponse();
         }
 
         // 통장 멤버인지 확인
@@ -188,15 +183,16 @@ public class PaymentsHistoryService {
 
         // 결제 내역 리스트로 변환
         List<PaymentsHistoryCategoryResponse.Payments> payments = paymentsPage.getContent().stream()
-                .map(payment -> new PaymentsHistoryCategoryResponse.Payments(
-                        payment.getPayId(),
-                        payment.getMerchant().getExchangeCurrency(),
-                        payment.getMerchant().getName(),
-                        payment.getPaymentDate().toString(),
-                        payment.getKrwAmount(),
-                        payment.getForeignAmount(),
-                        payment.getUserId()
-                )).collect(Collectors.toList());
+                .map(payment -> PaymentsHistoryCategoryResponse.Payments.builder()
+                        .payId(payment.getPayId())
+                        .currency(payment.getMerchant().getExchangeCurrency())
+                        .merchantName(payment.getMerchant().getName())
+                        .paymentDate(payment.getPaymentDate().toString())
+                        .krwAmount(payment.getKrwAmount())
+                        .foreignAmount(payment.getForeignAmount())
+                        .userId(payment.getUserId())
+                        .build())
+                .collect(Collectors.toList());
 
         // 페이지 정보 생성
         PaymentsHistoryCategoryResponse.Pagination pagination = new PaymentsHistoryCategoryResponse.Pagination(
