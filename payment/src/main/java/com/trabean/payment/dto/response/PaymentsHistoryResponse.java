@@ -4,9 +4,11 @@ import com.trabean.payment.enums.MerchantCategory;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class PaymentsHistoryResponse {
     private Long paymentAccountId;
     private List<Data> payments;
@@ -27,6 +29,7 @@ public class PaymentsHistoryResponse {
 
     @Getter
     @AllArgsConstructor
+    @NoArgsConstructor
     public static class Pagination {
         private Long currentPage;
         private Long totalPages;

@@ -35,16 +35,9 @@ public class PaymentsHistoryService {
     public PaymentsHistoryResponse getPaymentHistory(Long travelAccountId, LocalDate startdate, LocalDate enddate,
                                                      int page) {
         if (travelAccountId == null) {
-            return new PaymentsHistoryResponse(
-                    null,
-                    null,
-                    new PaymentsHistoryResponse.Pagination(
-                            1L,
-                            1L,
-                            1L
-                    )
-            );
+            return new PaymentsHistoryResponse();
         }
+
         // 통장 멤버인지 확인
         paymentsAccountService.validateTravelAccountMembers(travelAccountId);
         log.info("통장멤버@@@@@@@@@@@@@@@@@@@@@@@@@@");
