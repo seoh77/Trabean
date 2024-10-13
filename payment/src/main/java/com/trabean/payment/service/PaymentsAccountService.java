@@ -17,7 +17,6 @@ import com.trabean.payment.interceptor.UserHeaderInterceptor;
 import com.trabean.payment.repository.MerchantsRepository;
 import com.trabean.payment.repository.PaymentsRepository;
 import com.trabean.payment.util.ApiName;
-import feign.FeignException;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
 
 @Service
 @RequiredArgsConstructor
@@ -44,19 +42,15 @@ public class PaymentsAccountService {
     public String getAccountNumber(Long accountId) throws PaymentsException {
         String requestBody = String.format("{\"accountId\":\"%s\"}", accountId);
 
-        try {
-            // API 호출
-            AccountNoResponse response = accountClient.getAccountNumber(requestBody);
+        // API 호출
+        AccountNoResponse response = accountClient.getAccountNumber(requestBody);
 
-            if (response.getAccountNo() == null) {
-                throw new PaymentsException("해당 계좌를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
-            }
-
-            return response.getAccountNo();
-
-        } catch (FeignException e) {
-            throw new PaymentsException("계좌 번호 조회 외부 API 호출 실패: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        if (response.getAccountNo() == null) {
+            throw new PaymentsException("해당 계좌를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
         }
+
+        return response.getAccountNo();
+
     }
 
     // 한화 잔액 조회 후 검증
@@ -73,34 +67,29 @@ public class PaymentsAccountService {
                 accountNo
         );
 
-        try {
-            BalanceResponse response = demandDepositClient.getKRWBalance(balanceRequest);
+        BalanceResponse response = demandDepositClient.getKRWBalance(balanceRequest);
 
-            Payments payment = paymentsRepository.findById(requestPaymentRequest.getPayId()).orElseThrow(() ->
-                    new PaymentsException("결제 정보를 확인할 수 없습니다.", HttpStatus.NOT_FOUND));
+        Payments payment = paymentsRepository.findById(requestPaymentRequest.getPayId()).orElseThrow(() ->
+                new PaymentsException("결제 정보를 확인할 수 없습니다.", HttpStatus.NOT_FOUND));
 
-            // 결과 로그 남기기
-            if (response != null && response.getRec() != null) {
-                logger.info("한화 계좌 잔액 조회: {}", response.getRec().getAccountBalance());
+        // 결과 로그 남기기
+        if (response != null && response.getRec() != null) {
+            logger.info("한화 계좌 잔액 조회: {}", response.getRec().getAccountBalance());
 
-                // 잔액 부족
-                if (response.getRec().getAccountBalance() < payment.getKrwAmount()) {
-                    logger.info("한화 계좌 잔액 부족");
-                    throw new PaymentsException("계좌 잔액이 부족합니다." + response.getRec().getAccountBalance(),
-                            HttpStatus.PAYMENT_REQUIRED); // 402
-                } else {
-                    logger.info("한화 계좌 출금 가능");
-                }
+            // 잔액 부족
+            if (response.getRec().getAccountBalance() < payment.getKrwAmount()) {
+                logger.info("한화 계좌 잔액 부족");
+                throw new PaymentsException("계좌 잔액이 부족합니다." + response.getRec().getAccountBalance(),
+                        HttpStatus.PAYMENT_REQUIRED); // 402
             } else {
-                logger.warn("한화 계좌 잔액 조회 실패");
-                throw new PaymentsException("응답값이 잘못되었습니다. 잔액이 null 값 입니다.",
-                        HttpStatus.NOT_FOUND); // 404
+                logger.info("한화 계좌 출금 가능");
             }
-        } catch (RestClientException e) {
-            logger.error("한화 계좌 잔액 조회 API 호출 중 오류 발생: {}", e.getMessage());
-            throw new PaymentsException("한화 계좌 잔액 조회 API 호출 중 오류 발생" + e.getMessage(),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
+        } else {
+            logger.warn("한화 계좌 잔액 조회 실패");
+            throw new PaymentsException("응답값이 잘못되었습니다. 잔액이 null 값 입니다.",
+                    HttpStatus.NOT_FOUND); // 404
         }
+
     }
 
     // 외화 계좌 잔액 조회 후 검증
@@ -117,38 +106,34 @@ public class PaymentsAccountService {
                 accountNo
         );
 
-        try {
-            BalanceResponse response = demandDepositClient.getFORBalance(balanceRequest);
+        BalanceResponse response = demandDepositClient.getFORBalance(balanceRequest);
 
-            // 결과 로그 남기기
-            if (response != null && response.getRec() != null) {
-                logger.info("외화 계좌 잔액 조회: {}", response.getRec().getAccountBalance());
+        // 결과 로그 남기기
+        if (response != null && response.getRec() != null) {
+            logger.info("외화 계좌 잔액 조회: {}", response.getRec().getAccountBalance());
 
-                // 잔액 부족
-                if (response.getRec().getAccountBalance() < requestPaymentRequest.getForeignAmount()) {
-                    logger.info("외화 계좌 잔액 부족");
+            // 잔액 부족
+            if (response.getRec().getAccountBalance() < requestPaymentRequest.getForeignAmount()) {
+                logger.info("외화 계좌 잔액 부족");
 
-                    // 한국 계좌 잔액도 검증해봄
-                    validateKrwAmount(krwAccountId, requestPaymentRequest);
+                // 한국 계좌 잔액도 검증해봄
+                validateKrwAmount(krwAccountId, requestPaymentRequest);
 
-                    Payments payment = paymentsRepository.findById(requestPaymentRequest.getPayId()).orElseThrow(() ->
-                            new PaymentsException("결제 정보를 확인할 수 없습니다.", HttpStatus.NOT_FOUND));
+                Payments payment = paymentsRepository.findById(requestPaymentRequest.getPayId()).orElseThrow(() ->
+                        new PaymentsException("결제 정보를 확인할 수 없습니다.", HttpStatus.NOT_FOUND));
 
-                    throw new PaymentsException(
-                            "FOREIGN_ACCOUNT_BALANCE_ERROR", payment.getKrwAmount(),
-                            HttpStatus.PAYMENT_REQUIRED); // 402 한화로 결제할 경우 결제 금액 보여줌.
-                } else {
-                    logger.info("외화 계좌 출금 가능");
-                }
+                throw new PaymentsException(
+                        "FOREIGN_ACCOUNT_BALANCE_ERROR", payment.getKrwAmount(),
+                        HttpStatus.PAYMENT_REQUIRED); // 402 한화로 결제할 경우 결제 금액 보여줌.
             } else {
-                logger.warn("외화 계좌 잔액 조회 실패");
-                throw new PaymentsException("응답값이 잘못되었습니다. 잔액이 null 값 입니다.",
-                        HttpStatus.NOT_FOUND); // 404
+                logger.info("외화 계좌 출금 가능");
             }
-        } catch (RestClientException e) {
-            logger.error("계좌 잔액 조회 API 호출 중 오류 발생: {}", e.getMessage());
-            throw new PaymentsException("계좌 잔액 조회 API 호출 중 오류 발생" + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } else {
+            logger.warn("외화 계좌 잔액 조회 실패");
+            throw new PaymentsException("응답값이 잘못되었습니다. 잔액이 null 값 입니다.",
+                    HttpStatus.NOT_FOUND); // 404
         }
+
     }
 
     public Long getFORAccount(Long merchantId, Long accountId) {
@@ -190,17 +175,11 @@ public class PaymentsAccountService {
     }
 
     public TravelAccountMemberListResponse validateTravelAccountMembers(Long accountId) {
-        try {
-            String requestBody = String.format("{\"accountId\":\"%d\", \"userId\":\"%d\"}", accountId,
-                    UserHeaderInterceptor.userId.get());
-            TravelAccountMemberListResponse response = accountClient.getTravelAccountMembers(requestBody);
-            log.info(response.toString() + "민우 API 호출한거 (여행통장 멤버인지 조회)");
-            return response;
-        } catch (FeignException error) {
-            if (error.status() == 404) {
-                throw new PaymentsException("권한이 거부되었습니다.", HttpStatus.UNAUTHORIZED);
-            }
-            throw new PaymentsException("API 호출 에러", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+
+        String requestBody = String.format("{\"accountId\":\"%d\", \"userId\":\"%d\"}", accountId,
+                UserHeaderInterceptor.userId.get());
+        TravelAccountMemberListResponse response = accountClient.getTravelAccountMembers(requestBody);
+        log.info(response.toString() + "민우 API 호출한거 (여행통장 멤버인지 조회)");
+        return response;
     }
 }

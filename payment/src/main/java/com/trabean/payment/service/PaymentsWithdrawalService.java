@@ -9,7 +9,6 @@ import com.trabean.payment.entity.Merchants;
 import com.trabean.payment.exception.PaymentsException;
 import com.trabean.payment.repository.MerchantsRepository;
 import com.trabean.payment.util.ApiName;
-import feign.FeignException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -28,10 +27,7 @@ public class PaymentsWithdrawalService {
     private static final Logger logger = LoggerFactory.getLogger(PaymentsWithdrawalService.class);
     private final MerchantsRepository merchantsRepository;
 
-    //    // 유저 키 임시 설정
-//    @Value("9e10349e-91e9-474d-afb4-564b24178d9f")
-//    private String userKey;
-//
+
     public void withdrawalToPay(RequestPaymentRequest request, Long accountId, String apiType) {
         // 유저 키 조회
         String userKey = paymentAccountService.getAccountAdmin(accountId);
@@ -50,26 +46,20 @@ public class PaymentsWithdrawalService {
                 accountNo, price, merchant.getName()
         );
 
-        try {
-            WithdrawalResponse response;
-            // API 호출
-            if (apiType.equals(ApiName.KRW_WITHDRAW)) {
-                response = demandDepositClient.withdrawKRW(withdrawalRequest);
-            } else { // 외화일 때
-                response = demandDepositClient.withdrawFOR(withdrawalRequest);
-            }
-
-            // 결과 로그 남기기
-            if (response != null && response.getRec() != null) {
-                logger.info("출금 성공: {}", response.getRec().getTransactionDate());
-            } else {
-                logger.warn("출금 return 값이 null 입니다.");
-            }
-
-        } catch (FeignException e) {
-            logger.error("출금 API 호출 중 오류 발생: {}", e.getMessage());
-            throw new PaymentsException("출금 API 호출 중 오류 발생" + e.getMessage(),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
+        WithdrawalResponse response;
+        // API 호출
+        if (apiType.equals(ApiName.KRW_WITHDRAW)) {
+            response = demandDepositClient.withdrawKRW(withdrawalRequest);
+        } else { // 외화일 때
+            response = demandDepositClient.withdrawFOR(withdrawalRequest);
         }
+
+        // 결과 로그 남기기
+        if (response != null && response.getRec() != null) {
+            logger.info("출금 성공: {}", response.getRec().getTransactionDate());
+        } else {
+            logger.warn("출금 return 값이 null 입니다.");
+        }
+
     }
 }
