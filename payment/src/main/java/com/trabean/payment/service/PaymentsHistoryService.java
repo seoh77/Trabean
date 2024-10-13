@@ -35,16 +35,9 @@ public class PaymentsHistoryService {
     public PaymentsHistoryResponse getPaymentHistory(Long travelAccountId, LocalDate startdate, LocalDate enddate,
                                                      int page) {
         if (travelAccountId == null) {
-            return new PaymentsHistoryResponse(
-                    null,
-                    null,
-                    new PaymentsHistoryResponse.Pagination(
-                            1L,
-                            1L,
-                            1L
-                    )
-            );
+            return new PaymentsHistoryResponse();
         }
+
         // 통장 멤버인지 확인
         paymentsAccountService.validateTravelAccountMembers(travelAccountId);
         log.info("통장멤버@@@@@@@@@@@@@@@@@@@@@@@@@@");
@@ -73,30 +66,32 @@ public class PaymentsHistoryService {
                 .collect(Collectors.toList());
 
         // 응답 생성
-        return new PaymentsHistoryResponse(
-                travelAccountId,
-                payments,
-                new PaymentsHistoryResponse.Pagination(
-                        (long) paymentsPage.getNumber() + 1,
-                        (long) paymentsPage.getTotalPages(),
-                        paymentsPage.getTotalElements()
+        return PaymentsHistoryResponse.builder()
+                .paymentAccountId(travelAccountId)
+                .payments(payments)
+                .pagination(
+                        PaymentsHistoryResponse.Pagination.builder()
+                                .currentPage((long) paymentsPage.getNumber() + 1)
+                                .totalPages((long) paymentsPage.getTotalPages())
+                                .totalResults(paymentsPage.getTotalElements())
+                                .build()
                 )
-        );
+                .build();
     }
 
     // DTO로 변환
     private PaymentsHistoryResponse.Data toPaymentsHistoryData(Payments payment) {
 
-        return new PaymentsHistoryResponse.Data(
-                payment.getPayId(),
-                payment.getMerchant().getExchangeCurrency(),
-                payment.getMerchant().getName(),
-                payment.getPaymentDate().toString(),
-                payment.getKrwAmount(),
-                payment.getForeignAmount(),
-                paymentsUserService.getUserName(payment.getUserId()),
-                payment.getMerchant().getCategory() // 카테고리 필드 예시
-        );
+        return PaymentsHistoryResponse.Data.builder()
+                .payId(payment.getPayId())
+                .currency(payment.getMerchant().getExchangeCurrency())
+                .merchantName(payment.getMerchant().getName())
+                .paymentDate(payment.getPaymentDate().toString())
+                .krwAmount(payment.getKrwAmount())
+                .foreignAmount(payment.getForeignAmount())
+                .userName(paymentsUserService.getUserName(payment.getUserId()))
+                .category(payment.getMerchant().getCategory()) // 카테고리 필드
+                .build();
     }
 
     public ChartResponse getChart(Long travelAccountId, LocalDate startdate, LocalDate enddate) {
@@ -138,7 +133,7 @@ public class PaymentsHistoryService {
                 .collect(Collectors.toList());
 
         // 응답 DTO 생성
-        return new ChartResponse(totalAmount, categoryList);
+        return ChartResponse.builder().totalAmount(totalAmount).category(categoryList).build();
     }
 
     private double calculatePercent(Long categoryAmount, Long totalAmount) {
@@ -148,12 +143,7 @@ public class PaymentsHistoryService {
     public PaymentsHistoryCategoryResponse getPaymentsByCategoryName(Long accountId, String categoryName,
                                                                      LocalDate startDate, LocalDate endDate, int page) {
         if (accountId == null) {
-            return new PaymentsHistoryCategoryResponse(
-                    null,
-                    null,
-                    null,
-                    null
-            );
+            return new PaymentsHistoryCategoryResponse();
         }
 
         // 통장 멤버인지 확인
@@ -193,15 +183,16 @@ public class PaymentsHistoryService {
 
         // 결제 내역 리스트로 변환
         List<PaymentsHistoryCategoryResponse.Payments> payments = paymentsPage.getContent().stream()
-                .map(payment -> new PaymentsHistoryCategoryResponse.Payments(
-                        payment.getPayId(),
-                        payment.getMerchant().getExchangeCurrency(),
-                        payment.getMerchant().getName(),
-                        payment.getPaymentDate().toString(),
-                        payment.getKrwAmount(),
-                        payment.getForeignAmount(),
-                        payment.getUserId()
-                )).collect(Collectors.toList());
+                .map(payment -> PaymentsHistoryCategoryResponse.Payments.builder()
+                        .payId(payment.getPayId())
+                        .currency(payment.getMerchant().getExchangeCurrency())
+                        .merchantName(payment.getMerchant().getName())
+                        .paymentDate(payment.getPaymentDate().toString())
+                        .krwAmount(payment.getKrwAmount())
+                        .foreignAmount(payment.getForeignAmount())
+                        .userId(payment.getUserId())
+                        .build())
+                .collect(Collectors.toList());
 
         // 페이지 정보 생성
         PaymentsHistoryCategoryResponse.Pagination pagination = new PaymentsHistoryCategoryResponse.Pagination(
@@ -211,11 +202,11 @@ public class PaymentsHistoryService {
         );
 
         // 응답 DTO 생성 및 반환
-        return new PaymentsHistoryCategoryResponse(
-                MerchantCategory.valueOf(categoryName),
-                categoryTotalAmount,
-                payments,
-                List.of(pagination)
-        );
+        return PaymentsHistoryCategoryResponse.builder()
+                .categoryName(MerchantCategory.valueOf(categoryName))
+                .categoryTotalAmount(categoryTotalAmount)
+                .payments(payments)
+                .pagination(List.of(pagination))
+                .build();
     }
 }

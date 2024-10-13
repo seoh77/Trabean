@@ -3,10 +3,14 @@ package com.trabean.payment.dto.response;
 import com.trabean.payment.enums.MerchantCategory;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class PaymentsHistoryCategoryResponse {
     private MerchantCategory categoryName;
     private Long categoryTotalAmount;
@@ -15,6 +19,7 @@ public class PaymentsHistoryCategoryResponse {
 
     @Getter
     @AllArgsConstructor
+    @Builder
     public static class Payments {
         private Long payId;
         private String currency;
@@ -26,6 +31,7 @@ public class PaymentsHistoryCategoryResponse {
     }
 
     @Getter
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class Pagination {
         private Long currentPage;

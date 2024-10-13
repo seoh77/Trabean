@@ -71,6 +71,7 @@ public class PaymentsService {
     public PaymentResponse processForeignPayment(Long accountId, RequestPaymentRequest request) {
         // 외화 계좌 조회
         Long paymentAccountId = paymentsAccountService.getFORAccount(request.getMerchantId(), accountId);
+        log.info("외화계좌조회@@@@@@@@" + paymentAccountId);
         if (paymentAccountId == null) {
             log.info(request.getPayId() + "결제 id 찾았나???@@@@@@@@");
             Payments payment = paymentsRepository.findById(request.getPayId())
@@ -80,18 +81,18 @@ public class PaymentsService {
         }
 
         // 외화 결제 로직 처리
-        return executePayment(accountId, paymentAccountId, request, ApiName.FOREIGN_BALANCE, ApiName.FOREIGN_WITHDRAW);
+        return executePayment(paymentAccountId, request, ApiName.FOREIGN_WITHDRAW);
     }
 
     // 한화 결제 처리
     public PaymentResponse processKrwPayment(Long accountId, RequestPaymentRequest request) {
         // 한화 결제 로직 처리
-        return executePayment(accountId, accountId, request, ApiName.KRW_BALANCE, ApiName.KRW_WITHDRAW);
+        return executePayment(accountId, request, ApiName.KRW_WITHDRAW);
     }
 
     // 공통 결제 처리 로직
-    private PaymentResponse executePayment(Long accountId, Long paymentAccountId, RequestPaymentRequest request,
-                                           String searchApiType, String payApiType) {
+    private PaymentResponse executePayment(Long paymentAccountId, RequestPaymentRequest request,
+                                           String payApiType) {
         // 잔액 검증
         if (payApiType.equals(ApiName.KRW_WITHDRAW)) {
             paymentsAccountService.validateKrwAmount(paymentAccountId, request);

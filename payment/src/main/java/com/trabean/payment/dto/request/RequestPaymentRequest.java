@@ -1,10 +1,11 @@
 package com.trabean.payment.dto.request;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class RequestPaymentRequest {
     private String transactionId;
     private Long payId;

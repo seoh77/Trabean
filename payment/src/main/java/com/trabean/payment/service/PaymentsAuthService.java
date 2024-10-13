@@ -8,7 +8,6 @@ import com.trabean.payment.enums.UserRole;
 import com.trabean.payment.exception.PaymentsException;
 import com.trabean.payment.interceptor.UserHeaderInterceptor;
 import com.trabean.payment.repository.PaymentsRepository;
-import feign.FeignException;
 import feign.FeignException.NotFound;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,21 +26,17 @@ public class PaymentsAuthService {
         // 유저 권한 확인 API 호출
         String requestBody = String.format("{\"userId\":\"%d\", \"accountId\":%d}", userId, accountId);
 
-        try {
-            // API 호출
-            UserRoleResponse userRoleResponse = accountClient.getUserRole(requestBody);
+        // API 호출
+        UserRoleResponse userRoleResponse = accountClient.getUserRole(requestBody);
 
-            // 유저 권한 확인 후 처리
-            if (userRoleResponse == null) {
-                throw new PaymentsException("유저 결제 권한을 받아오지 못 했습니다.", HttpStatus.BAD_REQUEST);
-            }
-            if (userRoleResponse.getUserRole() == UserRole.NONE_PAYER) {
-                throw new PaymentsException("권한이 없는 사용자입니다.", HttpStatus.FORBIDDEN);
-            }
-
-        } catch (FeignException e) {
-            throw new PaymentsException("권한 조회 외부 API 호출 실패: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        // 유저 권한 확인 후 처리
+        if (userRoleResponse == null) {
+            throw new PaymentsException("유저 결제 권한을 받아오지 못 했습니다.", HttpStatus.BAD_REQUEST);
         }
+        if (userRoleResponse.getUserRole() == UserRole.NONE_PAYER) {
+            throw new PaymentsException("권한이 없는 사용자입니다.", HttpStatus.FORBIDDEN);
+        }
+
     }
 
     public String checkAccountPassword(ValidatePasswordRequest request) {
