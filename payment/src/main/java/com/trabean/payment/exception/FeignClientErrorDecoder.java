@@ -29,7 +29,8 @@ public class FeignClientErrorDecoder implements ErrorDecoder {
             if (methodKey.startsWith("DemandDepositClient") || methodKey.startsWith("ExchangeClient")) {
                 SsafyErrorResponse errorResponse = objectMapper.readValue(response.body().asInputStream(),
                         SsafyErrorResponse.class);
-                return new SsafyException(errorResponse.getResponseMessage(), errorResponse.getResponseCode());
+                return new SsafyException(errorResponse.getResponseMessage() + methodKey,
+                        errorResponse.getResponseCode());
             }
             FeignErrorResponse errorResponse = objectMapper.readValue(response.body().asInputStream(),
                     FeignErrorResponse.class);
