@@ -66,15 +66,17 @@ public class PaymentsHistoryService {
                 .collect(Collectors.toList());
 
         // 응답 생성
-        return new PaymentsHistoryResponse(
-                travelAccountId,
-                payments,
-                new PaymentsHistoryResponse.Pagination(
-                        (long) paymentsPage.getNumber() + 1,
-                        (long) paymentsPage.getTotalPages(),
-                        paymentsPage.getTotalElements()
+        return PaymentsHistoryResponse.builder()
+                .paymentAccountId(travelAccountId)
+                .payments(payments)
+                .pagination(
+                        PaymentsHistoryResponse.Pagination.builder()
+                                .currentPage((long) paymentsPage.getNumber() + 1)
+                                .totalPages((long) paymentsPage.getTotalPages())
+                                .totalResults(paymentsPage.getTotalElements())
+                                .build()
                 )
-        );
+                .build();
     }
 
     // DTO로 변환
